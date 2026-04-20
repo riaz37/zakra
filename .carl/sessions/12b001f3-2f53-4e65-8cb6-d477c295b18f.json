@@ -1,0 +1,20 @@
+{
+  "uuid": "12b001f3-2f53-4e65-8cb6-d477c295b18f",
+  "started": "2026-04-20T12:25:56.992566",
+  "cwd": "/Users/riazulislam/Developer/work/kb-next",
+  "label": "kb-next",
+  "title": null,
+  "prompt_count": 1,
+  "last_activity": "2026-04-20T12:33:41.670346",
+  "overrides": {
+    "DEVMODE": null,
+    "PROJECT_STATE": null,
+    "FRONTEND_STATE": null,
+    "API_STATE": null,
+    "AUTH_STATE": null,
+    "FORMS_STATE": null,
+    "STATE_STATE": null,
+    "QA_STATE": null,
+    "REVIEW_STATE": null
+  }
+}

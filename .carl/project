@@ -1,0 +1,13 @@
+# PROJECT Domain — kb-next (ESAP-KB Admin Frontend)
+# Always-on context about this codebase.
+
+PROJECT_RULE_0=Project: ESAP-KB Admin frontend. Next.js 16 App Router, React 19, TypeScript strict, pnpm. NOT the Next.js you know — read node_modules/next/dist/docs/ before guessing API behavior.
+PROJECT_RULE_1=Stack: Tailwind CSS v4, shadcn/ui (components in src/components/ui/), @base-ui/react, lucide-react icons, next-themes, sonner toasts, recharts.
+PROJECT_RULE_2=Data layer: axios (src/api/axios.ts) with JWT + refresh-token interceptor. TanStack Query for server state, Zustand for client state (src/store/), TanStack Table for tables.
+PROJECT_RULE_3=Forms: react-hook-form + @hookform/resolvers + zod schemas. Always validate at the boundary.
+PROJECT_RULE_4=Backend is external — base URL via NEXT_PUBLIC_API_BASE_URL. All calls go through src/api/*.ts modules. Never bypass the axios instance.
+PROJECT_RULE_5=Auth flow: tokens in localStorage (ACCESS_TOKEN_KEY/REFRESH_TOKEN_KEY in src/utils/constants.ts), auto-refresh on 401 via interceptor queue. Don't read tokens directly — use src/api/axios.ts helpers.
+PROJECT_RULE_6=Directory layout: src/app (routes), src/components/ui (shadcn), src/api (clients), src/hooks (TanStack Query hooks), src/store (Zustand), src/types (shared types), src/utils (helpers), src/lib/utils.ts (cn helper).
+PROJECT_RULE_7=Design system: Cursor-inspired warm-minimal aesthetic. See DESIGN.md before building UI — warm cream surfaces, oklab borders, CursorGothic/jjannon/berkeleyMono type stack.
+PROJECT_RULE_8=Path alias: @/* → src/*. Use it for all internal imports.
+PROJECT_RULE_9=Package manager is pnpm (pnpm-workspace.yaml exists). Never run npm/yarn install commands.

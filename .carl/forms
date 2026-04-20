@@ -1,0 +1,8 @@
+# FORMS Domain — react-hook-form + zod
+
+FORMS_RULE_0=All forms use react-hook-form + zod via @hookform/resolvers/zod. Define a zod schema first, infer the type with z.infer.
+FORMS_RULE_1=Validate at the boundary: schema parses input on submit (and onChange for live feedback). Never call API with un-parsed data.
+FORMS_RULE_2=Use the shadcn Form primitives (Form, FormField, FormItem, FormLabel, FormControl, FormMessage) — don't bypass them with raw <input>.
+FORMS_RULE_3=Server errors: map API field errors back to form via setError(field, { message }). Generic errors → toast.
+FORMS_RULE_4=Default values: provide them explicitly. Never rely on undefined to render an "uncontrolled" input.
+FORMS_RULE_5=Schemas live next to the form (or in src/types/<resource>.ts if shared). Don't duplicate validation across hook + component.

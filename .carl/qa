@@ -1,0 +1,8 @@
+# QA Domain — testing
+
+QA_RULE_0=No test framework is wired yet. Before adding tests, decide stack with the user (Vitest + Testing Library for unit/integration, Playwright for E2E is the typical pick).
+QA_RULE_1=When tests exist: write the test first (RED), implement to green, refactor. Aim for 80%+ on touched code.
+QA_RULE_2=Mock at the network boundary (msw) — not the axios instance, not React Query. Real hooks, fake server.
+QA_RULE_3=Components: test behavior (what the user sees/does), not implementation (state shape, internal handlers).
+QA_RULE_4=E2E: cover critical flows — login + refresh, chat send/receive, report generation, role/permission gating.
+QA_RULE_5=Don't add coverage thresholds to CI before there's a meaningful baseline — gate on per-PR diff coverage instead.

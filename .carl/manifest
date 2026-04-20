@@ -1,0 +1,64 @@
+# CARL Project Manifest — kb-next (ESAP-KB Admin)
+# =================================================
+# Project-local overrides + domains. Extends global ~/.carl/.
+#
+# Format:
+#   {DOMAIN}_STATE=active|inactive
+#   {DOMAIN}_ALWAYS_ON=true|false
+#   {DOMAIN}_RECALL=keyword1,keyword2
+#   {DOMAIN}_EXCLUDE=word1,word2
+
+# ============================================================================
+# PROJECT - Always-on rules specific to kb-next
+# ============================================================================
+PROJECT_STATE=active
+PROJECT_ALWAYS_ON=true
+
+# ============================================================================
+# FRONTEND - UI, components, pages, styling
+# ============================================================================
+FRONTEND_STATE=active
+FRONTEND_ALWAYS_ON=false
+FRONTEND_RECALL=component,page,layout,ui,shadcn,tailwind,css,style,radix,base-ui,form,modal,dialog,sheet,table,chart,sidebar,navbar,theme
+
+# ============================================================================
+# API - HTTP client, axios, react-query
+# ============================================================================
+API_STATE=active
+API_ALWAYS_ON=false
+API_RECALL=api,axios,fetch,endpoint,request,response,interceptor,react-query,tanstack,query,mutation,sse,stream
+
+# ============================================================================
+# AUTH - JWT, login, refresh tokens, RBAC
+# ============================================================================
+AUTH_STATE=active
+AUTH_ALWAYS_ON=false
+AUTH_RECALL=auth,login,logout,jwt,token,refresh,role,permission,rbac,protected,session,user
+
+# ============================================================================
+# FORMS - react-hook-form + zod
+# ============================================================================
+FORMS_STATE=active
+FORMS_ALWAYS_ON=false
+FORMS_RECALL=form,validate,validation,schema,zod,hook-form,input,field,submit
+
+# ============================================================================
+# STATE - Zustand stores
+# ============================================================================
+STATE_STATE=active
+STATE_ALWAYS_ON=false
+STATE_RECALL=store,zustand,state,global state,persist,slice
+
+# ============================================================================
+# QA - Testing
+# ============================================================================
+QA_STATE=active
+QA_ALWAYS_ON=false
+QA_RECALL=test,vitest,playwright,coverage,spec,mock,fixture,e2e
+
+# ============================================================================
+# REVIEW - Code review mode
+# ============================================================================
+REVIEW_STATE=active
+REVIEW_ALWAYS_ON=false
+REVIEW_RECALL=review,pr,pull request,audit

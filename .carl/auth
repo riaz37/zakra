@@ -1,0 +1,9 @@
+# AUTH Domain — JWT, refresh, RBAC
+
+AUTH_RULE_0=Tokens live in localStorage under ACCESS_TOKEN_KEY/REFRESH_TOKEN_KEY (src/utils/constants.ts). Read/write only via getAccessToken/getRefreshToken/setTokens/clearTokens in src/api/axios.ts.
+AUTH_RULE_1=Auth state in Zustand authStore (src/store/authStore.ts). UI gets the user from the store; never read the JWT to derive identity in components.
+AUTH_RULE_2=Login flow: call src/api/auth.login → setTokens → fetch getCurrentUser → hydrate authStore. Logout: clearTokens + reset stores.
+AUTH_RULE_3=401 handling is automatic via the axios interceptor (refresh queue). Components must NOT catch and refresh manually.
+AUTH_RULE_4=RBAC: roles + table-access come from src/api/roles.ts and src/api/table-access.ts. Gate routes/components on role/permission, not on raw user fields.
+AUTH_RULE_5=Protected routes: handle in the layout/page (Server Component reading cookies via Next 16 patterns) OR client-side with the authStore — pick one per route, don't mix.
+AUTH_RULE_6=Never log tokens or full Authorization headers. Sanitize before sending to Sentry/Axiom/console.

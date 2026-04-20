@@ -1,0 +1,11 @@
+# API Domain — HTTP client + server state
+
+API_RULE_0=All HTTP calls go through the axios instance in src/api/axios.ts. Never call fetch() or new axios.create() in components/hooks.
+API_RULE_1=Add new endpoints as functions in src/api/<resource>.ts (auth.ts, chat.ts, companies.ts, etc.). One file per resource.
+API_RULE_2=Always type request/response using src/types/<resource>.ts. Never use `any`.
+API_RULE_3=Wrap server state in TanStack Query hooks under src/hooks/use<Resource>.ts. UI components consume hooks, not raw API functions.
+API_RULE_4=Mutations: use useMutation + invalidateQueries on success. Don't manually setQueryData unless ordering matters.
+API_RULE_5=Query keys: stable arrays like ['companies', companyId]. Keep keys colocated with the hook that owns them.
+API_RULE_6=SSE/streams: use src/api/sse.ts and the chat-stream hook pattern (useChatStream). Don't open EventSource directly in components.
+API_RULE_7=Error handling: surface errors via toast (sonner) at the call site, not deep in the axios interceptor (which only handles 401 refresh).
+API_RULE_8=Refresh-token logic in axios.ts uses a subscriber queue — do not duplicate it. If you need request retry, route through the existing interceptor.

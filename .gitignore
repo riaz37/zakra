@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# serena (project config + memories committed; cache + local overrides ignored)
+.serena/cache
+.serena/project.local.yml
+
+# agent skill caches (skill source committed via .agents/skills)
+.claude/skills/*/.cache

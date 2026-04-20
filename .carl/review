@@ -1,0 +1,11 @@
+# REVIEW Domain — project-specific review checklist
+
+REVIEW_RULE_0=Read full file context before suggesting changes. Match existing patterns in src/api, src/hooks, src/store.
+REVIEW_RULE_1=Flag any direct fetch/axios.create outside src/api/axios.ts — auth refresh will silently break.
+REVIEW_RULE_2=Flag any `any`, `as unknown as`, or untyped API responses. Types belong in src/types/.
+REVIEW_RULE_3=Flag client components that read tokens directly instead of using the store + axios helpers.
+REVIEW_RULE_4=Flag UI that ignores DESIGN.md (raw hex colors, missing cn(), arbitrary shadcn overrides, gradient/emoji slop).
+REVIEW_RULE_5=Flag forms missing zod validation or shadcn Form primitives.
+REVIEW_RULE_6=Flag mutations that don't invalidate related queries (stale data on screen).
+REVIEW_RULE_7=Flag tokens or full Authorization headers in logs.
+REVIEW_RULE_8=Flag 'use client' on pages that don't actually need it (kills RSC benefits).

@@ -1,0 +1,8 @@
+# STATE Domain — Zustand stores
+
+STATE_RULE_0=Client state lives in Zustand stores under src/store/. Server state stays in TanStack Query — never mirror server data into Zustand.
+STATE_RULE_1=One store per concern: authStore (user/session), chatStore (active chat UI state), uiStore (sidebars/modals/theme bits). Don't merge them.
+STATE_RULE_2=Selectors: components subscribe to slices, not the whole store — `useAuthStore((s) => s.user)` not `useAuthStore()`.
+STATE_RULE_3=Mutations: expose action methods on the store (login, logout, setActiveChat). Don't `setState` from outside the store.
+STATE_RULE_4=Persistence: only persist what truly survives a reload (theme, sidebar collapsed). Auth tokens stay in localStorage via axios.ts helpers, not via Zustand persist.
+STATE_RULE_5=Reset on logout: every store should expose a reset() and authStore.logout() should call them all.
