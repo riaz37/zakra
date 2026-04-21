@@ -1,6 +1,6 @@
 import api from './axios';
 import type {
-  User,
+  ListUser,
   UserDetail,
   UserCreate,
   UserUpdate,
@@ -17,8 +17,8 @@ import type {
 /**
  * List all users with pagination
  */
-export async function listUsers(params?: QueryParams): Promise<PaginatedResponse<User>> {
-  const response = await api.get<PaginatedResponse<User>>('/users', { params });
+export async function listUsers(params?: QueryParams): Promise<PaginatedResponse<ListUser>> {
+  const response = await api.get<PaginatedResponse<ListUser>>('/users', { params });
   return response.data;
 }
 
@@ -33,16 +33,16 @@ export async function getUser(id: string): Promise<UserDetail> {
 /**
  * Create a new user
  */
-export async function createUser(data: UserCreate): Promise<User> {
-  const response = await api.post<User>('/users', data);
+export async function createUser(data: UserCreate): Promise<ListUser> {
+  const response = await api.post<ListUser>('/users', data);
   return response.data;
 }
 
 /**
  * Update an existing user
  */
-export async function updateUser(id: string, data: UserUpdate): Promise<User> {
-  const response = await api.put<User>(`/users/${id}`, data);
+export async function updateUser(id: string, data: UserUpdate): Promise<ListUser> {
+  const response = await api.put<ListUser>(`/users/${id}`, data);
   return response.data;
 }
 

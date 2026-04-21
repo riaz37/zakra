@@ -1,11 +1,12 @@
 import { useCallback, useReducer, useRef } from 'react';
-import { aiGenerateReport, subscribeToReportStream } from '../api/reports';
+import { aiGenerateReport } from '../api/reports';
+import { subscribeToSSEStream } from '../api/sse';
+import type { SSEEventType } from '../api/sse';
 import type {
   AIReportPipelineState,
   ReportPipelineStep,
   TemplateSelectionResult,
   QueryAdaptationResult,
-  SSEEventType,
 } from '../types';
 import { AI_REPORT_PIPELINE_STEPS } from '../types';
 
@@ -177,7 +178,7 @@ export function useAIReportGeneration() {
       );
       dispatch({ type: 'START', generationId: generation_id });
 
-      subscribeToReportStream(
+      subscribeToSSEStream(
         task_id,
         (eventType: SSEEventType, data: Record<string, unknown>) => {
           switch (eventType) {

@@ -2,15 +2,19 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+
+function useIsMounted() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+}
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsMounted();
 
   const isDark = mounted && resolvedTheme === "dark";
   const nextTheme = isDark ? "light" : "dark";
@@ -24,11 +28,7 @@ export function ThemeToggle() {
       aria-label={label}
       title={label}
       onClick={() => setTheme(nextTheme)}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] transition-all duration-200 hover:shadow-[var(--shadow-focus)] hover:[color:var(--color-error)]"
-      style={{
-        background: "var(--color-surface-300)",
-        color: "var(--color-foreground)",
-      }}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-300 text-foreground shadow-ring transition-all duration-200 hover:text-error hover:shadow-focus"
     >
       <span className="sr-only">{label}</span>
       {mounted ? (

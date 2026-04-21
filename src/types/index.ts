@@ -1,6 +1,6 @@
 export * from './auth';
 export * from './company';
-export type { UserDetail, UserRole, UserCompany, UserCreate, UserUpdate, AssignRolesRequest } from './user';
+export type { ListUser, UserDetail, UserRole, UserCompany, UserCreate, UserUpdate, AssignRolesRequest } from './user';
 export * from './role';
 export * from './db-connection';
 export * from './table-access';

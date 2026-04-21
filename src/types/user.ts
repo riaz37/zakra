@@ -1,4 +1,4 @@
-export interface User {
+export interface ListUser {
   id: string;
   email: string;
   first_name: string | null;
@@ -14,7 +14,7 @@ export interface User {
   last_login_at: string | null;
 }
 
-export interface UserDetail extends User {
+export interface UserDetail extends ListUser {
   roles: UserRole[];
   companies: UserCompany[];
 }

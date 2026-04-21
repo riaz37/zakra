@@ -1,9 +1,10 @@
 import { useCallback, useReducer, useRef } from 'react';
-import { generateReport, subscribeToReportStream } from '../api/reports';
+import { generateReport } from '../api/reports';
+import { subscribeToSSEStream } from '../api/sse';
+import type { SSEEventType } from '../api/sse';
 import type {
   ReportPipelineState,
   ReportPipelineStep,
-  SSEEventType,
 } from '../types';
 import { REPORT_PIPELINE_STEPS } from '../types';
 
@@ -157,7 +158,7 @@ export function useReportGeneration() {
       const { task_id, generation_id } = await generateReport(templateId, companyId, title, language);
       dispatch({ type: 'START', generationId: generation_id });
 
-      subscribeToReportStream(
+      subscribeToSSEStream(
         task_id,
         (eventType: SSEEventType, data: Record<string, unknown>) => {
           switch (eventType) {

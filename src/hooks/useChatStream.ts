@@ -1,13 +1,7 @@
-/**
- * Hook for sending chat messages and handling SSE streaming responses.
- * Uses useReducer pattern from useDbQuery.ts.
- */
-
-import { useCallback, useReducer, useRef } from 'react';
+import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { sendMessage } from '../api/chat';
 import { subscribeToSSEStream, type SSEEventType } from '../api/sse';
 import type {
-  MessageContentBlock,
   StreamingMessage,
   StreamingStatus,
   QueryResultData,
@@ -47,6 +41,7 @@ type Action =
   | { type: 'REPORT_PICKER'; data: ReportPickerData }
   | { type: 'STEP_START'; stepNumber: number; stepName: string; description?: string }
   | { type: 'STEP_COMPLETE'; stepNumber: number; stepName: string; success: boolean; resultSummary?: string; durationMs?: number }
+  | { type: 'RECONNECTING'; attempt: number }
   | { type: 'ERROR'; message: string }
   | { type: 'COMPLETE' };
 
@@ -88,7 +83,6 @@ function reducer(state: StreamState, action: Action): StreamState {
       const msg = ensureStreamingMessage(state);
       const blocks = [...msg.contentBlocks];
 
-      // Append to existing text block or create new one
       const lastBlock = blocks[blocks.length - 1];
       if (lastBlock && lastBlock.type === 'text') {
         blocks[blocks.length - 1] = {
@@ -152,7 +146,6 @@ function reducer(state: StreamState, action: Action): StreamState {
 
     case 'STEP_START': {
       const steps = [...state.pipelineSteps];
-      // Use stepName as unique key (step numbers can overlap between orchestrator and sub-agents)
       const existing = steps.findIndex(
         (s) => s.stepName === action.stepName && s.stepNumber === action.stepNumber,
       );
@@ -204,6 +197,12 @@ function reducer(state: StreamState, action: Action): StreamState {
       };
     }
 
+    case 'RECONNECTING':
+      return {
+        ...state,
+        status: 'reconnecting',
+      };
+
     case 'ERROR':
       return {
         ...state,
@@ -220,9 +219,6 @@ function reducer(state: StreamState, action: Action): StreamState {
         ...state,
         status: 'completed',
         pendingUserMessage: null,
-        // Keep streaming message visible (isStreaming: false) so there's
-        // no flash while React Query refetches persisted messages.
-        // ChatMessageList deduplicates once the persisted message arrives.
         streamingMessage: state.streamingMessage
           ? { ...state.streamingMessage, isStreaming: false }
           : null,
@@ -243,6 +239,12 @@ export function useChatStream(options?: UseChatStreamOptions) {
   const [state, dispatch] = useReducer(reducer, undefined, createInitialState);
   const abortRef = useRef<AbortController | null>(null);
   const completedRef = useRef(false);
+  // Stable ref for onComplete callback — avoids stale closure when options object changes on re-render
+  const onCompleteRef = useRef(options?.onComplete);
+
+  useEffect(() => {
+    onCompleteRef.current = options?.onComplete;
+  }, [options?.onComplete]);
 
   const reset = useCallback(() => {
     abortRef.current?.abort();
@@ -329,7 +331,7 @@ export function useChatStream(options?: UseChatStreamOptions) {
                 if (!completedRef.current) {
                   completedRef.current = true;
                   dispatch({ type: 'COMPLETE' });
-                  options?.onComplete?.();
+                  onCompleteRef.current?.();
                 }
                 break;
 
@@ -351,10 +353,14 @@ export function useChatStream(options?: UseChatStreamOptions) {
             if (!completedRef.current) {
               completedRef.current = true;
               dispatch({ type: 'COMPLETE' });
-              options?.onComplete?.();
+              onCompleteRef.current?.();
             }
           },
           controller.signal,
+          3,
+          (attempt) => {
+            dispatch({ type: 'RECONNECTING', attempt });
+          },
         );
       } catch (err) {
         const message =
@@ -362,7 +368,7 @@ export function useChatStream(options?: UseChatStreamOptions) {
         dispatch({ type: 'ERROR', message });
       }
     },
-    [options],
+    [], // stable — onComplete accessed via ref, not captured in closure
   );
 
   return {
@@ -372,7 +378,7 @@ export function useChatStream(options?: UseChatStreamOptions) {
     streamingMessage: state.streamingMessage,
     pendingUserMessage: state.pendingUserMessage,
     pipelineSteps: state.pipelineSteps,
-    isStreaming: state.status === 'streaming' || state.status === 'connecting',
+    isStreaming: state.status === 'streaming' || state.status === 'connecting' || state.status === 'reconnecting',
     error: state.error,
     status: state.status,
   };

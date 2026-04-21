@@ -29,6 +29,20 @@ export const useAuthStore = create<AuthStore>()(
           const response = await authApi.login(credentials);
           setTokens(response.access_token, response.refresh_token);
 
+          const cookieRes = await fetch('/api/auth/set-cookie', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              access_token: response.access_token,
+              refresh_token: response.refresh_token,
+            }),
+          });
+
+          if (!cookieRes.ok) {
+            clearTokens();
+            throw new Error('Session setup failed');
+          }
+
           set({
             user: response.user,
             isAuthenticated: true,
@@ -58,6 +72,7 @@ export const useAuthStore = create<AuthStore>()(
           // Continue with logout even if API call fails
         } finally {
           clearTokens();
+          fetch('/api/auth/clear-cookie', { method: 'POST' }).catch(() => {});
           set({
             user: null,
             isAuthenticated: false,

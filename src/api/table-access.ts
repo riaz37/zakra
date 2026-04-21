@@ -83,14 +83,22 @@ export async function grantColumnPermission(
 /**
  * Bulk grant permissions
  */
+export interface BulkGrantResult {
+  granted: number;
+  failed_grants?: Array<{ column_name: string; grantee_id: string; reason: string }>;
+}
+
 export async function bulkGrantPermissions(
   tableName: string,
   data: BulkGrantPermissions,
   schemaName = 'public'
-): Promise<void> {
-  await api.post(`/data/tables/${tableName}/column-permissions/bulk`, data, {
-    params: { schema_name: schemaName },
-  });
+): Promise<BulkGrantResult> {
+  const response = await api.post<BulkGrantResult>(
+    `/data/tables/${tableName}/column-permissions/bulk`,
+    data,
+    { params: { schema_name: schemaName } },
+  );
+  return response.data;
 }
 
 /**

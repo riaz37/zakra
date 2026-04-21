@@ -120,6 +120,7 @@ export type StreamingStatus =
   | 'idle'
   | 'connecting'
   | 'streaming'
+  | 'reconnecting'
   | 'completed'
   | 'error';
 
