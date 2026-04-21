@@ -49,3 +49,8 @@ next-env.d.ts
 
 # CARL session state (per-machine, not shared)
 .carl/sessions/
+
+# Playwright auth storage (contains live session tokens)
+/.auth/
+/test-results/
+/playwright-report/

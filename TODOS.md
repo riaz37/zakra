@@ -17,3 +17,21 @@
 **Cons:** ~2-3 hours with proper tooling (axe DevTools + VoiceOver manual pass).
 **Context:** Use axe DevTools browser extension for automated pass, then manual keyboard + VoiceOver/NVDA walk-through of login → dashboard → users → connections → chat. Doc findings here, fix in follow-up PR.
 **Depends on:** design-contract-repair plan complete (tokens land so focus rings are visible to test).
+
+## Bugs (surfaced by E2E baseline)
+
+### API contract mismatches on /dashboard and /chat
+**What:** Multiple HTTP 400 responses on `/dashboard` (4 requests) and `/chat` (2 requests) when loaded with valid auth. Page renders the admin shell but data tiles/empty states show because data calls fail. No JS pageerror — backend rejects request shape silently.
+**Why:** Likely query-param shape, body shape, or endpoint version drift between frontend hooks (`src/hooks/use*`) and backend (`https://edgingly-grimiest-madyson.ngrok-free.dev/api/v1`). Pre-existed Phase 0 — surfaced when Playwright auth setup made first authenticated calls.
+**Pros:** Fixing makes dashboard/chat actually usable end-to-end.
+**Cons:** Need backend OpenAPI/contract reference to identify exact mismatch per request.
+**Context:** Currently masked in `tests/e2e/smoke-admin-routes.spec.ts` via `IGNORED_CONSOLE_PATTERNS` (regex on `status of 4xx`). When fixed, tighten the regex back to strict.
+**Repro:** Run `pnpm test:e2e:update` after auth setup, watch DevTools network tab on /dashboard or /chat for the failing requests; compare payload to backend swagger.
+
+### table-access throws `permissions.data is not iterable`
+**What:** `/table-access` page throws a runtime `TypeError: permissions.data is not iterable`. Code expects `permissions.data` to be an array but the API returns an object (or null/undefined) wrapper.
+**Why:** Frontend type assumption diverges from actual API response shape. Either the type in `src/types/` is wrong or the hook unwraps the response incorrectly.
+**Pros:** Fix unblocks the entire table-access page (currently shows error boundary or blank).
+**Cons:** Need a sample response payload to model the correct type.
+**Context:** Currently masked in `tests/e2e/smoke-admin-routes.spec.ts` via `IGNORED_CONSOLE_PATTERNS` (regex on `permissions\.data is not iterable`). When fixed, remove the ignore line.
+**Repro:** Visit `/table-access` while authenticated; observe the page error.
