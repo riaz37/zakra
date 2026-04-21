@@ -1,24 +1,20 @@
 # Design System Inspired by Cursor
 
-> **Font substitution note:** The original Cursor system uses proprietary Geist, Instrument Serif, and Geist Mono. This project substitutes open-source equivalents (Geist / Instrument Serif / Geist Mono) that preserve the three-voice structure and warm publication feel.
-
-> **Project customization:** the brand accent is **green `#1f8a65`** (dark mode `#2fb080`), not Cursor's orange `#f54e00`. Everywhere this document says "accent orange" or references `#f54e00`, read it as the project green. All other Cursor system choices (warm cream canvas, oklab borders, Geist/Instrument Serif/Geist Mono voice, shadows, radii, spacing) are preserved.
-
 ## 1. Visual Theme & Atmosphere
 
 Cursor's website is a study in warm minimalism meets code-editor elegance. The entire experience is built on a warm off-white canvas (`#f2f1ed`) with dark warm-brown text (`#26251e`) -- not pure black, not neutral gray, but a deeply warm near-black with a yellowish undertone that evokes old paper, ink, and craft. This warmth permeates every surface: backgrounds lean toward cream (`#e6e5e0`, `#ebeae5`), borders dissolve into transparent warm overlays using `oklab` color space, and even the error state (`#cf2d56`) carries warmth rather than clinical red. The result feels more like a premium print publication than a tech website.
 
-The custom Geist font is the typographic signature -- a gothic sans-serif with aggressive negative letter-spacing at display sizes (-0.04em at 72px) that creates a compressed, engineered feel. As a secondary voice, the Instrument Serif serif font (with OpenType `"cswh"` contextual swash alternates) provides literary counterpoint for body copy and editorial passages. The monospace voice comes from Geist Mono, a refined coding font that connects the marketing site to Cursor's core identity as a code editor. This three-font system (gothic display, serif body, mono code) gives Cursor one of the most typographically rich palettes in developer tooling.
+The custom CursorGothic font is the typographic signature -- a gothic sans-serif with aggressive negative letter-spacing at display sizes (-2.16px at 72px) that creates a compressed, engineered feel. As a secondary voice, the jjannon serif font (with OpenType `"cswh"` contextual swash alternates) provides literary counterpoint for body copy and editorial passages. The monospace voice comes from berkeleyMono, a refined coding font that connects the marketing site to Cursor's core identity as a code editor. This three-font system (gothic display, serif body, mono code) gives Cursor one of the most typographically rich palettes in developer tooling.
 
 The border system is particularly distinctive -- Cursor uses `oklab()` color space for border colors, applying warm brown at various alpha levels (0.1, 0.2, 0.55) to create borders that feel organic rather than mechanical. The signature border color `oklab(0.263084 -0.00230259 0.0124794 / 0.1)` is not a simple rgba value but a perceptually uniform color that maintains visual consistency across different backgrounds.
 
 **Key Characteristics:**
-- Geist with aggressive negative letter-spacing (-0.04em at 72px, -0.025em at 36px) for compressed display headings
-- Instrument Serif serif for body text with OpenType `"cswh"` (contextual swash alternates)
-- Geist Mono for code and technical labels
+- CursorGothic with aggressive negative letter-spacing (-2.16px at 72px, -0.72px at 36px) for compressed display headings
+- jjannon serif for body text with OpenType `"cswh"` (contextual swash alternates)
+- berkeleyMono for code and technical labels
 - Warm off-white background (`#f2f1ed`) instead of pure white -- the entire system is warm-shifted
 - Primary text color `#26251e` (warm near-black with yellow undertone)
-- Accent green `#1f8a65` for brand highlight, CTAs, and links (dark-mode `#2fb080`)
+- Accent orange `#f54e00` for brand highlight and links
 - oklab-space borders at various alpha levels for perceptually uniform edge treatment
 - Pill-shaped elements with extreme radius (33.5M px, effectively full-pill)
 - 8px base spacing system with fine-grained sub-8px increments (1.5px, 2px, 2.5px, 3px, 4px, 5px, 6px)
@@ -33,14 +29,12 @@ The border system is particularly distinctive -- Cursor uses `oklab()` color spa
 - **True Black** (`#000000`): Minimal use, specific code/console contexts.
 
 ### Accent
-- **Brand Green** (`#1f8a65` light / `#2fb080` dark): Brand accent, `--primary` / `--color-accent`. A muted warm teal-green that sits naturally on the cream canvas. Used for primary CTAs, active links, focus rings, selected nav, and brand moments.
-- **Brand Green Hover** (`#176b4f` light / `#3dd19d` dark): Hover/pressed state for primary buttons.
-- **Brand Green Soft** (`#e3f1ea` light / `rgba(47,176,128,0.12)` dark): Badge fills, nav-active backgrounds, skeleton base, subtle selection highlights.
-- **Gold** (`#c08532`): Secondary accent, warm gold for premium or highlighted contexts — use sparingly.
+- **Cursor Orange** (`#f54e00`): Brand accent, `--color-accent`. A vibrant red-orange used for primary CTAs, active links, and brand moments. Warm and urgent.
+- **Gold** (`#c08532`): Secondary accent, warm gold for premium or highlighted contexts.
 
 ### Semantic
-- **Error** (`#cf2d56` light / `#e94169` dark): `--destructive`. A warm crimson-rose rather than cold red. Also used for the signature hover-text shift on primary buttons (Cursor convention preserved).
-- **Success**: identical to primary green (`#1f8a65` / `#2fb080`). Success badges use `--primary-soft` fill with `--primary` text — never introduce a second green.
+- **Error** (`#cf2d56`): `--color-error`. A warm crimson-rose rather than cold red.
+- **Success** (`#1f8a65`): `--color-success`. A muted teal-green, warm-shifted.
 
 ### Timeline / Feature Colors
 - **Thinking** (`#dfa88f`): Warm peach for "thinking" state in AI timeline.
@@ -69,41 +63,41 @@ The border system is particularly distinctive -- Cursor uses `oklab()` color spa
 ## 3. Typography Rules
 
 ### Font Family
-- **Display/Headlines**: `Geist`, with fallbacks: `Geist Fallback, system-ui, Helvetica Neue, Helvetica, Arial`
-- **Body/Editorial**: `Instrument Serif`, with fallbacks: `Iowan Old Style, Palatino Linotype, URW Palladio L, P052, ui-serif, Georgia, Cambria, Times New Roman, Times`
-- **Code/Technical**: `Geist Mono`, with fallbacks: `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New`
+- **Display/Headlines**: `CursorGothic`, with fallbacks: `CursorGothic Fallback, system-ui, Helvetica Neue, Helvetica, Arial`
+- **Body/Editorial**: `jjannon`, with fallbacks: `Iowan Old Style, Palatino Linotype, URW Palladio L, P052, ui-serif, Georgia, Cambria, Times New Roman, Times`
+- **Code/Technical**: `berkeleyMono`, with fallbacks: `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New`
 - **UI/System**: `system-ui`, with fallbacks: `-apple-system, Segoe UI, Helvetica Neue, Arial`
 - **Icons**: `CursorIcons16` (icon font at 14px and 12px)
-- **OpenType Features**: `"cswh"` on Instrument Serif body text, `"ss09"` on Geist buttons/captions
+- **OpenType Features**: `"cswh"` on jjannon body text, `"ss09"` on CursorGothic buttons/captions
 
 ### Hierarchy
 
 | Role | Font | Size | Weight | Line Height | Letter Spacing | Notes |
 |------|------|------|--------|-------------|----------------|-------|
-| Display Hero | Geist | 72px (4.50rem) | 400 | 1.10 (tight) | -0.04em | Maximum compression, hero statements |
-| Section Heading | Geist | 36px (2.25rem) | 400 | 1.20 (tight) | -0.025em | Feature sections, CTA headlines |
-| Sub-heading | Geist | 26px (1.63rem) | 400 | 1.25 (tight) | -0.325px | Card headings, sub-sections |
-| Title Small | Geist | 22px (1.38rem) | 400 | 1.30 (tight) | -0.11px | Smaller titles, list headings |
-| Body Serif | Instrument Serif | 19.2px (1.20rem) | 500 | 1.50 | normal | Editorial body with `"cswh"` |
-| Body Serif SM | Instrument Serif | 17.28px (1.08rem) | 400 | 1.35 | normal | Standard body text, descriptions |
-| Body Sans | Geist | 16px (1.00rem) | 400 | 1.50 | normal/0.08px | UI body text |
-| Button Label | Geist | 14px (0.88rem) | 400 | 1.00 (tight) | normal | Primary button text |
-| Button Caption | Geist | 14px (0.88rem) | 400 | 1.50 | 0.14px | Secondary button with `"ss09"` |
-| Caption | Geist | 11px (0.69rem) | 400-500 | 1.50 | normal | Small captions, metadata |
+| Display Hero | CursorGothic | 72px (4.50rem) | 400 | 1.10 (tight) | -2.16px | Maximum compression, hero statements |
+| Section Heading | CursorGothic | 36px (2.25rem) | 400 | 1.20 (tight) | -0.72px | Feature sections, CTA headlines |
+| Sub-heading | CursorGothic | 26px (1.63rem) | 400 | 1.25 (tight) | -0.325px | Card headings, sub-sections |
+| Title Small | CursorGothic | 22px (1.38rem) | 400 | 1.30 (tight) | -0.11px | Smaller titles, list headings |
+| Body Serif | jjannon | 19.2px (1.20rem) | 500 | 1.50 | normal | Editorial body with `"cswh"` |
+| Body Serif SM | jjannon | 17.28px (1.08rem) | 400 | 1.35 | normal | Standard body text, descriptions |
+| Body Sans | CursorGothic | 16px (1.00rem) | 400 | 1.50 | normal/0.08px | UI body text |
+| Button Label | CursorGothic | 14px (0.88rem) | 400 | 1.00 (tight) | normal | Primary button text |
+| Button Caption | CursorGothic | 14px (0.88rem) | 400 | 1.50 | 0.14px | Secondary button with `"ss09"` |
+| Caption | CursorGothic | 11px (0.69rem) | 400-500 | 1.50 | normal | Small captions, metadata |
 | System Heading | system-ui | 20px (1.25rem) | 700 | 1.55 | normal | System UI headings |
 | System Caption | system-ui | 13px (0.81rem) | 500-600 | 1.33 | normal | System UI labels |
 | System Micro | system-ui | 11px (0.69rem) | 500 | 1.27 (tight) | 0.048px | Uppercase micro labels |
-| Mono Body | Geist Mono | 12px (0.75rem) | 400 | 1.67 (relaxed) | normal | Code blocks |
-| Mono Small | Geist Mono | 11px (0.69rem) | 400 | 1.33 | -0.275px | Inline code, terminal |
+| Mono Body | berkeleyMono | 12px (0.75rem) | 400 | 1.67 (relaxed) | normal | Code blocks |
+| Mono Small | berkeleyMono | 11px (0.69rem) | 400 | 1.33 | -0.275px | Inline code, terminal |
 | Lato Heading | Lato | 16px (1.00rem) | 600 | 1.33 | normal | Lato section headings |
 | Lato Caption | Lato | 14px (0.88rem) | 400-600 | 1.33 | normal | Lato captions |
 | Lato Micro | Lato | 12px (0.75rem) | 400-600 | 1.27 (tight) | 0.053px | Lato small labels |
 
 ### Principles
-- **Gothic compression for impact**: Geist at display sizes uses -0.04em letter-spacing at 72px, progressively relaxing: -0.025em at 36px, -0.325px at 26px, -0.11px at 22px, normal at 16px and below. The tracking creates a sense of precision engineering.
-- **Serif for soul**: Instrument Serif provides literary warmth. The `"cswh"` feature adds contextual swash alternates that give body text a calligraphic quality.
+- **Gothic compression for impact**: CursorGothic at display sizes uses -2.16px letter-spacing at 72px, progressively relaxing: -0.72px at 36px, -0.325px at 26px, -0.11px at 22px, normal at 16px and below. The tracking creates a sense of precision engineering.
+- **Serif for soul**: jjannon provides literary warmth. The `"cswh"` feature adds contextual swash alternates that give body text a calligraphic quality.
 - **Three typographic voices**: Gothic (display/UI), serif (editorial/body), mono (code/technical). Each serves a distinct communication purpose.
-- **Weight restraint**: Geist uses weight 400 almost exclusively, relying on size and tracking for hierarchy rather than weight. System-ui components use 500-700 for functional emphasis.
+- **Weight restraint**: CursorGothic uses weight 400 almost exclusively, relying on size and tracking for hierarchy rather than weight. System-ui components use 500-700 for functional emphasis.
 
 ## 4. Component Stylings
 
@@ -157,12 +151,12 @@ The border system is particularly distinctive -- Cursor uses `oklab()` color spa
 - Text: `#26251e`
 - Padding: 8px 8px 6px (textarea)
 - Border: `1px solid oklab(0.263 / 0.1)`
-- Focus: border shifts to `--primary` with 3px `--ring` halo (`rgba(31, 138, 101, 0.35)`)
+- Focus: border shifts to `oklab(0.263 / 0.2)` or accent orange
 
 ### Navigation
 - Clean horizontal nav on warm cream background
 - Cursor logotype left-aligned (~96x24px)
-- Links: 14px Geist or system-ui, weight 500
+- Links: 14px CursorGothic or system-ui, weight 500
 - CTA button: warm surface with Cursor Dark text
 - Tab navigation: bottom border `1px solid oklab(0.263 / 0.1)` with active tab differentiation
 
@@ -182,13 +176,13 @@ The border system is particularly distinctive -- Cursor uses `oklab()` color spa
 
 **Code Editor Previews**
 - Dark code editor screenshots with warm cream border frame
-- Geist Mono for code text
+- berkeleyMono for code text
 - Syntax highlighting using timeline colors
 
 **Pricing Cards**
 - Warm surface backgrounds with bordered containers
-- Feature lists using Instrument Serif serif for readability
-- CTA buttons with primary green (`--primary`) or warm-dark styling
+- Feature lists using jjannon serif for readability
+- CTA buttons with accent orange or primary dark styling
 
 ## 5. Layout Principles
 
@@ -208,7 +202,7 @@ The border system is particularly distinctive -- Cursor uses `oklab()` color spa
 
 ### Whitespace Philosophy
 - **Warm negative space**: The cream background means whitespace has warmth and texture, unlike cold white minimalism. Large empty areas feel cozy rather than clinical.
-- **Compressed text, open layout**: Aggressive negative letter-spacing on Geist headlines is balanced by generous surrounding margins. Text is dense; space around it breathes.
+- **Compressed text, open layout**: Aggressive negative letter-spacing on CursorGothic headlines is balanced by generous surrounding margins. Text is dense; space around it breathes.
 - **Section variation**: Alternating surface tones (cream → lighter cream → cream) create subtle section differentiation without harsh boundaries.
 
 ### Border Radius Scale
@@ -242,7 +236,7 @@ The border system is particularly distinctive -- Cursor uses `oklab()` color spa
 
 ### Hover States
 - Buttons: text color shifts to `--color-error` (`#cf2d56`) on hover -- a distinctive warm crimson that signals interactivity
-- Links: color shift to primary green (`#1f8a65` / `#2fb080` dark) or underline decoration with `rgba(38, 37, 30, 0.4)`
+- Links: color shift to accent orange (`#f54e00`) or underline decoration with `rgba(38, 37, 30, 0.4)`
 - Cards: shadow intensification on hover (ambient → elevated)
 
 ### Focus States
@@ -272,7 +266,7 @@ The border system is particularly distinctive -- Cursor uses `oklab()` color spa
 - Navigation links at 14px with adequate spacing for touch
 
 ### Collapsing Strategy
-- Hero: 72px Geist → 36px → 26px on smaller screens, maintaining proportional letter-spacing
+- Hero: 72px CursorGothic → 36px → 26px on smaller screens, maintaining proportional letter-spacing
 - Navigation: horizontal links → hamburger menu on mobile
 - Feature cards: 3-column → 2-column → single column stacked
 - Code editor screenshots: maintain aspect ratio, may shrink with border treatment preserved
@@ -292,23 +286,23 @@ The border system is particularly distinctive -- Cursor uses `oklab()` color spa
 - Page background: `#f2f1ed` (warm off-white)
 - Text color: `#26251e` (warm near-black)
 - Secondary text: `rgba(38, 37, 30, 0.55)` (55% warm brown)
-- Accent / Primary: `#1f8a65` (light) / `#2fb080` (dark)
-- Error / hover shift: `#cf2d56` (warm crimson) — signature Cursor button-text hover
-- Success: same green as primary; never introduce a second green token
+- Accent: `#f54e00` (orange)
+- Error/hover: `#cf2d56` (warm crimson)
+- Success: `#1f8a65` (muted teal)
 - Border: `oklab(0.263084 -0.00230259 0.0124794 / 0.1)` or `rgba(38, 37, 30, 0.1)` as fallback
 
 ### Example Component Prompts
-- "Create a hero section on `#f2f1ed` warm cream background. Headline at 72px Geist weight 400, line-height 1.10, letter-spacing -0.04em, color `#26251e`. Subtitle at 17.28px Instrument Serif weight 400, line-height 1.35, color `rgba(38,37,30,0.55)`. Primary CTA button (`#ebeae5` bg, 8px radius, 10px 14px padding) with hover text shift to `#cf2d56`."
-- "Design a card: `#e6e5e0` background, border `1px solid rgba(38,37,30,0.1)`. Radius 8px. Title at 22px Geist weight 400, letter-spacing -0.11px. Body at 17.28px Instrument Serif weight 400, color `rgba(38,37,30,0.55)`. Use `#1f8a65` (var(--primary)) for link accents."
-- "Build a pill tag: `#e6e5e0` background, `rgba(38,37,30,0.6)` text, full-pill radius (9999px), 3px 8px padding, 14px Geist weight 400."
+- "Create a hero section on `#f2f1ed` warm cream background. Headline at 72px CursorGothic weight 400, line-height 1.10, letter-spacing -2.16px, color `#26251e`. Subtitle at 17.28px jjannon weight 400, line-height 1.35, color `rgba(38,37,30,0.55)`. Primary CTA button (`#ebeae5` bg, 8px radius, 10px 14px padding) with hover text shift to `#cf2d56`."
+- "Design a card: `#e6e5e0` background, border `1px solid rgba(38,37,30,0.1)`. Radius 8px. Title at 22px CursorGothic weight 400, letter-spacing -0.11px. Body at 17.28px jjannon weight 400, color `rgba(38,37,30,0.55)`. Use `#f54e00` for link accents."
+- "Build a pill tag: `#e6e5e0` background, `rgba(38,37,30,0.6)` text, full-pill radius (9999px), 3px 8px padding, 14px CursorGothic weight 400."
 - "Create navigation: sticky `#f2f1ed` background with backdrop-filter blur. 14px system-ui weight 500 for links, `#26251e` text. CTA button right-aligned with `#ebeae5` bg and 8px radius. Bottom border `1px solid rgba(38,37,30,0.1)`."
-- "Design an AI timeline showing four steps: Thinking (`#dfa88f`), Grep (`#9fc9a2`), Read (`#9fbbe0`), Edit (`#c0a8dd`). Each step: 14px system-ui label + 16px Geist description + vertical connecting line in `rgba(38,37,30,0.1)`."
+- "Design an AI timeline showing four steps: Thinking (`#dfa88f`), Grep (`#9fc9a2`), Read (`#9fbbe0`), Edit (`#c0a8dd`). Each step: 14px system-ui label + 16px CursorGothic description + vertical connecting line in `rgba(38,37,30,0.1)`."
 
 ### Iteration Guide
 1. Always use warm tones -- `#f2f1ed` background, `#26251e` text, never pure white/black for primary surfaces
-2. Letter-spacing scales with font size for Geist: -0.04em at 72px, -0.025em at 36px, -0.325px at 26px, normal at 16px
+2. Letter-spacing scales with font size for CursorGothic: -2.16px at 72px, -0.72px at 36px, -0.325px at 26px, normal at 16px
 3. Use `rgba(38, 37, 30, alpha)` as a CSS-compatible fallback for oklab borders
-4. Three fonts, three voices: Geist (display/UI), Instrument Serif (editorial), Geist Mono (code)
+4. Three fonts, three voices: CursorGothic (display/UI), jjannon (editorial), berkeleyMono (code)
 5. Pill shapes (9999px radius) for tags and filters; 8px radius for primary buttons and cards
 6. Hover states use `#cf2d56` text color -- the warm crimson shift is a signature interaction
 7. Shadows use large blur values (28px, 70px) for diffused atmospheric depth
