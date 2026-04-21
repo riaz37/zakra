@@ -20,6 +20,9 @@ export const DENSITY_STORAGE_KEY = 'zakra-density';
 export const DEFAULT_PAGE_SIZE = 10;
 export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
+// UI Preferences
+export const DENSITY_STORAGE_KEY = 'zakra-density';
+
 // User Types
 export const USER_TYPES = {
   SUPER_ADMIN: 'super_admin',
