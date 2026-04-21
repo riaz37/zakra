@@ -1,342 +1,446 @@
-import {
-  ArrowRight,
-  Check,
-  Eye,
-  FileText,
-  Search,
-  Sparkles,
-  Zap,
-} from "lucide-react";
+import Image from "next/image";
+import { LandingThemeToggle } from "@/components/landing-theme-toggle";
+import { MobileMenu } from "@/components/mobile-menu";
+import { RevealOnScroll } from "@/components/reveal-on-scroll";
+
+const NAV_LINKS = [
+  { href: "#product", label: "Product" },
+  { href: "#docs", label: "Docs" },
+  { href: "#changelog", label: "Changelog" },
+];
+
+const FEATURE_ROWS = [
+  {
+    eyebrow: "Connections",
+    title: "Connect once. Query anywhere.",
+    body: "Zakra speaks Postgres, MySQL, MSSQL, Snowflake, and BigQuery. Credentials are encrypted at rest with per-connection keys.",
+    image: "/screenshots/connections.png",
+    alt: "DB Connections grid with status indicators",
+    reverse: false,
+  },
+  {
+    eyebrow: "Access control",
+    title: "Permissions that match your schema.",
+    body: "Grant read or write on a specific table, not a whole database. Changes are audit-logged, reviewable, and reversible.",
+    image: "/screenshots/table-access.png",
+    alt: "Table access matrix showing per-role read and write permissions across schemas",
+    reverse: true,
+  },
+  {
+    eyebrow: "Assistant",
+    title: "Ask your data. Get a report.",
+    body: "The assistant reads your schema and writes the SQL. Results stream into a shareable report — with the query still editable.",
+    image: "/screenshots/chat.png",
+    alt: "Chat canvas with an assistant reply, query context, and token usage",
+    reverse: false,
+  },
+];
+
+const BUILT_ITEMS = [
+  {
+    title: "Self-hosted or managed.",
+    body: "Ship it on your infra with the Docker image or the Helm chart. Or run on Zakra Cloud — same binary, same release train.",
+  },
+  {
+    title: "SSO on day one.",
+    body: "SAML and OIDC are first-class, not gated behind an Enterprise sticker. SCIM lands in Q3.",
+  },
+  {
+    title: "The audit log is Postgres.",
+    body: "Every permission change, query, and login writes to a table you can query. No SaaS event bus, no proprietary format.",
+  },
+  {
+    title: "Every write has a revert.",
+    body: (
+      <>
+        Granted the wrong table? Click revert. Dropped a role? Click revert. No{" "}
+        <code>ARE YOU SURE?</code> theater, no destructive defaults.
+      </>
+    ),
+  },
+];
+
+const CHANGELOG = [
+  {
+    date: "Apr 15, 2026",
+    version: "v0.18",
+    line: (
+      <>
+        BigQuery connector, <code>INFORMATION_SCHEMA</code> introspection, and
+        sub-second autocomplete on schemas over 10k tables.
+      </>
+    ),
+  },
+  {
+    date: "Apr 02, 2026",
+    version: "v0.17",
+    line: "Per-connection encryption keys. Rotate without re-entering credentials. Breaking change documented in the migration guide.",
+  },
+  {
+    date: "Mar 20, 2026",
+    version: "v0.16",
+    line: (
+      <>
+        Scheduled reports with cron syntax, email delivery, and a{" "}
+        <code>--dry-run</code> flag for CI.
+      </>
+    ),
+  },
+];
+
+const FOOTER_COLS = [
+  {
+    head: "Product",
+    links: ["Overview", "Connections", "Access control", "Assistant", "Reports"],
+  },
+  {
+    head: "Docs",
+    links: ["Quickstart", "Self-hosting", "API reference", "CLI"],
+  },
+  {
+    head: "Company",
+    links: ["Changelog", "Careers", "Contact"],
+  },
+  {
+    head: "Legal",
+    links: ["Terms", "Privacy", "DPA", "Subprocessors"],
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col bg-white text-[#0d0d0d]">
-      <header className="sticky top-0 z-40 border-b border-[rgba(0,0,0,0.05)] bg-white/80 backdrop-blur-md">
-        <nav className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4 lg:px-8">
-          <a href="#" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#18e299]">
-              <Sparkles
-                className="h-3.5 w-3.5 text-[#0d0d0d]"
-                strokeWidth={2.5}
-              />
-            </div>
-            <span className="text-[15px] font-semibold tracking-sub">
-              ESAP-KB
+    <>
+      <RevealOnScroll />
+
+      {/* NAV */}
+      <header
+        id="nav"
+        className="sticky top-0 z-50 flex h-[72px] items-center border-b border-transparent transition-[background-color,border-color,backdrop-filter] duration-200 [&.scrolled]:border-b-[var(--border)] [&.scrolled]:bg-[color-mix(in_oklab,var(--surface)_85%,transparent)] [&.scrolled]:backdrop-blur-xl"
+      >
+        <div className="mx-auto flex w-full max-w-[1200px] items-center gap-8 px-8 max-md:px-5">
+          <a
+            href="#"
+            aria-label="Zakra, home"
+            className="inline-flex items-center gap-[10px] font-display text-[18px] font-semibold tracking-[-0.01em] text-[var(--fg)]"
+          >
+            <span className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-[7px] bg-[var(--primary)] font-display text-[15px] font-bold text-[var(--primary-fg)]">
+              Z
             </span>
+            <span>Zakra</span>
           </a>
-          <div className="hidden items-center gap-7 md:flex">
-            {["Product", "Pricing", "Docs", "Blog"].map((item) => (
+          <nav
+            aria-label="Primary"
+            className="flex items-center gap-7 text-[14px] text-[var(--fg-muted)] max-md:hidden"
+          >
+            {NAV_LINKS.map((l) => (
               <a
-                key={item}
-                href="#"
-                className="text-[14px] font-medium text-[#0d0d0d] transition-colors hover:text-[#0fa76e]"
+                key={l.href}
+                href={l.href}
+                className="transition-colors duration-150 hover:text-[var(--fg)]"
               >
-                {item}
+                {l.label}
               </a>
             ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <a
-              href="#"
-              className="hidden rounded-full px-3 py-1.5 text-[14px] font-medium text-[#0d0d0d] transition-colors hover:text-[#0fa76e] sm:inline-block"
-            >
+          </nav>
+          <div className="ml-auto flex items-center gap-2">
+            <LandingThemeToggle />
+            <a href="/login" className="btn btn-ghost btn-sm max-md:hidden">
               Sign in
             </a>
-            <a
-              href="#"
-              className="shadow-button inline-flex items-center gap-1.5 rounded-full bg-[#0d0d0d] px-5 py-2 text-[14px] font-medium text-white transition-opacity hover:opacity-90"
-            >
-              Get started
-              <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+            <a href="/dashboard" className="btn btn-primary btn-sm">
+              Open admin
             </a>
+            <MobileMenu />
           </div>
-        </nav>
+        </div>
       </header>
 
-      <section className="hero-gradient relative overflow-hidden">
-        <div className="mx-auto max-w-[1200px] px-6 pb-24 pt-24 lg:px-8 lg:pb-32 lg:pt-32">
-          <div className="mx-auto max-w-[860px] text-center">
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[rgba(0,0,0,0.05)] bg-white/80 px-3 py-1 backdrop-blur-sm">
-              <span className="flex h-1.5 w-1.5 rounded-full bg-[#18e299]" />
-              <span className="font-mono-label text-[11px] text-[#0fa76e]">
-                v2.4 · semantic retrieval shipped
-              </span>
-            </div>
-
-            <h1 className="font-display text-[40px] leading-[1.1] tracking-[-0.8px] text-[#0d0d0d] md:text-[56px] md:leading-[1.08] lg:text-[64px] lg:leading-[1.05] lg:tracking-[-1.28px]">
-              The knowledge base your team can actually trust.
+      {/* HERO */}
+      <section className="relative overflow-hidden py-[96px_64px] max-md:py-[56px_32px]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-[-140px] h-[700px] w-[1100px] -translate-x-1/2 opacity-20 blur-[20px] dark:opacity-[0.15]"
+          style={{
+            background:
+              "radial-gradient(closest-side, var(--primary) 0%, transparent 72%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-[960px] px-8 max-md:px-5">
+          <div className="reveal">
+            <span className="mb-5 inline-block font-sans text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--primary)]">
+              Internal admin for data teams
+            </span>
+            <h1 className="mb-5 max-w-[18ch] font-display text-[56px] font-semibold leading-[60px] tracking-[-0.02em] text-[var(--fg)] max-md:text-[40px] max-md:leading-[44px]">
+              One admin for your databases, pipelines, and data assistants.
             </h1>
-
-            <p className="mx-auto mt-6 max-w-[640px] text-[17px] leading-[1.55] text-[#666666] md:text-[18px]">
-              ESAP-KB is an admin surface for teams that treat institutional
-              memory as a first-class product. Semantic search, transparent
-              agents, auditable edits.
+            <p
+              className="mb-8 max-w-[60ch] text-[17px] leading-[26px] text-[var(--fg-muted)] max-md:text-[16px]"
+              style={{ textWrap: "pretty" }}
+            >
+              Zakra connects to Postgres, MySQL, Snowflake, and BigQuery. Manage
+              table-level access, run SQL, and ship reports — from the same
+              window.
             </p>
-
-            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <a
-                href="#"
-                className="shadow-button inline-flex items-center gap-2 rounded-full bg-[#0d0d0d] px-6 py-2.5 text-[15px] font-medium text-white transition-opacity hover:opacity-90"
-              >
-                Get started
-                <ArrowRight className="h-4 w-4" strokeWidth={2} />
+            <div className="flex flex-wrap items-center gap-3">
+              <a href="/dashboard" className="btn btn-primary btn-lg">
+                Open admin
               </a>
               <a
-                href="#"
-                className="inline-flex items-center rounded-full border border-[rgba(0,0,0,0.08)] bg-white px-6 py-2.5 text-[15px] font-medium text-[#0d0d0d] transition-opacity hover:opacity-90"
+                href="/login"
+                className="btn btn-ghost btn-lg group inline-flex items-center"
               >
-                Request demo
+                Sign in
+                <span className="ml-1 text-[var(--fg-muted)] transition-transform duration-150 group-hover:translate-x-[2px] group-hover:text-[var(--fg)]">
+                  →
+                </span>
               </a>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-x-[22px] gap-y-2 text-[13px] text-[var(--fg-subtle)]">
+              {[
+                "Self-hosted or managed",
+                "SAML / OIDC on day one",
+                "Postgres-backed audit log",
+              ].map((m) => (
+                <span key={m} className="inline-flex items-center gap-[6px]">
+                  <span className="inline-block h-2 w-2 rounded-full bg-[var(--primary)]" />
+                  {m}
+                </span>
+              ))}
             </div>
           </div>
 
-          <div className="mt-24 grid grid-cols-2 gap-6 md:grid-cols-4">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="shadow-card rounded-2xl border border-[rgba(0,0,0,0.05)] bg-white p-6 text-center"
-              >
-                <div className="font-display text-[32px] leading-none tracking-[-0.64px] text-[#0d0d0d]">
-                  {stat.value}
-                </div>
-                <div className="mt-2 text-[13px] font-medium text-[#666666]">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+          <div className="reveal-shot relative mt-[72px]">
+            <Image
+              src="/screenshots/dashboard.png"
+              alt="Zakra dashboard showing active connections, query volume, and system health"
+              width={1800}
+              height={1200}
+              priority
+              sizes="(max-width: 960px) 100vw, 960px"
+              className="block w-full rounded-[16px] border border-[var(--border-strong)] bg-[var(--surface)]"
+              style={{
+                boxShadow:
+                  "var(--shadow-lg), 0 32px 80px -24px color-mix(in oklab, var(--primary) 35%, transparent)",
+              }}
+            />
           </div>
         </div>
       </section>
 
-      <section className="border-t border-[rgba(0,0,0,0.05)] px-6 py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-[1200px]">
-          <div className="mx-auto mb-14 max-w-[720px] text-center">
-            <div className="font-mono-label mb-4 text-[12px] text-[#0fa76e]">
-              Capabilities
-            </div>
-            <h2 className="font-display text-[36px] leading-[1.1] tracking-[-0.72px] text-[#0d0d0d] md:text-[40px] md:tracking-[-0.8px]">
-              Four primitives. Predictable APIs.
-            </h2>
-            <p className="mx-auto mt-5 max-w-[560px] text-[16px] leading-[1.55] text-[#666666]">
-              Composed through a single typed client. No configuration debt,
-              no fragile glue code.
-            </p>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {features.map((feature) => (
-              <article
-                key={feature.title}
-                className="shadow-card group flex flex-col rounded-2xl border border-[rgba(0,0,0,0.05)] bg-white p-6 transition-colors hover:border-[rgba(0,0,0,0.1)]"
+      {/* FEATURE ROWS */}
+      <section id="product" className="py-24 max-md:py-[72px]">
+        <div className="mx-auto max-w-[1200px] px-8 max-md:px-5">
+          <div className="flex flex-col gap-[120px] max-md:gap-[72px]">
+            {FEATURE_ROWS.map((row) => (
+              <div
+                key={row.eyebrow}
+                className={`grid items-center gap-[72px] max-md:gap-8 max-md:grid-cols-1 ${
+                  row.reverse
+                    ? "grid-cols-[1.15fr_1fr] max-md:grid-flow-row"
+                    : "grid-cols-[1fr_1.15fr]"
+                }`}
               >
-                <div className="mb-6 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#d4fae8]">
-                  <feature.icon
-                    className="h-4.5 w-4.5 text-[#0fa76e]"
-                    strokeWidth={2}
+                <div
+                  className={`reveal ${row.reverse ? "md:order-2" : ""} max-md:order-1`}
+                >
+                  <span className="mb-[14px] inline-block font-sans text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--primary)]">
+                    {row.eyebrow}
+                  </span>
+                  <h3 className="mb-[14px] font-display text-[28px] font-semibold leading-[34px] tracking-[-0.015em] text-[var(--fg)]">
+                    {row.title}
+                  </h3>
+                  <p
+                    className="mb-5 max-w-[46ch] text-[16px] leading-[26px] text-[var(--fg-muted)]"
+                    style={{ textWrap: "pretty" }}
+                  >
+                    {row.body}
+                  </p>
+                  <a
+                    href="#docs"
+                    className="group inline-flex items-center gap-[6px] text-[14px] font-medium text-[var(--fg)] transition-colors duration-150 hover:text-[var(--primary)]"
+                  >
+                    See the docs
+                    <span className="text-[var(--fg-muted)] transition-[transform,color] duration-150 group-hover:translate-x-[2px] group-hover:text-[var(--primary)]">
+                      →
+                    </span>
+                  </a>
+                </div>
+                <div
+                  className={`reveal-shot relative ${row.reverse ? "md:order-1" : ""} max-md:order-2`}
+                >
+                  <Image
+                    src={row.image}
+                    alt={row.alt}
+                    width={1600}
+                    height={1100}
+                    sizes="(max-width: 900px) 100vw, 660px"
+                    className="block w-full rounded-[14px] border border-[var(--border)] bg-[var(--surface)] shadow-token-lg"
                   />
                 </div>
-                <div className="font-mono-label mb-2 text-[11px] text-[#666666]">
-                  {feature.tag}
-                </div>
-                <h3 className="font-display mb-2 text-[20px] leading-[1.3] tracking-[-0.4px] text-[#0d0d0d]">
-                  {feature.title}
-                </h3>
-                <p className="text-[14px] leading-[1.55] text-[#666666]">
-                  {feature.description}
-                </p>
-              </article>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="border-t border-[rgba(0,0,0,0.05)] bg-[#fafafa] px-6 py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-[1200px]">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-            <div>
-              <div className="font-mono-label mb-4 text-[12px] text-[#0fa76e]">
-                Developer experience
+      {/* BUILT BY */}
+      <section className="border-y border-[var(--border)] bg-[var(--surface-muted)] py-24 max-md:py-[72px]">
+        <div className="mx-auto max-w-[1200px] px-8 max-md:px-5">
+          <div className="reveal mx-auto mb-12 max-w-[680px] text-center">
+            <span className="mb-5 inline-block font-sans text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              How it&apos;s built
+            </span>
+            <h2 className="mb-3 font-display text-[36px] font-semibold leading-[42px] tracking-[-0.015em] text-[var(--fg)] max-md:text-[28px] max-md:leading-[34px]">
+              Built by people who&apos;ve run data platforms.
+            </h2>
+            <p
+              className="text-[16px] leading-[26px] text-[var(--fg-muted)]"
+              style={{ textWrap: "pretty" }}
+            >
+              Engineering decisions you&apos;ll recognize. No surprises in the
+              architecture.
+            </p>
+          </div>
+          <div className="reveal mx-auto grid max-w-[960px] grid-cols-2 gap-x-[72px] gap-y-12 max-md:grid-cols-1 max-md:gap-8">
+            {BUILT_ITEMS.map((item) => (
+              <div key={item.title}>
+                <h4 className="mb-2 font-display text-[17px] font-semibold leading-6 text-[var(--fg)]">
+                  {item.title}
+                </h4>
+                <p className="max-w-[42ch] text-[15px] leading-6 text-[var(--fg-muted)]">
+                  {item.body}
+                </p>
               </div>
-              <h2 className="font-display text-[36px] leading-[1.1] tracking-[-0.72px] text-[#0d0d0d] md:text-[40px] md:tracking-[-0.8px]">
-                Typed at every boundary.
-              </h2>
-              <p className="mt-5 max-w-[460px] text-[16px] leading-[1.55] text-[#666666]">
-                Zod schemas at the edge. TanStack Query for cache correctness.
-                An axios instance that refreshes tokens so you don&apos;t have
-                to think about auth.
-              </p>
-              <ul className="mt-8 space-y-3">
-                {[
-                  "Schema-validated requests and responses",
-                  "Queue-safe JWT refresh on 401",
-                  "Server Components by default",
-                ].map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-3 text-[15px] text-[#333333]"
-                  >
-                    <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#d4fae8]">
-                      <Check
-                        className="h-3 w-3 text-[#0fa76e]"
-                        strokeWidth={3}
-                      />
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="shadow-card rounded-3xl border border-[rgba(0,0,0,0.05)] bg-[#0d0d0d] p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[rgba(255,255,255,0.15)]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[rgba(255,255,255,0.15)]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[rgba(255,255,255,0.15)]" />
-                </div>
-                <span className="font-mono-label text-[10px] text-[rgba(255,255,255,0.4)]">
-                  src/hooks/useArticle.ts
+      {/* CHANGELOG */}
+      <section id="changelog" className="py-24 max-md:py-[72px]">
+        <div className="mx-auto max-w-[1200px] px-8 max-md:px-5">
+          <div className="reveal mx-auto mb-14 max-w-[680px] text-center">
+            <span className="mb-5 inline-block font-sans text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-subtle)]">
+              Changelog
+            </span>
+            <h2 className="mb-3 font-display text-[36px] font-semibold leading-[42px] tracking-[-0.015em] text-[var(--fg)] max-md:text-[28px] max-md:leading-[34px]">
+              Shipped recently.
+            </h2>
+            <p className="text-[16px] leading-[26px] text-[var(--fg-muted)]">
+              The last three releases. Everything else is in the full
+              changelog.
+            </p>
+          </div>
+
+          <div className="reveal mx-auto max-w-[760px] overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--surface)]">
+            {CHANGELOG.map((item, i) => (
+              <div
+                key={item.version}
+                className={`grid items-baseline gap-6 px-6 py-5 max-md:grid-cols-[90px_1fr] md:grid-cols-[120px_80px_1fr] ${
+                  i !== CHANGELOG.length - 1
+                    ? "border-b border-[var(--border)]"
+                    : ""
+                }`}
+              >
+                <span className="font-mono text-[12px] tracking-[0.02em] text-[var(--fg-subtle)]">
+                  {item.date}
+                </span>
+                <span className="font-mono text-[12px] font-medium text-[var(--primary)] max-md:col-start-2 max-md:row-start-2 max-md:-mt-[14px]">
+                  {item.version}
+                </span>
+                <span className="text-[15px] leading-6 text-[var(--fg)] max-md:col-span-full [&_code]:rounded [&_code]:bg-[var(--surface-muted)] [&_code]:px-[6px] [&_code]:py-[1px] [&_code]:font-mono [&_code]:text-[13px]">
+                  {item.line}
                 </span>
               </div>
-              <pre className="overflow-x-auto font-mono text-[13px] leading-[1.7] text-[rgba(255,255,255,0.9)]">
-                <code>
-                  <span className="text-[rgba(255,255,255,0.35)]">
-                    {"// typed. validated. cached."}
-                  </span>
-                  {"\n"}
-                  <span className="text-[#18e299]">export const</span>{" "}
-                  <span className="text-[#ededed]">useArticle</span>{" = ("}
-                  <span className="text-[#ededed]">id</span>
-                  {": "}
-                  <span className="text-[#18e299]">string</span>
-                  {") => {"}
-                  {"\n  "}
-                  <span className="text-[#18e299]">return</span>{" "}
-                  <span className="text-[#ededed]">useQuery</span>
-                  {"({"}
-                  {"\n    queryKey: ["}
-                  <span className="text-[#d4fae8]">&apos;article&apos;</span>
-                  {", id],"}
-                  {"\n    queryFn: () => "}
-                  <span className="text-[#ededed]">fetchArticle</span>
-                  {"(id),"}
-                  {"\n    staleTime: "}
-                  <span className="text-[#18e299]">60_000</span>
-                  {","}
-                  {"\n  });"}
-                  {"\n};"}
-                </code>
-              </pre>
-            </div>
+            ))}
+          </div>
+
+          <div className="reveal mt-5 text-center">
+            <a
+              href="#changelog-full"
+              className="group inline-flex items-center gap-[6px] text-[14px] font-medium text-[var(--fg)] transition-colors duration-150 hover:text-[var(--primary)]"
+            >
+              Read the full changelog
+              <span className="text-[var(--fg-muted)] transition-[transform,color] duration-150 group-hover:translate-x-[2px] group-hover:text-[var(--primary)]">
+                →
+              </span>
+            </a>
           </div>
         </div>
       </section>
 
-      <section className="border-t border-[rgba(0,0,0,0.05)] px-6 py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-[1200px] text-center">
-          <div className="font-mono-label mb-4 text-[12px] text-[#666666]">
-            Trusted by teams at
+      {/* CLOSING CTA */}
+      <section className="border-t border-[var(--border)] bg-[var(--surface-muted)] py-[88px] text-center">
+        <div className="reveal mx-auto max-w-[1200px] px-8 max-md:px-5">
+          <h2 className="mx-auto mb-7 max-w-[22ch] font-display text-[36px] font-semibold leading-[42px] tracking-[-0.015em] text-[var(--fg)] max-md:text-[28px] max-md:leading-[34px]">
+            Book 30 minutes. We&apos;ll set up your first connection live.
+          </h2>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <a href="/dashboard" className="btn btn-primary btn-lg">
+              Open admin
+            </a>
+            <a href="/login" className="btn btn-ghost btn-lg">
+              Sign in
+            </a>
           </div>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-            {["Linear", "Vercel", "Stripe", "Ramp", "Notion"].map((name) => (
-              <div
-                key={name}
-                className="flex h-16 items-center justify-center rounded-2xl border border-[rgba(0,0,0,0.05)] bg-white text-[15px] font-semibold text-[#888888] tracking-sub"
-              >
-                {name}
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-[var(--border)] bg-[var(--bg)] px-0 pb-12 pt-16">
+        <div className="mx-auto max-w-[1200px] px-8 max-md:px-5">
+          <div className="mb-12 grid grid-cols-[1.5fr_repeat(4,1fr)] gap-12 max-md:grid-cols-2 max-md:gap-8">
+            <div>
+              <div className="inline-flex items-center gap-[10px] font-display text-[18px] font-semibold tracking-[-0.01em] text-[var(--fg)]">
+                <span className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-[7px] bg-[var(--primary)] font-display text-[15px] font-bold text-[var(--primary-fg)]">
+                  Z
+                </span>
+                <span>Zakra</span>
+              </div>
+              <p className="mt-[14px] max-w-[32ch] text-[14px] leading-[22px] text-[var(--fg-muted)]">
+                The admin layer for your data stack. Built for teams that
+                already know what they want.
+              </p>
+            </div>
+            {FOOTER_COLS.map((col) => (
+              <div key={col.head}>
+                <h5 className="mb-[14px] font-sans text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--fg-subtle)]">
+                  {col.head}
+                </h5>
+                <ul className="m-0 flex list-none flex-col gap-[10px] p-0">
+                  {col.links.map((link) => (
+                    <li key={link}>
+                      <a
+                        href="#"
+                        className="text-[14px] text-[var(--fg-muted)] transition-colors duration-150 hover:text-[var(--fg)]"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="border-t border-[rgba(0,0,0,0.05)] px-6 py-24 lg:px-8 lg:py-32">
-        <div className="mx-auto max-w-[1200px]">
-          <div className="hero-gradient shadow-card overflow-hidden rounded-3xl border border-[rgba(0,0,0,0.05)] px-8 py-20 text-center">
-            <div className="font-mono-label mb-4 text-[12px] text-[#0fa76e]">
-              Start free
-            </div>
-            <h2 className="font-display mx-auto max-w-[18ch] text-[36px] leading-[1.1] tracking-[-0.72px] text-[#0d0d0d] md:text-[48px] md:tracking-[-0.96px]">
-              Make your knowledge base a winning advantage.
-            </h2>
-            <p className="mx-auto mt-5 max-w-[520px] text-[16px] leading-[1.55] text-[#666666]">
-              Thirty days full access. No credit card. SSO and audit logs on
-              every tier.
-            </p>
-            <form className="mx-auto mt-8 flex max-w-md flex-col gap-2 sm:flex-row">
-              <input
-                type="email"
-                placeholder="you@work.com"
-                className="flex-1 rounded-full border border-[rgba(0,0,0,0.08)] bg-white px-4 py-2.5 text-[14px] text-[#0d0d0d] placeholder:text-[#888888] focus:border-[#18e299] focus:outline-none focus:ring-1 focus:ring-[#18e299]"
-              />
-              <button
-                type="submit"
-                className="shadow-button inline-flex items-center justify-center gap-1.5 rounded-full bg-[#0d0d0d] px-6 py-2.5 text-[14px] font-medium text-white transition-opacity hover:opacity-90"
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-6 text-[13px] text-[var(--fg-subtle)]">
+            <span>© 2026 Zakra Systems, Inc.</span>
+            <div className="flex gap-5">
+              <a
+                href="#"
+                className="transition-colors duration-150 hover:text-[var(--fg)]"
               >
-                Get started
-                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      <footer className="border-t border-[rgba(0,0,0,0.05)] px-6 py-10 lg:px-8">
-        <div className="mx-auto flex max-w-[1200px] flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#18e299]">
-              <Sparkles
-                className="h-3 w-3 text-[#0d0d0d]"
-                strokeWidth={2.5}
-              />
+                status.zakra.dev
+              </a>
+              <a
+                href="#"
+                className="transition-colors duration-150 hover:text-[var(--fg)]"
+              >
+                security.txt
+              </a>
             </div>
-            <span className="text-[13px] font-semibold tracking-sub">
-              ESAP-KB
-            </span>
-          </div>
-          <div className="font-mono-label text-[11px] text-[#888888]">
-            © 2026 · Next.js 16 · Tailwind v4
           </div>
         </div>
       </footer>
-    </div>
+    </>
   );
 }
-
-const stats = [
-  { value: "1.2M", label: "documents indexed" },
-  { value: "18ms", label: "avg query latency" },
-  { value: "99.99%", label: "uptime SLA" },
-  { value: "240", label: "active workspaces" },
-];
-
-const features = [
-  {
-    tag: "Search",
-    title: "Retrieval that reads intent.",
-    description:
-      "Hybrid vector and lexical scoring, reranked per query. Results in milliseconds.",
-    icon: Search,
-  },
-  {
-    tag: "Compose",
-    title: "Blocks that cite themselves.",
-    description:
-      "Author once, reuse everywhere. Every block remembers where it came from.",
-    icon: FileText,
-  },
-  {
-    tag: "Agents",
-    title: "Transparent by default.",
-    description:
-      "Thinking, grep, read, edit — surfaced as a timeline you can pause and inspect.",
-    icon: Zap,
-  },
-  {
-    tag: "Audit",
-    title: "Access control, built in.",
-    description:
-      "Role-based permissions, per-document ACLs, auditable trails from day one.",
-    icon: Eye,
-  },
-];

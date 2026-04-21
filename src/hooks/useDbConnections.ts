@@ -168,3 +168,18 @@ export function useUnlearnTables(id: string, companyId?: string) {
     },
   });
 }
+
+/**
+ * Hook for resuming AI sync on pending/failed tables
+ */
+export function useResumeAiSync(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => dbApi.resumeAiSync(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY, id, 'progress'] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY, id] });
+    },
+  });
+}

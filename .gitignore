@@ -46,3 +46,6 @@ next-env.d.ts
 
 # agent skill caches (skill source committed via .agents/skills)
 .claude/skills/*/.cache
+
+# CARL session state (per-machine, not shared)
+.carl/sessions/
