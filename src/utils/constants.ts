@@ -13,6 +13,9 @@ export const ACCESS_TOKEN_KEY = 'access_token';
 export const REFRESH_TOKEN_KEY = 'refresh_token';
 export const TOKEN_EXPIRY_BUFFER_MS = 60000; // 1 minute buffer before token expiry
 
+// UI density preference (settings page)
+export const DENSITY_STORAGE_KEY = 'zakra-density';
+
 // Pagination
 export const DEFAULT_PAGE_SIZE = 10;
 export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
