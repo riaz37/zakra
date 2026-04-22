@@ -70,6 +70,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
 
   async function handleSignOut() {
     await logout();
+    window.location.href = '/login';
   }
 
   return (

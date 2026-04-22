@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Building2 } from 'lucide-react';
 import { useCompanyStore } from '@/store/companyStore';
 import { useCompanies } from '@/hooks/useCompanies';
@@ -21,6 +22,10 @@ export function CompanySwitcher({ collapsed = false }: CompanySwitcherProps) {
   const setSelectedCompanyId = useCompanyStore((s) => s.setSelectedCompanyId);
 
   const companies = data?.items ?? [];
+  const selectedCompany = useMemo(
+    () => companies.find((c) => c.id === selectedCompanyId),
+    [companies, selectedCompanyId],
+  );
 
   if (collapsed) {
     const selected = companies.find((c) => c.id === selectedCompanyId);
@@ -56,7 +61,9 @@ export function CompanySwitcher({ collapsed = false }: CompanySwitcherProps) {
           className="w-full"
           disabled={isLoading}
         >
-          <SelectValue placeholder="Select a company…" />
+          <SelectValue placeholder="Select a company…">
+            {selectedCompany?.name}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {companies.map((company) => (

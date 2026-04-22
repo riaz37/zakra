@@ -72,7 +72,7 @@ export const useAuthStore = create<AuthStore>()(
           // Continue with logout even if API call fails
         } finally {
           clearTokens();
-          fetch('/api/auth/clear-cookie', { method: 'POST' }).catch(() => {});
+          await fetch('/api/auth/clear-cookie', { method: 'POST' }).catch(() => {});
           set({
             user: null,
             isAuthenticated: false,

@@ -200,12 +200,7 @@ export default function ReportTemplatesPage() {
             borderColor: 'var(--color-border)',
           }}
         >
-          <span
-            className="flex h-12 w-12 items-center justify-center rounded-full"
-            style={{ background: 'var(--color-surface-400)' }}
-          >
-            <FilePlus className="h-6 w-6" style={{ color: 'var(--color-muted)' }} />
-          </span>
+          <FilePlus className="h-7 w-7" strokeWidth={1.25} style={{ color: 'var(--color-muted)', opacity: 0.6 }} />
           <h2
             className="mt-4 text-[18px]"
             style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}

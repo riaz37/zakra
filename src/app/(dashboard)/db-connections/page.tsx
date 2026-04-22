@@ -308,12 +308,11 @@ function AddConnectionDialog({
                 disabled={isSubmitting}
                 className={cn(
                   'inline-flex items-center justify-center rounded-lg px-4 py-2',
-                  'font-sans text-[14px] text-white',
+                  'bg-foreground font-sans text-[14px] text-background',
                   'transition-colors hover:opacity-90',
                   'focus-visible:outline-none',
                   'disabled:cursor-not-allowed disabled:opacity-50',
                 )}
-                style={{ backgroundColor: 'var(--color-accent)' }}
               >
                 {isSubmitting ? 'Adding…' : 'Add Connection'}
               </button>
@@ -366,11 +365,10 @@ export default function DbConnectionsPage() {
             onClick={() => setDialogOpen(true)}
             className={cn(
               'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2',
-              'font-sans text-[14px] text-white',
+              'bg-foreground font-sans text-[14px] text-background',
               'transition-colors hover:opacity-90',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-medium',
             )}
-            style={{ backgroundColor: 'var(--color-accent)' }}
           >
             <span aria-hidden>+</span> Add Connection
           </button>
@@ -396,10 +394,9 @@ export default function DbConnectionsPage() {
               onClick={() => setDialogOpen(true)}
               className={cn(
                 'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2',
-                'font-sans text-[14px] text-white',
+                'bg-foreground font-sans text-[14px] text-background',
                 'transition-colors hover:opacity-90',
               )}
-              style={{ backgroundColor: 'var(--color-accent)' }}
             >
               <span aria-hidden>+</span> Add Connection
             </button>
