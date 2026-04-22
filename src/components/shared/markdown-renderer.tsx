@@ -55,7 +55,7 @@ const components: Components = {
     <p
       className="mb-4 text-[16px] last:mb-0"
       style={{
-        fontFamily: 'var(--font-serif)',
+        fontFamily: 'var(--font-sans)',
         lineHeight: 1.6,
         color: 'var(--color-foreground)',
       }}
@@ -66,7 +66,7 @@ const components: Components = {
   ul: ({ children }) => (
     <ul
       className="mb-4 list-disc space-y-1 pl-6 text-[16px]"
-      style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-foreground)' }}
+      style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-foreground)' }}
     >
       {children}
     </ul>
@@ -74,7 +74,7 @@ const components: Components = {
   ol: ({ children }) => (
     <ol
       className="mb-4 list-decimal space-y-1 pl-6 text-[16px]"
-      style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-foreground)' }}
+      style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-foreground)' }}
     >
       {children}
     </ol>
@@ -136,11 +136,9 @@ const components: Components = {
   ),
   blockquote: ({ children }) => (
     <blockquote
-      className="my-4 border-l-2 pl-4 text-[16px]"
+      className="my-4 rounded-md bg-surface-200 px-4 py-2 italic text-[16px] text-muted"
       style={{
-        borderColor: 'var(--color-border-medium)',
-        fontFamily: 'var(--font-serif)',
-        color: 'var(--color-muted-strong)',
+        fontFamily: 'var(--font-sans)',
         lineHeight: 1.6,
       }}
     >

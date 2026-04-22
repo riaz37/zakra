@@ -9,10 +9,10 @@ import { FileText, Eye } from 'lucide-react';
 // ── Status badge ───────────────────────────────────────────────────────────
 
 const STATUS_STYLES: Record<ReportGenerationStatus, { bg: string; color: string; label: string }> = {
-  pending: { bg: 'rgba(192,133,50,0.12)', color: '#c08532', label: 'Pending' },
-  running: { bg: 'rgba(159,187,224,0.2)', color: '#5a8fc0', label: 'Generating' },
-  completed: { bg: 'rgba(31,138,101,0.12)', color: '#1f8a65', label: 'Completed' },
-  failed: { bg: 'rgba(207,45,86,0.12)', color: '#cf2d56', label: 'Failed' },
+  pending: { bg: 'rgba(229,165,10,0.12)', color: 'var(--color-warning)', label: 'Pending' },
+  running: { bg: 'rgba(106,158,196,0.14)', color: 'var(--color-read)', label: 'Generating' },
+  completed: { bg: 'rgba(62,207,142,0.12)', color: 'var(--color-accent)', label: 'Completed' },
+  failed: { bg: 'rgba(229,72,77,0.12)', color: 'var(--color-error)', label: 'Failed' },
 };
 
 function StatusBadge({ status }: { status: ReportGenerationStatus }) {
@@ -62,7 +62,7 @@ export default function ReportHistoryPage() {
         </h1>
         <p
           className="mt-1 text-[15px]"
-          style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+          style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
         >
           All generated reports for your workspace.
         </p>
@@ -99,7 +99,7 @@ export default function ReportHistoryPage() {
           </h2>
           <p
             className="mt-2 max-w-[340px] text-[15px]"
-            style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+            style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
           >
             Generate your first AI report from a template.
           </p>
@@ -159,7 +159,7 @@ export default function ReportHistoryPage() {
                     {gen.executive_summary && (
                       <p
                         className="mt-0.5 line-clamp-1 text-[12px]"
-                        style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+                        style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
                       >
                         {gen.executive_summary}
                       </p>

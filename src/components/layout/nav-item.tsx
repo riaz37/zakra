@@ -6,6 +6,7 @@ import {
   Database,
   FileBarChart,
   History,
+  LayoutDashboard,
   MessageCircle,
   MessageSquare,
   Shield,
@@ -23,6 +24,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Database,
   FileBarChart,
   History,
+  LayoutDashboard,
   MessageCircle,
   MessageSquare,
   Shield,
@@ -64,29 +66,19 @@ export function NavItem({
       title={collapsed ? label : undefined}
       onClick={onNavigate}
       className={cn(
-        // base — relative to anchor the 2px orange active indicator
-        'relative flex min-h-10 items-center gap-2.5 rounded-md px-3 py-3 font-sans text-button outline-none transition-colors duration-150',
-        // focus ring — accessible, non-bluish, uses warm border token
-        'focus-visible:shadow-focus focus-visible:ring-1 focus-visible:ring-border-medium',
-        // state
+        // base
+        'relative flex min-h-10 items-center gap-2.5 rounded-md px-3 py-2.5 font-sans text-button outline-none transition-colors duration-150',
+        'focus-visible:outline-none',
         active
-          ? 'bg-background font-medium text-foreground'
-          : 'text-muted hover:bg-background/60 hover:text-muted-strong',
+          ? 'bg-surface-300 font-medium text-foreground'
+          : 'text-muted hover:bg-surface-200 hover:text-muted-strong',
         collapsed && 'justify-center px-0',
       )}
     >
-      {/* 2px × 16px accent indicator — 8px from top, 8px from left */}
-      {active ? (
-        <span
-          aria-hidden
-          className="absolute left-2 top-2 h-4 w-0.5 rounded-pill bg-accent"
-        />
-      ) : null}
-
       {Icon ? (
         <Icon
           aria-hidden
-          size={16}
+          size={15}
           strokeWidth={1.75}
           className={cn('shrink-0', collapsed && 'mx-auto')}
         />

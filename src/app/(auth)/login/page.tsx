@@ -34,30 +34,30 @@ export default function LoginPage() {
       await login({ email: values.email, password: values.password });
       router.push('/chat');
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : 'Sign in failed. Please try again.');
+      setApiError(
+        err instanceof Error ? err.message : 'Sign in failed. Please try again.',
+      );
     }
   }
 
   return (
-    <div className="w-full max-w-[360px]">
-      {/* Product name */}
-      <h1
-        className="text-center font-display font-normal text-foreground"
-        style={{ fontSize: '36px', letterSpacing: '-0.72px' }}
-      >
-        ESAP-KB
-      </h1>
+    <div className="w-full max-w-[340px] animate-fade-up px-6 py-8">
+      {/* Brand */}
+      <div className="mb-8">
+        <h1 className="font-sans text-[18px] font-semibold tracking-[-0.36px] text-foreground">
+          ESAP<span className="text-accent">-</span>KB
+        </h1>
+        <p className="mt-1 font-sans text-caption text-muted">
+          Admin console
+        </p>
+      </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="mt-10 flex flex-col gap-5"
-        noValidate
-      >
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         {/* Email */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col">
           <label
             htmlFor="email"
-            className="font-sans text-button text-muted"
+            className="mb-1.5 block font-sans text-caption text-muted"
           >
             Email
           </label>
@@ -68,25 +68,26 @@ export default function LoginPage() {
             {...register('email')}
             aria-invalid={!!errors.email}
             className={cn(
-              'rounded-lg border bg-background px-3 py-2 font-sans text-button text-foreground outline-none placeholder:text-muted/50 transition-colors',
+              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-[14px] text-foreground transition-colors duration-150',
+              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(62,207,142,0.4)]',
               errors.email
-                ? 'border-error bg-error/5 focus:border-error'
-                : 'border-border focus:border-border-medium',
+                ? 'border-error focus:border-error'
+                : 'border-border focus:border-accent',
             )}
             placeholder="you@company.com"
           />
           {errors.email && (
-            <p className="font-sans text-caption text-error" role="alert">
+            <p className="mt-1.5 font-sans text-caption text-error" role="alert">
               {errors.email.message}
             </p>
           )}
         </div>
 
-        {/* Password */}
-        <div className="flex flex-col gap-1.5">
+        {/* Password — 16px gap between fields */}
+        <div className="mt-4 flex flex-col">
           <label
             htmlFor="password"
-            className="font-sans text-button text-muted"
+            className="mb-1.5 block font-sans text-caption text-muted"
           >
             Password
           </label>
@@ -97,35 +98,30 @@ export default function LoginPage() {
             {...register('password')}
             aria-invalid={!!errors.password}
             className={cn(
-              'rounded-lg border bg-background px-3 py-2 font-sans text-button text-foreground outline-none placeholder:text-muted/50 transition-colors',
+              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-[14px] text-foreground transition-colors duration-150',
+              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(62,207,142,0.4)]',
               errors.password
-                ? 'border-error bg-error/5 focus:border-error'
-                : 'border-border focus:border-border-medium',
+                ? 'border-error focus:border-error'
+                : 'border-border focus:border-accent',
             )}
             placeholder="••••••••"
           />
           {errors.password && (
-            <p className="font-sans text-caption text-error" role="alert">
+            <p className="mt-1.5 font-sans text-caption text-error" role="alert">
               {errors.password.message}
             </p>
           )}
         </div>
 
-        {/* API error */}
-        {apiError && (
-          <p
-            className="rounded-lg border border-error/20 bg-error/5 px-3 py-2 font-sans text-button text-error"
-            role="alert"
-          >
-            {apiError}
-          </p>
-        )}
-
-        {/* Submit */}
+        {/* Submit — 24px gap from last field */}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-1 flex w-full items-center justify-center rounded-lg bg-foreground px-3.5 py-2.5 font-sans text-button text-background transition-colors duration-150 hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className={cn(
+            'mt-6 flex w-full items-center justify-center rounded-lg bg-accent py-2.5 font-sans text-[14px] font-medium text-[#111]',
+            'transition-colors duration-150 hover:bg-[#4ed99a]',
+            'disabled:cursor-not-allowed disabled:opacity-60',
+          )}
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
@@ -136,6 +132,20 @@ export default function LoginPage() {
             'Sign in'
           )}
         </button>
+
+        <p className="mt-4 font-sans text-caption text-muted">
+          First time signing in? Check your invite email for credentials.
+        </p>
+
+        {/* API error — bare, no box */}
+        {apiError && (
+          <p
+            className="mt-3 font-sans text-caption text-error"
+            role="alert"
+          >
+            {apiError}
+          </p>
+        )}
       </form>
     </div>
   );

@@ -27,183 +27,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
-// ─── Invite user form ─────────────────────────────────────────────────────────
-
-interface InviteFormData {
-  email: string;
-  password: string;
-  first_name: string;
-  last_name: string;
-  user_type: 'admin' | 'regular';
-}
-
-function InviteUserForm({
-  onSubmit,
-  isPending,
-  onCancel,
-}: {
-  onSubmit: (data: InviteFormData) => void;
-  isPending: boolean;
-  onCancel: () => void;
-}) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [userType, setUserType] = useState<'admin' | 'regular'>('regular');
-  const [emailError, setEmailError] = useState('');
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.trim() || !email.includes('@')) {
-      setEmailError('A valid email is required.');
-      return;
-    }
-    onSubmit({
-      email: email.trim(),
-      password,
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      user_type: userType,
-    });
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="user-first-name">First Name</Label>
-          <Input
-            id="user-first-name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="Jane"
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="user-last-name">Last Name</Label>
-          <Input
-            id="user-last-name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder="Smith"
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="user-email">Email *</Label>
-        <Input
-          id="user-email"
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (emailError && e.target.value.includes('@')) setEmailError('');
-          }}
-          placeholder="jane@example.com"
-          aria-invalid={!!emailError}
-        />
-        {emailError ? (
-          <p className="font-sans text-[12px] text-error">{emailError}</p>
-        ) : null}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="user-password">Password *</Label>
-        <Input
-          id="user-password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          required
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="user-type">User Type</Label>
-        <Select
-          value={userType}
-          onValueChange={(v) => setUserType(v as typeof userType)}
-        >
-          <SelectTrigger id="user-type">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="regular">Regular</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg border border-border bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground transition-colors hover:bg-surface-400 disabled:opacity-50"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-foreground px-4 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
-        >
-          {isPending ? 'Inviting…' : 'Invite User'}
-        </button>
-      </div>
-    </form>
-  );
-}
-
-// ─── User type badge ──────────────────────────────────────────────────────────
-
-function UserTypeBadge({ type }: { type: string }) {
-  const label = type === 'super_admin'
-    ? 'Super Admin'
-    : type === 'admin'
-    ? 'Admin'
-    : 'Regular';
-  const classes =
-    type === 'super_admin'
-      ? 'bg-[rgba(192,133,50,0.1)] text-[#c08532]'
-      : type === 'admin'
-      ? 'bg-[rgba(31,138,101,0.1)] text-[#1a7855]'
-      : 'bg-[rgba(38,37,30,0.06)] text-muted';
-
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 font-sans text-[11px] font-medium leading-none ${classes}`}
-    >
-      {label}
-    </span>
-  );
-}
-
-// ─── Avatar initial ───────────────────────────────────────────────────────────
-
-function AvatarInitial({ name, email }: { name: string; email: string }) {
-  const initial = (name.trim().charAt(0) || email.charAt(0)).toUpperCase();
-  return (
-    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-300 font-sans text-[12px] font-medium text-foreground">
-      {initial}
-    </span>
-  );
-}
-
-// ─── Page ────────────────────────────────────────────────────────────────────
+import { InviteUserForm, type InviteFormData } from '@/components/features/users/invite-user-form';
+import { UserTypeBadge } from '@/components/features/users/user-type-badge';
+import { AvatarInitial } from '@/components/features/users/avatar-initial';
 
 export default function UsersPage() {
   const router = useRouter();
@@ -279,7 +106,7 @@ export default function UsersPage() {
       id: 'actions',
       header: '',
       cell: ({ row }) => (
-        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
           <button
             type="button"
             onClick={(e) => {
@@ -398,7 +225,6 @@ export default function UsersPage() {
         />
       )}
 
-      {/* Invite dialog */}
       <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -412,7 +238,6 @@ export default function UsersPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete confirm */}
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}

@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
 
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/shared/empty-state";
 
 export interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -95,7 +96,7 @@ export function DataTable<TData>({
   return (
     <div className={cn("w-full", className)}>
       {/* -------- Desktop: semantic table -------- */}
-      <div className="hidden overflow-hidden rounded-lg border border-border bg-background md:block">
+      <div className="hidden overflow-hidden rounded-lg border border-border bg-surface-200 md:block">
         <table className="w-full border-collapse">
           {caption ? <caption className="sr-only">{caption}</caption> : null}
 
@@ -103,7 +104,7 @@ export function DataTable<TData>({
             {headerGroups.map((headerGroup) => (
               <tr
                 key={headerGroup.id}
-                className="border-b border-border bg-surface-200/50"
+                className="border-b border-border bg-surface-100/50"
               >
                 {headerGroup.headers.map((header) => (
                   <th
@@ -130,7 +131,7 @@ export function DataTable<TData>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-12 text-center font-serif text-[17px] text-muted"
+                  className="px-4 py-12 text-center font-sans text-body text-muted"
                 >
                   {emptyMessage}
                 </td>
@@ -140,7 +141,7 @@ export function DataTable<TData>({
                 <tr
                   key={row.id}
                   className={cn(
-                    "border-b border-border last:border-b-0",
+                    "group border-b border-border last:border-b-0",
                     "transition-colors hover:bg-surface-300",
                   )}
                 >
@@ -169,18 +170,13 @@ export function DataTable<TData>({
         {isLoading ? (
           <MobileSkeletonCards />
         ) : isEmpty ? (
-          <div
-            className="rounded-lg border border-border bg-background px-4 py-10 text-center font-serif text-[17px] text-muted"
-            role="status"
-          >
-            {emptyMessage}
-          </div>
+          <EmptyState title={emptyMessage} />
         ) : (
           <ul className="space-y-2">
             {rows.map((row) => (
               <li
                 key={row.id}
-                className="rounded-lg border border-border bg-background p-3"
+                className="rounded-lg border border-border bg-surface-200 p-3"
               >
                 <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5">
                   {row.getVisibleCells().map((cell) => {
@@ -230,7 +226,7 @@ export function DataTable<TData>({
 
             <span
               aria-current="page"
-              className="rounded bg-surface-400 px-3 py-1.5 font-sans text-button text-foreground font-feat-tnum"
+              className="rounded bg-surface-300 px-3 py-1.5 font-sans text-button text-foreground font-feat-tnum"
             >
               {pageIndex + 1}
             </span>
@@ -268,11 +264,11 @@ function PaginationButton({
       disabled={disabled}
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex items-center gap-1 rounded border border-border bg-surface-300 px-3 py-1.5",
+        "inline-flex items-center gap-1 rounded border border-border bg-surface-200 px-3 py-1.5",
         "font-sans text-button text-foreground transition-colors",
-        "hover:bg-surface-400",
+        "hover:bg-surface-300",
         "focus-visible:border-border-medium focus-visible:outline-none",
-        "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface-300",
+        "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface-200",
       )}
     >
       {children}
@@ -291,7 +287,15 @@ function SkeletonRows({ columnCount }: { columnCount: number }) {
         >
           {Array.from({ length: columnCount }).map((_, cellIdx) => (
             <td key={cellIdx} className="px-4 py-3">
-              <div className="h-5 animate-pulse rounded bg-surface-300" />
+              <div
+                className="h-5 rounded"
+                style={{
+                  background:
+                    "linear-gradient(90deg, var(--color-surface-300) 25%, var(--color-surface-400) 50%, var(--color-surface-300) 75%)",
+                  backgroundSize: "200% 100%",
+                  animation: "shimmer 1.5s ease-in-out infinite",
+                }}
+              />
             </td>
           ))}
         </tr>
@@ -309,9 +313,17 @@ function MobileSkeletonCards() {
       {Array.from({ length: SKELETON_ROW_COUNT }).map((_, idx) => (
         <li
           key={idx}
-          className="rounded-lg border border-border bg-background p-3"
+          className="rounded-lg border border-border bg-surface-200 p-3"
         >
-          <div className="h-10 animate-pulse rounded bg-surface-300" />
+          <div
+            className="h-10 rounded"
+            style={{
+              background:
+                "linear-gradient(90deg, var(--color-surface-300) 25%, var(--color-surface-400) 50%, var(--color-surface-300) 75%)",
+              backgroundSize: "200% 100%",
+              animation: "shimmer 1.5s ease-in-out infinite",
+            }}
+          />
         </li>
       ))}
     </ul>

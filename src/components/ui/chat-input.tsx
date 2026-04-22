@@ -609,7 +609,7 @@ export function ChatInput({
           rows={1}
           className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-[15px] outline-none disabled:opacity-50"
           style={{
-            fontFamily: "var(--font-serif)",
+            fontFamily: "var(--font-sans)",
             color: "var(--color-foreground)",
             lineHeight: 1.5,
             maxHeight: "120px",
@@ -655,7 +655,7 @@ export function ChatInput({
                 className="flex items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 text-[13px] transition-colors hover:opacity-80"
                 style={{
                   background: "var(--color-error)",
-                  color: "#fff",
+                  color: 'var(--color-foreground)',
                   fontFamily: "var(--font-display)",
                 }}
               >
