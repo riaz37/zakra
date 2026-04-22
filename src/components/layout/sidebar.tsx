@@ -7,6 +7,7 @@ import { useAuth } from '@/store/authStore';
 import { NAV_ITEMS } from '@/utils/constants';
 import { cn } from '@/lib/utils';
 import { NavItem } from './nav-item';
+import { CompanySwitcher } from './company-switcher';
 
 export interface SidebarProps {
   /**
@@ -102,6 +103,13 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
           </span>
         )}
       </div>
+
+      {/* Company switcher — super admins only */}
+      {isSuperAdmin && (
+        <div className="border-b border-border pt-3">
+          <CompanySwitcher collapsed={collapsed} />
+        </div>
+      )}
 
       {/* Primary navigation */}
       <nav

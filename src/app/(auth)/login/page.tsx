@@ -32,7 +32,7 @@ export default function LoginPage() {
     setApiError(null);
     try {
       await login({ email: values.email, password: values.password });
-      router.push('/');
+      router.push('/chat');
     } catch (err) {
       setApiError(err instanceof Error ? err.message : 'Sign in failed. Please try again.');
     }

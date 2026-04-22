@@ -1,14 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useChatStream } from '@/hooks/useChatStream';
 import { useChatMessages } from '@/hooks/useChatMessages';
 import { useChatSessions, useCreateSession } from '@/hooks/useChatSessions';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { StreamingTextBlock } from '@/components/shared/streaming-text-block';
+import { ChatInput } from '@/components/ui/chat-input';
+import { toast } from 'sonner';
 import type { ChatMessage, MessageContentBlock } from '@/types/chat';
-import { Send, Square, MessageSquarePlus } from 'lucide-react';
+import { MessageSquarePlus, ChevronDown, ChevronRight } from 'lucide-react';
 
 // ── Step type colors ───────────────────────────────────────────────────────
 
@@ -29,6 +31,111 @@ function stepColor(name: string): string {
   return '#dfa88f';
 }
 
+// ── Query result block (table + collapsible SQL) ───────────────────────────
+
+function QueryResultBlock({ qr }: { qr: NonNullable<import('@/types/chat').MessageContentBlock['query_result']> }) {
+  const [sqlOpen, setSqlOpen] = useState(false);
+
+  return (
+    <div
+      className="mt-3 overflow-hidden rounded-[var(--radius-lg)] border"
+      style={{ borderColor: 'var(--color-border)' }}
+    >
+      {/* Header row */}
+      <div
+        className="flex items-center justify-between px-3 py-2"
+        style={{
+          background: 'var(--color-surface-300)',
+          borderBottom: '1px solid var(--color-border)',
+        }}
+      >
+        <span
+          className="text-[11px] uppercase"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
+        >
+          {qr.row_count} rows
+          {qr.execution_time_ms != null && ` · ${(qr.execution_time_ms / 1000).toFixed(2)}s`}
+        </span>
+        {qr.sql && (
+          <button
+            onClick={() => setSqlOpen((o) => !o)}
+            className="flex items-center gap-1 text-[11px] transition-opacity hover:opacity-80"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
+          >
+            {sqlOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+            SQL
+            {qr.confidence != null && (
+              <span className="ml-1 opacity-60">{Math.round(qr.confidence * 100)}%</span>
+            )}
+          </button>
+        )}
+      </div>
+
+      {/* Collapsible SQL panel */}
+      {sqlOpen && qr.sql && (
+        <div style={{ borderBottom: '1px solid var(--color-border)' }}>
+          <pre
+            className="overflow-x-auto p-3 text-[12px]"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              background: 'var(--color-surface-400)',
+              color: 'var(--color-foreground)',
+              lineHeight: 1.6,
+            }}
+          >
+            {qr.sql}
+          </pre>
+          {qr.explanation && (
+            <p
+              className="px-3 pb-2 text-[12px]"
+              style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+            >
+              {qr.explanation}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Data table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-[12px]">
+          <thead>
+            <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
+              {qr.columns.map((col) => (
+                <th
+                  key={col}
+                  className="px-3 py-2 text-left font-medium"
+                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
+                >
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {qr.rows.slice(0, 10).map((row, i) => (
+              <tr key={i} style={{ borderBottom: '1px solid var(--color-border)' }}>
+                {qr.columns.map((col) => (
+                  <td
+                    key={col}
+                    className="px-3 py-2"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      color: 'var(--color-foreground)',
+                    }}
+                  >
+                    {String(row[col] ?? '')}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // ── Message content block renderer ────────────────────────────────────────
 
 function ContentBlockView({ block }: { block: MessageContentBlock }) {
@@ -44,63 +151,7 @@ function ContentBlockView({ block }: { block: MessageContentBlock }) {
   }
 
   if (block.type === 'query_result' && block.query_result) {
-    const qr = block.query_result;
-    return (
-      <div
-        className="mt-3 overflow-hidden rounded-[var(--radius-lg)] border"
-        style={{ borderColor: 'var(--color-border)' }}
-      >
-        <div
-          className="px-3 py-2"
-          style={{
-            background: 'var(--color-surface-300)',
-            borderBottom: '1px solid var(--color-border)',
-          }}
-        >
-          <span
-            className="text-[11px] uppercase"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
-          >
-            {qr.row_count} rows
-          </span>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-[12px]">
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
-                {qr.columns.map((col) => (
-                  <th
-                    key={col}
-                    className="px-3 py-2 text-left font-medium"
-                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
-                  >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {qr.rows.slice(0, 10).map((row, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                  {qr.columns.map((col) => (
-                    <td
-                      key={col}
-                      className="px-3 py-2"
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        color: 'var(--color-foreground)',
-                      }}
-                    >
-                      {String(row[col] ?? '')}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
+    return <QueryResultBlock qr={block.query_result} />;
   }
 
   if (block.type === 'report_link' && block.report) {
@@ -269,30 +320,23 @@ export default function ChatSessionPage() {
     };
   }, [cancel]);
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [inputValue, setInputValue] = useState('');
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingMessage, pendingUserMessage]);
 
-  const handleSend = useCallback(async () => {
-    const text = inputValue.trim();
-    if (!text || !sessionId || isStreaming) return;
-    setInputValue('');
-    await send(sessionId, text, companyId);
-  }, [inputValue, sessionId, isStreaming, send, companyId]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      void handleSend();
-    }
-  };
+  const handleSend = useCallback(async (text: string) => {
+    if (!text.trim() || !sessionId) return;
+    await send(sessionId, text.trim(), companyId);
+  }, [sessionId, send, companyId]);
 
   const handleNewChat = async () => {
+    if (!companyId) {
+      toast.error('Select a company before starting a chat.');
+      return;
+    }
     const session = await createSession.mutateAsync({});
     router.push(`/chat/${session.id}`);
   };
@@ -452,60 +496,11 @@ export default function ChatSessionPage() {
           }}
         >
           <div className="mx-auto max-w-[720px]">
-            <div
-              className="flex items-end gap-3 rounded-[var(--radius-xl)] border px-4 py-3"
-              style={{
-                background: 'var(--color-surface-100)',
-                borderColor: 'var(--color-border)',
-              }}
-            >
-              <textarea
-                ref={textareaRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Ask a question… (Shift+Enter for new line)"
-                rows={1}
-                disabled={isStreaming}
-                className="flex-1 resize-none bg-transparent text-[15px] outline-none disabled:opacity-50"
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  color: 'var(--color-foreground)',
-                  lineHeight: 1.5,
-                  maxHeight: '120px',
-                  overflowY: 'auto',
-                }}
-              />
-
-              {isStreaming ? (
-                <button
-                  onClick={cancel}
-                  className="flex shrink-0 items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-2 text-[13px] transition-colors hover:opacity-80"
-                  style={{
-                    background: 'var(--color-error)',
-                    color: '#fff',
-                    fontFamily: 'var(--font-display)',
-                  }}
-                >
-                  <Square className="h-3.5 w-3.5" />
-                  Stop
-                </button>
-              ) : (
-                <button
-                  onClick={() => void handleSend()}
-                  disabled={!inputValue.trim() || isStreaming}
-                  className="flex shrink-0 items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-2 text-[13px] transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-                  style={{
-                    background: 'var(--color-foreground)',
-                    color: 'var(--color-background)',
-                    fontFamily: 'var(--font-display)',
-                  }}
-                >
-                  <Send className="h-3.5 w-3.5" />
-                  Send
-                </button>
-              )}
-            </div>
+            <ChatInput
+              onSendMessage={(message) => void handleSend(message)}
+              onStop={cancel}
+              isStreaming={isStreaming}
+            />
           </div>
         </div>
       </div>

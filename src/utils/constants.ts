@@ -85,7 +85,6 @@ export const ROUTES = {
   DB_CONNECTIONS: '/db-connections',
   DB_CONNECTION_DETAIL: '/db-connections/:id',
   TABLE_ACCESS: '/table-access',
-  QUERY: '/query',
   REPORT_TEMPLATES: '/reports/templates',
   REPORT_TEMPLATE_NEW: '/reports/templates/new',
   REPORT_TEMPLATE_DETAIL: '/reports/templates/:id',
@@ -93,6 +92,7 @@ export const ROUTES = {
   REPORT_AI_GENERATE: '/reports/ai-generate',
   REPORT_GENERATE: '/reports/generate/:templateId',
   REPORT_VIEW: '/reports/:reportId',
+  CHAT: '/chat',
   CHAT_SESSION: '/chat/:sessionId',
   NOT_FOUND: '*',
 } as const;
@@ -101,13 +101,12 @@ export type RequiredRole = 'admin' | 'super_admin';
 
 // Navigation Items — Chat is the home (/); admin-only items gated by requiredRole
 export const NAV_ITEMS = [
-  { label: 'Chat', path: ROUTES.DASHBOARD, icon: 'MessageCircle' },
+  { label: 'Chat', path: ROUTES.CHAT, icon: 'MessageCircle' },
   { label: 'Companies', path: ROUTES.COMPANIES, icon: 'Building2', requiredRole: 'admin' as RequiredRole },
   { label: 'Users', path: ROUTES.USERS, icon: 'Users', requiredRole: 'admin' as RequiredRole },
   { label: 'Roles', path: ROUTES.ROLES, icon: 'Shield', requiredRole: 'admin' as RequiredRole },
   { label: 'Databases', path: ROUTES.DB_CONNECTIONS, icon: 'Database', requiredRole: 'admin' as RequiredRole },
   { label: 'Table Access', path: ROUTES.TABLE_ACCESS, icon: 'Table', requiredRole: 'admin' as RequiredRole },
-  { label: 'Query', path: ROUTES.QUERY, icon: 'MessageSquare' },
   { label: 'Templates', path: ROUTES.REPORT_TEMPLATES, icon: 'FileBarChart', requiredRole: 'admin' as RequiredRole },
   { label: 'Generate Report', path: ROUTES.REPORT_AI_GENERATE, icon: 'Sparkles' },
   { label: 'Report History', path: ROUTES.REPORT_HISTORY, icon: 'History' },

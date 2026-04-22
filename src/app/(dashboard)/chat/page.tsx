@@ -1,9 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { toast } from 'sonner';
 import { useChatSessions, useCreateSession } from '@/hooks/useChatSessions';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
-import { MessageSquarePlus, MessageSquare } from 'lucide-react';
+import { useDbConnections } from '@/hooks/useDbConnections';
+import { MessageSquarePlus, MessageSquare, Database, Plus } from 'lucide-react';
 
 function formatRelative(dateStr: string): string {
   const date = new Date(dateStr);
@@ -26,8 +29,16 @@ export default function ChatPage() {
   const createSession = useCreateSession(companyId);
 
   const sessions = data?.sessions ?? [];
+  const { data: connectionsData, isLoading: connectionsLoading } = useDbConnections(
+    companyId ? { company_id: companyId, page: 1, page_size: 1 } : undefined,
+  );
+  const showDbBanner = !connectionsLoading && (connectionsData?.total ?? 0) === 0 && !!companyId;
 
   const handleNewChat = async () => {
+    if (!companyId) {
+      toast.error('Select a company before starting a chat.');
+      return;
+    }
     const session = await createSession.mutateAsync({});
     router.push(`/chat/${session.id}`);
   };
@@ -70,6 +81,50 @@ export default function ChatPage() {
           New Chat
         </button>
       </div>
+
+      {/* No DB connection banner */}
+      {showDbBanner && (
+        <div
+          className="mb-6 flex items-start gap-4 rounded-[var(--radius-xl)] border p-5"
+          style={{
+            background: 'var(--color-surface-100)',
+            borderColor: 'var(--color-border)',
+          }}
+        >
+          <span
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+            style={{ background: 'var(--color-surface-400)' }}
+          >
+            <Database className="h-4 w-4" style={{ color: 'var(--color-muted)' }} />
+          </span>
+          <div className="flex-1">
+            <p
+              className="text-[14px] font-medium"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
+            >
+              Connect a database to start querying data
+            </p>
+            <p
+              className="mt-1 text-[13px]"
+              style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+            >
+              Chat can answer questions about your data once a database connection is added.
+            </p>
+          </div>
+          <Link
+            href="/db-connections"
+            className="flex shrink-0 items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-2 text-[13px] transition-colors hover:opacity-90"
+            style={{
+              background: 'var(--color-foreground)',
+              color: 'var(--color-background)',
+              fontFamily: 'var(--font-display)',
+            }}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add connection
+          </Link>
+        </div>
+      )}
 
       {/* Loading skeleton */}
       {isLoading && (
