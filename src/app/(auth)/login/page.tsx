@@ -125,7 +125,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-1 flex w-full items-center justify-center rounded-lg border border-border bg-surface-300 px-3.5 py-2.5 font-sans text-button text-foreground shadow-ring transition-all duration-150 hover:text-error disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-1 flex w-full items-center justify-center rounded-lg bg-foreground px-3.5 py-2.5 font-sans text-button text-background transition-colors duration-150 hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
