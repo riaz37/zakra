@@ -18,9 +18,7 @@ export function EmptyState({ icon: Icon, title, description, action, className }
       )}
     >
       {Icon ? (
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-300">
-          <Icon aria-hidden size={22} strokeWidth={1.5} className="text-muted" />
-        </div>
+        <Icon aria-hidden size={28} strokeWidth={1.25} className="text-muted/60" />
       ) : null}
       <div className="flex flex-col gap-1.5">
         <p className="font-sans text-[15px] font-medium text-foreground">{title}</p>
