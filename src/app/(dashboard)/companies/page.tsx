@@ -159,7 +159,7 @@ function CompanyForm({
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2 font-sans text-[14px] font-medium text-white transition-colors hover:bg-accent/90 disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-lg bg-foreground px-4 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
         >
           {isPending ? 'Saving…' : submitLabel}
         </button>
@@ -311,7 +311,7 @@ export default function CompaniesPage() {
           <button
             type="button"
             onClick={() => setCreateOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-3.5 py-2 font-sans text-[14px] font-medium text-white transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none"
           >
             <Plus aria-hidden size={15} strokeWidth={2} />
             Create Company
@@ -351,7 +351,7 @@ export default function CompaniesPage() {
             <button
               type="button"
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-accent px-3.5 py-2 font-sans text-[14px] font-medium text-white transition-colors hover:bg-accent/90"
+              className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90"
             >
               <Plus aria-hidden size={15} strokeWidth={2} />
               Create Company

@@ -159,7 +159,7 @@ function InviteUserForm({
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2 font-sans text-[14px] font-medium text-white transition-colors hover:bg-accent/90 disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-lg bg-foreground px-4 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
         >
           {isPending ? 'Inviting…' : 'Invite User'}
         </button>
@@ -336,7 +336,7 @@ export default function UsersPage() {
           <button
             type="button"
             onClick={() => setInviteOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-3.5 py-2 font-sans text-[14px] font-medium text-white transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none"
           >
             <UserPlus aria-hidden size={15} strokeWidth={2} />
             Invite User
@@ -376,7 +376,7 @@ export default function UsersPage() {
             <button
               type="button"
               onClick={() => setInviteOpen(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-accent px-3.5 py-2 font-sans text-[14px] font-medium text-white transition-colors hover:bg-accent/90"
+              className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90"
             >
               <UserPlus aria-hidden size={15} strokeWidth={2} />
               Invite User
