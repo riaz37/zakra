@@ -6,7 +6,9 @@ import { toast } from 'sonner';
 import { useChatSessions, useCreateSession } from '@/hooks/useChatSessions';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useDbConnections } from '@/hooks/useDbConnections';
-import { MessageSquarePlus, MessageSquare, Database, Plus } from 'lucide-react';
+import { MessageSquarePlus, Plus } from 'lucide-react';
+import { EmptyState } from '@/components/shared/empty-state';
+import { cn } from '@/lib/utils';
 
 function formatRelative(dateStr: string): string {
   const date = new Date(dateStr);
@@ -22,6 +24,14 @@ function formatRelative(dateStr: string): string {
   return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
 }
 
+const DELAY_CLASSES = [
+  'animation-delay-50',
+  'animation-delay-100',
+  'animation-delay-150',
+  'animation-delay-200',
+  'animation-delay-300',
+];
+
 export default function ChatPage() {
   const router = useRouter();
   const companyId = useCurrentCompanyId();
@@ -29,10 +39,12 @@ export default function ChatPage() {
   const createSession = useCreateSession(companyId);
 
   const sessions = data?.sessions ?? [];
-  const { data: connectionsData, isLoading: connectionsLoading } = useDbConnections(
-    companyId ? { company_id: companyId, page: 1, page_size: 1 } : undefined,
-  );
-  const showDbBanner = !connectionsLoading && (connectionsData?.total ?? 0) === 0 && !!companyId;
+  const { data: connectionsData, isLoading: connectionsLoading } =
+    useDbConnections(
+      companyId ? { company_id: companyId, page: 1, page_size: 1 } : undefined,
+    );
+  const showDbBanner =
+    !connectionsLoading && (connectionsData?.total ?? 0) === 0 && !!companyId;
 
   const handleNewChat = async () => {
     if (!companyId) {
@@ -44,25 +56,14 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="mx-auto max-w-[760px] px-6 py-8">
+    <div className="mx-auto max-w-[760px] px-6 py-10">
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <header className="mb-8 flex items-end justify-between border-b border-border pb-5 animate-fade-up">
         <div>
-          <h1
-            className="text-[28px]"
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 400,
-              letterSpacing: '-0.56px',
-              color: 'var(--color-foreground)',
-            }}
-          >
+          <h1 className="font-sans text-[28px] font-normal leading-[1.2] tracking-[-0.56px] text-foreground">
             Chat
           </h1>
-          <p
-            className="mt-1 text-[15px]"
-            style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
-          >
+          <p className="mt-1.5 font-sans text-caption text-muted">
             Conversations with your data
           </p>
         </div>
@@ -70,57 +71,48 @@ export default function ChatPage() {
         <button
           onClick={() => void handleNewChat()}
           disabled={createSession.isPending}
-          className="flex items-center gap-2 rounded-[var(--radius-lg)] px-4 py-2 text-[13px] transition-colors hover:opacity-90 disabled:opacity-50"
-          style={{
-            background: 'var(--color-foreground)',
-            color: 'var(--color-background)',
-            fontFamily: 'var(--font-display)',
-          }}
+          className={cn(
+            'flex items-center gap-2 rounded-lg bg-accent px-3.5 py-2 font-sans text-button font-medium text-[#111] transition-colors duration-150',
+            'hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50',
+          )}
         >
-          <MessageSquarePlus className="h-4 w-4" />
-          New Chat
+          <MessageSquarePlus className="h-4 w-4" aria-hidden />
+          New chat
         </button>
-      </div>
+      </header>
+
+      {/* No company selected banner */}
+      {!companyId && (
+        <div className="mb-6 flex items-start gap-4 rounded-lg border border-border bg-surface-200 px-5 py-4 animate-fade-up">
+          <div className="flex-1">
+            <p className="font-sans text-button font-medium text-foreground">
+              No company selected
+            </p>
+            <p className="mt-1 font-sans text-caption text-muted">
+              Select a company from the switcher to view and start
+              conversations.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* No DB connection banner */}
       {showDbBanner && (
-        <div
-          className="mb-6 flex items-start gap-4 rounded-[var(--radius-xl)] border p-5"
-          style={{
-            background: 'var(--color-surface-100)',
-            borderColor: 'var(--color-border)',
-          }}
-        >
-          <span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-            style={{ background: 'var(--color-surface-400)' }}
-          >
-            <Database className="h-4 w-4" style={{ color: 'var(--color-muted)' }} />
-          </span>
+        <div className="mb-6 flex items-start gap-4 rounded-lg border border-border bg-surface-200 px-5 py-4 animate-fade-up">
           <div className="flex-1">
-            <p
-              className="text-[14px] font-medium"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-            >
+            <p className="font-sans text-button font-medium text-foreground">
               Connect a database to start querying data
             </p>
-            <p
-              className="mt-1 text-[13px]"
-              style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
-            >
-              Chat can answer questions about your data once a database connection is added.
+            <p className="mt-1 font-sans text-caption text-muted">
+              Chat can answer questions about your data once a database
+              connection is added.
             </p>
           </div>
           <Link
             href="/db-connections"
-            className="flex shrink-0 items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-2 text-[13px] transition-colors hover:opacity-90"
-            style={{
-              background: 'var(--color-foreground)',
-              color: 'var(--color-background)',
-              fontFamily: 'var(--font-display)',
-            }}
+            className="flex shrink-0 items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 font-sans text-button font-medium text-[#111] transition-colors duration-150 hover:bg-accent/90"
           >
-            <Plus className="h-3.5 w-3.5" />
+            <Plus className="h-3.5 w-3.5" aria-hidden />
             Add connection
           </Link>
         </div>
@@ -132,91 +124,73 @@ export default function ChatPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-[72px] animate-pulse rounded-[var(--radius-lg)]"
-              style={{ background: 'var(--color-surface-300)' }}
+              className="h-[72px] rounded-lg"
+              style={{
+                background:
+                  'linear-gradient(90deg, var(--color-surface-200) 25%, var(--color-surface-300) 50%, var(--color-surface-200) 75%)',
+                backgroundSize: '200% 100%',
+                animation: 'shimmer 1.5s ease-in-out infinite',
+              }}
             />
           ))}
         </div>
       )}
 
       {/* Empty state */}
-      {!isLoading && sessions.length === 0 && (
-        <div
-          className="flex flex-col items-center rounded-[var(--radius-xl)] border px-8 py-16 text-center"
-          style={{
-            background: 'var(--color-surface-100)',
-            borderColor: 'var(--color-border)',
-          }}
-        >
-          <MessageSquare className="h-7 w-7" style={{ color: 'var(--color-muted)', opacity: 0.6 }} />
-          <h2
-            className="mt-2 text-[18px]"
-            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-          >
-            Start your first conversation
-          </h2>
-          <p
-            className="mt-2 max-w-[340px] text-[15px]"
-            style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
-          >
-            Ask questions about your data in plain language.
-          </p>
-          <button
-            onClick={() => void handleNewChat()}
-            disabled={createSession.isPending}
-            className="mt-6 flex items-center gap-2 rounded-[var(--radius-lg)] px-5 py-[10px] text-[14px] transition-colors hover:opacity-90 disabled:opacity-50"
-            style={{
-              background: 'var(--color-foreground)',
-              color: 'var(--color-background)',
-              fontFamily: 'var(--font-display)',
-            }}
-          >
-            <MessageSquarePlus className="h-4 w-4" />
-            New Chat
-          </button>
-        </div>
+      {!isLoading && sessions.length === 0 && companyId && (
+        <EmptyState
+          title="Start your first conversation"
+          description="Ask questions about your data in plain language. Queries become SQL, results stream back, and your history lives here."
+          action={
+            <button
+              onClick={() => void handleNewChat()}
+              disabled={createSession.isPending}
+              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 font-sans text-button font-medium text-[#111] transition-colors duration-150 hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <MessageSquarePlus className="h-4 w-4" aria-hidden />
+              New chat
+            </button>
+          }
+        />
       )}
 
       {/* Sessions list */}
       {!isLoading && sessions.length > 0 && (
-        <div className="space-y-2">
-          {sessions.map((session) => (
-            <button
+        <ul className="space-y-2">
+          {sessions.map((session, i) => (
+            <li
               key={session.id}
-              onClick={() => router.push(`/chat/${session.id}`)}
-              className="w-full rounded-[var(--radius-lg)] border px-4 py-3 text-left transition-colors hover:bg-[var(--color-surface-200)]"
-              style={{
-                background: 'var(--color-background)',
-                borderColor: 'var(--color-border)',
-              }}
+              className={cn(
+                'animate-fade-up',
+                DELAY_CLASSES[i] ?? 'animation-delay-300',
+              )}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <p
-                    className="truncate text-[14px] font-medium"
-                    style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-                  >
-                    {session.title || 'Untitled conversation'}
-                  </p>
-                  {session.last_message_preview && (
-                    <p
-                      className="mt-1 truncate text-[13px]"
-                      style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
-                    >
-                      {session.last_message_preview}
+              <button
+                onClick={() => router.push(`/chat/${session.id}`)}
+                className={cn(
+                  'w-full rounded-lg border border-border bg-surface-200 px-4 py-3 text-left',
+                  'transition-colors duration-150 hover:bg-surface-300 focus-visible:outline-none',
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-sans text-button font-medium text-foreground">
+                      {session.title || 'Untitled conversation'}
                     </p>
-                  )}
+                    {session.last_message_preview && (
+                      <p className="mt-1 truncate font-sans text-caption text-muted">
+                        {session.last_message_preview}
+                      </p>
+                    )}
+                  </div>
+                  <span className="shrink-0 font-mono text-mono-sm text-muted">
+                    {formatRelative(session.created_at)}
+                  </span>
                 </div>
-                <span
-                  className="shrink-0 text-[11px]"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
-                >
-                  {formatRelative(session.created_at)}
-                </span>
-              </div>
-            </button>
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

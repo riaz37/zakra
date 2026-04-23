@@ -3,26 +3,36 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* ==========  Surface scale — warm cream  ========== */
-  --color-surface-100: #f7f7f4;
-  --color-surface-200: #f2f1ed;
-  --color-surface-300: #ebeae5;
-  --color-surface-400: #e6e5e0;
-  --color-surface-500: #e1e0db;
+  /* ==========  Surface scale — warm dark  ========== */
+  --color-surface-100: #1e1d19;
+  --color-surface-200: #21201c;
+  --color-surface-300: #282722;
+  --color-surface-400: #2e2d28;
+  --color-surface-500: #35332e;
 
   /* ==========  Semantic surfaces  ========== */
-  --color-background: #f2f1ed;
-  --color-background-translucent: rgba(242, 241, 237, 0.8);
-  --color-foreground: #26251e;
-  --color-muted: rgba(38, 37, 30, 0.55);
-  --color-muted-strong: rgba(38, 37, 30, 0.9);
-  --color-muted-soft: rgba(38, 37, 30, 0.06);
+  --color-background: #1a1916;
+  --color-background-translucent: rgba(26, 25, 22, 0.85);
+  --color-foreground: #ebeae5;
+  --color-muted: rgba(235, 234, 229, 0.65);
+  --color-muted-strong: rgba(235, 234, 229, 0.85);
+  --color-muted-soft: rgba(235, 234, 229, 0.06);
 
   /* ==========  Brand + state  ========== */
-  --color-accent: #f54e00;
-  --color-gold: #c08532;
-  --color-error: #cf2d56;
-  --color-success: #1f8a65;
+  --color-accent: #3ecf8e;
+  --color-accent-soft: rgba(62, 207, 142, 0.1);
+  --color-gold: #d99a45;
+  --color-error: #e8476a;
+  --color-success: #3ecf8e;
+  --color-warning: #d99a45;
+
+  /* ==========  State surface + border tokens  ========== */
+  --color-error-bg: rgba(232, 71, 106, 0.08);
+  --color-error-border: rgba(232, 71, 106, 0.2);
+  --color-accent-bg: rgba(62, 207, 142, 0.08);
+  --color-accent-border: rgba(62, 207, 142, 0.22);
+  --color-warning-bg: rgba(217, 154, 69, 0.1);
+  --color-warning-border: rgba(217, 154, 69, 0.25);
 
   /* ==========  AI timeline palette  ========== */
   --color-thinking: #dfa88f;
@@ -31,20 +41,34 @@
   --color-edit: #c0a8dd;
 
   /* ==========  Code editor canvas  ========== */
-  --color-code-canvas: #1c1b15;
+  --color-code-canvas: #131210;
 
-  /* ==========  Borders — oklab with rgba fallbacks  ========== */
-  --color-border: oklab(0.263084 -0.00230259 0.0124794 / 0.1);
-  --color-border-medium: oklab(0.263084 -0.00230259 0.0124794 / 0.2);
-  --color-border-strong: rgba(38, 37, 30, 0.55);
+  /* ==========  Borders — warm dark rgba  ========== */
+  --color-border: rgba(235, 234, 229, 0.1);
+  --color-border-medium: rgba(235, 234, 229, 0.16);
+  --color-border-strong: rgba(235, 234, 229, 0.22);
 
-  /* ==========  Fonts — three-voice system (Geist / Instrument Serif / Geist Mono)  ========== */
+  /* ==========  shadcn/ui alias tokens (popover, input, ring, etc.)  ========== */
+  --color-popover: #21201c;
+  --color-popover-foreground: #ebeae5;
+  --color-muted-foreground: rgba(235, 234, 229, 0.65);
+  --color-accent-foreground: #111111;
+  --color-input: rgba(235, 234, 229, 0.1);
+  --color-ring: rgba(62, 207, 142, 0.4);
+  --color-destructive: #e8476a;
+  --color-destructive-foreground: #ebeae5;
+  --color-primary: #3ecf8e;
+  --color-primary-foreground: #111111;
+  --color-secondary: #282722;
+  --color-secondary-foreground: #ebeae5;
+  --color-card: #21201c;
+  --color-card-foreground: #ebeae5;
+
+  /* ==========  Fonts — Archivo / JetBrains Mono  ========== */
   --font-display: var(--font-sans);
-  --font-sans: "Geist", system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype",
-    "URW Palladio L", P052, ui-serif, Georgia, Cambria, "Times New Roman",
-    Times, serif;
-  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+  --font-sans: "Archivo", system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* ==========  Radii  ========== */
@@ -56,43 +80,40 @@
   --radius-xl: 10px;
   --radius-pill: 9999px;
 
-  /* ==========  Shadows — warm oklab ring + diffuse lifts  ========== */
-  --shadow-ring: oklab(0.263084 -0.00230259 0.0124794 / 0.1) 0px 0px 0px 1px;
-  --shadow-ambient: rgba(0, 0, 0, 0.02) 0px 0px 16px,
-    rgba(0, 0, 0, 0.008) 0px 0px 8px;
-  --shadow-elevated: rgba(0, 0, 0, 0.14) 0px 28px 70px,
-    rgba(0, 0, 0, 0.1) 0px 14px 32px,
-    oklab(0.263084 -0.00230259 0.0124794 / 0.1) 0px 0px 0px 1px;
-  --shadow-focus: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  /* ==========  Shadows — atmospheric, warm  ========== */
+  --shadow-ring: rgba(235, 234, 229, 0.08) 0px 0px 0px 1px;
+  --shadow-ambient: none;
+  --shadow-elevated: rgba(0, 0, 0, 0.5) 0px 16px 40px,
+    rgba(235, 234, 229, 0.06) 0px 0px 0px 1px;
+  --shadow-focus: 0 0 0 2px rgba(62, 207, 142, 0.4);
 
-  /* ==========  Typography scale — DESIGN.md hierarchy  ==========
-     Each step pairs size + line-height + letter-spacing + weight. */
+  /* ==========  Typography scale  ========== */
   --text-hero: 4.5rem;
   --text-hero--line-height: 1.1;
   --text-hero--letter-spacing: -2.16px;
-  --text-hero--font-weight: 400;
+  --text-hero--font-weight: 600;
 
   --text-section: 2.25rem;
   --text-section--line-height: 1.2;
   --text-section--letter-spacing: -0.72px;
-  --text-section--font-weight: 400;
+  --text-section--font-weight: 600;
 
   --text-sub: 1.625rem;
   --text-sub--line-height: 1.25;
   --text-sub--letter-spacing: -0.325px;
-  --text-sub--font-weight: 400;
+  --text-sub--font-weight: 600;
 
   --text-title: 1.375rem;
   --text-title--line-height: 1.3;
   --text-title--letter-spacing: -0.11px;
-  --text-title--font-weight: 400;
+  --text-title--font-weight: 600;
 
-  --text-body-serif: 1.2rem;
+  --text-body-serif: 1rem;
   --text-body-serif--line-height: 1.5;
-  --text-body-serif--font-weight: 500;
+  --text-body-serif--font-weight: 400;
 
-  --text-body-serif-sm: 1.08rem;
-  --text-body-serif-sm--line-height: 1.35;
+  --text-body-serif-sm: 0.875rem;
+  --text-body-serif-sm--line-height: 1.5;
   --text-body-serif-sm--font-weight: 400;
 
   --text-body: 1rem;
@@ -101,18 +122,16 @@
 
   --text-button: 0.875rem;
   --text-button--line-height: 1;
-  --text-button--font-weight: 400;
+  --text-button--font-weight: 500;
 
-  /* Caption — 11px, normal tracking, for metadata labels */
   --text-caption: 0.6875rem;
   --text-caption--line-height: 1.5;
   --text-caption--font-weight: 500;
 
-  /* Micro — 11px, 0.048px tracking, for uppercase micro labels (was --text-caption) */
   --text-micro: 0.6875rem;
   --text-micro--line-height: 1.27;
   --text-micro--letter-spacing: 0.048px;
-  --text-micro--font-weight: 500;
+  --text-micro--font-weight: 600;
 
   --text-mono: 0.75rem;
   --text-mono--line-height: 1.67;
@@ -125,12 +144,10 @@
 
   /* ==========  Motion tokens  ========== */
   --default-transition-duration: 150ms;
-  --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  --default-transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ==========  Semantic alias layer — admin UI canonical names  ==========
-   @theme inline generates Tailwind utilities (text-fg, bg-surface, etc.)
-   while keeping them as var() references so dark mode overrides work. */
+/* ==========  Semantic alias layer  ========== */
 @theme inline {
   /* Color roles */
   --color-fg: var(--fg);
@@ -138,7 +155,6 @@
   --color-fg-subtle: var(--fg-subtle);
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
-  --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
@@ -152,7 +168,7 @@
   --radius-input: 8px;
   --radius-badge: 9999px;
 
-  /* Layout dimensions (no dark variant needed) */
+  /* Layout dimensions */
   --layout-topbar-h: 56px;
   --layout-sidebar-w: 240px;
   --layout-sidebar-w-collapsed: 64px;
@@ -160,28 +176,43 @@
   --layout-anchor-width: 16rem;
 
   /* Motion */
-  --motion-panel: 200ms ease;
+  --motion-panel: 220ms cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Shadow alias */
   --shadow-lg: var(--shadow-elevated);
 }
 
-/* ==========  Root semantic vars — light mode  ========== */
+/* ==========  Dark mode semantic vars (default)  ========== */
 :root {
-  --fg: var(--color-foreground);
-  --fg-muted: rgba(38, 37, 30, 0.72);
-  --fg-subtle: rgba(38, 37, 30, 0.55);
-  --bg: var(--color-background);
-  --surface: var(--color-surface-200);
-  --surface-muted: var(--color-surface-300);
-  --border-strong: rgba(38, 37, 30, 0.2);
-  --primary-fg: var(--color-foreground);
-  --warning: #c08532;
-  --warning-soft: rgba(192, 133, 50, 0.12);
+  --fg: #ebeae5;
+  --fg-muted: rgba(235, 234, 229, 0.65);
+  --fg-subtle: rgba(235, 234, 229, 0.45);
+  --bg: #1a1916;
+  --surface: #21201c;
+  --surface-muted: #282722;
+  --surface-strong: #2e2d28;
+  --surface-deep: #35332e;
+  --border-strong: rgba(235, 234, 229, 0.22);
+  --primary: #ebeae5;
+  --primary-hover: #ffffff;
+  --primary-soft: #2e2d28;
+  --primary-fg: #1a1916;
+  --accent: #3ecf8e;
+  --accent-soft: rgba(62, 207, 142, 0.1);
+  --warning: #d99a45;
+  --warning-soft: rgba(217, 154, 69, 0.14);
   --info: #9fbbe0;
-  --info-soft: rgba(159, 187, 224, 0.18);
-  --destructive-soft: rgba(207, 45, 86, 0.1);
-  --brand-deep: #176b4f;
+  --info-soft: rgba(159, 187, 224, 0.14);
+  --destructive: #e8476a;
+  --destructive-soft: rgba(232, 71, 106, 0.12);
+  --brand-deep: #2ea574;
+
+  /* ==========  Legacy shadcn direct-var aliases (used by sonner, etc.)  ========== */
+  --popover: #21201c;
+  --popover-foreground: #ebeae5;
+  --border: rgba(235, 234, 229, 0.1);
+  --radius: 8px;
+
   --topbar-h: 56px;
   --sidebar-w: 240px;
   --sidebar-w-collapsed: 64px;
@@ -189,63 +220,53 @@
   --anchor-width: 16rem;
 }
 
-/* ==========  Dark palette — warm-minimal inversion  ==========
-   Not "black + invert". The whole system stays warm: ink-depth near-black
-   paired with cream foreground, oklab borders shifted to high-lightness
-   alphas so edges read the same on dark paper. */
+/* .dark class — explicit dark override */
 .dark {
-  --color-surface-100: #191712;
-  --color-surface-200: #1f1d17;
-  --color-surface-300: #2a2820;
-  --color-surface-400: #33302a;
-  --color-surface-500: #3b3832;
+  --fg: #ebeae5;
+  --fg-muted: rgba(235, 234, 229, 0.65);
+  --fg-subtle: rgba(235, 234, 229, 0.45);
+  --bg: #1a1916;
+  --surface: #21201c;
+  --surface-muted: #282722;
+  --surface-strong: #2e2d28;
+  --surface-deep: #35332e;
+  --border-strong: rgba(235, 234, 229, 0.22);
+  --primary: #ebeae5;
+  --primary-hover: #ffffff;
+  --primary-soft: #2e2d28;
+  --primary-fg: #1a1916;
+  --accent: #3ecf8e;
+  --accent-soft: rgba(62, 207, 142, 0.1);
+  --warning: #d99a45;
+  --warning-soft: rgba(217, 154, 69, 0.14);
+  --info: #9fbbe0;
+  --info-soft: rgba(159, 187, 224, 0.14);
+  --destructive: #e8476a;
+  --destructive-soft: rgba(232, 71, 106, 0.12);
+  --brand-deep: #2ea574;
 
-  --color-background: #14130f;
-  --color-background-translucent: rgba(20, 19, 15, 0.75);
-  --color-foreground: #ebeae5;
-  --color-muted: rgba(235, 234, 229, 0.55);
-  --color-muted-strong: rgba(235, 234, 229, 0.9);
-  --color-muted-soft: rgba(235, 234, 229, 0.06);
-
-  --color-code-canvas: #0f0e0a;
-
-  --color-border: oklab(0.95 -0.002 0.012 / 0.1);
-  --color-border-medium: oklab(0.95 -0.002 0.012 / 0.22);
-  --color-border-strong: rgba(235, 234, 229, 0.45);
-
-  --shadow-ring: oklab(0.95 -0.002 0.012 / 0.1) 0px 0px 0px 1px;
-  --shadow-ambient: rgba(0, 0, 0, 0.5) 0px 0px 16px,
-    rgba(0, 0, 0, 0.3) 0px 0px 8px;
-  --shadow-elevated: rgba(0, 0, 0, 0.7) 0px 28px 70px,
-    rgba(0, 0, 0, 0.5) 0px 14px 32px,
-    oklab(0.95 -0.002 0.012 / 0.12) 0px 0px 0px 1px;
-  --shadow-focus: rgba(0, 0, 0, 0.6) 0px 4px 12px;
-
-  /* Semantic overrides — dark mode */
-  --fg-muted: rgba(235, 234, 229, 0.72);
-  --fg-subtle: rgba(235, 234, 229, 0.55);
-  --border-strong: rgba(235, 234, 229, 0.2);
-  --warning: #d39948;
-  --warning-soft: rgba(211, 153, 72, 0.14);
-  --info-soft: rgba(159, 187, 224, 0.12);
-  --destructive-soft: rgba(233, 65, 105, 0.12);
-  --brand-deep: #3dd19d;
+  /* Legacy shadcn direct-var aliases */
+  --popover: #21201c;
+  --popover-foreground: #ebeae5;
+  --border: rgba(235, 234, 229, 0.1);
+  --radius: 8px;
 }
 
-/* ==========  Base layer — document defaults  ========== */
+/* ==========  Base layer  ========== */
 @layer base {
   html,
   body {
     background: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv01";
   }
 
   ::selection {
     background: var(--color-accent);
-    color: #f2f1ed;
+    color: #111111;
   }
 
   *,
@@ -253,20 +274,93 @@
   ::after {
     border-color: var(--color-border);
   }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
 }
 
-/* ==========  OpenType feature utilities  ==========
-   Instrument Serif body wants "cswh" swash alternates.
-   Geist buttons/captions want "ss09". */
-@utility font-feat-cswh {
-  font-feature-settings: "cswh";
-}
-
+/* ==========  OpenType feature utilities  ========== */
 @utility font-feat-ss09 {
   font-feature-settings: "ss09";
 }
 
-/* Tabular numerals for price / metric blocks */
 @utility font-feat-tnum {
   font-variant-numeric: tabular-nums;
+}
+
+/* ==========  Motion keyframes  ========== */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ==========  Motion utilities  ========== */
+@utility animate-fade-up {
+  animation: fade-up 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.18s ease-out both;
+}
+
+@utility animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ==========  Stagger delay utilities  ========== */
+@utility animation-delay-50 {
+  animation-delay: 50ms;
+}
+
+@utility animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+@utility animation-delay-150 {
+  animation-delay: 150ms;
+}
+
+@utility animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+@utility animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+/* ==========  Reduced motion  ========== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

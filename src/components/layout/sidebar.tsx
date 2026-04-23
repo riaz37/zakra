@@ -1,15 +1,14 @@
 'use client';
 
 import { useMemo } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '@/store/authStore';
 import { NAV_ITEMS } from '@/utils/constants';
 import { cn } from '@/lib/utils';
 import { NavItem } from './nav-item';
 import { CompanySwitcher } from './company-switcher';
-import { useChatSessions } from '@/hooks/useChatSessions';
-import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 
 export interface SidebarProps {
   variant?: 'full' | 'rail' | 'overlay';
@@ -61,10 +60,7 @@ function filterItemsByRole(
 
 export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const { user, isAdmin, isSuperAdmin, logout } = useAuth();
-  const companyId = useCurrentCompanyId();
-
   const { primaryItems, adminItems } = useMemo(() => {
     const allowed = filterItemsByRole(NAV_ITEMS, isAdmin, isSuperAdmin);
     return {
@@ -72,9 +68,6 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
       adminItems: allowed.filter((item) => ADMIN_LABELS.has(item.label)),
     };
   }, [isAdmin, isSuperAdmin]);
-
-  const { data: sessionsData } = useChatSessions(companyId);
-  const recentSessions = sessionsData?.sessions?.slice(0, 5) ?? [];
 
   const collapsed = variant === 'rail';
   const email = user?.email ?? '';
@@ -101,7 +94,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
         variant === 'overlay' && 'w-60',
       )}
     >
-      {/* Brand — taller zone, live-dot + wordmark */}
+      {/* Brand */}
       <div
         className={cn(
           'flex items-center border-b border-border',
@@ -110,27 +103,32 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
         style={{ minHeight: '64px' }}
       >
         {collapsed ? (
-          <div className="flex items-center gap-1.5">
-            <span
-              aria-hidden
-              className="h-1.5 w-1.5 shrink-0 rounded-pill bg-accent"
-            />
-            <span
-              className="font-sans text-[15px] font-semibold tracking-[-0.3px] text-foreground"
-              aria-label="ESAP-KB"
-            >
-              E
-            </span>
-          </div>
+          <Image
+            src="/logo/esaplogo.webp"
+            alt="ESAP"
+            width={28}
+            height={28}
+            className="shrink-0"
+            priority
+          />
         ) : (
-          <div className="flex items-center gap-2">
-            <span
-              aria-hidden
-              className="h-1.5 w-1.5 shrink-0 rounded-pill bg-accent"
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/logo/esaplogo.webp"
+              alt="ESAP"
+              width={28}
+              height={28}
+              className="shrink-0"
+              priority
             />
-            <span className="font-sans text-[15px] font-semibold tracking-[-0.3px] text-foreground">
-              ESAP<span className="text-accent">-</span>KB
-            </span>
+            <Image
+              src="/logo/esaplogo.svg"
+              alt="ESAP employer solutions"
+              width={65}
+              height={21}
+              className="shrink-0"
+              priority
+            />
           </div>
         )}
       </div>
@@ -194,39 +192,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
           </>
         )}
 
-        {/* Recent chats — full sidebar only, quiet empty state */}
-        {!collapsed && recentSessions.length > 0 && (
-          <div className="mt-8">
-            <h2 className="px-3 font-sans text-micro uppercase tracking-[0.08em] text-muted/40">
-              Recents
-            </h2>
-            <ul className="mt-2 flex flex-col gap-0.5">
-              {recentSessions.map((session) => {
-                const isActive = pathname === `/chat/${session.id}`;
-                return (
-                  <li key={session.id}>
-                    <button
-                      onClick={() => {
-                        router.push(`/chat/${session.id}`);
-                        onNavigate?.();
-                      }}
-                      className={cn(
-                        'w-full rounded-md px-3 py-1.5 text-left transition-colors duration-150',
-                        isActive
-                          ? 'bg-surface-300 text-foreground'
-                          : 'text-muted hover:bg-surface-200 hover:text-muted-strong',
-                      )}
-                    >
-                      <span className="block truncate font-sans text-caption">
-                        {session.title || 'Untitled conversation'}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
+
       </nav>
 
       {/* User footer — pinned */}

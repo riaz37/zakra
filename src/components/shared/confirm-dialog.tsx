@@ -76,7 +76,7 @@ export function ConfirmDialog({
           </Dialog.Title>
 
           {description ? (
-            <Dialog.Description className="mt-1 font-serif text-[17px] leading-[1.4] text-muted">
+            <Dialog.Description className="mt-1 font-sans text-[15px] leading-[1.4] text-muted">
               {description}
             </Dialog.Description>
           ) : null}

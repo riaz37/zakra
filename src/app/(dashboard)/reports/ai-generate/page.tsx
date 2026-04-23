@@ -113,7 +113,7 @@ export default function AIGeneratePage() {
         </h1>
         <p
           className="mt-1 text-[15px]"
-          style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+          style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
         >
           Describe the report you want and AI will generate it from your data.
         </p>
@@ -143,7 +143,7 @@ export default function AIGeneratePage() {
                 style={{
                   background: 'var(--color-background)',
                   borderColor: 'var(--color-border)',
-                  fontFamily: 'var(--font-serif)',
+                  fontFamily: 'var(--font-sans)',
                   color: 'var(--color-foreground)',
                   lineHeight: 1.5,
                 }}
@@ -167,7 +167,7 @@ export default function AIGeneratePage() {
                 style={{
                   background: 'var(--color-background)',
                   borderColor: 'var(--color-border)',
-                  fontFamily: 'var(--font-serif)',
+                  fontFamily: 'var(--font-sans)',
                   color: 'var(--color-foreground)',
                 }}
               />
@@ -206,7 +206,7 @@ export default function AIGeneratePage() {
             {formError && (
               <p
                 className="text-[13px]"
-                style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-error)' }}
+                style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-error)' }}
               >
                 {formError}
               </p>
@@ -255,7 +255,7 @@ export default function AIGeneratePage() {
                 {query && (
                   <p
                     className="mt-1 text-[13px]"
-                    style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+                    style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
                   >
                     {query.length > 80 ? `${query.slice(0, 80)}…` : query}
                   </p>
@@ -307,7 +307,7 @@ export default function AIGeneratePage() {
             >
               <p
                 className="text-[14px]"
-                style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-error)' }}
+                style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-error)' }}
               >
                 {state.error.message}
               </p>
@@ -328,7 +328,7 @@ export default function AIGeneratePage() {
               </p>
               <p
                 className="text-[15px] leading-relaxed"
-                style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-foreground)' }}
+                style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-foreground)' }}
               >
                 {state.executiveSummary}
               </p>

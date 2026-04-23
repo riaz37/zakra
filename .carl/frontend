@@ -3,11 +3,11 @@
 FRONTEND_RULE_0=Components: prefer shadcn/ui primitives in src/components/ui. Add new shadcn components via `pnpm dlx shadcn@latest add <component>` — don't hand-roll Radix wrappers.
 FRONTEND_RULE_1=Use the cn() helper from src/lib/utils (clsx + tailwind-merge) for all conditional class merging.
 FRONTEND_RULE_2=Tailwind v4: configuration is CSS-first (in src/app/globals.css with @theme), not tailwind.config.js. Read globals.css before adding design tokens.
-FRONTEND_RULE_3=Follow DESIGN.md for color, type, spacing, radius, motion. Cursor-inspired warm palette — never introduce cold grays/blues without checking the system.
+FRONTEND_RULE_3=Follow .impeccable.md for color, type, spacing, radius, motion. Warm dark palette — #1a1916→#35332e surface scale, Supabase green accent (#3ecf8e), Archivo/JetBrains Mono. Dark-only. DESIGN.md is deleted and superseded by .impeccable.md.
 FRONTEND_RULE_4=Theming via next-themes. Use semantic tokens (bg-background, text-foreground, etc.) not raw colors.
 FRONTEND_RULE_5=Icons: lucide-react. Match icon stroke/size to surrounding type.
 FRONTEND_RULE_6=Toasts: use sonner (already wired). Don't add a second notification library.
 FRONTEND_RULE_7=Tables: @tanstack/react-table — use column defs and the existing shadcn data-table pattern, not custom table markup.
 FRONTEND_RULE_8=Charts: recharts. Use design tokens for fills/strokes.
 FRONTEND_RULE_9=Server vs Client components: default to Server Components. Add 'use client' only when you need state, effects, or browser APIs (auth/store/forms typically need it).
-FRONTEND_RULE_10=Avoid AI-slop aesthetics: no gradient-soup, no rainbow shadows, no random emoji icons, no purple-everywhere. Stay disciplined to DESIGN.md.
+FRONTEND_RULE_10=Avoid AI-slop aesthetics: no gradient-soup, no rainbow shadows, no random emoji icons, no purple-everywhere. Stay disciplined to .impeccable.md.

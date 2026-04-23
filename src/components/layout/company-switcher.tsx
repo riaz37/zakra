@@ -58,14 +58,20 @@ export function CompanySwitcher({ collapsed = false }: CompanySwitcherProps) {
         }}
       >
         <SelectTrigger
-          className="w-full"
+          className="w-full truncate"
           disabled={isLoading}
         >
           <SelectValue placeholder="Select a company…">
             {selectedCompany?.name}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent
+          align="start"
+          side="bottom"
+          sideOffset={4}
+          alignItemWithTrigger={false}
+          className="w-[var(--anchor-width)] min-w-[200px]"
+        >
           {companies.map((company) => (
             <SelectItem key={company.id} value={company.id}>
               {company.name}

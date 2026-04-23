@@ -16,12 +16,12 @@ export interface AIPipelineTimelineProps {
 }
 
 const STEP_COLORS: Record<PipelineStep['type'], string> = {
-  thinking: '#dfa88f',
-  search: '#9fc9a2',
-  query: '#9fbbe0',
-  write: '#c0a8dd',
-  complete: '#1f8a65',
-  error: '#cf2d56',
+  thinking: 'var(--color-thinking)',
+  search: 'var(--color-grep)',
+  query: 'var(--color-read)',
+  write: 'var(--color-edit)',
+  complete: 'var(--color-success)',
+  error: 'var(--color-error)',
 };
 
 function formatElapsed(ms: number): string {
@@ -65,7 +65,7 @@ function StepDot({ step }: { step: PipelineStep }) {
   return (
     <span
       className="mt-[3px] flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full"
-      style={{ background: '#cf2d56' }}
+      style={{ background: 'var(--color-error)' }}
     >
       <X className="h-[9px] w-[9px] text-white" strokeWidth={3} />
     </span>
@@ -88,7 +88,7 @@ export function AIPipelineTimeline({ steps, className }: AIPipelineTimelineProps
             className="flex items-start gap-3 rounded px-2 py-[6px] transition-colors"
             style={
               step.status === 'active'
-                ? { background: 'rgba(235,234,229,0.5)' }
+                ? { background: 'var(--color-surface-200)' }
                 : undefined
             }
           >

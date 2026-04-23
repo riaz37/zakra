@@ -17,6 +17,7 @@ import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
 import { PageHeader } from '@/components/shared/page-header';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
+import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 
 import {
@@ -25,142 +26,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
-// ─── Role type badge ──────────────────────────────────────────────────────────
-
-function RoleTypeBadge({ type }: { type: Role['role_type'] }) {
-  const label =
-    type === 'system'
-      ? 'System'
-      : type === 'company_default'
-      ? 'Company Default'
-      : 'Custom';
-  const classes =
-    type === 'system'
-      ? 'bg-[rgba(159,187,224,0.2)] text-[#4a7fa8]'
-      : type === 'company_default'
-      ? 'bg-[rgba(31,138,101,0.1)] text-[#1a7855]'
-      : 'bg-[rgba(38,37,30,0.06)] text-muted';
-
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 font-sans text-[11px] font-medium leading-none ${classes}`}
-    >
-      {label}
-    </span>
-  );
-}
-
-// ─── Role form ────────────────────────────────────────────────────────────────
-
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-interface RoleFormData {
-  name: string;
-  slug: string;
-  description: string;
-}
-
-function RoleForm({
-  initial,
-  onSubmit,
-  isPending,
-  onCancel,
-  submitLabel = 'Create Role',
-}: {
-  initial?: Partial<RoleFormData>;
-  onSubmit: (data: RoleFormData) => void;
-  isPending: boolean;
-  onCancel: () => void;
-  submitLabel?: string;
-}) {
-  const [name, setName] = useState(initial?.name ?? '');
-  const [slug, setSlug] = useState(initial?.slug ?? '');
-  const [description, setDescription] = useState(initial?.description ?? '');
-  const [nameError, setNameError] = useState('');
-
-  function handleNameChange(value: string) {
-    setName(value);
-    if (!initial?.slug) {
-      setSlug(slugify(value));
-    }
-    if (nameError && value.trim()) setNameError('');
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim()) {
-      setNameError('Role name is required.');
-      return;
-    }
-    onSubmit({ name: name.trim(), slug: slug || slugify(name), description });
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="role-name">Name *</Label>
-        <Input
-          id="role-name"
-          value={name}
-          onChange={(e) => handleNameChange(e.target.value)}
-          placeholder="Data Viewer"
-          aria-invalid={!!nameError}
-        />
-        {nameError ? (
-          <p className="font-sans text-[12px] text-error">{nameError}</p>
-        ) : null}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="role-slug">Slug</Label>
-        <Input
-          id="role-slug"
-          value={slug}
-          onChange={(e) => setSlug(e.target.value)}
-          placeholder="data-viewer"
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="role-description">Description</Label>
-        <Input
-          id="role-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Optional description of this role's permissions"
-        />
-      </div>
-
-      <div className="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg border border-border bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground transition-colors hover:bg-surface-400 disabled:opacity-50"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-foreground px-4 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
-        >
-          {isPending ? 'Saving…' : submitLabel}
-        </button>
-      </div>
-    </form>
-  );
-}
-
-// ─── Page ────────────────────────────────────────────────────────────────────
+import { RoleTypeBadge } from '@/components/features/roles/role-type-badge';
+import { RoleForm, type RoleFormData } from '@/components/features/roles/role-form';
 
 export default function RolesPage() {
   const [page, setPage] = useState(0);
@@ -228,7 +96,7 @@ export default function RolesPage() {
       cell: ({ row }) => {
         const isSystem = row.original.role_type === 'system';
         return (
-          <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
             <button
               type="button"
               onClick={(e) => {
@@ -237,7 +105,7 @@ export default function RolesPage() {
               }}
               disabled={isSystem}
               aria-label={`Edit ${row.original.name}`}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-foreground focus-visible:outline-none disabled:opacity-30 disabled:cursor-not-allowed"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-foreground focus-visible:outline-none disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <Pencil aria-hidden size={13} strokeWidth={1.75} />
             </button>
@@ -249,7 +117,7 @@ export default function RolesPage() {
               }}
               disabled={isSystem}
               aria-label={`Delete ${row.original.name}`}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-error focus-visible:outline-none disabled:opacity-30 disabled:cursor-not-allowed"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-error focus-visible:outline-none disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <Trash2 aria-hidden size={13} strokeWidth={1.75} />
             </button>
@@ -305,16 +173,7 @@ export default function RolesPage() {
       />
 
       {isError ? (
-        <div className="rounded-lg border border-border bg-background px-4 py-8 text-center">
-          <p className="font-sans text-[14px] text-error">Failed to load roles.</p>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="mt-3 font-sans text-[14px] text-muted underline hover:text-foreground"
-          >
-            Try again
-          </button>
-        </div>
+        <ErrorState title="Failed to load roles" onRetry={() => refetch()} />
       ) : items.length === 0 && !isLoading ? (
         <EmptyState
           icon={Shield}
@@ -346,7 +205,6 @@ export default function RolesPage() {
         />
       )}
 
-      {/* Create dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -361,7 +219,6 @@ export default function RolesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit dialog */}
       <Dialog open={!!editTarget} onOpenChange={(open) => !open && setEditTarget(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -383,7 +240,6 @@ export default function RolesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete confirm */}
       <ConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}

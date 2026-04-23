@@ -591,11 +591,7 @@ export function ChatInput({
       )}
 
       <div
-        className="flex flex-col rounded-[var(--radius-xl)]"
-        style={{
-          background: "var(--color-surface-100)",
-          border: "1px solid var(--color-border-medium)",
-        }}
+        className="flex flex-col rounded-[var(--radius-xl)] border border-border-medium bg-surface-100 transition-colors duration-150 focus-within:border-border-strong"
       >
         {/* Textarea */}
         <textarea
@@ -607,7 +603,7 @@ export function ChatInput({
           placeholder={placeholder}
           disabled={disabled || isStreaming}
           rows={1}
-          className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-[15px] outline-none disabled:opacity-50"
+          className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-[15px] outline-none focus-visible:shadow-none disabled:opacity-50"
           style={{
             fontFamily: "var(--font-sans)",
             color: "var(--color-foreground)",

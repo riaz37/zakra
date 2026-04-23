@@ -99,8 +99,9 @@ export const ROUTES = {
 
 export type RequiredRole = 'admin' | 'super_admin';
 
-// Navigation Items — Chat is the home (/); admin-only items gated by requiredRole
+// Navigation Items — Overview is the home (/); admin-only items gated by requiredRole
 export const NAV_ITEMS = [
+  { label: 'Overview', path: ROUTES.DASHBOARD, icon: 'LayoutDashboard' },
   { label: 'Chat', path: ROUTES.CHAT, icon: 'MessageCircle' },
   { label: 'Companies', path: ROUTES.COMPANIES, icon: 'Building2', requiredRole: 'admin' as RequiredRole },
   { label: 'Users', path: ROUTES.USERS, icon: 'Users', requiredRole: 'admin' as RequiredRole },

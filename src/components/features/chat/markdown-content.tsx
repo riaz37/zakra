@@ -3,9 +3,8 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
-import { normalizeMarkdown } from '@/components/features/chat/markdown-content';
 
-const streamingComponents: Components = {
+export const markdownComponents: Components = {
   p: ({ children }) => (
     <p className="mb-3 font-sans text-[14px] leading-[1.7] text-foreground last:mb-0">
       {children}
@@ -66,46 +65,48 @@ const streamingComponents: Components = {
   a: ({ href, children }) => (
     <a
       href={href}
-      className="text-accent underline underline-offset-2 hover:opacity-80"
+      className="text-accent underline underline-offset-2 transition-opacity hover:opacity-80"
       target="_blank"
       rel="noopener noreferrer"
     >
       {children}
     </a>
   ),
+  table: ({ children }) => (
+    <div className="my-3 overflow-x-auto rounded-lg border border-border">
+      <table className="w-full text-[13px]">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => (
+    <thead className="border-b border-border bg-surface-300">{children}</thead>
+  ),
+  th: ({ children }) => (
+    <th className="px-3 py-2 text-left font-sans text-[12px] font-medium text-muted">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="border-b border-border px-3 py-2 font-sans last:border-0">
+      {children}
+    </td>
+  ),
 };
 
-export interface StreamingTextBlockProps {
-  text: string;
-  isStreaming?: boolean;
-  className?: string;
+export function normalizeMarkdown(text: string): string {
+  return text
+    .split('\n')
+    .map((line) => (line.startsWith('• ') ? `- ${line.slice(2)}` : line))
+    .join('\n');
 }
 
-export function StreamingTextBlock({
-  text,
-  isStreaming = false,
-  className,
-}: StreamingTextBlockProps) {
-  if (!text && isStreaming) {
-    return (
-      <span
-        className="inline-block h-[15px] w-[2px] animate-pulse rounded-sm bg-muted align-middle"
-        aria-label="Generating response"
-      />
-    );
-  }
+interface MarkdownContentProps {
+  children: string;
+}
 
+export function MarkdownContent({ children }: MarkdownContentProps) {
   return (
-    <div className={className}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={streamingComponents}>
-        {normalizeMarkdown(text)}
-      </ReactMarkdown>
-      {isStreaming && (
-        <span
-          className="mt-1 inline-block h-[14px] w-[2px] animate-pulse rounded-sm bg-accent/50 align-middle"
-          aria-hidden
-        />
-      )}
-    </div>
+    <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+      {normalizeMarkdown(children)}
+    </ReactMarkdown>
   );
 }

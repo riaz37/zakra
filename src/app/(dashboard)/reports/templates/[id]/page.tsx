@@ -89,7 +89,7 @@ export default function EditTemplatePage() {
   const inputStyle = {
     background: 'var(--color-background)',
     borderColor: 'var(--color-border)',
-    fontFamily: 'var(--font-serif)',
+    fontFamily: 'var(--font-sans)',
     color: 'var(--color-foreground)',
   };
 
@@ -105,7 +105,7 @@ export default function EditTemplatePage() {
   if (!template) {
     return (
       <div className="mx-auto max-w-[720px] px-6 py-8">
-        <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}>
+        <p style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}>
           Template not found.
         </p>
       </div>
@@ -276,7 +276,7 @@ export default function EditTemplatePage() {
             style={{
               background: 'rgba(207,45,86,0.06)',
               borderColor: 'rgba(207,45,86,0.2)',
-              fontFamily: 'var(--font-serif)',
+              fontFamily: 'var(--font-sans)',
               color: 'var(--color-error)',
             }}
           >

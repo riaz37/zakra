@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
@@ -41,15 +42,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-[340px] animate-fade-up px-6 py-8">
+    <div className="w-full max-w-[340px] animate-fade-up rounded-xl border border-border bg-surface-100 px-6 py-8">
       {/* Brand */}
       <div className="mb-8">
-        <h1 className="font-sans text-[18px] font-semibold tracking-[-0.36px] text-foreground">
-          ESAP<span className="text-accent">-</span>KB
-        </h1>
-        <p className="mt-1 font-sans text-caption text-muted">
-          Admin console
-        </p>
+        <div className="mb-3 flex items-center gap-2.5">
+          <Image
+            src="/logo/esaplogo.webp"
+            alt="ESAP"
+            width={32}
+            height={32}
+            priority
+          />
+          <Image
+            src="/logo/esaplogo.svg"
+            alt="ESAP employer solutions"
+            width={65}
+            height={21}
+            priority
+          />
+        </div>
+        <p className="font-sans text-caption text-muted">Admin console</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>

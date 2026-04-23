@@ -272,12 +272,18 @@ export default function ReportViewerPage() {
                             </tr>
                           </thead>
                           <tbody>
-                            {(section.query_result.rows as unknown[][]).slice(0, 20).map((row, i) => (
+                            {(section.query_result.rows as unknown[]).slice(0, 20).map((row, i) => {
+                              const cells = Array.isArray(row)
+                                ? row
+                                : section.query_result!.columns.map(
+                                    (col) => (row as Record<string, unknown>)[col],
+                                  );
+                              return (
                               <tr
                                 key={i}
                                 style={{ borderBottom: '1px solid var(--color-border)' }}
                               >
-                                {row.map((cell, colIdx) => (
+                                {cells.map((cell, colIdx) => (
                                   <td
                                     key={colIdx}
                                     className="px-4 py-2"
@@ -290,7 +296,8 @@ export default function ReportViewerPage() {
                                   </td>
                                 ))}
                               </tr>
-                            ))}
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>

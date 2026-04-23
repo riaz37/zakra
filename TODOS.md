@@ -18,6 +18,22 @@
 **Context:** Use axe DevTools browser extension for automated pass, then manual keyboard + VoiceOver/NVDA walk-through of login → dashboard → users → connections → chat. Doc findings here, fix in follow-up PR.
 **Depends on:** design-contract-repair plan complete (tokens land so focus rings are visible to test).
 
+### Error states on admin data tables
+**What:** Add error states to all admin data tables when TanStack Query fetch fails: users, companies, db-connections, roles, reports. Currently a failed fetch leaves the table in perpetual loading or blank state with no user feedback.
+**Why:** Users hitting a 5xx or network error see nothing actionable. A warm error card with retry action (using `border-error/20 bg-error/5` token pattern already used in forms) gives users a recovery path.
+**Pros:** Prevents "is the page broken or loading?" confusion. Consistent with error state pattern already in login form.
+**Cons:** Need to add error handling to every DataTable usage (5-6 pages). Low risk, mechanical.
+**Context:** Use the shared `EmptyState` component pattern (already in `src/components/shared/`) or a new `ErrorState` shared component. Pattern: `{ isError, error, refetch }` from `useQuery`. Surface from `plan-design-review` on 2026-04-22.
+**Depends on:** None.
+
+### Reports pages design audit
+**What:** Full design review of all `/reports/*` sub-routes: history list, templates list, template detail, template new, AI generate flow, report viewer.
+**Why:** These pages were not covered in the 2026-04-22 design review. The report viewer uses a sandboxed iframe (existing decision logged in Serena memory). The other pages — template creation, AI generate flow — are unknown state and may have inconsistencies with the design system.
+**Pros:** Ensures the entire reporting surface follows DESIGN.md and proper UX patterns.
+**Cons:** ~1-2 hours. Needs dev server running for visual review.
+**Context:** Surfaced from `plan-design-review` on 2026-04-22. Report viewer iframe pattern is correct per user preference (sandboxed, prevents style bleed). Audit the other pages for inline style usage, interaction states, and type scale compliance.
+**Depends on:** Chat page inline style migration complete (establishes the pattern to check against).
+
 ## Bugs (surfaced by E2E baseline)
 
 ### API contract mismatches on /dashboard and /chat

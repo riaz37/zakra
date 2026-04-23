@@ -41,7 +41,7 @@ function TemplateRow({
         {template.description && (
           <p
             className="mt-0.5 text-[13px]"
-            style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+            style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
           >
             {template.description}
           </p>
@@ -159,7 +159,7 @@ export default function ReportTemplatesPage() {
           </h1>
           <p
             className="mt-1 text-[15px]"
-            style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+            style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
           >
             Define reusable templates for AI-generated reports.
           </p>
@@ -209,7 +209,7 @@ export default function ReportTemplatesPage() {
           </h2>
           <p
             className="mt-2 max-w-[340px] text-[15px]"
-            style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
+            style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
           >
             Create templates to standardize your AI-generated reports.
           </p>

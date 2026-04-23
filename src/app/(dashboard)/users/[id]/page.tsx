@@ -47,10 +47,10 @@ function UserTypeBadge({ type }: { type: string }) {
     type === 'super_admin' ? 'Super Admin' : type === 'admin' ? 'Admin' : 'Regular';
   const classes =
     type === 'super_admin'
-      ? 'bg-[rgba(192,133,50,0.1)] text-[#c08532]'
+      ? 'bg-[rgba(229,165,10,0.12)] text-gold border border-[rgba(229,165,10,0.2)]'
       : type === 'admin'
-      ? 'bg-[rgba(31,138,101,0.1)] text-[#1a7855]'
-      : 'bg-[rgba(38,37,30,0.06)] text-muted';
+      ? 'bg-[rgba(62,207,142,0.12)] text-accent border border-[rgba(62,207,142,0.2)]'
+      : 'bg-surface-300 text-muted border border-border';
 
   return (
     <span
@@ -192,7 +192,7 @@ export default function UserDetailPage() {
             await assignMutation.mutateAsync({ role_ids: remaining });
           }}
           aria-label={`Remove role ${row.original.name}`}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-error focus-visible:outline-none"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-error focus-visible:outline-none"
         >
           <X aria-hidden size={13} strokeWidth={1.75} />
         </button>

@@ -203,7 +203,7 @@ function SchemaExplorerTab({ connectionId }: SchemaExplorerTabProps) {
 
   if (tables.length === 0) {
     return (
-      <p className="font-serif text-[15px] text-muted">
+      <p className="font-sans text-[15px] text-muted">
         Schema loading… Run schema discovery to populate table structure.
       </p>
     );
@@ -236,7 +236,7 @@ function SchemaExplorerTab({ connectionId }: SchemaExplorerTabProps) {
                   {table.schema_name}.{table.table_name}
                 </span>
                 {table.display_name && table.display_name !== table.table_name && (
-                  <span className="font-serif text-[13px] text-muted">
+                  <span className="font-sans text-[13px] text-muted">
                     {table.display_name}
                   </span>
                 )}
@@ -279,7 +279,7 @@ function SchemaExplorerTab({ connectionId }: SchemaExplorerTabProps) {
                           >
                             {col.name}
                             {col.is_primary_key && (
-                              <span className="ml-1.5 text-[10px] text-[#c08532]">PK</span>
+                              <span className="ml-1.5 text-[10px] text-gold">PK</span>
                             )}
                           </span>
                         </td>
@@ -443,7 +443,7 @@ function RuleDialog({
                 placeholder="Describe the business rule in plain language…"
                 className={cn(
                   'w-full resize-none rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-serif text-[14px] text-foreground outline-none placeholder:text-muted/40',
+                  'font-sans text-[14px] text-foreground outline-none placeholder:text-muted/40',
                   'transition-colors focus:border-border-medium',
                   errors.rule_text && 'border-error',
                 )}
@@ -581,7 +581,7 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
                       {rule.scope_type}
                     </span>
                   </div>
-                  <p className="mt-1 font-serif text-[13px] text-muted line-clamp-2">
+                  <p className="mt-1 font-sans text-[13px] text-muted line-clamp-2">
                     {rule.rule_text}
                   </p>
                 </div>
@@ -682,7 +682,7 @@ export default function DbConnectionDetailPage({ params }: DbConnectionDetailPag
   if (!connection) {
     return (
       <div className="p-6 lg:p-8">
-        <p className="font-serif text-[15px] text-muted">Connection not found.</p>
+        <p className="font-sans text-[15px] text-muted">Connection not found.</p>
       </div>
     );
   }

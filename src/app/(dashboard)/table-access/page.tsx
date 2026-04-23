@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Table } from 'lucide-react';
+import { Columns, Table } from 'lucide-react';
 
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import {
@@ -14,6 +14,7 @@ import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PermissionMatrix } from '@/components/shared/permission-matrix';
 import type { ColumnPermissionRow } from '@/components/shared/permission-matrix';
+import { SearchInput } from '@/components/shared/search-input';
 import { cn } from '@/lib/utils';
 import type { ManagedTable, ColumnPermission, MaskPattern, ColumnPermissionGrant } from '@/types';
 
@@ -25,44 +26,97 @@ interface TableListPanelProps {
   onSelect: (tableName: string) => void;
 }
 
-function TableListPanel({
-  tables,
-  selectedTableName,
-  onSelect,
-}: TableListPanelProps) {
+function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelProps) {
+  const [search, setSearch] = useState('');
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return tables;
+    const q = search.toLowerCase();
+    return tables.filter(
+      (t) =>
+        t.table_name.toLowerCase().includes(q) ||
+        t.display_name?.toLowerCase().includes(q),
+    );
+  }, [tables, search]);
+
   return (
-    <aside className="w-60 shrink-0 rounded-lg border border-border bg-background overflow-hidden">
+    <aside className="sticky top-6 lg:top-8 flex w-56 shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-surface-200 max-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-4rem)]">
+      {/* Header */}
       <div className="border-b border-border px-3 py-2.5">
-        <p className="font-sans text-[11px] font-medium uppercase tracking-wide text-muted">
+        <p className="font-sans text-[11px] font-medium uppercase tracking-wide text-muted/60">
           Tables
+          <span className="ml-1.5 font-mono text-[10px] text-muted/40">{tables.length}</span>
         </p>
       </div>
-      <ul role="listbox" aria-label="Managed tables">
-        {tables.map((table) => (
-          <li key={table.table_name} role="option" aria-selected={selectedTableName === table.table_name}>
-            <button
-              type="button"
-              onClick={() => onSelect(table.table_name)}
-              className={cn(
-                'flex w-full flex-col items-start gap-0.5 px-3 py-2.5 text-left',
-                'transition-colors focus-visible:outline-none focus-visible:bg-surface-300',
-                selectedTableName === table.table_name
-                  ? 'bg-surface-300 text-foreground'
-                  : 'text-muted hover:bg-surface-200 hover:text-foreground',
-              )}
-            >
-              <span
-                className="font-mono text-[12px] font-medium"
-                style={{ fontFamily: 'var(--font-mono)' }}
-              >
-                {table.table_name}
-              </span>
-              {table.display_name && table.display_name !== table.table_name && (
-                <span className="font-sans text-[11px] text-muted">{table.display_name}</span>
-              )}
-            </button>
+
+      {/* Search */}
+      {tables.length > 5 && (
+        <div className="border-b border-border p-2">
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder="Filter tables…"
+            ariaLabel="Filter tables"
+            debounceMs={150}
+          />
+        </div>
+      )}
+
+      {/* Table list */}
+      <ul
+        role="listbox"
+        aria-label="Managed tables"
+        className="flex-1 overflow-y-auto"
+      >
+        {filtered.length === 0 ? (
+          <li className="px-3 py-4 text-center font-sans text-[12px] text-muted/50">
+            No tables match
           </li>
-        ))}
+        ) : (
+          filtered.map((table) => {
+            const isActive = selectedTableName === table.table_name;
+            return (
+              <li
+                key={table.table_name}
+                role="option"
+                aria-selected={isActive}
+              >
+                <button
+                  type="button"
+                  onClick={() => onSelect(table.table_name)}
+                  className={cn(
+                    'flex w-full items-start justify-between gap-2 px-3 py-2.5 text-left',
+                    'transition-colors focus-visible:bg-surface-400 focus-visible:outline-none',
+                    isActive
+                      ? 'bg-surface-400 text-foreground'
+                      : 'text-muted hover:bg-surface-300 hover:text-foreground',
+                  )}
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-mono text-[12px] font-medium">
+                      {table.table_name}
+                    </span>
+                    {table.display_name && table.display_name !== table.table_name && (
+                      <span className="mt-0.5 block truncate font-sans text-[11px] text-muted/70">
+                        {table.display_name}
+                      </span>
+                    )}
+                  </span>
+                  {table.columns.length > 0 && (
+                    <span
+                      className={cn(
+                        'mt-0.5 shrink-0 font-mono text-[10px]',
+                        isActive ? 'text-muted/60' : 'text-muted/40',
+                      )}
+                    >
+                      {table.columns.length}
+                    </span>
+                  )}
+                </button>
+              </li>
+            );
+          })
+        )}
       </ul>
     </aside>
   );
@@ -82,7 +136,6 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
 
   const bulkGrant = useBulkGrantPermissions(table.table_name, table.schema_name);
 
-  // Build initial permissions map from existing grants
   type PermissionMap = Record<
     string,
     { permission: ColumnPermission; maskPattern?: MaskPattern | null }
@@ -90,13 +143,18 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
 
   const grants: ColumnPermissionGrant[] = Array.isArray(permissionsData) ? permissionsData : [];
 
-  const initialPermissions: PermissionMap = {};
-  for (const grant of grants) {
-    initialPermissions[grant.column_name] = {
-      permission: grant.permission,
-      maskPattern: grant.mask_pattern,
-    };
-  }
+  const initialPermissions = useMemo<PermissionMap>(() => {
+    const map: PermissionMap = {};
+    for (const grant of grants) {
+      map[grant.column_name] = {
+        permission: grant.permission,
+        maskPattern: grant.mask_pattern,
+      };
+    }
+    return map;
+  // grants reference changes when permissionsData changes; stringify is not needed
+  // because TanStack Query returns a stable reference on cache hit
+  }, [grants]);
 
   async function handleSave(rows: ColumnPermissionRow[]) {
     try {
@@ -115,37 +173,48 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
     }
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex-1">
-        <div className="animate-pulse space-y-2">
+  return (
+    <div className="min-w-0 flex-1">
+      {/* Table header */}
+      <div className="mb-5">
+        <div className="flex items-baseline gap-2.5">
+          <h2 className="font-sans text-[17px] font-semibold tracking-[-0.2px] text-foreground">
+            {table.display_name || table.table_name}
+          </h2>
+          <span className="font-mono text-[12px] text-muted/60">
+            {table.schema_name}.{table.table_name}
+          </span>
+        </div>
+
+        <div className="mt-1.5 flex items-center gap-3">
+          {table.description && (
+            <p className="font-sans text-[13px] text-muted/70">{table.description}</p>
+          )}
+          <div className="flex items-center gap-1 font-sans text-[12px] text-muted/50">
+            <Columns size={12} strokeWidth={1.75} aria-hidden />
+            {table.columns.length} column{table.columns.length !== 1 ? 's' : ''}
+          </div>
+          {!table.is_active && (
+            <span className="rounded bg-warning-bg px-1.5 py-0.5 font-sans text-[11px] text-warning">
+              Inactive
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Loading skeleton */}
+      {isLoading ? (
+        <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <div
               key={i}
-              className="h-10 rounded-lg border border-border bg-surface-300"
+              className="h-10 animate-pulse rounded-lg border border-border bg-surface-300"
               aria-hidden="true"
             />
           ))}
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex-1 min-w-0">
-      <div className="mb-4 flex items-baseline gap-2">
-        <h2 className="font-sans text-[15px] font-medium text-foreground">
-          {table.display_name || table.table_name}
-        </h2>
-        <span
-          className="font-mono text-[12px] text-muted"
-          style={{ fontFamily: 'var(--font-mono)' }}
-        >
-          {table.schema_name}.{table.table_name}
-        </span>
-      </div>
-      {table.columns.length === 0 ? (
-        <p className="font-serif text-[14px] text-muted">
+      ) : table.columns.length === 0 ? (
+        <p className="font-sans text-[14px] text-muted/60">
           No columns discovered for this table.
         </p>
       ) : (
@@ -167,17 +236,18 @@ export default function TableAccessPage() {
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
 
   const { data, isLoading } = useManagedTables(
-    companyId ? { company_id: companyId } : undefined,
+    companyId ? { company_id: companyId, page_size: 500 } : undefined,
   );
 
   const tables: ManagedTable[] = data?.items ?? [];
-
   const selectedTable = tables.find((t) => t.table_name === selectedTableName) ?? null;
 
-  // Auto-select first table when data loads
-  if (!selectedTableName && tables.length > 0) {
-    setSelectedTableName(tables[0].table_name);
-  }
+  // Auto-select first table once data arrives — must be in useEffect, not render.
+  useEffect(() => {
+    if (!selectedTableName && tables.length > 0) {
+      setSelectedTableName(tables[0].table_name);
+    }
+  }, [tables, selectedTableName]);
 
   return (
     <div className="p-6 lg:p-8">
@@ -185,12 +255,12 @@ export default function TableAccessPage() {
 
       {isLoading && (
         <div className="flex gap-4">
-          <div className="animate-pulse w-60 shrink-0 rounded-lg border border-border bg-surface-300 h-64" />
+          <div className="h-64 w-56 shrink-0 animate-pulse rounded-xl border border-border bg-surface-300" />
           <div className="flex-1 space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="animate-pulse h-10 rounded-lg border border-border bg-surface-300"
+                className="h-10 animate-pulse rounded-lg border border-border bg-surface-300"
                 aria-hidden="true"
               />
             ))}
@@ -207,7 +277,7 @@ export default function TableAccessPage() {
       )}
 
       {!isLoading && tables.length > 0 && (
-        <div className="flex gap-4 items-start">
+        <div className="flex items-start gap-5">
           <TableListPanel
             tables={tables}
             selectedTableName={selectedTableName}
@@ -215,13 +285,10 @@ export default function TableAccessPage() {
           />
 
           {selectedTable ? (
-            <PermissionsPanel
-              key={selectedTable.table_name}
-              table={selectedTable}
-            />
+            <PermissionsPanel key={selectedTable.table_name} table={selectedTable} />
           ) : (
-            <div className="flex-1 flex items-center justify-center py-16">
-              <p className="font-serif text-[15px] text-muted">
+            <div className="flex flex-1 items-center justify-center py-16">
+              <p className="font-sans text-[14px] text-muted/60">
                 Select a table to manage column permissions.
               </p>
             </div>

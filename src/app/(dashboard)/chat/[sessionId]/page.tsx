@@ -1,303 +1,24 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useRef, useCallback } from 'react';
+import { useParams } from 'next/navigation';
 import { useChatStream } from '@/hooks/useChatStream';
 import { useChatMessages } from '@/hooks/useChatMessages';
-import { useChatSessions, useCreateSession } from '@/hooks/useChatSessions';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
-import { StreamingTextBlock } from '@/components/shared/streaming-text-block';
 import { ChatInput } from '@/components/ui/chat-input';
-import { toast } from 'sonner';
-import type { ChatMessage, MessageContentBlock } from '@/types/chat';
-import { MessageSquarePlus, ChevronDown, ChevronRight } from 'lucide-react';
-
-// ── Step type colors ───────────────────────────────────────────────────────
-
-function stepColor(name: string): string {
-  const lower = name.toLowerCase();
-  if (lower.includes('think') || lower.includes('plan') || lower.includes('reason')) {
-    return '#dfa88f';
-  }
-  if (lower.includes('search') || lower.includes('grep') || lower.includes('find')) {
-    return '#9fc9a2';
-  }
-  if (lower.includes('read') || lower.includes('query') || lower.includes('fetch')) {
-    return '#9fbbe0';
-  }
-  if (lower.includes('write') || lower.includes('edit') || lower.includes('generat')) {
-    return '#c0a8dd';
-  }
-  return '#dfa88f';
-}
-
-// ── Query result block (table + collapsible SQL) ───────────────────────────
-
-function QueryResultBlock({ qr }: { qr: NonNullable<import('@/types/chat').MessageContentBlock['query_result']> }) {
-  const [sqlOpen, setSqlOpen] = useState(false);
-
-  return (
-    <div
-      className="mt-3 overflow-hidden rounded-[var(--radius-lg)] border"
-      style={{ borderColor: 'var(--color-border)' }}
-    >
-      {/* Header row */}
-      <div
-        className="flex items-center justify-between px-3 py-2"
-        style={{
-          background: 'var(--color-surface-300)',
-          borderBottom: '1px solid var(--color-border)',
-        }}
-      >
-        <span
-          className="text-[11px] uppercase"
-          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
-        >
-          {qr.row_count} rows
-          {qr.execution_time_ms != null && ` · ${(qr.execution_time_ms / 1000).toFixed(2)}s`}
-        </span>
-        {qr.sql && (
-          <button
-            onClick={() => setSqlOpen((o) => !o)}
-            className="flex items-center gap-1 text-[11px] transition-opacity hover:opacity-80"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
-          >
-            {sqlOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-            SQL
-            {qr.confidence != null && (
-              <span className="ml-1 opacity-60">{Math.round(qr.confidence * 100)}%</span>
-            )}
-          </button>
-        )}
-      </div>
-
-      {/* Collapsible SQL panel */}
-      {sqlOpen && qr.sql && (
-        <div style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <pre
-            className="overflow-x-auto p-3 text-[12px]"
-            style={{
-              fontFamily: 'var(--font-mono)',
-              background: 'var(--color-surface-400)',
-              color: 'var(--color-foreground)',
-              lineHeight: 1.6,
-            }}
-          >
-            {qr.sql}
-          </pre>
-          {qr.explanation && (
-            <p
-              className="px-3 pb-2 text-[12px]"
-              style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
-            >
-              {qr.explanation}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Data table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-[12px]">
-          <thead>
-            <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
-              {qr.columns.map((col) => (
-                <th
-                  key={col}
-                  className="px-3 py-2 text-left font-medium"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
-                >
-                  {col}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {qr.rows.slice(0, 10).map((row, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                {qr.columns.map((col) => (
-                  <td
-                    key={col}
-                    className="px-3 py-2"
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      color: 'var(--color-foreground)',
-                    }}
-                  >
-                    {String(row[col] ?? '')}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// ── Message content block renderer ────────────────────────────────────────
-
-function ContentBlockView({ block }: { block: MessageContentBlock }) {
-  if (block.type === 'text' && block.text) {
-    return (
-      <p
-        className="text-[16px] leading-relaxed"
-        style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-foreground)' }}
-      >
-        {block.text}
-      </p>
-    );
-  }
-
-  if (block.type === 'query_result' && block.query_result) {
-    return <QueryResultBlock qr={block.query_result} />;
-  }
-
-  if (block.type === 'report_link' && block.report) {
-    return (
-      <a
-        href={block.report.page_url}
-        className="mt-2 inline-flex items-center gap-2 rounded-[var(--radius-md)] border px-3 py-2 text-[13px] transition-colors hover:opacity-80"
-        style={{
-          background: 'var(--color-surface-300)',
-          borderColor: 'var(--color-border)',
-          color: 'var(--color-foreground)',
-          fontFamily: 'var(--font-display)',
-        }}
-      >
-        {block.report.title ?? 'View Report'} →
-      </a>
-    );
-  }
-
-  if (block.type === 'search_result' && block.search_results) {
-    return (
-      <div className="mt-2 space-y-2">
-        {block.search_results.results.slice(0, 5).map((item, i) => (
-          <div
-            key={i}
-            className="rounded-[var(--radius-md)] border px-3 py-2"
-            style={{ borderColor: 'var(--color-border)' }}
-          >
-            <p
-              className="text-[13px] font-medium"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-            >
-              {item.title}
-            </p>
-            <p
-              className="mt-1 text-[12px]"
-              style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
-            >
-              {item.snippet}
-            </p>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return null;
-}
-
-// ── Persisted message ──────────────────────────────────────────────────────
-
-function PersistedMessageView({ message }: { message: ChatMessage }) {
-  const isUser = message.role === 'user';
-
-  if (isUser) {
-    return (
-      <div className="flex justify-end">
-        <div
-          className="max-w-2xl rounded-xl px-4 py-3 text-[15px]"
-          style={{
-            background: 'var(--color-surface-400)',
-            fontFamily: 'var(--font-display)',
-            color: 'var(--color-foreground)',
-          }}
-        >
-          {message.content}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex justify-start">
-      <div className="max-w-2xl">
-        <p
-          className="text-[16px] leading-relaxed"
-          style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-foreground)' }}
-        >
-          {message.content}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ── Session sidebar item ───────────────────────────────────────────────────
-
-interface SessionLike {
-  id: string;
-  title: string;
-  created_at: string;
-  last_message_preview: string | null;
-}
-
-function SessionItem({
-  session,
-  isActive,
-  onClick,
-}: {
-  session: SessionLike;
-  isActive: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full rounded-[var(--radius-lg)] px-3 py-2 text-left transition-colors"
-      style={{
-        background: isActive ? 'var(--color-surface-400)' : 'transparent',
-        borderLeft: isActive ? '2px solid var(--color-accent)' : '2px solid transparent',
-      }}
-    >
-      <p
-        className="truncate text-[13px] font-medium"
-        style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-      >
-        {session.title || 'Untitled'}
-      </p>
-      {session.last_message_preview && (
-        <p
-          className="mt-0.5 truncate text-[11px]"
-          style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-muted)' }}
-        >
-          {session.last_message_preview}
-        </p>
-      )}
-    </button>
-  );
-}
-
-// ── Main page ──────────────────────────────────────────────────────────────
+import { ChatMessageView, UserMessage } from '@/components/features/chat/chat-message';
+import { ThinkingIndicator } from '@/components/features/chat/thinking-indicator';
+import { PipelineStepList } from '@/components/features/chat/pipeline-step-list';
+import { StreamingResponse } from '@/components/features/chat/streaming-response';
+import { ChatWelcome } from '@/components/features/chat/chat-welcome';
+import { ChatMessagesSkeleton } from '@/components/features/chat/chat-messages-skeleton';
 
 export default function ChatSessionPage() {
   const params = useParams<{ sessionId: string }>();
   const sessionId = params.sessionId;
-  const router = useRouter();
   const companyId = useCurrentCompanyId();
 
-  const { data: sessionsData } = useChatSessions(companyId);
-  const sessions = sessionsData?.sessions ?? [];
-  const createSession = useCreateSession(companyId);
-
-  const { messages, invalidate, isLoading: messagesLoading } = useChatMessages(
-    sessionId,
-    companyId,
-  );
+  const { messages, invalidate, isLoading: messagesLoading } = useChatMessages(sessionId, companyId);
 
   const {
     send,
@@ -313,171 +34,66 @@ export default function ChatSessionPage() {
     },
   });
 
-  // SSE abort cleanup — CRITICAL
+  // CRITICAL: close EventSource on unmount
   useEffect(() => {
-    return () => {
-      cancel();
-    };
+    return () => { cancel(); };
   }, [cancel]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingMessage, pendingUserMessage]);
 
-  const handleSend = useCallback(async (text: string) => {
-    if (!text.trim() || !sessionId) return;
-    await send(sessionId, text.trim(), companyId);
-  }, [sessionId, send, companyId]);
+  const handleSend = useCallback(
+    async (text: string) => {
+      if (!text.trim() || !sessionId) return;
+      await send(sessionId, text.trim(), companyId);
+    },
+    [sessionId, send, companyId],
+  );
 
-  const handleNewChat = async () => {
-    if (!companyId) {
-      toast.error('Select a company before starting a chat.');
-      return;
-    }
-    const session = await createSession.mutateAsync({});
-    router.push(`/chat/${session.id}`);
-  };
+  const hasContent = messages.length > 0 || !!pendingUserMessage || !!streamingMessage;
 
   return (
-    <div className="flex h-[calc(100vh-56px)] overflow-hidden">
-      {/* Sidebar */}
-      <aside
-        className="hidden w-[220px] shrink-0 flex-col border-r md:flex"
-        style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface-100)' }}
-      >
-        <div
-          className="flex items-center justify-between px-3 py-3"
-          style={{ borderBottom: '1px solid var(--color-border)' }}
-        >
-          <span
-            className="text-[12px] font-medium uppercase tracking-wider"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
-          >
-            Chats
-          </span>
-          <button
-            onClick={() => void handleNewChat()}
-            className="flex h-6 w-6 items-center justify-center rounded transition-colors hover:opacity-80"
-            style={{ background: 'var(--color-surface-300)' }}
-            title="New chat"
-          >
-            <MessageSquarePlus
-              className="h-3.5 w-3.5"
-              style={{ color: 'var(--color-foreground)' }}
-            />
-          </button>
-        </div>
-        <div className="flex-1 overflow-y-auto p-2">
-          {sessions.map((s) => (
-            <SessionItem
-              key={s.id}
-              session={s}
-              isActive={s.id === sessionId}
-              onClick={() => router.push(`/chat/${s.id}`)}
-            />
-          ))}
-        </div>
-      </aside>
+    <div
+      className="flex flex-col overflow-hidden"
+      style={{ height: 'calc(100dvh - var(--layout-topbar-h, 56px))' }}
+    >
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="mx-auto max-w-[720px]">
+          {messagesLoading && <ChatMessagesSkeleton />}
 
-      {/* Main chat area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="mx-auto max-w-[720px] space-y-6">
-            {messagesLoading && (
-              <div className="space-y-4">
-                {[1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="h-12 animate-pulse rounded-[var(--radius-lg)]"
-                    style={{ background: 'var(--color-surface-300)' }}
-                  />
-                ))}
-              </div>
-            )}
+          {!messagesLoading && !hasContent && (
+            <ChatWelcome onPrompt={(text) => void handleSend(text)} />
+          )}
 
+          <div className="space-y-6">
             {messages.map((msg) => (
-              <PersistedMessageView key={msg.id} message={msg} />
+              <ChatMessageView key={msg.id} message={msg} />
             ))}
 
-            {/* Pending user message (optimistic) */}
-            {pendingUserMessage && (
-              <div className="flex justify-end">
-                <div
-                  className="max-w-2xl rounded-xl px-4 py-3 text-[15px]"
-                  style={{
-                    background: 'var(--color-surface-400)',
-                    fontFamily: 'var(--font-display)',
-                    color: 'var(--color-foreground)',
-                  }}
-                >
-                  {pendingUserMessage}
-                </div>
-              </div>
+            {pendingUserMessage && <UserMessage content={pendingUserMessage} />}
+
+            {isStreaming && pipelineSteps.length === 0 && !streamingMessage && (
+              <ThinkingIndicator />
             )}
 
-            {/* Pipeline step pills */}
-            {pipelineSteps.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {pipelineSteps.map((step, idx) => (
-                  <span
-                    key={idx}
-                    className="rounded-full px-3 py-1 text-[11px] font-medium"
-                    style={{
-                      background: stepColor(step.stepName),
-                      color: '#fff',
-                      fontFamily: 'var(--font-mono)',
-                      opacity: step.status === 'completed' ? 0.65 : 1,
-                    }}
-                  >
-                    {step.stepName}
-                    {step.status === 'running' && '…'}
-                    {step.durationMs !== undefined && step.status === 'completed' && (
-                      <span className="ml-1 opacity-75">
-                        {step.durationMs < 1000
-                          ? `${step.durationMs}ms`
-                          : `${(step.durationMs / 1000).toFixed(1)}s`}
-                      </span>
-                    )}
-                  </span>
-                ))}
-              </div>
+            {pipelineSteps.length > 0 && !streamingMessage && (
+              <PipelineStepList steps={pipelineSteps} />
             )}
 
-            {/* Streaming AI response */}
             {streamingMessage && (
-              <div className="flex justify-start">
-                <div className="max-w-2xl space-y-2">
-                  {streamingMessage.contentBlocks.map((block, idx) => {
-                    if (block.type === 'text') {
-                      const isLastBlock = idx === streamingMessage.contentBlocks.length - 1;
-                      return (
-                        <StreamingTextBlock
-                          key={idx}
-                          text={block.text ?? ''}
-                          isStreaming={streamingMessage.isStreaming && isLastBlock}
-                        />
-                      );
-                    }
-                    return <ContentBlockView key={idx} block={block} />;
-                  })}
-                </div>
-              </div>
+              <StreamingResponse
+                streamingMessage={streamingMessage}
+                pipelineSteps={pipelineSteps}
+              />
             )}
 
-            {/* Error */}
             {error && (
               <div
-                className="rounded-[var(--radius-lg)] border px-4 py-3 text-[14px]"
-                style={{
-                  background: 'rgba(207,45,86,0.06)',
-                  borderColor: 'rgba(207,45,86,0.2)',
-                  fontFamily: 'var(--font-serif)',
-                  color: 'var(--color-error)',
-                }}
+                className="rounded-lg border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error"
+                role="alert"
               >
                 {error}
               </div>
@@ -486,22 +102,15 @@ export default function ChatSessionPage() {
             <div ref={messagesEndRef} />
           </div>
         </div>
+      </div>
 
-        {/* Input area — pinned to bottom */}
-        <div
-          className="border-t px-6 py-4"
-          style={{
-            borderColor: 'var(--color-border)',
-            background: 'var(--color-background)',
-          }}
-        >
-          <div className="mx-auto max-w-[720px]">
-            <ChatInput
-              onSendMessage={(message) => void handleSend(message)}
-              onStop={cancel}
-              isStreaming={isStreaming}
-            />
-          </div>
+      <div className="bg-background px-6 pb-6 pt-3">
+        <div className="mx-auto max-w-[720px]">
+          <ChatInput
+            onSendMessage={(message) => void handleSend(message)}
+            onStop={cancel}
+            isStreaming={isStreaming}
+          />
         </div>
       </div>
     </div>

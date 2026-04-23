@@ -10,22 +10,23 @@ export interface StatusBadgeProps {
 }
 
 /**
- * Status-semantic color pairs.
+ * Status-semantic color pairs tuned for dark enterprise surfaces.
  *
- * These hex values intentionally bypass the warm-cream design tokens:
- * they encode *status meaning* (healthy green, warning gold, error crimson)
- * rather than visual theming, so they must not change with light/dark mode.
- * The warm-shifted semantics (no cold blue, no neon) keep them on-brand.
+ * Green / red / gold encode *status meaning* — they are independent of the
+ * neutral surface scale and must not change with theme.
  */
 const VARIANT_CLASSES: Record<StatusVariant, string> = {
-  // success tint — warm teal-green
-  active: "bg-[rgba(31,138,101,0.1)] text-[#1a7855]",
-  // neutral — quiet warm brown
-  inactive: "bg-[rgba(38,37,30,0.06)] text-muted",
-  // error tint — warm crimson rose
-  suspended: "bg-[rgba(207,45,86,0.1)] text-error",
-  // warning tint — warm gold
-  pending: "bg-[rgba(192,133,50,0.1)] text-[#c08532]",
+  // success — Supabase green on translucent green
+  active:
+    "bg-[rgba(62,207,142,0.12)] text-accent border border-[rgba(62,207,142,0.2)]",
+  // neutral — quiet surface, muted label
+  inactive: "bg-surface-300 text-muted border border-border",
+  // error — rose on translucent rose
+  suspended:
+    "bg-[rgba(229,72,77,0.12)] text-error border border-[rgba(229,72,77,0.2)]",
+  // warning — amber on translucent amber
+  pending:
+    "bg-[rgba(229,165,10,0.12)] text-warning border border-[rgba(229,165,10,0.2)]",
 };
 
 function toDisplayText(status: StatusVariant): string {
