@@ -16,17 +16,10 @@ export interface StatusBadgeProps {
  * neutral surface scale and must not change with theme.
  */
 const VARIANT_CLASSES: Record<StatusVariant, string> = {
-  // success — Supabase green on translucent green
-  active:
-    "bg-[rgba(62,207,142,0.12)] text-accent border border-[rgba(62,207,142,0.2)]",
-  // neutral — quiet surface, muted label
-  inactive: "bg-surface-300 text-muted border border-border",
-  // error — rose on translucent rose
-  suspended:
-    "bg-[rgba(229,72,77,0.12)] text-error border border-[rgba(229,72,77,0.2)]",
-  // warning — amber on translucent amber
-  pending:
-    "bg-[rgba(229,165,10,0.12)] text-warning border border-[rgba(229,165,10,0.2)]",
+  active:    "bg-accent-bg text-accent border border-accent-border",
+  inactive:  "bg-surface-300 text-muted border border-border",
+  suspended: "bg-error-bg text-error border border-error-border",
+  pending:   "bg-warning-bg text-warning border border-warning-border",
 };
 
 function toDisplayText(status: StatusVariant): string {
