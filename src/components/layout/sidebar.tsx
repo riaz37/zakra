@@ -240,9 +240,9 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
                   className={cn(
                     'w-fit rounded-sm px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em]',
                     roleBadge.tone === 'accent' &&
-                      'bg-[rgba(62,207,142,0.1)] text-accent',
+                      'bg-accent/10 text-accent',
                     roleBadge.tone === 'gold' &&
-                      'bg-[rgba(229,165,10,0.1)] text-gold',
+                      'bg-gold/10 text-gold',
                   )}
                 >
                   {roleBadge.label}
