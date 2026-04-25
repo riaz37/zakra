@@ -2,10 +2,17 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/shared/skeleton';
 import { ChatSession } from '@/types/chat';
-import { GeneratedReport } from '@/types/report';
-import { StatusBadge } from '@/components/shared/status-badge';
+import { GeneratedReport, ReportGenerationStatus } from '@/types/report';
+import { StatusBadge, StatusVariant } from '@/components/shared/status-badge';
 import { MessageSquare, FileBarChart, Clock } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+
+const REPORT_STATUS_MAP: Record<ReportGenerationStatus, StatusVariant> = {
+  pending:   'pending',
+  running:   'pending',
+  completed: 'active',
+  failed:    'suspended',
+};
 
 interface RecentActivityProps {
   recentActivity: {
@@ -71,7 +78,7 @@ export function RecentActivity({ recentActivity, isLoading }: RecentActivityProp
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-sm truncate pr-4">{report.title || 'Untitled Report'}</span>
-                      <StatusBadge status={report.status} size="sm" />
+                      <StatusBadge status={REPORT_STATUS_MAP[report.status]} label={report.status} size="sm" />
                     </div>
                     <div className="flex items-center text-micro text-muted gap-1">
                       <Clock className="size-3" />

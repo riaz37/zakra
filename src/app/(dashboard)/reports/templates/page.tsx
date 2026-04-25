@@ -159,7 +159,7 @@ export default function ReportTemplatesPage() {
         title="Delete Template"
         description={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
         confirmLabel="Delete"
-        variant="destructive"
+        variant="danger"
       />
     </div>
   );

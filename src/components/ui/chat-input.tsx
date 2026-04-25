@@ -125,12 +125,7 @@ function readFileAsText(file: File): Promise<string> {
 function CardBadge({ label }: { label: string }) {
   return (
     <span
-      className="capitalize font-mono text-caption px-1.5 py-0.5 rounded-md"
-      style={{
-        background: "var(--color-surface-500)",
-        color: "var(--color-foreground)",
-        border: "1px solid var(--color-border)",
-      }}
+      className="capitalize font-mono text-caption px-1.5 py-0.5 rounded-md bg-surface-500 text-foreground border border-border"
     >
       {label}
     </span>
@@ -274,8 +269,7 @@ function TextualFilePreviewCard({
       <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         {file.textContent && (
           <button
-            className="h-5 w-5 rounded flex items-center justify-center"
-            className="bg-surface-500 border border-border"
+            className="h-5 w-5 rounded flex items-center justify-center bg-surface-500 border border-border"
             onClick={() => void navigator.clipboard.writeText(file.textContent ?? "")}
             title="Copy content"
           >
@@ -283,8 +277,7 @@ function TextualFilePreviewCard({
           </button>
         )}
         <button
-          className="h-5 w-5 rounded flex items-center justify-center"
-          className="bg-surface-500 border border-border"
+          className="h-5 w-5 rounded flex items-center justify-center bg-surface-500 border border-border"
           onClick={() => onRemove(file.id)}
           title="Remove"
         >
@@ -329,16 +322,14 @@ function PastedContentCard({
 
       <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
-          className="h-5 w-5 rounded flex items-center justify-center"
-          className="bg-surface-500 border border-border"
+          className="h-5 w-5 rounded flex items-center justify-center bg-surface-500 border border-border"
           onClick={() => void navigator.clipboard.writeText(content.content)}
           title="Copy"
         >
           <Copy className="h-3 w-3 text-foreground" />
         </button>
         <button
-          className="h-5 w-5 rounded flex items-center justify-center"
-          className="bg-surface-500 border border-border"
+          className="h-5 w-5 rounded flex items-center justify-center bg-surface-500 border border-border"
           onClick={() => onRemove(content.id)}
           title="Remove"
         >
@@ -569,15 +560,10 @@ export function ChatInput({
       {/* Drag overlay */}
       {isDragging && (
         <div
-          className="absolute inset-0 z-50 rounded-[var(--radius-xl)] flex items-center justify-center pointer-events-none"
-          style={{
-            background: "rgba(245,78,0,0.04)",
-            border: "2px dashed var(--color-accent)",
-          }}
+          className="absolute inset-0 z-50 rounded-[var(--radius-xl)] flex items-center justify-center pointer-events-none bg-accent-soft border-2 border-dashed border-accent"
         >
           <p
-            className="font-sans text-button flex items-center gap-2"
-            className="text-accent"
+            className="font-sans text-button flex items-center gap-2 text-accent"
           >
             <ImageIcon className="h-4 w-4 opacity-60" />
             Drop files to attach
@@ -613,8 +599,7 @@ export function ChatInput({
         <div className="flex items-center justify-between px-3 pb-2.5">
           {/* Left: attach */}
           <button
-            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-40"
-            className="text-muted"
+            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-40 text-muted"
             onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-surface-400)")}
             onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
             onClick={() => fileInputRef.current?.click()}

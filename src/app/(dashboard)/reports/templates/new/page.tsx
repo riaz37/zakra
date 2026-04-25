@@ -22,7 +22,11 @@ export default function NewTemplatePage() {
       description: formData.description || undefined,
       connection_id: formData.connection_id,
       report_type: formData.report_type,
-      sections: formData.sections,
+      sections: formData.sections.map((s) => ({
+        ...s,
+        description: s.description ?? '',
+        analysis_prompt: s.analysis_prompt ?? null,
+      })),
     });
     router.push('/reports/templates');
   };

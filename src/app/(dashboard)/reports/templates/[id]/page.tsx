@@ -25,7 +25,11 @@ export default function EditTemplatePage() {
       data: {
         name: formData.name,
         description: formData.description || undefined,
-        sections: formData.sections,
+        sections: formData.sections.map((s) => ({
+          ...s,
+          description: s.description ?? '',
+          analysis_prompt: s.analysis_prompt ?? null,
+        })),
       },
     });
     router.push('/reports/templates');

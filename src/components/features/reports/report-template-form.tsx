@@ -4,7 +4,7 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Trash2 } from 'lucide-react';
-import type { ReportSectionConfig, ReportType, DbConnection } from '@/types';
+import type { ReportSectionConfig, ReportType, DatabaseConnection } from '@/types';
 import {
   Field,
   FieldGroup,
@@ -35,10 +35,11 @@ const sectionSchema = z.object({
   title: z.string().min(1, 'Section title is required'),
   description: z.string().optional(),
   query_hint: z.string().min(1, 'Query hint is required'),
-  chart_preference: z.enum(['auto', 'bar', 'line', 'pie', 'table']),
+  chart_preference: z.enum(['auto', 'bar', 'line', 'pie', 'scatter', 'table']),
   include_table: z.boolean(),
   include_chart: z.boolean(),
   order: z.number(),
+  analysis_prompt: z.string().nullable().optional(),
 });
 
 const templateSchema = z.object({
@@ -57,7 +58,7 @@ interface ReportTemplateFormProps {
   isPending: boolean;
   onCancel: () => void;
   submitLabel?: string;
-  connections: DbConnection[];
+  connections: DatabaseConnection[];
 }
 
 export function ReportTemplateForm({

@@ -131,7 +131,7 @@ export function AddConnectionDialog({
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>Database Type</FieldLabel>
                     <Select
-                      onValueChange={(v) => handleDbTypeChange(v, field.onChange)}
+                      onValueChange={(v) => v && handleDbTypeChange(v, field.onChange)}
                       defaultValue={field.value}
                     >
                       <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
