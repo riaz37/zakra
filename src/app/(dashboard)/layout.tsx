@@ -7,27 +7,30 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useRouter } from 'next/navigation';
 import { X } from 'lucide-react';
-import { useAuth } from '@/store/authStore';
+import { useAuth, useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const { isAuthenticated, fetchUser } = useAuth();
   const [navOpen, setNavOpen] = useState(false);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
 
-  // Refresh the user profile if the persisted store is empty but a cookie
-  // exists (i.e. the user refreshed the page). `fetchUser` no-ops when there
-  // is no access token, so the login page stays clean.
   useEffect(() => {
     if (!isAuthenticated) {
-      void fetchUser();
+      void fetchUser().then(() => {
+        if (!useAuthStore.getState().isAuthenticated) {
+          router.replace('/login');
+        }
+      });
     }
-  }, [isAuthenticated, fetchUser]);
+  }, [isAuthenticated, fetchUser, router]);
 
   const closeNav = useCallback(() => {
     setNavOpen(false);
