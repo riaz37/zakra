@@ -138,8 +138,8 @@ function SubsidiaryForm({
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5 py-2">
-      <span className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-muted/60">{label}</span>
-      <span className="font-sans text-[14px] text-foreground">{value || '—'}</span>
+      <span className="font-sans text-caption font-medium uppercase tracking-[0.08em] text-muted/60">{label}</span>
+      <span className="font-sans text-button text-foreground">{value || '—'}</span>
     </div>
   );
 }
@@ -184,7 +184,7 @@ export default function CompanyDetailPage() {
       id: 'created_at',
       header: 'Created',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {formatDate(row.original.created_at)}
         </span>
       ),
@@ -196,7 +196,7 @@ export default function CompanyDetailPage() {
       id: 'name',
       header: 'User',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] font-medium text-foreground">
+        <span className="font-sans text-button font-medium text-foreground">
           {[row.original.first_name, row.original.last_name].filter(Boolean).join(' ') || row.original.email}
         </span>
       ),
@@ -205,7 +205,7 @@ export default function CompanyDetailPage() {
       id: 'email',
       header: 'Email',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">{row.original.email}</span>
+        <span className="font-sans text-button text-muted">{row.original.email}</span>
       ),
     },
   ];
@@ -245,7 +245,7 @@ export default function CompanyDetailPage() {
                 <h1 className="font-sans text-[24px] font-semibold text-foreground">{company.name}</h1>
                 <StatusBadge status={company.status as any} />
               </div>
-              <p className="font-sans text-[14px] text-muted capitalize">{company.company_type} organization</p>
+              <p className="font-sans text-button text-muted capitalize">{company.company_type} organization</p>
             </div>
           </div>
 
@@ -264,13 +264,13 @@ export default function CompanyDetailPage() {
       <div className="flex-1 px-8 py-8">
         <Tabs defaultValue="overview" className="space-y-8">
           <TabsList variant="line" className="justify-start gap-8 border-b border-border p-0">
-            <TabsTrigger value="overview" className="rounded-none border-b-2 border-transparent px-2 py-3 text-[14px] data-[state=active]:border-accent data-[state=active]:text-foreground">
+            <TabsTrigger value="overview" className="rounded-none border-b-2 border-transparent px-2 py-3 text-button data-[state=active]:border-accent data-[state=active]:text-foreground">
               Overview
             </TabsTrigger>
-            <TabsTrigger value="subsidiaries" className="rounded-none border-b-2 border-transparent px-2 py-3 text-[14px] data-[state=active]:border-accent data-[state=active]:text-foreground">
+            <TabsTrigger value="subsidiaries" className="rounded-none border-b-2 border-transparent px-2 py-3 text-button data-[state=active]:border-accent data-[state=active]:text-foreground">
               Subsidiaries ({subsidiaries.data?.total ?? 0})
             </TabsTrigger>
-            <TabsTrigger value="users" className="rounded-none border-b-2 border-transparent px-2 py-3 text-[14px] data-[state=active]:border-accent data-[state=active]:text-foreground">
+            <TabsTrigger value="users" className="rounded-none border-b-2 border-transparent px-2 py-3 text-button data-[state=active]:border-accent data-[state=active]:text-foreground">
               Users ({companyUsers.data?.total ?? 0})
             </TabsTrigger>
           </TabsList>
@@ -280,7 +280,7 @@ export default function CompanyDetailPage() {
               {/* Left Column: Details */}
               <div className="lg:col-span-8 space-y-8">
                 <section>
-                  <h3 className="mb-4 font-sans text-[14px] font-semibold text-foreground">General Information</h3>
+                  <h3 className="mb-4 font-sans text-button font-semibold text-foreground">General Information</h3>
                   <div className="grid gap-4 rounded-xl border border-border bg-surface-100/20 p-6 sm:grid-cols-2">
                     <InfoRow label="Company Name" value={company.name} />
                     <InfoRow label="Domain" value={company.domain} />
@@ -290,9 +290,9 @@ export default function CompanyDetailPage() {
                 </section>
 
                 <section>
-                  <h3 className="mb-4 font-sans text-[14px] font-semibold text-foreground">About</h3>
+                  <h3 className="mb-4 font-sans text-button font-semibold text-foreground">About</h3>
                   <div className="rounded-xl border border-border bg-surface-100/20 p-6">
-                    <p className="font-sans text-[14px] leading-relaxed text-muted">
+                    <p className="font-sans text-button leading-relaxed text-muted">
                       {company.description || "No description available for this organization."}
                     </p>
                   </div>
@@ -302,16 +302,16 @@ export default function CompanyDetailPage() {
               {/* Right Column: Sidebar */}
               <div className="lg:col-span-4 space-y-8">
                 <section>
-                  <h3 className="mb-4 font-sans text-[14px] font-semibold text-foreground">Hierarchy</h3>
+                  <h3 className="mb-4 font-sans text-button font-semibold text-foreground">Hierarchy</h3>
                   <div className="rounded-xl border border-border bg-surface-100/20 p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-[13px] text-muted">Organization Type</span>
-                      <span className="text-[13px] font-medium capitalize text-foreground">{company.company_type}</span>
+                      <span className="text-button text-muted">Organization Type</span>
+                      <span className="text-button font-medium capitalize text-foreground">{company.company_type}</span>
                     </div>
                     {company.parent_id && (
                       <div className="flex items-center justify-between pt-4 border-t border-border">
-                        <span className="text-[13px] text-muted">Parent Company</span>
-                        <Button variant="link" className="h-auto p-0 text-[13px]" onClick={() => router.push(`/companies/${company.parent_id}`)}>
+                        <span className="text-button text-muted">Parent Company</span>
+                        <Button variant="link" className="h-auto p-0 text-button" onClick={() => router.push(`/companies/${company.parent_id}`)}>
                           View Parent
                         </Button>
                       </div>
@@ -320,15 +320,15 @@ export default function CompanyDetailPage() {
                 </section>
 
                 <section>
-                  <h3 className="mb-4 font-sans text-[14px] font-semibold text-foreground">System Metadata</h3>
+                  <h3 className="mb-4 font-sans text-button font-semibold text-foreground">System Metadata</h3>
                   <div className="rounded-xl border border-border bg-surface-100/20 p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-[13px] text-muted">Created</span>
-                      <span className="text-[13px] text-foreground">{formatDate(company.created_at)}</span>
+                      <span className="text-button text-muted">Created</span>
+                      <span className="text-button text-foreground">{formatDate(company.created_at)}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[13px] text-muted">Last Updated</span>
-                      <span className="text-[13px] text-foreground">{formatDate(company.updated_at)}</span>
+                      <span className="text-button text-muted">Last Updated</span>
+                      <span className="text-button text-foreground">{formatDate(company.updated_at)}</span>
                     </div>
                   </div>
                 </section>

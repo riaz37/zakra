@@ -31,11 +31,11 @@ export default function ReportTemplatesPage() {
       header: 'Name',
       cell: ({ row }) => (
         <div className="flex flex-col gap-0.5">
-          <span className="font-sans text-[14px] font-medium text-foreground">
+          <span className="font-sans text-button font-medium text-foreground">
             {row.original.name}
           </span>
           {row.original.description && (
-            <span className="font-sans text-[12px] text-muted line-clamp-1">
+            <span className="font-sans text-caption text-muted line-clamp-1">
               {row.original.description}
             </span>
           )}
@@ -46,7 +46,7 @@ export default function ReportTemplatesPage() {
       id: 'type',
       header: 'Type',
       cell: ({ row }) => (
-        <span className="inline-flex items-center rounded-full bg-surface-300 px-2 py-0.5 font-mono text-[11px] font-medium text-muted-strong border border-border">
+        <span className="inline-flex items-center rounded-full bg-surface-300 px-2 py-0.5 font-mono text-caption font-medium text-muted-strong border border-border">
           {row.original.report_type}
         </span>
       ),
@@ -55,7 +55,7 @@ export default function ReportTemplatesPage() {
       id: 'sections',
       header: 'Sections',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {row.original.sections.length}
         </span>
       ),
@@ -64,7 +64,7 @@ export default function ReportTemplatesPage() {
       id: 'created_at',
       header: 'Created',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {formatDate(row.original.created_at)}
         </span>
       ),

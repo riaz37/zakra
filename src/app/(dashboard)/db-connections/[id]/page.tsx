@@ -81,10 +81,10 @@ function OverviewTab({ connection, companyId }: OverviewTabProps) {
 
   const details: Array<{ label: string; value: React.ReactNode }> = [
     { label: 'Type', value: connection.database_type },
-    { label: 'Host', value: <span style={{ fontFamily: 'var(--font-mono)' }}>{connection.host}</span> },
-    { label: 'Port', value: <span style={{ fontFamily: 'var(--font-mono)' }}>{connection.port}</span> },
-    { label: 'Database', value: <span style={{ fontFamily: 'var(--font-mono)' }}>{connection.database_name}</span> },
-    { label: 'Username', value: <span style={{ fontFamily: 'var(--font-mono)' }}>{connection.username}</span> },
+    { label: 'Host', value: <span className="font-mono">{connection.host}</span> },
+    { label: 'Port', value: <span className="font-mono">{connection.port}</span> },
+    { label: 'Database', value: <span className="font-mono">{connection.database_name}</span> },
+    { label: 'Username', value: <span className="font-mono">{connection.username}</span> },
     {
       label: 'Status',
       value: (
@@ -110,8 +110,8 @@ function OverviewTab({ connection, companyId }: OverviewTabProps) {
     <div className="flex flex-col gap-6">
       {connection.last_error && (
         <div className="rounded-lg border border-error/30 bg-error/5 px-4 py-3">
-          <p className="font-sans text-[13px] font-medium text-error">Last Error</p>
-          <p className="mt-1 font-mono text-[12px] text-error/80" style={{ fontFamily: 'var(--font-mono)' }}>
+          <p className="font-sans text-button font-medium text-error">Last Error</p>
+          <p className="mt-1 font-mono text-caption text-error/80">
             {connection.last_error}
           </p>
         </div>
@@ -120,10 +120,10 @@ function OverviewTab({ connection, companyId }: OverviewTabProps) {
       <dl className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
         {details.map(({ label, value }) => (
           <div key={label}>
-            <dt className="font-sans text-[12px] font-medium uppercase tracking-wide text-muted">
+            <dt className="font-sans text-caption font-medium uppercase tracking-wide text-muted">
               {label}
             </dt>
-            <dd className="mt-1 font-sans text-[14px] text-foreground">{value}</dd>
+            <dd className="mt-1 font-sans text-button text-foreground">{value}</dd>
           </div>
         ))}
       </dl>
@@ -135,7 +135,7 @@ function OverviewTab({ connection, companyId }: OverviewTabProps) {
           disabled={testConnection.isPending}
           className={cn(
             'inline-flex items-center justify-center rounded-lg border border-border',
-            'bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground',
+            'bg-surface-300 px-4 py-2 font-sans text-button text-foreground',
             'transition-colors hover:bg-surface-400',
             'focus-visible:border-border-medium focus-visible:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50',
@@ -148,7 +148,7 @@ function OverviewTab({ connection, companyId }: OverviewTabProps) {
           onClick={() => setConfirmDelete(true)}
           className={cn(
             'inline-flex items-center justify-center rounded-lg border border-border',
-            'bg-surface-300 px-4 py-2 font-sans text-[14px] text-error',
+            'bg-surface-300 px-4 py-2 font-sans text-button text-error',
             'transition-colors hover:bg-surface-400',
             'focus-visible:border-border-medium focus-visible:outline-none',
           )}
@@ -225,24 +225,23 @@ function SchemaExplorerTab({ connectionId }: SchemaExplorerTabProps) {
               className={cn(
                 'flex w-full items-center justify-between gap-2 px-4 py-3',
                 'bg-background hover:bg-surface-200 transition-colors',
-                'font-sans text-[14px] text-foreground focus-visible:outline-none',
+                'font-sans text-button text-foreground focus-visible:outline-none',
               )}
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span
-                  className="font-mono text-[13px] font-medium"
-                  style={{ fontFamily: 'var(--font-mono)' }}
+                  className="font-mono text-button font-medium"
                 >
                   {table.schema_name}.{table.table_name}
                 </span>
                 {table.display_name && table.display_name !== table.table_name && (
-                  <span className="font-sans text-[13px] text-muted">
+                  <span className="font-sans text-button text-muted">
                     {table.display_name}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-3 shrink-0">
-                <span className="font-sans text-[12px] text-muted">
+                <span className="font-sans text-caption text-muted">
                   {table.columns.length} cols
                 </span>
                 {isOpen ? (
@@ -258,13 +257,13 @@ function SchemaExplorerTab({ connectionId }: SchemaExplorerTabProps) {
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="px-4 py-2 font-sans text-[11px] font-medium uppercase tracking-wide text-muted">
+                      <th className="px-4 py-2 font-sans text-caption font-medium uppercase tracking-wide text-muted">
                         Column
                       </th>
-                      <th className="px-4 py-2 font-sans text-[11px] font-medium uppercase tracking-wide text-muted">
+                      <th className="px-4 py-2 font-sans text-caption font-medium uppercase tracking-wide text-muted">
                         Type
                       </th>
-                      <th className="px-4 py-2 font-sans text-[11px] font-medium uppercase tracking-wide text-muted">
+                      <th className="px-4 py-2 font-sans text-caption font-medium uppercase tracking-wide text-muted">
                         Nullable
                       </th>
                     </tr>
@@ -274,24 +273,22 @@ function SchemaExplorerTab({ connectionId }: SchemaExplorerTabProps) {
                       <tr key={col.name} className="border-b border-border last:border-0">
                         <td className="px-4 py-2">
                           <span
-                            className="font-mono text-[12px] text-foreground"
-                            style={{ fontFamily: 'var(--font-mono)' }}
+                            className="font-mono text-caption text-foreground"
                           >
                             {col.name}
                             {col.is_primary_key && (
-                              <span className="ml-1.5 text-[10px] text-gold">PK</span>
+                              <span className="ml-1.5 text-micro text-gold">PK</span>
                             )}
                           </span>
                         </td>
                         <td className="px-4 py-2">
                           <span
-                            className="font-mono text-[12px] text-muted"
-                            style={{ fontFamily: 'var(--font-mono)' }}
+                            className="font-mono text-caption text-muted"
                           >
                             {col.data_type}
                           </span>
                         </td>
-                        <td className="px-4 py-2 font-sans text-[12px] text-muted">
+                        <td className="px-4 py-2 font-sans text-caption text-muted">
                           {col.is_nullable ? 'Yes' : 'No'}
                         </td>
                       </tr>
@@ -401,29 +398,29 @@ function RuleDialog({
 
           <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-4" noValidate>
             <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-[13px] font-medium text-foreground">Name</label>
+              <label className="font-sans text-button font-medium text-foreground">Name</label>
               <input
                 {...register('name')}
                 placeholder="e.g. Exclude test data"
                 className={cn(
                   'w-full rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-sans text-[14px] text-foreground outline-none placeholder:text-muted/40',
+                  'font-sans text-button text-foreground outline-none placeholder:text-muted/40',
                   'transition-colors focus:border-border-medium',
                   errors.name && 'border-error',
                 )}
               />
               {errors.name && (
-                <p className="font-sans text-[12px] text-error">{errors.name.message}</p>
+                <p className="font-sans text-caption text-error">{errors.name.message}</p>
               )}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-[13px] font-medium text-foreground">Scope</label>
+              <label className="font-sans text-button font-medium text-foreground">Scope</label>
               <select
                 {...register('scope_type')}
                 className={cn(
                   'w-full rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-sans text-[14px] text-foreground outline-none',
+                  'font-sans text-button text-foreground outline-none',
                   'transition-colors focus:border-border-medium',
                 )}
               >
@@ -434,7 +431,7 @@ function RuleDialog({
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-[13px] font-medium text-foreground">
+              <label className="font-sans text-button font-medium text-foreground">
                 Rule Text
               </label>
               <textarea
@@ -443,13 +440,13 @@ function RuleDialog({
                 placeholder="Describe the business rule in plain language…"
                 className={cn(
                   'w-full resize-none rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-sans text-[14px] text-foreground outline-none placeholder:text-muted/40',
+                  'font-sans text-button text-foreground outline-none placeholder:text-muted/40',
                   'transition-colors focus:border-border-medium',
                   errors.rule_text && 'border-error',
                 )}
               />
               {errors.rule_text && (
-                <p className="font-sans text-[12px] text-error">{errors.rule_text.message}</p>
+                <p className="font-sans text-caption text-error">{errors.rule_text.message}</p>
               )}
             </div>
 
@@ -460,7 +457,7 @@ function RuleDialog({
                 onClick={handleClose}
                 className={cn(
                   'inline-flex items-center justify-center rounded-lg border border-border',
-                  'bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground',
+                  'bg-surface-300 px-4 py-2 font-sans text-button text-foreground',
                   'transition-colors hover:bg-surface-400',
                   'focus-visible:border-border-medium focus-visible:outline-none',
                   'disabled:cursor-not-allowed disabled:opacity-50',
@@ -473,7 +470,7 @@ function RuleDialog({
                 disabled={isSubmitting}
                 className={cn(
                   'inline-flex items-center justify-center rounded-lg px-4 py-2',
-                  'font-sans text-[14px] text-white',
+                  'font-sans text-button text-white',
                   'transition-colors hover:opacity-90',
                   'focus-visible:outline-none',
                   'disabled:cursor-not-allowed disabled:opacity-50',
@@ -535,7 +532,7 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
           }}
           className={cn(
             'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2',
-            'font-sans text-[14px] text-white',
+            'font-sans text-button text-white',
             'transition-colors hover:opacity-90',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-medium',
           )}
@@ -574,14 +571,14 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="font-sans text-[14px] font-medium text-foreground">
+                    <p className="font-sans text-button font-medium text-foreground">
                       {rule.name}
                     </p>
-                    <span className="rounded-full bg-surface-300 px-2 py-0.5 font-sans text-[11px] text-muted">
+                    <span className="rounded-full bg-surface-300 px-2 py-0.5 font-sans text-caption text-muted">
                       {rule.scope_type}
                     </span>
                   </div>
-                  <p className="mt-1 font-sans text-[13px] text-muted line-clamp-2">
+                  <p className="mt-1 font-sans text-button text-muted line-clamp-2">
                     {rule.rule_text}
                   </p>
                 </div>
@@ -590,7 +587,7 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
                     type="button"
                     onClick={() => handleEdit(rule)}
                     className={cn(
-                      'rounded-md px-2.5 py-1 font-sans text-[12px] text-foreground',
+                      'rounded-md px-2.5 py-1 font-sans text-caption text-foreground',
                       'border border-border bg-transparent',
                       'transition-colors hover:bg-surface-300',
                       'focus-visible:outline-none focus-visible:border-border-medium',
@@ -602,7 +599,7 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
                     type="button"
                     onClick={() => setConfirmDeleteRuleId(rule.id)}
                     className={cn(
-                      'rounded-md px-2.5 py-1 font-sans text-[12px] text-error',
+                      'rounded-md px-2.5 py-1 font-sans text-caption text-error',
                       'border border-border bg-transparent',
                       'transition-colors hover:bg-surface-300',
                       'focus-visible:outline-none focus-visible:border-border-medium',
@@ -694,25 +691,22 @@ export default function DbConnectionDetailPage({ params }: DbConnectionDetailPag
         <button
           type="button"
           onClick={() => router.push('/db-connections')}
-          className="flex items-center gap-1 font-sans text-[13px] text-muted transition-colors hover:text-foreground focus-visible:outline-none"
+          className="flex items-center gap-1 font-sans text-button text-muted transition-colors hover:text-foreground focus-visible:outline-none"
         >
           <ChevronLeft aria-hidden size={13} strokeWidth={2} />
           Databases
         </button>
-        <span aria-hidden className="font-sans text-[13px] text-muted">
+        <span aria-hidden className="font-sans text-button text-muted">
           /
         </span>
-        <span className="font-sans text-[13px] text-foreground">{connection.name}</span>
+        <span className="font-sans text-button text-foreground">{connection.name}</span>
       </nav>
 
       {/* Page title */}
       <h1 className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.11px] text-foreground">
         {connection.name}
       </h1>
-      <p
-        className="mt-0.5 font-mono text-[12px] text-muted"
-        style={{ fontFamily: 'var(--font-mono)' }}
-      >
+      <p className="mt-0.5 font-mono text-caption text-muted">
         {connection.database_type} · {connection.host}:{connection.port}
       </p>
 
@@ -727,7 +721,7 @@ export default function DbConnectionDetailPage({ params }: DbConnectionDetailPag
               aria-selected={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'px-4 py-2.5 font-sans text-[14px] transition-colors',
+                'px-4 py-2.5 font-sans text-button transition-colors',
                 'border-b-2 -mb-px focus-visible:outline-none',
                 activeTab === tab.id
                   ? 'border-foreground text-foreground'

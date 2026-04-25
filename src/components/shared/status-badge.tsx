@@ -40,7 +40,7 @@ export function StatusBadge({ status, label, className }: StatusBadgeProps) {
     <span
       aria-label={`Status: ${status}`}
       className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 font-sans text-[11px] font-medium leading-none",
+        "inline-flex items-center rounded-full px-2 py-0.5 font-sans text-caption font-medium leading-none",
         VARIANT_CLASSES[status],
         className,
       )}

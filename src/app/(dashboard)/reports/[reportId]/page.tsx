@@ -74,7 +74,7 @@ export default function ReportViewerPage() {
           <Button
             variant="link"
             onClick={() => router.push('/reports/history')}
-            className="h-auto p-0 font-sans text-[13px] text-muted hover:text-foreground no-underline gap-1.5"
+            className="h-auto p-0 font-sans text-button text-muted hover:text-foreground no-underline gap-1.5"
           >
             <ChevronLeft aria-hidden size={14} strokeWidth={1.75} />
             Report History
@@ -105,12 +105,12 @@ export default function ReportViewerPage() {
             {report.title || 'Untitled Report'}
           </h1>
           <div className="mt-3 flex items-center gap-3">
-            <span className="flex items-center gap-1.5 font-mono text-[13px] text-muted">
+            <span className="flex items-center gap-1.5 font-mono text-button text-muted">
               <Clock aria-hidden size={14} strokeWidth={1.75} />
               {formatDate(report.created_at)}
             </span>
             {report.duration_ms && (
-              <span className="font-mono text-[13px] text-muted">
+              <span className="font-mono text-button text-muted">
                 · {(report.duration_ms / 1000).toFixed(1)}s
               </span>
             )}
@@ -119,7 +119,7 @@ export default function ReportViewerPage() {
 
         {/* Download error */}
         {downloadError && (
-          <div className="mb-6 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 font-sans text-[14px] text-error">
+          <div className="mb-6 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 font-sans text-button text-error">
             {downloadError}
           </div>
         )}
@@ -127,7 +127,7 @@ export default function ReportViewerPage() {
         {/* Executive summary */}
         {report.executive_summary && (
           <div className="mb-12 rounded-xl border border-border bg-surface-100 p-8 shadow-sm">
-            <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-wider text-muted">
+            <p className="mb-4 font-mono text-caption font-medium uppercase tracking-wider text-muted">
               Executive Summary
             </p>
             <p className="font-sans text-[15px] leading-relaxed text-foreground">
@@ -150,11 +150,11 @@ export default function ReportViewerPage() {
                   {section.analysis_text ? (
                     <MarkdownRenderer content={section.analysis_text} />
                   ) : section.status === 'failed' ? (
-                    <p className="font-sans text-[14px] text-error italic">
+                    <p className="font-sans text-button text-error italic">
                       {section.error_message || 'Section generation failed.'}
                     </p>
                   ) : (
-                    <p className="font-sans text-[14px] text-muted italic">
+                    <p className="font-sans text-button text-muted italic">
                       No content generated for this section.
                     </p>
                   )}
@@ -163,16 +163,16 @@ export default function ReportViewerPage() {
                   {section.query_result && section.query_result.row_count > 0 && (
                     <div className="mt-6 overflow-hidden rounded-lg border border-border bg-background">
                       <div className="flex items-center justify-between border-bottom border-border bg-surface-100 px-4 py-2">
-                        <span className="font-mono text-[11px] font-medium text-muted uppercase tracking-wider">
+                        <span className="font-mono text-caption font-medium text-muted uppercase tracking-wider">
                           Query Result
                         </span>
-                        <span className="font-mono text-[11px] text-muted">
+                        <span className="font-mono text-caption text-muted">
                           {section.query_result.row_count} rows
                           {section.query_result.truncated && ' (truncated)'}
                         </span>
                       </div>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-[12px] border-collapse">
+                        <table className="w-full text-caption border-collapse">
                           <thead>
                             <tr className="border-b border-border bg-surface-50">
                               {section.query_result.columns.map((col) => (
@@ -230,7 +230,7 @@ export default function ReportViewerPage() {
                 <p className="font-display text-[15px] font-semibold text-error">
                   Report generation failed
                 </p>
-                <p className="mt-1 font-sans text-[14px] text-error/80 leading-relaxed">
+                <p className="mt-1 font-sans text-button text-error/80 leading-relaxed">
                   {report.error_message}
                 </p>
               </div>

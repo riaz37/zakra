@@ -98,8 +98,7 @@ export function ConnectionCard({
               {connection.name}
             </p>
             <p
-              className="font-mono text-[12px] text-muted truncate"
-              style={{ fontFamily: 'var(--font-mono)' }}
+              className="font-mono text-caption text-muted truncate"
             >
               {connection.host}:{connection.port}
             </p>
@@ -120,7 +119,7 @@ export function ConnectionCard({
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-2">
-        <p className="font-sans text-[12px] text-muted">
+        <p className="font-sans text-caption text-muted">
           Tested: {formatTimestamp(connection.last_connected_at)}
         </p>
         <button
@@ -130,7 +129,7 @@ export function ConnectionCard({
           aria-label={`Test connection for ${connection.name}`}
           className={cn(
             'inline-flex items-center justify-center rounded-md px-2.5 py-1',
-            'font-sans text-[12px] text-foreground border border-border bg-transparent',
+            'font-sans text-caption text-foreground border border-border bg-transparent',
             'transition-colors hover:bg-surface-300 hover:text-foreground',
             'focus-visible:outline-none focus-visible:border-border-medium',
             'disabled:cursor-not-allowed disabled:opacity-50',
@@ -141,7 +140,7 @@ export function ConnectionCard({
       </div>
 
       {connection.last_error ? (
-        <p className="mt-2 font-mono text-[11px] text-error truncate" title={connection.last_error}>
+        <p className="mt-2 font-mono text-caption text-error truncate" title={connection.last_error}>
           {connection.last_error}
         </p>
       ) : null}

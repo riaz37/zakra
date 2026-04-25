@@ -97,7 +97,7 @@ export function ReportTemplateForm({
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       <section className="rounded-xl border border-border bg-surface-100 p-6">
-        <h2 className="mb-5 font-sans text-[13px] font-medium uppercase tracking-[0.06em] text-muted/60">
+        <h2 className="mb-5 font-sans text-button font-medium uppercase tracking-[0.06em] text-muted/60">
           Basic info
         </h2>
 
@@ -196,7 +196,7 @@ export function ReportTemplateForm({
 
       <section className="rounded-xl border border-border bg-surface-100 p-6">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="font-sans text-[13px] font-medium uppercase tracking-[0.06em] text-muted/60">
+          <h2 className="font-sans text-button font-medium uppercase tracking-[0.06em] text-muted/60">
             Sections
           </h2>
           <Button
@@ -230,7 +230,7 @@ export function ReportTemplateForm({
               )}
             >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-[11px] font-medium text-muted/50 uppercase tracking-wider">
+                <span className="font-mono text-caption font-medium text-muted/50 uppercase tracking-wider">
                   Section {idx + 1}
                 </span>
                 {fields.length > 1 && (

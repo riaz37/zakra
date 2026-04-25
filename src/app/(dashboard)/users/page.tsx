@@ -64,7 +64,7 @@ export default function UsersPage() {
             onClick={() => router.push(`/users/${row.original.id}`)}
           >
             <AvatarInitial name={fullName} email={row.original.email} />
-            <span className="font-sans text-[14px]">
+            <span className="font-sans text-button">
               {fullName || row.original.email}
             </span>
           </Button>
@@ -75,7 +75,7 @@ export default function UsersPage() {
       id: 'email',
       header: 'Email',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">{row.original.email}</span>
+        <span className="font-sans text-button text-muted">{row.original.email}</span>
       ),
     },
     {
@@ -91,14 +91,14 @@ export default function UsersPage() {
         if (s === 'active' || s === 'inactive' || s === 'suspended' || s === 'pending') {
           return <StatusBadge status={s} />;
         }
-        return <span className="font-sans text-[14px] text-muted">{s}</span>;
+        return <span className="font-sans text-button text-muted">{s}</span>;
       },
     },
     {
       id: 'created_at',
       header: 'Created',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {formatDate(row.original.created_at)}
         </span>
       ),

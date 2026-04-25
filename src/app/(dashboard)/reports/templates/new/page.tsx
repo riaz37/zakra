@@ -33,7 +33,7 @@ export default function NewTemplatePage() {
       <Button
         variant="link"
         onClick={() => router.back()}
-        className="mb-6 h-auto p-0 font-sans text-[13px] text-muted hover:text-foreground no-underline"
+        className="mb-6 h-auto p-0 font-sans text-button text-muted hover:text-foreground no-underline"
       >
         <ChevronLeft aria-hidden size={14} strokeWidth={1.75} />
         Back to Templates

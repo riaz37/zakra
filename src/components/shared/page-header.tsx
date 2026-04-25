@@ -46,7 +46,7 @@ export function PageHeader({
           {title}
           {scopeLabel ? (
             <span
-              className="ml-3 inline-flex items-center gap-1 rounded-full bg-surface-300 px-2 py-0.5 align-middle font-sans text-[11px] font-medium text-muted-strong"
+              className="ml-3 inline-flex items-center gap-1 rounded-full bg-surface-300 px-2 py-0.5 align-middle font-sans text-caption font-medium text-muted-strong"
               aria-label={`Scope: ${scopeLabel}`}
             >
               <Building2 aria-hidden="true" className="size-3" />

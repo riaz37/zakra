@@ -238,11 +238,9 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               {roleBadge && (
                 <span
                   className={cn(
-                    'w-fit rounded-sm px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em]',
-                    roleBadge.tone === 'accent' &&
-                      'bg-accent/10 text-accent',
-                    roleBadge.tone === 'gold' &&
-                      'bg-gold/10 text-gold',
+                    'w-fit whitespace-nowrap rounded-sm px-1.5 py-px font-mono text-micro uppercase tracking-[0.06em] opacity-70',
+                    roleBadge.tone === 'accent' && 'text-accent',
+                    roleBadge.tone === 'gold' && 'text-gold',
                   )}
                 >
                   {roleBadge.label}

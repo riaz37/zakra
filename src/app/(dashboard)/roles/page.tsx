@@ -55,10 +55,10 @@ export default function RolesPage() {
       header: 'Name',
       cell: ({ row }) => (
         <div className="flex flex-col gap-0.5">
-          <span className="font-sans text-[14px] font-medium text-foreground">
+          <span className="font-sans text-button font-medium text-foreground">
             {row.original.name}
           </span>
-          <span className="font-mono text-[12px] text-muted">{row.original.slug}</span>
+          <span className="font-mono text-caption text-muted">{row.original.slug}</span>
         </div>
       ),
     },
@@ -71,7 +71,7 @@ export default function RolesPage() {
       id: 'description',
       header: 'Description',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {row.original.description ?? '—'}
         </span>
       ),
@@ -80,7 +80,7 @@ export default function RolesPage() {
       id: 'hierarchy',
       header: 'Level',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {row.original.hierarchy_level}
         </span>
       ),
@@ -89,7 +89,7 @@ export default function RolesPage() {
       id: 'created_at',
       header: 'Created',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {formatDate(row.original.created_at)}
         </span>
       ),

@@ -93,11 +93,11 @@ export default function CompaniesPage() {
         const isSub = row.original.company_type === 'subsidiary';
         return (
           <div className="flex flex-col">
-            <span className="font-sans text-[14px] text-muted capitalize">
+            <span className="font-sans text-button text-muted capitalize">
               {row.original.company_type}
             </span>
             {isSub && row.original.parent_id && (
-              <span className="font-sans text-[10px] text-muted-foreground/60 uppercase tracking-tighter">
+              <span className="font-sans text-micro text-muted/60 uppercase tracking-tighter">
                 Under {allCompanies?.items?.find(c => c.id === row.original.parent_id)?.name || 'Parent'}
               </span>
             )}
@@ -113,14 +113,14 @@ export default function CompaniesPage() {
         if (s === 'active' || s === 'inactive' || s === 'suspended') {
           return <StatusBadge status={s} />;
         }
-        return <span className="font-sans text-[14px] text-muted">{s}</span>;
+        return <span className="font-sans text-button text-muted">{s}</span>;
       },
     },
     {
       id: 'subsidiaries',
       header: 'Subsidiaries',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {row.original.subsidiaries?.length ?? 0}
         </span>
       ),
@@ -129,7 +129,7 @@ export default function CompaniesPage() {
       id: 'created_at',
       header: 'Created',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {formatDate(row.original.created_at)}
         </span>
       ),

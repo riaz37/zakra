@@ -28,7 +28,7 @@ export function RoleTypeBadge({ type }: RoleTypeBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2 py-0.5 font-sans text-[11px] font-medium leading-none',
+        'inline-flex items-center rounded-full px-2 py-0.5 font-sans text-caption font-medium leading-none',
         variant.classes,
       )}
     >

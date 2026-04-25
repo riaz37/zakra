@@ -134,7 +134,7 @@ export default function AIGeneratePage() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="e.g. Monthly sales performance report with revenue trends and top products"
                 rows={3}
-                className="w-full resize-none rounded-lg border border-border bg-background px-4 py-3 font-sans text-[14px] text-foreground outline-none transition-shadow focus:shadow-focus"
+                className="w-full resize-none rounded-lg border border-border bg-background px-4 py-3 font-sans text-button text-foreground outline-none transition-shadow focus:shadow-focus"
               />
             </Field>
 
@@ -147,7 +147,7 @@ export default function AIGeneratePage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Auto-generated if left blank"
-                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 font-sans text-[14px] text-foreground outline-none transition-shadow focus:shadow-focus"
+                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 font-sans text-button text-foreground outline-none transition-shadow focus:shadow-focus"
               />
             </Field>
 
@@ -172,7 +172,7 @@ export default function AIGeneratePage() {
 
             {/* Form error */}
             {formError && (
-              <p className="font-sans text-[13px] text-error">
+              <p className="font-sans text-button text-error">
                 {formError}
               </p>
             )}
@@ -196,7 +196,7 @@ export default function AIGeneratePage() {
           <div className="rounded-xl border border-border bg-surface-100 p-5">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="font-sans text-[14px] font-medium text-foreground">
+                <p className="font-sans text-button font-medium text-foreground">
                   {isGenerating
                     ? 'Generating report…'
                     : isCompleted
@@ -206,7 +206,7 @@ export default function AIGeneratePage() {
                         : 'Stopped'}
                 </p>
                 {query && (
-                  <p className="mt-1 font-sans text-[13px] text-muted">
+                  <p className="mt-1 font-sans text-button text-muted">
                     {query.length > 80 ? `${query.slice(0, 80)}…` : query}
                   </p>
                 )}
@@ -241,7 +241,7 @@ export default function AIGeneratePage() {
           {/* Error */}
           {hasError && state.error && (
             <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
-              <p className="font-sans text-[14px] text-error">
+              <p className="font-sans text-button text-error">
                 {state.error.message}
               </p>
             </div>
@@ -250,7 +250,7 @@ export default function AIGeneratePage() {
           {/* Executive summary preview */}
           {state.executiveSummary && (
             <div className="rounded-xl border border-border bg-surface-100 p-5">
-              <p className="mb-2 font-mono text-[11px] font-medium uppercase tracking-wider text-muted">
+              <p className="mb-2 font-mono text-caption font-medium uppercase tracking-wider text-muted">
                 Executive Summary
               </p>
               <p className="font-sans text-[15px] leading-relaxed text-foreground">

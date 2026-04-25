@@ -80,7 +80,7 @@ export default function LoginPage() {
             {...register('email')}
             aria-invalid={!!errors.email}
             className={cn(
-              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-[14px] text-foreground transition-colors duration-150',
+              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
               'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(62,207,142,0.4)]',
               errors.email
                 ? 'border-error focus:border-error'
@@ -110,7 +110,7 @@ export default function LoginPage() {
             {...register('password')}
             aria-invalid={!!errors.password}
             className={cn(
-              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-[14px] text-foreground transition-colors duration-150',
+              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
               'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(62,207,142,0.4)]',
               errors.password
                 ? 'border-error focus:border-error'
@@ -130,7 +130,7 @@ export default function LoginPage() {
           type="submit"
           disabled={isSubmitting}
           className={cn(
-            'mt-6 flex w-full items-center justify-center rounded-lg bg-accent py-2.5 font-sans text-[14px] font-medium text-[#111]',
+            'mt-6 flex w-full items-center justify-center rounded-lg bg-accent py-2.5 font-sans text-button font-medium text-[#111]',
             'transition-colors duration-150 hover:bg-[#4ed99a]',
             'disabled:cursor-not-allowed disabled:opacity-60',
           )}

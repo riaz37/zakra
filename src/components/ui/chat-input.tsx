@@ -125,9 +125,8 @@ function readFileAsText(file: File): Promise<string> {
 function CardBadge({ label }: { label: string }) {
   return (
     <span
-      className="capitalize text-[11px] px-1.5 py-0.5 rounded-md"
+      className="capitalize font-mono text-caption px-1.5 py-0.5 rounded-md"
       style={{
-        fontFamily: "var(--font-mono)",
         background: "var(--color-surface-500)",
         color: "var(--color-foreground)",
         border: "1px solid var(--color-border)",
@@ -170,13 +169,13 @@ function FilePreviewCard({
         <div className="flex flex-col gap-1 p-2.5 h-full">
           {getFileIcon(file.type)}
           <p
-            className="text-[11px] font-medium truncate mt-auto"
-            style={{ fontFamily: "var(--font-display)", color: "var(--color-foreground)" }}
+            className="font-sans text-caption font-medium truncate mt-auto"
+            style={{ color: "var(--color-foreground)" }}
             title={file.file.name}
           >
             {file.file.name}
           </p>
-          <p className="text-[10px]" style={{ color: "var(--color-muted)", fontFamily: "var(--font-mono)" }}>
+          <p className="font-mono text-micro" style={{ color: "var(--color-muted)" }}>
             {formatFileSize(file.file.size)}
           </p>
         </div>
@@ -581,8 +580,8 @@ export function ChatInput({
           }}
         >
           <p
-            className="text-[13px] flex items-center gap-2"
-            style={{ fontFamily: "var(--font-display)", color: "var(--color-accent)" }}
+            className="font-sans text-button flex items-center gap-2"
+            style={{ color: "var(--color-accent)" }}
           >
             <ImageIcon className="h-4 w-4 opacity-60" />
             Drop files to attach
@@ -634,9 +633,8 @@ export function ChatInput({
             {/* File count badge */}
             {files.length > 0 && (
               <span
-                className="text-[11px] px-1.5 py-0.5 rounded-md"
+                className="font-mono text-caption px-1.5 py-0.5 rounded-md"
                 style={{
-                  fontFamily: "var(--font-mono)",
                   color: "var(--color-muted)",
                   background: "var(--color-surface-400)",
                 }}
@@ -648,11 +646,10 @@ export function ChatInput({
             {isStreaming ? (
               <button
                 onClick={onStop}
-                className="flex items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 text-[13px] transition-colors hover:opacity-80"
+                className="flex items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 font-sans text-button transition-colors hover:opacity-80"
                 style={{
                   background: "var(--color-error)",
                   color: 'var(--color-foreground)',
-                  fontFamily: "var(--font-display)",
                 }}
               >
                 <Square className="h-3.5 w-3.5" />

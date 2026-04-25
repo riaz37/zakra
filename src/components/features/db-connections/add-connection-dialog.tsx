@@ -118,7 +118,7 @@ export function AddConnectionDialog({
           <Dialog.Title className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.11px] text-foreground">
             Add Connection
           </Dialog.Title>
-          <Dialog.Description className="mt-1 font-sans text-[14px] leading-[1.4] text-muted">
+          <Dialog.Description className="mt-1 font-sans text-button leading-[1.4] text-muted">
             Connect a database to enable natural language queries.
           </Dialog.Description>
 

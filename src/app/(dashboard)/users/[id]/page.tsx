@@ -60,7 +60,7 @@ function UserTypeBadge({ type }: { type: string }) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 font-sans text-[11px] font-medium leading-none ${classes}`}
+      className={`inline-flex items-center rounded-full px-2 py-0.5 font-sans text-caption font-medium leading-none ${classes}`}
     >
       {label}
     </span>
@@ -109,7 +109,7 @@ function AssignRoleForm({
             </SelectTrigger>
             <SelectContent>
               {availableRoles.length === 0 ? (
-                <div className="px-2 py-3 font-sans text-[13px] text-muted">
+                <div className="px-2 py-3 font-sans text-button text-muted">
                   No additional roles available.
                 </div>
               ) : (
@@ -162,7 +162,7 @@ export default function UserDetailPage() {
       id: 'name',
       header: 'Role',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] font-medium text-foreground">
+        <span className="font-sans text-button font-medium text-foreground">
           {row.original.name}
         </span>
       ),
@@ -171,14 +171,14 @@ export default function UserDetailPage() {
       id: 'slug',
       header: 'Slug',
       cell: ({ row }) => (
-        <span className="font-mono text-[13px] text-muted">{row.original.slug}</span>
+        <span className="font-mono text-button text-muted">{row.original.slug}</span>
       ),
     },
     {
       id: 'assigned_at',
       header: 'Assigned',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted">
+        <span className="font-sans text-button text-muted">
           {formatDate(row.original.assigned_at)}
         </span>
       ),
@@ -220,10 +220,10 @@ export default function UserDetailPage() {
   if (isError || !user) {
     return (
       <div className="px-6 py-8">
-        <p className="font-sans text-[14px] text-error">Failed to load user.</p>
+        <p className="font-sans text-button text-error">Failed to load user.</p>
         <Button
           variant="link"
-          className="mt-3 p-0 h-auto font-sans text-[14px] text-muted underline hover:text-foreground no-underline"
+          className="mt-3 p-0 h-auto font-sans text-button text-muted underline hover:text-foreground no-underline"
           onClick={() => router.push('/users')}
         >
           Back to Users
@@ -278,7 +278,7 @@ export default function UserDetailPage() {
               <p className="font-sans text-[18px] font-medium text-foreground">
                 {fullName}
               </p>
-              <p className="font-sans text-[14px] text-muted">{user.email}</p>
+              <p className="font-sans text-button text-muted">{user.email}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <UserTypeBadge type={user.user_type} />
@@ -290,7 +290,7 @@ export default function UserDetailPage() {
               )}
             </div>
             {user.last_login_at && (
-              <p className="font-sans text-[12px] text-muted">
+              <p className="font-sans text-caption text-muted">
                 Last login:{' '}
                 {formatDateTime(user.last_login_at)}
               </p>

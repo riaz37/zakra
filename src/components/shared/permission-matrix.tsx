@@ -160,7 +160,7 @@ export function PermissionMatrix({
   }
 
   if (columns.length === 0) {
-    return <p className="font-sans text-[14px] text-muted">No columns available.</p>;
+    return <p className="font-sans text-button text-muted">No columns available.</p>;
   }
 
   return (
@@ -182,7 +182,7 @@ export function PermissionMatrix({
             spellCheck={false}
             className={cn(
               'h-8 w-full rounded-lg border border-border bg-transparent pl-8 pr-8',
-              'font-sans text-[13px] text-foreground outline-none placeholder:text-muted/40',
+              'font-sans text-button text-foreground outline-none placeholder:text-muted/40',
               'transition-colors focus:border-border-medium',
               '[&::-webkit-search-cancel-button]:appearance-none',
             )}
@@ -201,14 +201,14 @@ export function PermissionMatrix({
 
         {/* Bulk actions */}
         <div className="flex items-center gap-1.5">
-          <span className="font-sans text-[11px] text-muted/50">All:</span>
+          <span className="font-sans text-caption text-muted/50">All:</span>
           {PERMISSION_LEVELS.map((level) => (
             <button
               key={level}
               type="button"
               onClick={() => setAllPermissions(level)}
               className={cn(
-                'rounded px-2 py-1 font-sans text-[11px] transition-colors',
+                'rounded px-2 py-1 font-sans text-caption transition-colors',
                 'border border-border text-muted hover:text-foreground hover:border-border-medium',
               )}
             >
@@ -220,7 +220,7 @@ export function PermissionMatrix({
         {/* Save action */}
         <div className="flex shrink-0 items-center gap-2">
           {isDirty && pendingCount > 0 && (
-            <span className="font-sans text-[11px] text-muted">
+            <span className="font-sans text-caption text-muted">
               {pendingCount} {pendingCount === 1 ? 'change' : 'changes'}
             </span>
           )}
@@ -237,7 +237,7 @@ export function PermissionMatrix({
 
       {/* Column filter result count */}
       {columnSearch && (
-        <p className="font-sans text-[12px] text-muted/60">
+        <p className="font-sans text-caption text-muted/60">
           {filteredRows.length} of {rows.length} columns
         </p>
       )}
@@ -247,14 +247,14 @@ export function PermissionMatrix({
         <table className="w-full min-w-[560px] border-collapse">
           <thead>
             <tr className="border-b border-border bg-surface-300">
-              <th className="px-4 py-2.5 text-left font-sans text-[11px] font-medium uppercase tracking-wide text-muted/50">
+              <th className="px-4 py-2.5 text-left font-sans text-caption font-medium uppercase tracking-wide text-muted/50">
                 Column
               </th>
               {PERMISSION_LEVELS.map((level) => (
                 <th
                   key={level}
                   className={cn(
-                    'w-24 px-2 py-2.5 text-center font-sans text-[11px] font-medium uppercase tracking-wide',
+                    'w-24 px-2 py-2.5 text-center font-sans text-caption font-medium uppercase tracking-wide',
                     headerColorClass(level),
                   )}
                 >
@@ -268,7 +268,7 @@ export function PermissionMatrix({
               <tr>
                 <td
                   colSpan={5}
-                  className="px-4 py-6 text-center font-sans text-[13px] text-muted/60"
+                  className="px-4 py-6 text-center font-sans text-button text-muted/60"
                 >
                   No columns match &ldquo;{columnSearch}&rdquo;
                 </td>
@@ -287,11 +287,11 @@ export function PermissionMatrix({
                     >
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-[12px] text-foreground">
+                          <span className="font-mono text-caption text-foreground">
                             {row.columnName}
                           </span>
                           {meta?.data_type && (
-                            <span className="rounded bg-surface-400 px-1.5 py-0.5 font-mono text-[10px] text-muted/60">
+                            <span className="rounded bg-surface-400 px-1.5 py-0.5 font-mono text-micro text-muted/60">
                               {shortType(meta.data_type)}
                             </span>
                           )}
@@ -343,7 +343,7 @@ export function PermissionMatrix({
                           <div className="flex items-center gap-2.5">
                             <label
                               htmlFor={`mask-${row.columnName}`}
-                              className="shrink-0 font-sans text-[12px] text-muted/70"
+                              className="shrink-0 font-sans text-caption text-muted/70"
                             >
                               Mask pattern
                             </label>

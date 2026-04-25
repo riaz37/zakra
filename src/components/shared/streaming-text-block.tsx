@@ -7,7 +7,7 @@ import { normalizeMarkdown } from '@/components/features/chat/markdown-content';
 
 const streamingComponents: Components = {
   p: ({ children }) => (
-    <p className="mb-3 font-sans text-[14px] leading-[1.7] text-foreground last:mb-0">
+    <p className="mb-3 font-sans text-button leading-[1.7] text-foreground last:mb-0">
       {children}
     </p>
   ),
@@ -16,7 +16,7 @@ const streamingComponents: Components = {
     <ol className="my-2 list-decimal space-y-1.5 pl-4">{children}</ol>
   ),
   li: ({ children }) => (
-    <li className="flex gap-2 font-sans text-[14px] leading-[1.7] text-foreground">
+    <li className="flex gap-2 font-sans text-button leading-[1.7] text-foreground">
       <span
         aria-hidden
         className="mt-[0.65em] h-[4px] w-[4px] shrink-0 rounded-full bg-muted"

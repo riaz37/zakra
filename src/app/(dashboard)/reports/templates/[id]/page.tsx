@@ -47,11 +47,11 @@ export default function EditTemplatePage() {
   if (!template) {
     return (
       <div className="mx-auto max-w-[680px] px-6 py-8">
-        <p className="font-sans text-[14px] text-muted">Template not found.</p>
+        <p className="font-sans text-button text-muted">Template not found.</p>
         <Button
           variant="link"
           onClick={() => router.push('/reports/templates')}
-          className="mt-4 p-0 h-auto font-sans text-[14px] text-muted underline hover:text-foreground no-underline"
+          className="mt-4 p-0 h-auto font-sans text-button text-muted underline hover:text-foreground no-underline"
         >
           Back to Templates
         </Button>
@@ -65,7 +65,7 @@ export default function EditTemplatePage() {
       <Button
         variant="link"
         onClick={() => router.push('/reports/templates')}
-        className="mb-6 h-auto p-0 font-sans text-[13px] text-muted hover:text-foreground no-underline"
+        className="mb-6 h-auto p-0 font-sans text-button text-muted hover:text-foreground no-underline"
       >
         <ChevronLeft aria-hidden size={14} strokeWidth={1.75} />
         Back to Templates

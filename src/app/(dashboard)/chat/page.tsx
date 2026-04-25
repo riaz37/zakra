@@ -5,6 +5,7 @@ import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useCreateSession } from '@/hooks/useChatSessions';
 import { ChatWelcome } from '@/components/features/chat/chat-welcome';
 import { ChatInput } from '@/components/ui/chat-input';
+import { EmptyState } from '@/components/shared/empty-state';
 import { toast } from 'sonner';
 
 export default function NewChatPage() {
@@ -17,7 +18,7 @@ export default function NewChatPage() {
       toast.error('Select a company before starting a chat.');
       return;
     }
-    
+
     if (!text.trim()) return;
 
     try {
@@ -32,33 +33,28 @@ export default function NewChatPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {!companyId ? (
-        <div className="flex h-full items-center justify-center p-6">
-          <div className="flex max-w-md flex-col items-center justify-center rounded-lg border border-border border-dashed p-8 text-center animate-fade-up">
-            <h3 className="mb-2 text-lg font-semibold text-foreground">No company selected</h3>
-            <p className="text-sm text-muted-foreground">
-              Please select a company from the sidebar switcher to start a conversation with your data.
-            </p>
-          </div>
+      <div className="flex flex-1 items-center justify-center overflow-y-auto px-6 py-6">
+        <div className="w-full max-w-[720px]">
+          {!companyId ? (
+            <EmptyState
+              title="No company selected"
+              description="Select a company from the sidebar to start a conversation."
+            />
+          ) : (
+            <ChatWelcome onPrompt={handlePrompt} />
+          )}
         </div>
-      ) : (
-        <>
-          <div className="flex-1 overflow-y-auto px-6 py-6 flex items-center justify-center">
-            <div className="w-full max-w-[720px]">
-              <ChatWelcome onPrompt={handlePrompt} />
-            </div>
-          </div>
-          <div className="bg-background px-6 pb-6 pt-3">
-            <div className="mx-auto max-w-[720px]">
-              <ChatInput
-                onSendMessage={handlePrompt}
-                onStop={() => {}}
-                isStreaming={false}
-              />
-            </div>
-          </div>
-        </>
-      )}
+      </div>
+      <div className="bg-background px-6 pb-6 pt-3">
+        <div className="mx-auto max-w-[720px]">
+          <ChatInput
+            onSendMessage={handlePrompt}
+            onStop={() => {}}
+            isStreaming={false}
+            disabled={!companyId}
+          />
+        </div>
+      </div>
     </div>
   );
 }

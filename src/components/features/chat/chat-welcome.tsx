@@ -29,7 +29,7 @@ export function ChatWelcome({ onPrompt }: ChatWelcomeProps) {
       <h2 className="font-sans text-[22px] font-normal leading-[1.25] tracking-[-0.44px] text-foreground">
         Ask anything about your data
       </h2>
-      <p className="mt-2.5 max-w-[360px] font-sans text-[13px] leading-[1.6] text-muted">
+      <p className="mt-2.5 max-w-[360px] font-sans text-button leading-[1.6] text-muted">
         Query your connected database in plain language — operations, trends,
         users, anything.
       </p>
@@ -39,7 +39,7 @@ export function ChatWelcome({ onPrompt }: ChatWelcomeProps) {
           <button
             key={prompt}
             onClick={() => onPrompt(prompt)}
-            className="rounded-lg border border-border bg-surface-200 px-3.5 py-2 font-sans text-[13px] text-muted transition-colors duration-150 hover:border-border hover:bg-surface-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+            className="rounded-lg border border-border bg-surface-200 px-3.5 py-2 font-sans text-button text-muted transition-colors duration-150 hover:border-border hover:bg-surface-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
           >
             {prompt}
           </button>

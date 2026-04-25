@@ -112,7 +112,7 @@ export function DataTable<TData>({
                   <th
                     key={header.id}
                     scope="col"
-                    className="px-4 py-3 text-left align-middle font-sans text-[11px] font-medium uppercase tracking-[0.048px] text-muted"
+                    className="px-4 py-3 text-left align-middle font-sans text-caption font-medium uppercase tracking-[0.048px] text-muted"
                   >
                     {header.isPlaceholder
                       ? null
@@ -153,7 +153,7 @@ export function DataTable<TData>({
                     <td
                       key={cell.id}
                       className={cn(
-                        "px-4 py-3 align-middle font-sans text-[14px] text-foreground",
+                        "px-4 py-3 align-middle font-sans text-button text-foreground",
                         "relative",
                         cellIdx === 0 && "before:absolute before:left-0 before:top-0 before:h-full before:w-[2px] before:bg-accent before:opacity-0 before:transition-opacity group-hover:before:opacity-100"
                       )}
@@ -195,7 +195,7 @@ export function DataTable<TData>({
                     const label = columnLabels.get(cell.column.id);
                     return (
                       <div key={cell.id} className="contents">
-                        <dt className="font-sans text-[11px] font-medium uppercase tracking-[0.048px] text-muted">
+                        <dt className="font-sans text-caption font-medium uppercase tracking-[0.048px] text-muted">
                           {label}
                         </dt>
                         <dd className="font-sans text-button text-foreground">

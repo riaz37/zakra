@@ -30,7 +30,7 @@ export function MetricStrip({
             i < METRICS.length - 1 && 'md:border-r md:border-border',
           )}
         >
-          <dt className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
+          <dt className="font-sans text-caption font-medium uppercase tracking-[0.08em] text-muted">
             {label}
           </dt>
           <dd className="font-sans text-[28px] font-semibold leading-none text-foreground font-feat-tnum tabular-nums">

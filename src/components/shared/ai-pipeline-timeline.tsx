@@ -94,14 +94,14 @@ export function AIPipelineTimeline({ steps, className }: AIPipelineTimelineProps
           >
             <StepDot step={step} />
             <span
-              className={`flex-1 text-[13px] leading-[20px]${step.status === 'active' ? ' font-medium' : ''}`}
+              className={`flex-1 text-button leading-[20px]${step.status === 'active' ? ' font-medium' : ''}`}
               style={{ color: 'var(--color-foreground)' }}
             >
               {step.label}
             </span>
             {step.elapsed !== undefined && (
               <span
-                className="shrink-0 text-[11px] leading-[20px]"
+                className="shrink-0 text-caption leading-[20px]"
                 style={{
                   fontFamily: 'var(--font-mono)',
                   color: 'var(--color-muted)',
