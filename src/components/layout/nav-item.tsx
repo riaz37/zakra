@@ -68,10 +68,10 @@ export function NavItem({
       className={cn(
         // base
         'relative flex min-h-10 items-center gap-2.5 rounded-md px-3 py-2.5 font-sans text-button outline-none transition-colors duration-150',
-        'focus-visible:outline-none',
+        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/40',
         active
-          ? 'bg-surface-300 font-medium text-foreground'
-          : 'text-muted hover:bg-accent/10 hover:text-accent',
+          ? 'bg-accent/[0.08] font-medium text-accent'
+          : 'text-muted hover:bg-surface-300 hover:text-foreground',
         collapsed && 'justify-center px-0',
       )}
     >
