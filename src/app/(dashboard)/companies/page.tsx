@@ -68,7 +68,7 @@ export default function CompaniesPage() {
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-2">
             {row.original.parent_id && (
-              <GitBranch className="size-3 text-muted-foreground/50 rotate-90" />
+              <GitBranch className="size-3 text-muted/50 rotate-90" />
             )}
             <Button
               variant="link"

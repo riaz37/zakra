@@ -49,7 +49,7 @@ export function ChatSidebar() {
 
     return (
       <div className="mb-6">
-        <h3 className="mb-2 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        <h3 className="mb-2 px-4 text-micro font-semibold text-muted uppercase tracking-wider">
           {title}
         </h3>
         <ul className="space-y-1 px-2">
@@ -69,7 +69,7 @@ export function ChatSidebar() {
                   <MessageSquare
                     className={cn(
                       'h-4 w-4 shrink-0',
-                      isActive ? 'text-accent' : 'text-muted-foreground'
+                      isActive ? 'text-accent' : 'text-muted'
                     )}
                   />
                   <span className="truncate">{session.title || 'Untitled conversation'}</span>
@@ -96,7 +96,7 @@ export function ChatSidebar() {
 
       <div className="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-surface-400 scrollbar-track-transparent hover:scrollbar-thumb-surface-500">
         {!companyId && (
-          <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+          <div className="px-4 py-6 text-center text-caption text-muted">
             Select a company to view chat history.
           </div>
         )}
@@ -116,7 +116,7 @@ export function ChatSidebar() {
         )}
 
         {!isLoading && sessions.length === 0 && companyId && (
-          <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+          <div className="px-4 py-6 text-center text-caption text-muted">
             No past conversations found.
           </div>
         )}
