@@ -53,9 +53,9 @@ function UserTypeBadge({ type }: { type: string }) {
     type === 'super_admin' ? 'Super Admin' : type === 'admin' ? 'Admin' : 'Regular';
   const classes =
     type === 'super_admin'
-      ? 'bg-[rgba(229,165,10,0.12)] text-gold border border-[rgba(229,165,10,0.2)]'
+      ? 'bg-warning-bg text-gold border border-warning-border'
       : type === 'admin'
-      ? 'bg-[rgba(62,207,142,0.12)] text-accent border border-[rgba(62,207,142,0.2)]'
+      ? 'bg-accent-bg text-accent border border-accent-border'
       : 'bg-surface-300 text-muted border border-border';
 
   return (

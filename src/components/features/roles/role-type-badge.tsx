@@ -8,13 +8,11 @@ interface RoleTypeBadgeProps {
 const VARIANTS: Record<Role['role_type'], { label: string; classes: string }> = {
   system: {
     label: 'System',
-    classes:
-      'bg-[rgba(106,158,196,0.14)] text-read border border-[rgba(106,158,196,0.22)]',
+    classes: 'bg-info-soft text-read border border-info-soft',
   },
   company_default: {
     label: 'Company Default',
-    classes:
-      'bg-[rgba(62,207,142,0.12)] text-accent border border-[rgba(62,207,142,0.2)]',
+    classes: 'bg-accent-bg text-accent border border-accent-border',
   },
   custom: {
     label: 'Custom',

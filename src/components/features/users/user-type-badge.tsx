@@ -7,13 +7,11 @@ interface UserTypeBadgeProps {
 const VARIANTS: Record<string, { label: string; classes: string }> = {
   super_admin: {
     label: 'Super Admin',
-    classes:
-      'bg-[rgba(229,165,10,0.12)] text-gold border border-[rgba(229,165,10,0.2)]',
+    classes: 'bg-warning-bg text-gold border border-warning-border',
   },
   admin: {
     label: 'Admin',
-    classes:
-      'bg-[rgba(62,207,142,0.12)] text-accent border border-[rgba(62,207,142,0.2)]',
+    classes: 'bg-accent-bg text-accent border border-accent-border',
   },
   regular: {
     label: 'Regular',
