@@ -56,24 +56,24 @@ export function RecentActivity({ recentActivity, isLoading }: RecentActivityProp
         <div className="grid gap-6 md:grid-cols-2">
           {/* Recent Reports */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-semibold text-sm flex items-center gap-2">
+            <h3 className="font-sans text-button font-medium flex items-center gap-2">
               <FileBarChart className="size-4" /> Reports
             </h3>
             {reports.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No recent reports.</p>
+              <p className="text-caption text-muted">No recent reports.</p>
             ) : (
               <div className="flex flex-col gap-3">
                 {reports.map((report) => (
                   <Link
                     key={report.id}
                     href={`/reports/${report.id}`}
-                    className="flex flex-col gap-1 rounded-md border p-3 hover:bg-muted/50 transition-colors"
+                    className="flex flex-col gap-1 rounded-md border p-3 hover:bg-surface-300 transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-sm truncate pr-4">{report.title || 'Untitled Report'}</span>
                       <StatusBadge status={report.status} size="sm" />
                     </div>
-                    <div className="flex items-center text-xs text-muted-foreground gap-1">
+                    <div className="flex items-center text-micro text-muted gap-1">
                       <Clock className="size-3" />
                       {formatDate(report.created_at)}
                     </div>
@@ -85,21 +85,21 @@ export function RecentActivity({ recentActivity, isLoading }: RecentActivityProp
 
           {/* Recent Chats */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-semibold text-sm flex items-center gap-2">
+            <h3 className="font-sans text-button font-medium flex items-center gap-2">
               <MessageSquare className="size-4" /> Chats
             </h3>
             {chats.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No recent chats.</p>
+              <p className="text-caption text-muted">No recent chats.</p>
             ) : (
               <div className="flex flex-col gap-3">
                 {chats.map((chat) => (
                   <Link
                     key={chat.id}
                     href={`/chat/${chat.id}`}
-                    className="flex flex-col gap-1 rounded-md border p-3 hover:bg-muted/50 transition-colors"
+                    className="flex flex-col gap-1 rounded-md border p-3 hover:bg-surface-300 transition-colors"
                   >
                     <span className="font-medium text-sm truncate">{chat.title || 'New Chat'}</span>
-                    <div className="flex items-center text-xs text-muted-foreground gap-1">
+                    <div className="flex items-center text-micro text-muted gap-1">
                       <Clock className="size-3" />
                       {formatDate(chat.created_at)}
                     </div>

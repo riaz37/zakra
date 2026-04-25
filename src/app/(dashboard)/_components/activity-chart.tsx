@@ -43,7 +43,7 @@ export function ActivityChart({ data, isLoading }: ActivityChartProps) {
           <CardDescription>No activity data available.</CardDescription>
         </CardHeader>
         <CardContent className="h-[300px] flex items-center justify-center">
-          <p className="text-muted-foreground text-sm">Waiting for your first action</p>
+          <p className="text-caption text-muted">Waiting for your first action</p>
         </CardContent>
       </Card>
     );

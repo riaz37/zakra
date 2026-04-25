@@ -53,7 +53,7 @@ export function StatusDistributionChart({ data, isLoading }: StatusDistributionC
           <CardDescription>No reports generated yet</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 pb-0 flex items-center justify-center">
-          <p className="text-muted-foreground text-sm">Status breakdown will appear here</p>
+          <p className="text-caption text-muted">Status breakdown will appear here</p>
         </CardContent>
       </Card>
     );
