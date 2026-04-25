@@ -81,7 +81,7 @@ export default function LoginPage() {
             aria-invalid={!!errors.email}
             className={cn(
               'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(62,207,142,0.4)]',
+              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               errors.email
                 ? 'border-error focus:border-error'
                 : 'border-border focus:border-accent',
@@ -111,7 +111,7 @@ export default function LoginPage() {
             aria-invalid={!!errors.password}
             className={cn(
               'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(62,207,142,0.4)]',
+              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               errors.password
                 ? 'border-error focus:border-error'
                 : 'border-border focus:border-accent',
@@ -131,7 +131,7 @@ export default function LoginPage() {
           disabled={isSubmitting}
           className={cn(
             'mt-6 flex w-full items-center justify-center rounded-lg bg-accent py-2.5 font-sans text-button font-medium text-[#111]',
-            'transition-colors duration-150 hover:bg-[#4ed99a]',
+            'transition-colors duration-150 hover:bg-accent/90',
             'disabled:cursor-not-allowed disabled:opacity-60',
           )}
         >
