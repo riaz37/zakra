@@ -148,11 +148,7 @@ function FilePreviewCard({
 
   return (
     <div
-      className="relative group flex-shrink-0 overflow-hidden rounded-lg size-[116px]"
-      style={{
-        background: "var(--color-surface-400)",
-        border: "1px solid var(--color-border)",
-      }}
+      className="relative group flex-shrink-0 overflow-hidden rounded-lg size-[116px] bg-surface-400 border border-border"
     >
       {isImage && file.preview ? (
         <img
@@ -224,11 +220,7 @@ function TextualFilePreviewCard({
 
   return (
     <div
-      className="relative group flex-shrink-0 overflow-hidden rounded-lg size-[116px]"
-      style={{
-        background: "var(--color-surface-400)",
-        border: "1px solid var(--color-border)",
-      }}
+      className="relative group flex-shrink-0 overflow-hidden rounded-lg size-[116px] bg-surface-400 border border-border"
     >
       {/* Content preview */}
       <div className="p-2 h-full overflow-hidden">
@@ -299,11 +291,7 @@ function PastedContentCard({
 }) {
   return (
     <div
-      className="relative group flex-shrink-0 overflow-hidden rounded-lg size-[116px]"
-      style={{
-        background: "var(--color-surface-400)",
-        border: "1px solid var(--color-border)",
-      }}
+      className="relative group flex-shrink-0 overflow-hidden rounded-lg size-[116px] bg-surface-400 border border-border"
     >
       <div className="p-2 h-full overflow-hidden">
         <p
@@ -584,24 +572,15 @@ export function ChatInput({
           placeholder={placeholder}
           disabled={disabled || isStreaming}
           rows={1}
-          className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-[15px] outline-none focus-visible:shadow-none disabled:opacity-50"
-          style={{
-            fontFamily: "var(--font-sans)",
-            color: "var(--color-foreground)",
-            lineHeight: 1.5,
-            maxHeight: "120px",
-            overflowY: "auto",
-            caretColor: "var(--color-accent)",
-          }}
+          className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-[15px] outline-none focus-visible:shadow-none disabled:opacity-50 font-sans text-foreground leading-normal max-h-[120px] overflow-y-auto"
+          style={{ caretColor: "var(--color-accent)" }}
         />
 
         {/* Action bar */}
         <div className="flex items-center justify-between px-3 pb-2.5">
           {/* Left: attach */}
           <button
-            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-40 text-muted"
-            onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-surface-400)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-40 text-muted hover:bg-surface-400"
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled || files.length >= maxFiles}
             title={files.length >= maxFiles ? `Max ${maxFiles} files` : "Attach files"}
@@ -614,11 +593,7 @@ export function ChatInput({
             {/* File count badge */}
             {files.length > 0 && (
               <span
-                className="font-mono text-caption px-1.5 py-0.5 rounded-md"
-                style={{
-                  color: "var(--color-muted)",
-                  background: "var(--color-surface-400)",
-                }}
+                className="font-mono text-caption px-1.5 py-0.5 rounded-md text-muted bg-surface-400"
               >
                 {files.length}/{maxFiles}
               </span>
@@ -627,11 +602,7 @@ export function ChatInput({
             {isStreaming ? (
               <button
                 onClick={onStop}
-                className="flex items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 font-sans text-button transition-colors hover:opacity-80"
-                style={{
-                  background: "var(--color-error)",
-                  color: 'var(--color-foreground)',
-                }}
+                className="flex items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 font-sans text-button transition-colors hover:opacity-80 bg-error text-foreground"
               >
                 <Square className="h-3.5 w-3.5" />
                 Stop
@@ -640,11 +611,10 @@ export function ChatInput({
               <button
                 onClick={handleSend}
                 disabled={!canSend}
-                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                style={{
-                  background: canSend ? "var(--color-foreground)" : "var(--color-surface-400)",
-                  color: canSend ? "var(--color-background)" : "var(--color-muted)",
-                }}
+                className={cn(
+                  "flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed",
+                  canSend ? "bg-foreground text-background" : "bg-surface-400 text-muted",
+                )}
                 title="Send (Enter)"
               >
                 <ArrowUp className="h-4 w-4" />
