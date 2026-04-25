@@ -169,7 +169,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
           <>
             {!collapsed && (
               <div className="mt-5 mb-1 px-3">
-                <span className="font-sans text-micro uppercase tracking-[0.08em] text-muted/40">
+                <span className="font-sans text-micro uppercase tracking-[0.08em] text-muted/60">
                   Admin
                 </span>
               </div>
