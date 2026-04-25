@@ -50,8 +50,7 @@ export function PipelineSummary({ steps }: PipelineSummaryProps) {
       {steps.map((step, idx) => (
         <span
           key={idx}
-          className="font-mono text-caption"
-          style={{ color: 'var(--color-muted)', opacity: 0.5 }}
+          className="font-mono text-caption text-muted/50"
         >
           {step.stepName}
           {step.durationMs !== undefined && (

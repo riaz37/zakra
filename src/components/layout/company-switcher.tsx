@@ -33,8 +33,7 @@ export function CompanySwitcher({ collapsed = false }: CompanySwitcherProps) {
       <div className="flex justify-center px-2 pb-3">
         <span
           title={selected?.name ?? 'No company selected'}
-          className="flex h-8 w-8 items-center justify-center rounded-lg"
-          style={{ background: 'var(--color-surface-300)', color: 'var(--color-muted)' }}
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-300 text-muted"
         >
           <Building2 size={14} strokeWidth={1.75} />
         </span>
@@ -45,8 +44,7 @@ export function CompanySwitcher({ collapsed = false }: CompanySwitcherProps) {
   return (
     <div className="px-3 pb-3">
       <p
-        className="mb-1.5 px-1 font-sans text-micro uppercase"
-        style={{ color: 'var(--color-muted)', opacity: 0.5, letterSpacing: '0.048px' }}
+        className="mb-1.5 px-1 font-sans text-micro uppercase text-muted/50 tracking-[0.048px]"
       >
         Company context
       </p>

@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
 import { z } from 'zod';
-import { useAuth } from '@/store/authStore';
+import { useAuth, useAuthStore } from '@/store/authStore';
+import { useCompanyStore } from '@/store/companyStore';
 import { cn } from '@/lib/utils';
 
 const loginSchema = z.object({
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const [apiError, setApiError] = useState<string | null>(null);
+  const { selectedCompanyId } = useCompanyStore();
 
   const {
     register,
@@ -33,7 +35,13 @@ export default function LoginPage() {
     setApiError(null);
     try {
       await login({ email: values.email, password: values.password });
-      router.push('/chat');
+      const user = useAuthStore.getState().user;
+      const resolvedCompanyId = user?.company_id ?? selectedCompanyId;
+      if (!resolvedCompanyId) {
+        router.push('/select-company');
+      } else {
+        router.push('/');
+      }
     } catch (err) {
       setApiError(
         err instanceof Error ? err.message : 'Sign in failed. Please try again.',

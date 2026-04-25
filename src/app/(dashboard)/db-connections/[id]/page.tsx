@@ -470,12 +470,11 @@ function RuleDialog({
                 disabled={isSubmitting}
                 className={cn(
                   'inline-flex items-center justify-center rounded-lg px-4 py-2',
-                  'font-sans text-button text-white',
+                  'font-sans text-button text-white bg-accent',
                   'transition-colors hover:opacity-90',
                   'focus-visible:outline-none',
                   'disabled:cursor-not-allowed disabled:opacity-50',
                 )}
-                style={{ backgroundColor: 'var(--color-accent)' }}
               >
                 {isSubmitting ? 'Saving…' : editRule ? 'Update Rule' : 'Add Rule'}
               </button>
@@ -532,11 +531,10 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
           }}
           className={cn(
             'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2',
-            'font-sans text-button text-white',
+            'font-sans text-button text-white bg-accent',
             'transition-colors hover:opacity-90',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-medium',
           )}
-          style={{ backgroundColor: 'var(--color-accent)' }}
         >
           <span aria-hidden>+</span> Add Rule
         </button>

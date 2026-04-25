@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export interface PipelineStep {
   id: string;
@@ -63,10 +64,7 @@ function StepDot({ step }: { step: PipelineStep }) {
 
   // error
   return (
-    <span
-      className="mt-[3px] flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full"
-      style={{ background: 'var(--color-error)' }}
-    >
+    <span className="mt-[3px] flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-error">
       <X className="h-[9px] w-[9px] text-white" strokeWidth={3} />
     </span>
   );
@@ -74,39 +72,27 @@ function StepDot({ step }: { step: PipelineStep }) {
 
 export function AIPipelineTimeline({ steps, className }: AIPipelineTimelineProps) {
   return (
-    <div
-      className={`rounded-[var(--radius-lg)] border p-4 ${className ?? ''}`}
-      style={{
-        background: 'var(--color-background)',
-        borderColor: 'var(--color-border)',
-      }}
-    >
+    <div className={cn('rounded-[var(--radius-lg)] border border-border bg-background p-4', className)}>
       <ol className="space-y-1">
         {steps.map((step) => (
           <li
             key={step.id}
-            className="flex items-start gap-3 rounded px-2 py-[6px] transition-colors"
-            style={
-              step.status === 'active'
-                ? { background: 'var(--color-surface-200)' }
-                : undefined
-            }
+            className={cn(
+              'flex items-start gap-3 rounded px-2 py-[6px] transition-colors',
+              step.status === 'active' && 'bg-surface-200',
+            )}
           >
             <StepDot step={step} />
             <span
-              className={`flex-1 text-button leading-[20px]${step.status === 'active' ? ' font-medium' : ''}`}
-              style={{ color: 'var(--color-foreground)' }}
+              className={cn(
+                'flex-1 text-button leading-[20px] text-foreground',
+                step.status === 'active' && 'font-medium',
+              )}
             >
               {step.label}
             </span>
             {step.elapsed !== undefined && (
-              <span
-                className="shrink-0 text-caption leading-[20px]"
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  color: 'var(--color-muted)',
-                }}
-              >
+              <span className="shrink-0 text-caption leading-[20px] font-mono text-muted">
                 {formatElapsed(step.elapsed)}
               </span>
             )}
