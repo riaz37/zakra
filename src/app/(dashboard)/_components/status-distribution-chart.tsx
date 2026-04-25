@@ -28,7 +28,7 @@ const chartConfig = {
   },
   failed: {
     label: 'Failed',
-    color: 'hsl(var(--chart-destructive))',
+    color: 'var(--color-error)',
   },
   running: {
     label: 'Running',
