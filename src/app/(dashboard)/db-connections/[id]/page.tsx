@@ -392,7 +392,7 @@ function RuleDialog({
             'transition-[opacity,transform] duration-200',
           )}
         >
-          <Dialog.Title className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.11px] text-foreground">
+          <Dialog.Title className="font-sans text-title font-normal text-foreground">
             {editRule ? 'Edit Rule' : 'Add Rule'}
           </Dialog.Title>
 
@@ -703,7 +703,7 @@ export default function DbConnectionDetailPage({ params }: DbConnectionDetailPag
       </nav>
 
       {/* Page title */}
-      <h1 className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.11px] text-foreground">
+      <h1 className="font-sans text-title font-normal text-foreground">
         {connection.name}
       </h1>
       <p className="mt-0.5 font-mono text-caption text-muted">

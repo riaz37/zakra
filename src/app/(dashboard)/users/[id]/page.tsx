@@ -262,7 +262,7 @@ export default function UserDetailPage() {
         >
           <ArrowLeft aria-hidden size={14} strokeWidth={1.75} />
         </Button>
-        <h1 className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.11px] text-foreground">
+        <h1 className="font-sans text-title font-normal text-foreground">
           {fullName}
         </h1>
       </div>
