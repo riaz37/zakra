@@ -30,7 +30,6 @@ const ADMIN_LABELS = new Set<string>([
   'Users',
   'Companies',
   'Databases',
-  'Roles',
   'Table Access',
   'Templates',
 ]);
