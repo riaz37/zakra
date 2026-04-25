@@ -97,10 +97,9 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
       {/* Brand */}
       <div
         className={cn(
-          'flex items-center border-b border-border',
+          'flex h-16 items-center border-b border-border',
           collapsed ? 'justify-center px-0' : 'px-5',
         )}
-        style={{ minHeight: '64px' }}
       >
         {collapsed ? (
           <Image
