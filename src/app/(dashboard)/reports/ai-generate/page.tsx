@@ -8,7 +8,20 @@ import { useDbConnections } from '@/hooks/useDbConnections';
 import { AIPipelineTimeline } from '@/components/shared/ai-pipeline-timeline';
 import type { PipelineStep as TimelineStep } from '@/components/shared/ai-pipeline-timeline';
 import type { ReportPipelineStep } from '@/types';
-import { Sparkles, Square, ExternalLink } from 'lucide-react';
+import { Square, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 // ── Map pipeline steps to timeline visual types ────────────────────────────
 
@@ -100,150 +113,90 @@ export default function AIGeneratePage() {
     <div className="mx-auto max-w-[760px] px-6 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1
-          className="text-[28px]"
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 400,
-            letterSpacing: '-0.56px',
-            color: 'var(--color-foreground)',
-          }}
-        >
+        <h1 className="font-sans text-[28px] font-normal tracking-[-0.56px] text-foreground">
           AI Report Generator
         </h1>
-        <p
-          className="mt-1 text-[15px]"
-          style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
-        >
+        <p className="mt-1 font-sans text-[15px] text-muted">
           Describe the report you want and AI will generate it from your data.
         </p>
       </div>
 
       {/* Form — hide while generating or done */}
       {!hasStarted && (
-        <div
-          className="rounded-[var(--radius-xl)] border p-6"
-          style={{ background: 'var(--color-surface-100)', borderColor: 'var(--color-border)' }}
-        >
-          <div className="space-y-4">
+        <div className="rounded-xl border border-border bg-surface-100 p-6">
+          <FieldGroup className="gap-6">
             {/* Report description */}
-            <div>
-              <label
-                className="mb-1.5 block text-[13px] font-medium"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-              >
-                What report do you need? <span style={{ color: 'var(--color-error)' }}>*</span>
-              </label>
+            <Field>
+              <FieldLabel htmlFor="query-textarea">What report do you need? *</FieldLabel>
               <textarea
+                id="query-textarea"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="e.g. Monthly sales performance report with revenue trends and top products"
                 rows={3}
-                className="w-full resize-none rounded-[var(--radius-md)] border px-4 py-3 text-[14px] outline-none transition-shadow focus:shadow-[var(--shadow-focus)]"
-                style={{
-                  background: 'var(--color-background)',
-                  borderColor: 'var(--color-border)',
-                  fontFamily: 'var(--font-sans)',
-                  color: 'var(--color-foreground)',
-                  lineHeight: 1.5,
-                }}
+                className="w-full resize-none rounded-lg border border-border bg-background px-4 py-3 font-sans text-[14px] text-foreground outline-none transition-shadow focus:shadow-focus"
               />
-            </div>
+            </Field>
 
             {/* Optional title */}
-            <div>
-              <label
-                className="mb-1.5 block text-[13px] font-medium"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-              >
-                Report title <span style={{ color: 'var(--color-muted)' }}>(optional)</span>
-              </label>
+            <Field>
+              <FieldLabel htmlFor="title-input">Report title (optional)</FieldLabel>
               <input
+                id="title-input"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Auto-generated if left blank"
-                className="w-full rounded-[var(--radius-md)] border px-4 py-2.5 text-[14px] outline-none transition-shadow focus:shadow-[var(--shadow-focus)]"
-                style={{
-                  background: 'var(--color-background)',
-                  borderColor: 'var(--color-border)',
-                  fontFamily: 'var(--font-sans)',
-                  color: 'var(--color-foreground)',
-                }}
+                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 font-sans text-[14px] text-foreground outline-none transition-shadow focus:shadow-focus"
               />
-            </div>
+            </Field>
 
             {/* Connection selector */}
             {connections.length > 1 && (
-              <div>
-                <label
-                  className="mb-1.5 block text-[13px] font-medium"
-                  style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-                >
-                  Database Connection
-                </label>
-                <select
-                  value={connectionId}
-                  onChange={(e) => setConnectionId(e.target.value)}
-                  className="w-full rounded-[var(--radius-md)] border px-4 py-2.5 text-[14px] outline-none"
-                  style={{
-                    background: 'var(--color-background)',
-                    borderColor: 'var(--color-border)',
-                    fontFamily: 'var(--font-display)',
-                    color: 'var(--color-foreground)',
-                  }}
-                >
-                  {connections.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Field>
+                <FieldLabel htmlFor="connection-select">Database Connection</FieldLabel>
+                <Select value={connectionId} onValueChange={(v) => v && setConnectionId(v)}>
+                  <SelectTrigger id="connection-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {connections.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
             )}
 
             {/* Form error */}
             {formError && (
-              <p
-                className="text-[13px]"
-                style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-error)' }}
-              >
+              <p className="font-sans text-[13px] text-error">
                 {formError}
               </p>
             )}
 
             <div className="flex justify-end">
-              <button
+              <Button
                 onClick={() => void handleGenerate()}
                 disabled={!query.trim()}
-                className="flex items-center gap-2 rounded-[var(--radius-lg)] px-5 py-[10px] text-[14px] transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-                style={{
-                  background: 'var(--color-foreground)',
-                  color: 'var(--color-background)',
-                  fontFamily: 'var(--font-display)',
-                }}
+                className="h-10 px-5"
               >
-                <Sparkles className="h-4 w-4" />
                 Generate report
-              </button>
+              </Button>
             </div>
-          </div>
+          </FieldGroup>
         </div>
       )}
 
       {/* Pipeline while generating */}
       {hasStarted && (
         <div className="space-y-6">
-          <div
-            className="rounded-[var(--radius-xl)] border p-5"
-            style={{ background: 'var(--color-surface-100)', borderColor: 'var(--color-border)' }}
-          >
+          <div className="rounded-xl border border-border bg-surface-100 p-5">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <p
-                  className="text-[14px] font-medium"
-                  style={{ fontFamily: 'var(--font-display)', color: 'var(--color-foreground)' }}
-                >
+                <p className="font-sans text-[14px] font-medium text-foreground">
                   {isGenerating
                     ? 'Generating report…'
                     : isCompleted
@@ -253,10 +206,7 @@ export default function AIGeneratePage() {
                         : 'Stopped'}
                 </p>
                 {query && (
-                  <p
-                    className="mt-1 text-[13px]"
-                    style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-muted)' }}
-                  >
+                  <p className="mt-1 font-sans text-[13px] text-muted">
                     {query.length > 80 ? `${query.slice(0, 80)}…` : query}
                   </p>
                 )}
@@ -264,31 +214,23 @@ export default function AIGeneratePage() {
 
               <div className="flex items-center gap-2">
                 {isGenerating && (
-                  <button
+                  <Button
+                    variant="destructive"
+                    size="sm"
                     onClick={handleStop}
-                    className="flex items-center gap-2 rounded-[var(--radius-lg)] px-3 py-2 text-[13px] transition-colors hover:opacity-80"
-                    style={{
-                      background: 'var(--color-error)',
-                      color: '#fff',
-                      fontFamily: 'var(--font-display)',
-                    }}
                   >
-                    <Square className="h-3.5 w-3.5" />
+                    <Square aria-hidden size={14} />
                     Stop
-                  </button>
+                  </Button>
                 )}
                 {(isCompleted || hasError) && (
-                  <button
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={handleReset}
-                    className="rounded-[var(--radius-lg)] px-3 py-2 text-[13px] transition-colors hover:opacity-80"
-                    style={{
-                      background: 'var(--color-surface-300)',
-                      fontFamily: 'var(--font-display)',
-                      color: 'var(--color-foreground)',
-                    }}
                   >
                     New report
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -298,17 +240,8 @@ export default function AIGeneratePage() {
 
           {/* Error */}
           {hasError && state.error && (
-            <div
-              className="rounded-[var(--radius-lg)] border px-4 py-3"
-              style={{
-                background: 'rgba(207,45,86,0.06)',
-                borderColor: 'rgba(207,45,86,0.2)',
-              }}
-            >
-              <p
-                className="text-[14px]"
-                style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-error)' }}
-              >
+            <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3">
+              <p className="font-sans text-[14px] text-error">
                 {state.error.message}
               </p>
             </div>
@@ -316,20 +249,11 @@ export default function AIGeneratePage() {
 
           {/* Executive summary preview */}
           {state.executiveSummary && (
-            <div
-              className="rounded-[var(--radius-xl)] border p-5"
-              style={{ background: 'var(--color-surface-100)', borderColor: 'var(--color-border)' }}
-            >
-              <p
-                className="mb-2 text-[11px] font-medium uppercase tracking-wider"
-                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-muted)' }}
-              >
+            <div className="rounded-xl border border-border bg-surface-100 p-5">
+              <p className="mb-2 font-mono text-[11px] font-medium uppercase tracking-wider text-muted">
                 Executive Summary
               </p>
-              <p
-                className="text-[15px] leading-relaxed"
-                style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-foreground)' }}
-              >
+              <p className="font-sans text-[15px] leading-relaxed text-foreground">
                 {state.executiveSummary}
               </p>
             </div>
@@ -338,18 +262,14 @@ export default function AIGeneratePage() {
           {/* View report CTA */}
           {isCompleted && state.generationId && (
             <div className="flex justify-center">
-              <button
+              <Button
                 onClick={() => router.push(`/reports/${state.generationId}`)}
-                className="flex items-center gap-2 rounded-[var(--radius-lg)] px-6 py-3 text-[14px] transition-colors hover:opacity-90"
-                style={{
-                  background: 'var(--color-foreground)',
-                  color: 'var(--color-background)',
-                  fontFamily: 'var(--font-display)',
-                }}
+                size="lg"
+                className="px-8"
               >
-                <ExternalLink className="h-4 w-4" />
+                <ExternalLink aria-hidden size={16} />
                 View Report
-              </button>
+              </Button>
             </div>
           )}
         </div>

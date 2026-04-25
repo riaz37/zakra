@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Database } from 'lucide-react';
-
+import { Database, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useDbConnections, useTestConnection } from '@/hooks/useDbConnections';
 import { PageHeader } from '@/components/shared/page-header';
@@ -48,18 +48,13 @@ export default function DbConnectionsPage() {
       <PageHeader
         title="Databases"
         action={
-          <button
-            type="button"
+          <Button
             onClick={() => setDialogOpen(true)}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2',
-              'bg-foreground font-sans text-[14px] text-background',
-              'transition-colors hover:opacity-90',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-medium',
-            )}
+            className="h-9 px-4"
           >
-            <span aria-hidden>+</span> Add Connection
-          </button>
+            <Plus aria-hidden size={15} strokeWidth={2} />
+            Add Connection
+          </Button>
         }
       />
 
@@ -77,17 +72,13 @@ export default function DbConnectionsPage() {
           title="No databases connected"
           description="Connect a database to enable natural language queries and reports."
           action={
-            <button
-              type="button"
+            <Button
               onClick={() => setDialogOpen(true)}
-              className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2',
-                'bg-foreground font-sans text-[14px] text-background',
-                'transition-colors hover:opacity-90',
-              )}
+              className="h-9 px-4"
             >
-              <span aria-hidden>+</span> Add Connection
-            </button>
+              <Plus aria-hidden size={15} strokeWidth={2} />
+              Add Connection
+            </Button>
           }
         />
       )}

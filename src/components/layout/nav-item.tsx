@@ -71,7 +71,7 @@ export function NavItem({
         'focus-visible:outline-none',
         active
           ? 'bg-surface-300 font-medium text-foreground'
-          : 'text-muted hover:bg-surface-200 hover:text-muted-strong',
+          : 'text-muted hover:bg-accent/10 hover:text-accent',
         collapsed && 'justify-center px-0',
       )}
     >

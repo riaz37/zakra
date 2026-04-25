@@ -1,8 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -10,13 +17,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
-export interface CompanyFormData {
-  name: string;
-  slug: string;
-  description: string;
-  status: 'active' | 'inactive' | 'suspended';
-}
+const companySchema = z.object({
+  name: z.string().min(1, 'Company name is required.'),
+  slug: z.string().min(1, 'Slug is required.'),
+  description: z.string().optional(),
+  status: z.enum(['active', 'inactive', 'suspended']),
+  parent_id: z.string().optional(),
+});
+
+export type CompanyFormData = z.infer<typeof companySchema>;
 
 function slugify(name: string): string {
   return name
@@ -31,6 +42,7 @@ export interface CompanyFormProps {
   isPending: boolean;
   onCancel: () => void;
   submitLabel?: string;
+  parentCompanies?: { id: string; name: string }[];
 }
 
 export function CompanyForm({
@@ -39,102 +51,143 @@ export function CompanyForm({
   isPending,
   onCancel,
   submitLabel = 'Create Company',
+  parentCompanies,
 }: CompanyFormProps) {
-  const [name, setName] = useState(initial?.name ?? '');
-  const [slug, setSlug] = useState(initial?.slug ?? '');
-  const [description, setDescription] = useState(initial?.description ?? '');
-  const [status, setStatus] = useState<'active' | 'inactive' | 'suspended'>(
-    initial?.status ?? 'active',
-  );
-  const [nameError, setNameError] = useState('');
+  const form = useForm<CompanyFormData>({
+    resolver: zodResolver(companySchema),
+    defaultValues: {
+      name: initial?.name ?? '',
+      slug: initial?.slug ?? '',
+      description: initial?.description ?? '',
+      status: initial?.status ?? 'active',
+      parent_id: initial?.parent_id ?? '',
+    },
+  });
 
-  function handleNameChange(value: string) {
-    setName(value);
+  function handleNameChange(value: string, onChange: (v: string) => void) {
+    onChange(value);
     if (!initial?.slug) {
-      setSlug(slugify(value));
+      form.setValue('slug', slugify(value));
     }
-    if (nameError && value.trim()) setNameError('');
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim()) {
-      setNameError('Company name is required.');
-      return;
-    }
-    onSubmit({ name: name.trim(), slug: slug || slugify(name), description, status });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="company-name">Name *</Label>
-        <Input
-          id="company-name"
-          value={name}
-          onChange={(e) => handleNameChange(e.target.value)}
-          placeholder="Acme Corp"
-          aria-invalid={!!nameError}
-          aria-describedby={nameError ? 'company-name-error' : undefined}
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <FieldGroup>
+        <Controller
+          control={form.control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Name *</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                onChange={(e) => handleNameChange(e.target.value, field.onChange)}
+                placeholder="Acme Corp"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        {nameError ? (
-          <p id="company-name-error" className="font-sans text-[12px] text-error">{nameError}</p>
-        ) : null}
-      </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="company-slug">Slug</Label>
-        <Input
-          id="company-slug"
-          value={slug}
-          onChange={(e) => setSlug(e.target.value)}
-          placeholder="acme-corp"
+        <Controller
+          control={form.control}
+          name="slug"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Slug</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder="acme-corp"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-      </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="company-status">Status</Label>
-        <Select
-          value={status}
-          onValueChange={(v) => setStatus(v as typeof status)}
-        >
-          <SelectTrigger id="company-status">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-            <SelectItem value="suspended">Suspended</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="company-description">Description</Label>
-        <Input
-          id="company-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Optional description"
+        <Controller
+          control={form.control}
+          name="status"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Status</FieldLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                </SelectContent>
+              </Select>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-      </div>
+
+        {parentCompanies && parentCompanies.length > 0 && (
+          <Controller
+            control={form.control}
+            name="parent_id"
+            render={({ field }) => (
+              <Field>
+                <FieldLabel htmlFor={field.name}>Parent Company</FieldLabel>
+                <Select value={field.value ?? ''} onValueChange={field.onChange}>
+                  <SelectTrigger id={field.name}>
+                    <SelectValue placeholder="None (top-level)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">None (top-level)</SelectItem>
+                    {parentCompanies.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            )}
+          />
+        )}
+
+        <Controller
+          control={form.control}
+          name="description"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder="Optional description"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
 
       <div className="flex justify-end gap-2 pt-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={onCancel}
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg border border-border bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground transition-colors hover:bg-surface-400 disabled:opacity-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-foreground px-4 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
         >
           {isPending ? 'Saving…' : submitLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );

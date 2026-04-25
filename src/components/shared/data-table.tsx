@@ -27,6 +27,7 @@ export interface DataTableProps<TData> {
   caption?: string;
   /** Message shown when data is empty and not loading. */
   emptyMessage?: string;
+  onRowClick?: (row: TData) => void;
   className?: string;
 }
 
@@ -51,6 +52,7 @@ export function DataTable<TData>({
   totalCount,
   caption,
   emptyMessage = "No records to display.",
+  onRowClick,
   className,
 }: DataTableProps<TData>) {
   const table = useReactTable({
@@ -142,13 +144,19 @@ export function DataTable<TData>({
                   key={row.id}
                   className={cn(
                     "group border-b border-border last:border-b-0",
-                    "transition-colors hover:bg-surface-300",
+                    "transition-all hover:bg-accent/5",
+                    onRowClick && "cursor-pointer"
                   )}
+                  onClick={() => onRowClick?.(row.original)}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map((cell, cellIdx) => (
                     <td
                       key={cell.id}
-                      className="px-4 py-3 align-middle font-sans text-button text-foreground"
+                      className={cn(
+                        "px-4 py-3 align-middle font-sans text-[14px] text-foreground",
+                        "relative",
+                        cellIdx === 0 && "before:absolute before:left-0 before:top-0 before:h-full before:w-[2px] before:bg-accent before:opacity-0 before:transition-opacity group-hover:before:opacity-100"
+                      )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -176,7 +184,11 @@ export function DataTable<TData>({
             {rows.map((row) => (
               <li
                 key={row.id}
-                className="rounded-lg border border-border bg-surface-200 p-3"
+                className={cn(
+                  "rounded-lg border border-border bg-surface-200 p-3",
+                  onRowClick && "cursor-pointer active:bg-accent/5 transition-colors"
+                )}
+                onClick={() => onRowClick?.(row.original)}
               >
                 <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5">
                   {row.getVisibleCells().map((cell) => {
@@ -266,7 +278,7 @@ function PaginationButton({
       className={cn(
         "inline-flex items-center gap-1 rounded border border-border bg-surface-200 px-3 py-1.5",
         "font-sans text-button text-foreground transition-colors",
-        "hover:bg-surface-300",
+        "hover:bg-surface-400/60",
         "focus-visible:border-border-medium focus-visible:outline-none",
         "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface-200",
       )}

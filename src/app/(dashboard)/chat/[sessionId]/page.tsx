@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useChatStream } from '@/hooks/useChatStream';
 import { useChatMessages } from '@/hooks/useChatMessages';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
@@ -15,6 +15,8 @@ import { ChatMessagesSkeleton } from '@/components/features/chat/chat-messages-s
 
 export default function ChatSessionPage() {
   const params = useParams<{ sessionId: string }>();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const sessionId = params.sessionId;
   const companyId = useCurrentCompanyId();
 
@@ -55,11 +57,21 @@ export default function ChatSessionPage() {
 
   const hasContent = messages.length > 0 || !!pendingUserMessage || !!streamingMessage;
 
+  // Handle initial query from the "New Chat" page
+  useEffect(() => {
+    const initialQuery = searchParams.get('q');
+    if (initialQuery && sessionId && companyId) {
+      // Clear the query param so we don't resend on refresh
+      const newUrl = `/chat/${sessionId}`;
+      window.history.replaceState({}, '', newUrl);
+      
+      // Fire the message
+      void send(sessionId, initialQuery, companyId);
+    }
+  }, [searchParams, sessionId, companyId, send]);
+
   return (
-    <div
-      className="flex flex-col overflow-hidden"
-      style={{ height: 'calc(100dvh - var(--layout-topbar-h, 56px))' }}
-    >
+    <div className="flex h-full flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto px-6 py-6">
         <div className="mx-auto max-w-[720px]">
           {messagesLoading && <ChatMessagesSkeleton />}

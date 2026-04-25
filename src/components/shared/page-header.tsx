@@ -42,7 +42,7 @@ export function PageHeader({
       )}
     >
       <div className="flex flex-col gap-1">
-        <h1 className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.22px] text-foreground">
+        <h1 className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.02em] text-foreground">
           {title}
           {scopeLabel ? (
             <span

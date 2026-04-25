@@ -15,6 +15,7 @@ import type { Role, RoleCreate, RoleUpdate } from '@/types';
 import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
 
 import { PageHeader } from '@/components/shared/page-header';
+import { SearchInput } from '@/components/shared/search-input';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
@@ -27,10 +28,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+import { Button } from '@/components/ui/button';
 import { RoleTypeBadge } from '@/components/features/roles/role-type-badge';
 import { RoleForm, type RoleFormData } from '@/components/features/roles/role-form';
 
 export default function RolesPage() {
+  const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Role | null>(null);
@@ -39,6 +42,7 @@ export default function RolesPage() {
   const { data, isLoading, isError, refetch } = useRoles({
     page: page + 1,
     page_size: DEFAULT_PAGE_SIZE,
+    search: search || undefined,
   });
 
   const createMutation = useCreateRole();
@@ -97,30 +101,31 @@ export default function RolesPage() {
         const isSystem = row.original.role_type === 'system';
         return (
           <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 setEditTarget(row.original);
               }}
               disabled={isSystem}
               aria-label={`Edit ${row.original.name}`}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-foreground focus-visible:outline-none disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <Pencil aria-hidden size={13} strokeWidth={1.75} />
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 setDeleteTarget(row.original);
               }}
               disabled={isSystem}
               aria-label={`Delete ${row.original.name}`}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-error focus-visible:outline-none disabled:opacity-30 disabled:cursor-not-allowed"
+              className="hover:text-error"
             >
               <Trash2 aria-hidden size={13} strokeWidth={1.75} />
-            </button>
+            </Button>
           </div>
         );
       },
@@ -161,34 +166,44 @@ export default function RolesPage() {
       <PageHeader
         title="Roles"
         action={
-          <button
-            type="button"
+          <Button
             onClick={() => setCreateOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none"
+            className="h-9 px-4"
           >
             <Plus aria-hidden size={15} strokeWidth={2} />
             New Role
-          </button>
+          </Button>
         }
       />
+
+      <div className="mb-4 max-w-sm">
+        <SearchInput
+          value={search}
+          onChange={(v) => {
+            setSearch(v);
+            setPage(0);
+          }}
+          placeholder="Search roles…"
+          ariaLabel="Search roles"
+        />
+      </div>
 
       {isError ? (
         <ErrorState title="Failed to load roles" onRetry={() => refetch()} />
       ) : items.length === 0 && !isLoading ? (
         <EmptyState
           icon={Shield}
-          title="No roles defined"
-          description="Create roles to control what each user type can access."
-          action={
-            <button
-              type="button"
+          title={search ? "No roles match your search" : "No roles defined"}
+          description={search ? "Try adjusting your search terms." : "Create roles to control what each user type can access."}
+          action={!search ? (
+            <Button
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90"
+              className="h-9 px-4"
             >
               <Plus aria-hidden size={15} strokeWidth={2} />
               New Role
-            </button>
-          }
+            </Button>
+          ) : undefined}
         />
       ) : (
         <DataTable

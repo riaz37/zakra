@@ -1,14 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
-export interface RoleFormData {
-  name: string;
-  slug: string;
-  description: string;
-}
+const roleSchema = z.object({
+  name: z.string().min(1, 'Role name is required.'),
+  slug: z.string().min(1, 'Slug is required.'),
+  description: z.string().optional(),
+});
+
+export type RoleFormData = z.infer<typeof roleSchema>;
 
 function slugify(name: string): string {
   return name
@@ -32,81 +42,93 @@ export function RoleForm({
   onCancel,
   submitLabel = 'Create Role',
 }: RoleFormProps) {
-  const [name, setName] = useState(initial?.name ?? '');
-  const [slug, setSlug] = useState(initial?.slug ?? '');
-  const [description, setDescription] = useState(initial?.description ?? '');
-  const [nameError, setNameError] = useState('');
+  const form = useForm<RoleFormData>({
+    resolver: zodResolver(roleSchema),
+    defaultValues: {
+      name: initial?.name ?? '',
+      slug: initial?.slug ?? '',
+      description: initial?.description ?? '',
+    },
+  });
 
-  function handleNameChange(value: string) {
-    setName(value);
+  function handleNameChange(value: string, onChange: (v: string) => void) {
+    onChange(value);
     if (!initial?.slug) {
-      setSlug(slugify(value));
+      form.setValue('slug', slugify(value));
     }
-    if (nameError && value.trim()) setNameError('');
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!name.trim()) {
-      setNameError('Role name is required.');
-      return;
-    }
-    onSubmit({ name: name.trim(), slug: slug || slugify(name), description });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="role-name">Name *</Label>
-        <Input
-          id="role-name"
-          value={name}
-          onChange={(e) => handleNameChange(e.target.value)}
-          placeholder="Data Viewer"
-          aria-invalid={!!nameError}
-          aria-describedby={nameError ? 'role-name-error' : undefined}
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <FieldGroup>
+        <Controller
+          control={form.control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Name *</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                onChange={(e) => handleNameChange(e.target.value, field.onChange)}
+                placeholder="Data Viewer"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-        {nameError ? (
-          <p id="role-name-error" className="font-sans text-[12px] text-error">{nameError}</p>
-        ) : null}
-      </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="role-slug">Slug</Label>
-        <Input
-          id="role-slug"
-          value={slug}
-          onChange={(e) => setSlug(e.target.value)}
-          placeholder="data-viewer"
+        <Controller
+          control={form.control}
+          name="slug"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Slug</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder="data-viewer"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-      </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="role-description">Description</Label>
-        <Input
-          id="role-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Optional description of this role's permissions"
+        <Controller
+          control={form.control}
+          name="description"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                placeholder="Optional description of this role's permissions"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
         />
-      </div>
+      </FieldGroup>
 
       <div className="flex justify-end gap-2 pt-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={onCancel}
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg border border-border bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground transition-colors hover:bg-surface-400 disabled:opacity-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-foreground px-4 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
         >
           {isPending ? 'Saving…' : submitLabel}
-        </button>
+        </Button>
       </div>
     </form>
   );

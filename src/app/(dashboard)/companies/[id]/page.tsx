@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { type ColumnDef } from '@tanstack/react-table';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, Users as UsersIcon, GitBranch, Pencil, Trash2 } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
 
 import {
@@ -14,13 +14,6 @@ import {
   useCreateSubsidiary,
 } from '@/hooks/useCompanies';
 import type { Company, SubsidiaryCreate } from '@/types';
-
-interface CompanyUserBasic {
-  id: string;
-  email: string;
-  first_name: string | null;
-  last_name: string | null;
-}
 
 import {
   Breadcrumb,
@@ -38,9 +31,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { DataTable } from '@/components/shared/data-table';
+import { Button } from '@/components/ui/button';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
 
 // ─── Subsidiary form ──────────────────────────────────────────────────────────
 
@@ -90,60 +89,57 @@ function SubsidiaryForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="sub-name">Name *</Label>
-        <Input
-          id="sub-name"
-          value={name}
-          onChange={(e) => handleNameChange(e.target.value)}
-          placeholder="Subsidiary name"
-          aria-invalid={!!nameError}
-        />
-        {nameError ? (
-          <p className="font-sans text-[12px] text-error">{nameError}</p>
-        ) : null}
-      </div>
+      <FieldGroup>
+        <Field data-invalid={!!nameError}>
+          <FieldLabel htmlFor="sub-name">Name *</FieldLabel>
+          <Input
+            id="sub-name"
+            value={name}
+            onChange={(e) => handleNameChange(e.target.value)}
+            placeholder="Subsidiary name"
+            aria-invalid={!!nameError}
+          />
+          {nameError && <FieldError errors={[{ message: nameError } as any]} />}
+        </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="sub-description">Description</Label>
-        <Input
-          id="sub-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Optional description"
-        />
-      </div>
+        <Field>
+          <FieldLabel htmlFor="sub-description">Description</FieldLabel>
+          <Input
+            id="sub-description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Optional description"
+          />
+        </Field>
+      </FieldGroup>
 
       <div className="flex justify-end gap-2 pt-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={onCancel}
           disabled={createMutation.isPending}
-          className="inline-flex items-center justify-center rounded-lg border border-border bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground transition-colors hover:bg-surface-400 disabled:opacity-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={createMutation.isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-foreground px-4 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
         >
           {createMutation.isPending ? 'Creating…' : 'Create Subsidiary'}
-        </button>
+        </Button>
       </div>
     </form>
   );
 }
 
-// ─── Company detail field ─────────────────────────────────────────────────────
+// ─── Info Row ──────────────────────────────────────────────────────────────
 
-function DetailField({ label, value }: { label: string; value: React.ReactNode }) {
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="font-sans text-[11px] uppercase tracking-wide text-muted">
-        {label}
-      </span>
-      <span className="font-sans text-[14px] text-foreground">{value ?? '—'}</span>
+    <div className="flex flex-col gap-0.5 py-2">
+      <span className="font-sans text-[11px] font-medium uppercase tracking-[0.08em] text-muted/60">{label}</span>
+      <span className="font-sans text-[14px] text-foreground">{value || '—'}</span>
     </div>
   );
 }
@@ -164,27 +160,25 @@ export default function CompanyDetailPage() {
   const subsidiaryColumns: ColumnDef<Company>[] = [
     {
       id: 'name',
-      header: 'Name',
+      header: 'Company',
       cell: ({ row }) => (
-        <button
-          type="button"
-          onClick={() => router.push(`/companies/${row.original.id}`)}
-          className="font-sans text-[14px] font-medium text-foreground hover:text-accent transition-colors"
-        >
-          {row.original.name}
-        </button>
+        <div className="flex flex-col gap-0.5">
+          <Button
+            variant="link"
+            className="h-auto p-0 justify-start font-sans text-[15px] font-medium text-foreground hover:text-accent no-underline text-left"
+            onClick={() => router.push(`/companies/${row.original.id}`)}
+          >
+            {row.original.name}
+          </Button>
+        </div>
       ),
     },
     {
       id: 'status',
       header: 'Status',
-      cell: ({ row }) => {
-        const s = row.original.status;
-        if (s === 'active' || s === 'inactive' || s === 'suspended') {
-          return <StatusBadge status={s} />;
-        }
-        return <span className="font-sans text-[14px] text-muted">{s}</span>;
-      },
+      cell: ({ row }) => (
+        <StatusBadge status={row.original.status as any} />
+      ),
     },
     {
       id: 'created_at',
@@ -197,14 +191,13 @@ export default function CompanyDetailPage() {
     },
   ];
 
-  const userColumns: ColumnDef<CompanyUserBasic>[] = [
+  const userColumns: ColumnDef<any>[] = [
     {
       id: 'name',
-      header: 'Name',
+      header: 'User',
       cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-foreground">
-          {[row.original.first_name, row.original.last_name].filter(Boolean).join(' ') ||
-            '—'}
+        <span className="font-sans text-[14px] font-medium text-foreground">
+          {[row.original.first_name, row.original.last_name].filter(Boolean).join(' ') || row.original.email}
         </span>
       ),
     },
@@ -217,169 +210,152 @@ export default function CompanyDetailPage() {
     },
   ];
 
-  if (isLoading) {
-    return (
-      <div className="px-6 py-8">
-        <div className="space-y-4">
-          <div className="h-5 w-48 animate-pulse rounded bg-surface-300" />
-          <div className="h-8 w-64 animate-pulse rounded bg-surface-300" />
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-14 animate-pulse rounded-lg bg-surface-300" />
-            ))}
+  if (isLoading) return <div className="p-8 text-center text-muted">Loading...</div>;
+  if (isError || !company) return <div className="p-8 text-center text-error">Company not found.</div>;
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* Header Section */}
+      <div className="border-b border-border bg-surface-100/30 px-8 py-6">
+        <div className="mb-6">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink render={<Link href="/companies" />}>Companies</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{company.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => router.push('/companies')}
+            >
+              <ArrowLeft size={14} />
+            </Button>
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="font-sans text-[24px] font-semibold text-foreground">{company.name}</h1>
+                <StatusBadge status={company.status as any} />
+              </div>
+              <p className="font-sans text-[14px] text-muted capitalize">{company.company_type} organization</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm">Edit Details</Button>
+            {company.company_type === 'parent' && (
+              <Button size="sm" onClick={() => setCreateSubOpen(true)} className="gap-2">
+                <Plus size={14} /> Add Subsidiary
+              </Button>
+            )}
           </div>
         </div>
       </div>
-    );
-  }
 
-  if (isError || !company) {
-    return (
-      <div className="px-6 py-8">
-        <p className="font-sans text-[14px] text-error">Failed to load company.</p>
-        <button
-          type="button"
-          onClick={() => router.push('/companies')}
-          className="mt-3 font-sans text-[14px] text-muted underline hover:text-foreground"
-        >
-          Back to Companies
-        </button>
-      </div>
-    );
-  }
+      {/* Main Content */}
+      <div className="flex-1 px-8 py-8">
+        <Tabs defaultValue="overview" className="space-y-8">
+          <TabsList variant="line" className="justify-start gap-8 border-b border-border p-0">
+            <TabsTrigger value="overview" className="rounded-none border-b-2 border-transparent px-2 py-3 text-[14px] data-[state=active]:border-accent data-[state=active]:text-foreground">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="subsidiaries" className="rounded-none border-b-2 border-transparent px-2 py-3 text-[14px] data-[state=active]:border-accent data-[state=active]:text-foreground">
+              Subsidiaries ({subsidiaries.data?.total ?? 0})
+            </TabsTrigger>
+            <TabsTrigger value="users" className="rounded-none border-b-2 border-transparent px-2 py-3 text-[14px] data-[state=active]:border-accent data-[state=active]:text-foreground">
+              Users ({companyUsers.data?.total ?? 0})
+            </TabsTrigger>
+          </TabsList>
 
-  return (
-    <div className="px-6 py-8">
-      {/* Breadcrumb */}
-      <Breadcrumb className="mb-4">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink render={<Link href="/companies" />}>
-              Companies
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{company.name}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+          <TabsContent value="overview" className="mt-0 outline-none">
+            <div className="grid gap-8 lg:grid-cols-12">
+              {/* Left Column: Details */}
+              <div className="lg:col-span-8 space-y-8">
+                <section>
+                  <h3 className="mb-4 font-sans text-[14px] font-semibold text-foreground">General Information</h3>
+                  <div className="grid gap-4 rounded-xl border border-border bg-surface-100/20 p-6 sm:grid-cols-2">
+                    <InfoRow label="Company Name" value={company.name} />
+                    <InfoRow label="Domain" value={company.domain} />
+                    <InfoRow label="Industry" value={company.industry} />
+                    <InfoRow label="Location" value={company.country} />
+                  </div>
+                </section>
 
-      {/* Back + title */}
-      <div className="mb-6 flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => router.push('/companies')}
-          aria-label="Back to Companies"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface-300 text-muted transition-colors hover:bg-surface-400 hover:text-foreground focus-visible:outline-none"
-        >
-          <ArrowLeft aria-hidden size={14} strokeWidth={1.75} />
-        </button>
-        <h1 className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.11px] text-foreground">
-          {company.name}
-        </h1>
-        {(company.status === 'active' ||
-          company.status === 'inactive' ||
-          company.status === 'suspended') && (
-          <StatusBadge status={company.status} />
-        )}
-      </div>
+                <section>
+                  <h3 className="mb-4 font-sans text-[14px] font-semibold text-foreground">About</h3>
+                  <div className="rounded-xl border border-border bg-surface-100/20 p-6">
+                    <p className="font-sans text-[14px] leading-relaxed text-muted">
+                      {company.description || "No description available for this organization."}
+                    </p>
+                  </div>
+                </section>
+              </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="overview">
-        <TabsList variant="line" className="mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="subsidiaries">
-            Subsidiaries {subsidiaries.data?.total !== undefined ? `(${subsidiaries.data.total})` : ''}
-          </TabsTrigger>
-          <TabsTrigger value="users">
-            Users {companyUsers.data?.total !== undefined ? `(${companyUsers.data.total})` : ''}
-          </TabsTrigger>
-        </TabsList>
+              {/* Right Column: Sidebar */}
+              <div className="lg:col-span-4 space-y-8">
+                <section>
+                  <h3 className="mb-4 font-sans text-[14px] font-semibold text-foreground">Hierarchy</h3>
+                  <div className="rounded-xl border border-border bg-surface-100/20 p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[13px] text-muted">Organization Type</span>
+                      <span className="text-[13px] font-medium capitalize text-foreground">{company.company_type}</span>
+                    </div>
+                    {company.parent_id && (
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <span className="text-[13px] text-muted">Parent Company</span>
+                        <Button variant="link" className="h-auto p-0 text-[13px]" onClick={() => router.push(`/companies/${company.parent_id}`)}>
+                          View Parent
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </section>
 
-        {/* Overview */}
-        <TabsContent value="overview">
-          <div className="rounded-lg border border-border bg-background p-6">
-            <div className="grid gap-6 sm:grid-cols-2">
-              <DetailField label="Name" value={company.name} />
-              <DetailField
-                label="Type"
-                value={
-                  <span className="capitalize">{company.company_type}</span>
-                }
-              />
-              <DetailField
-                label="Status"
-                value={
-                  company.status === 'active' ||
-                  company.status === 'inactive' ||
-                  company.status === 'suspended' ? (
-                    <StatusBadge status={company.status} />
-                  ) : (
-                    company.status
-                  )
-                }
-              />
-              <DetailField
-                label="Created"
-                value={formatDate(company.created_at)}
-              />
-              <DetailField label="Domain" value={company.domain} />
-              <DetailField label="Industry" value={company.industry} />
-              <DetailField label="Country" value={company.country} />
-              <div className="sm:col-span-2">
-                <DetailField label="Description" value={company.description} />
+                <section>
+                  <h3 className="mb-4 font-sans text-[14px] font-semibold text-foreground">System Metadata</h3>
+                  <div className="rounded-xl border border-border bg-surface-100/20 p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[13px] text-muted">Created</span>
+                      <span className="text-[13px] text-foreground">{formatDate(company.created_at)}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[13px] text-muted">Last Updated</span>
+                      <span className="text-[13px] text-foreground">{formatDate(company.updated_at)}</span>
+                    </div>
+                  </div>
+                </section>
               </div>
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        {/* Subsidiaries */}
-        <TabsContent value="subsidiaries">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-sans text-[16px] font-medium text-foreground">
-              Subsidiaries
-            </h2>
-            {company.company_type === 'parent' && (
-              <button
-                type="button"
-                onClick={() => setCreateSubOpen(true)}
-                className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90"
-              >
-                <Plus aria-hidden size={14} strokeWidth={2} />
-                Add Subsidiary
-              </button>
-            )}
-          </div>
-          <DataTable
-            columns={subsidiaryColumns}
-            data={subsidiaries.data?.items ?? []}
-            isLoading={subsidiaries.isLoading}
-            pageCount={subsidiaries.data?.total_pages ?? 1}
-            caption="Subsidiaries list"
-            emptyMessage="No subsidiaries found for this company."
-          />
-        </TabsContent>
+          <TabsContent value="subsidiaries" className="mt-0 outline-none">
+            <DataTable
+              columns={subsidiaryColumns}
+              data={subsidiaries.data?.items ?? []}
+              isLoading={subsidiaries.isLoading}
+              onRowClick={(row) => router.push(`/companies/${row.id}`)}
+            />
+          </TabsContent>
 
-        {/* Users */}
-        <TabsContent value="users">
-          <div className="mb-4">
-            <h2 className="font-sans text-[16px] font-medium text-foreground">
-              Users
-            </h2>
-          </div>
-          <DataTable
-            columns={userColumns}
-            data={companyUsers.data?.items ?? []}
-            isLoading={companyUsers.isLoading}
-            pageCount={companyUsers.data?.total_pages ?? 1}
-            caption="Company users list"
-            emptyMessage="No users are associated with this company."
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="users" className="mt-0 outline-none">
+            <DataTable
+              columns={userColumns}
+              data={companyUsers.data?.items ?? []}
+              isLoading={companyUsers.isLoading}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
 
-      {/* Create subsidiary dialog */}
+      {/* Dialogs */}
       <Dialog open={createSubOpen} onOpenChange={setCreateSubOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -387,7 +363,10 @@ export default function CompanyDetailPage() {
           </DialogHeader>
           <SubsidiaryForm
             parentId={id}
-            onSuccess={() => setCreateSubOpen(false)}
+            onSuccess={() => {
+              setCreateSubOpen(false);
+              subsidiaries.refetch();
+            }}
             onCancel={() => setCreateSubOpen(false)}
           />
         </DialogContent>

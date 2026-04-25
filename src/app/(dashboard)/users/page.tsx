@@ -28,6 +28,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+import { Button } from '@/components/ui/button';
 import { InviteUserForm, type InviteFormData } from '@/components/features/users/invite-user-form';
 import { UserTypeBadge } from '@/components/features/users/user-type-badge';
 import { AvatarInitial } from '@/components/features/users/avatar-initial';
@@ -57,16 +58,16 @@ export default function UsersPage() {
           .filter(Boolean)
           .join(' ');
         return (
-          <button
-            type="button"
+          <Button
+            variant="link"
+            className="flex h-auto items-center gap-2.5 p-0 text-left hover:text-accent font-medium text-foreground no-underline"
             onClick={() => router.push(`/users/${row.original.id}`)}
-            className="flex items-center gap-2.5 text-left hover:text-accent transition-colors"
           >
             <AvatarInitial name={fullName} email={row.original.email} />
-            <span className="font-sans text-[14px] font-medium text-foreground">
+            <span className="font-sans text-[14px]">
               {fullName || row.original.email}
             </span>
-          </button>
+          </Button>
         );
       },
     },
@@ -107,28 +108,29 @@ export default function UsersPage() {
       header: '',
       cell: ({ row }) => (
         <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon-sm"
             onClick={(e) => {
               e.stopPropagation();
               router.push(`/users/${row.original.id}`);
             }}
             aria-label={`Edit ${row.original.email}`}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-foreground focus-visible:outline-none"
           >
             <Pencil aria-hidden size={13} strokeWidth={1.75} />
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
             onClick={(e) => {
               e.stopPropagation();
               setDeleteTarget(row.original);
             }}
             aria-label={`Delete ${row.original.email}`}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-error focus-visible:outline-none"
+            className="hover:text-error"
           >
             <Trash2 aria-hidden size={13} strokeWidth={1.75} />
-          </button>
+          </Button>
         </div>
       ),
     },
@@ -160,14 +162,13 @@ export default function UsersPage() {
       <PageHeader
         title="Users"
         action={
-          <button
-            type="button"
+          <Button
             onClick={() => setInviteOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none"
+            className="h-9 px-4"
           >
             <UserPlus aria-hidden size={15} strokeWidth={2} />
             Invite User
-          </button>
+          </Button>
         }
       />
 
@@ -184,31 +185,21 @@ export default function UsersPage() {
       </div>
 
       {isError ? (
-        <div className="rounded-lg border border-border bg-background px-4 py-8 text-center">
-          <p className="font-sans text-[14px] text-error">Failed to load users.</p>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="mt-3 font-sans text-[14px] text-muted underline hover:text-foreground"
-          >
-            Try again
-          </button>
-        </div>
+        <ErrorState title="Failed to load users" onRetry={() => refetch()} />
       ) : items.length === 0 && !isLoading ? (
         <EmptyState
           icon={Users}
-          title="No users in this workspace"
-          description="Invite users to grant them access to data and reports."
-          action={
-            <button
-              type="button"
+          title={search ? "No users match your search" : "No users in this workspace"}
+          description={search ? "Try adjusting your search terms." : "Invite users to grant them access to data and reports."}
+          action={!search ? (
+            <Button
               onClick={() => setInviteOpen(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90"
+              className="h-9 px-4"
             >
               <UserPlus aria-hidden size={15} strokeWidth={2} />
               Invite User
-            </button>
-          }
+            </Button>
+          ) : undefined}
         />
       ) : (
         <DataTable

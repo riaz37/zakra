@@ -26,6 +26,19 @@
   --color-success: #3ecf8e;
   --color-warning: #d99a45;
 
+  /* ==========  Chart palette  ========== */
+  --color-chart-1: #3ecf8e;
+  --color-chart-2: #d99a45;
+  --color-chart-3: #9fbbe0;
+  --color-chart-4: #c0a8dd;
+  --color-chart-5: #2ea574;
+
+  /* ==========  Status colors for charts  ========== */
+  --color-completed: #3ecf8e;
+  --color-failed: #e8476a;
+  --color-pending: #d99a45;
+  --color-running: #9fbbe0;
+
   /* ==========  State surface + border tokens  ========== */
   --color-error-bg: rgba(232, 71, 106, 0.08);
   --color-error-border: rgba(232, 71, 106, 0.2);
@@ -193,10 +206,10 @@
   --surface-strong: #2e2d28;
   --surface-deep: #35332e;
   --border-strong: rgba(235, 234, 229, 0.22);
-  --primary: #ebeae5;
-  --primary-hover: #ffffff;
-  --primary-soft: #2e2d28;
-  --primary-fg: #1a1916;
+  --primary: #3ecf8e;
+  --primary-hover: #45e39c;
+  --primary-soft: rgba(62, 207, 142, 0.1);
+  --primary-fg: #111111;
   --accent: #3ecf8e;
   --accent-soft: rgba(62, 207, 142, 0.1);
   --warning: #d99a45;
@@ -206,6 +219,13 @@
   --destructive: #e8476a;
   --destructive-soft: rgba(232, 71, 106, 0.12);
   --brand-deep: #2ea574;
+
+  /* ==========  Chart HSL variables (legacy compatibility)  ========== */
+  --chart-1: 153 60% 53%;
+  --chart-2: 32 70% 56%;
+  --chart-3: 213 47% 75%;
+  --chart-4: 267 40% 76%;
+  --chart-5: 155 56% 41%;
 
   /* ==========  Legacy shadcn direct-var aliases (used by sonner, etc.)  ========== */
   --popover: #21201c;
@@ -231,10 +251,10 @@
   --surface-strong: #2e2d28;
   --surface-deep: #35332e;
   --border-strong: rgba(235, 234, 229, 0.22);
-  --primary: #ebeae5;
-  --primary-hover: #ffffff;
-  --primary-soft: #2e2d28;
-  --primary-fg: #1a1916;
+  --primary: #3ecf8e;
+  --primary-hover: #45e39c;
+  --primary-soft: rgba(62, 207, 142, 0.1);
+  --primary-fg: #111111;
   --accent: #3ecf8e;
   --accent-soft: rgba(62, 207, 142, 0.1);
   --warning: #d99a45;

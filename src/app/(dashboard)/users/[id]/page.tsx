@@ -39,6 +39,12 @@ import {
 import { StatusBadge } from '@/components/shared/status-badge';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
+import { Button } from '@/components/ui/button';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 
 // ─── User type badge ──────────────────────────────────────────────────────────
 
@@ -94,46 +100,45 @@ function AssignRoleForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <label className="font-sans text-[14px] font-medium text-foreground">
-          Role
-        </label>
-        <Select value={selectedRoleId} onValueChange={(value) => { if (value) setSelectedRoleId(value); }}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a role…" />
-          </SelectTrigger>
-          <SelectContent>
-            {availableRoles.length === 0 ? (
-              <div className="px-2 py-3 font-sans text-[13px] text-muted">
-                No additional roles available.
-              </div>
-            ) : (
-              availableRoles.map((role) => (
-                <SelectItem key={role.id} value={role.id}>
-                  {role.name}
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
-      </div>
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="assign-role-select">Role</FieldLabel>
+          <Select value={selectedRoleId} onValueChange={(value) => { if (value) setSelectedRoleId(value); }}>
+            <SelectTrigger id="assign-role-select">
+              <SelectValue placeholder="Select a role…" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableRoles.length === 0 ? (
+                <div className="px-2 py-3 font-sans text-[13px] text-muted">
+                  No additional roles available.
+                </div>
+              ) : (
+                availableRoles.map((role) => (
+                  <SelectItem key={role.id} value={role.id}>
+                    {role.name}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </Field>
+      </FieldGroup>
 
       <div className="flex justify-end gap-2 pt-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={onCancel}
           disabled={assignMutation.isPending}
-          className="inline-flex items-center justify-center rounded-lg border border-border bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground transition-colors hover:bg-surface-400 disabled:opacity-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={!selectedRoleId || assignMutation.isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-foreground px-4 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
         >
           {assignMutation.isPending ? 'Assigning…' : 'Assign Role'}
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -182,8 +187,9 @@ export default function UserDetailPage() {
       id: 'actions',
       header: '',
       cell: ({ row }) => (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon-sm"
           onClick={async () => {
             if (!userRoles) return;
             const remaining = userRoles
@@ -192,10 +198,10 @@ export default function UserDetailPage() {
             await assignMutation.mutateAsync({ role_ids: remaining });
           }}
           aria-label={`Remove role ${row.original.name}`}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-error focus-visible:outline-none"
+          className="hover:text-error"
         >
           <X aria-hidden size={13} strokeWidth={1.75} />
-        </button>
+        </Button>
       ),
     },
   ];
@@ -215,13 +221,13 @@ export default function UserDetailPage() {
     return (
       <div className="px-6 py-8">
         <p className="font-sans text-[14px] text-error">Failed to load user.</p>
-        <button
-          type="button"
+        <Button
+          variant="link"
+          className="mt-3 p-0 h-auto font-sans text-[14px] text-muted underline hover:text-foreground no-underline"
           onClick={() => router.push('/users')}
-          className="mt-3 font-sans text-[14px] text-muted underline hover:text-foreground"
         >
           Back to Users
-        </button>
+        </Button>
       </div>
     );
   }
@@ -247,14 +253,15 @@ export default function UserDetailPage() {
 
       {/* Back + title */}
       <div className="mb-6 flex items-center gap-3">
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="icon-sm"
           onClick={() => router.push('/users')}
           aria-label="Back to Users"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface-300 text-muted transition-colors hover:bg-surface-400 hover:text-foreground focus-visible:outline-none"
+          className="text-muted hover:text-foreground"
         >
           <ArrowLeft aria-hidden size={14} strokeWidth={1.75} />
-        </button>
+        </Button>
         <h1 className="font-sans text-[22px] font-normal leading-[1.3] tracking-[-0.11px] text-foreground">
           {fullName}
         </h1>
@@ -298,14 +305,13 @@ export default function UserDetailPage() {
           <h2 className="font-sans text-[16px] font-medium text-foreground">
             Assigned Roles
           </h2>
-          <button
-            type="button"
+          <Button
             onClick={() => setAssignRoleOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90"
+            className="h-9 px-4"
           >
             <Plus aria-hidden size={14} strokeWidth={2} />
             Assign Role
-          </button>
+          </Button>
         </div>
 
         <div className="p-4">

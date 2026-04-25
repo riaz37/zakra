@@ -216,7 +216,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               onClick={handleSignOut}
               aria-label="Sign out"
               title="Sign out"
-              className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-surface-200 hover:text-error focus-visible:text-error focus-visible:outline-none"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-destructive/10 hover:text-error focus-visible:text-error focus-visible:outline-none"
             >
               <LogOut aria-hidden size={14} strokeWidth={1.75} />
             </button>
@@ -257,7 +257,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               onClick={handleSignOut}
               aria-label="Sign out"
               title="Sign out"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-surface-200 hover:text-error focus-visible:text-error focus-visible:outline-none"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-destructive/10 hover:text-error focus-visible:text-error focus-visible:outline-none"
             >
               <LogOut aria-hidden size={14} strokeWidth={1.75} />
             </button>

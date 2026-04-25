@@ -1,8 +1,8 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
-import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Dialog } from '@base-ui/react/dialog';
 
@@ -10,6 +10,21 @@ import { useCreateConnection } from '@/hooks/useDbConnections';
 import { DATABASE_TYPES } from '@/utils/constants';
 import { cn } from '@/lib/utils';
 import type { DatabaseType } from '@/types';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const DEFAULT_PORTS: Record<DatabaseType, number> = {
   postgresql: 5432,
@@ -21,7 +36,7 @@ const connectionSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   database_type: z.enum(['postgresql', 'mssql', 'mongodb']),
   host: z.string().min(1, 'Host is required'),
-  port: z.number().int().min(1).max(65535),
+  port: z.coerce.number().int().min(1).max(65535),
   database_name: z.string().min(1, 'Database name is required'),
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
@@ -42,14 +57,7 @@ export function AddConnectionDialog({
 }: AddConnectionDialogProps) {
   const createConnection = useCreateConnection(companyId);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<ConnectionFormValues>({
+  const form = useForm<ConnectionFormValues>({
     resolver: zodResolver(connectionSchema),
     defaultValues: {
       database_type: 'postgresql',
@@ -62,19 +70,19 @@ export function AddConnectionDialog({
     },
   });
 
-  const dbType = watch('database_type');
+  const dbType = form.watch('database_type');
 
-  function handleDbTypeChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const type = e.target.value as DatabaseType;
-    setValue('database_type', type, { shouldValidate: false });
-    setValue('port', DEFAULT_PORTS[type], { shouldValidate: false });
+  function handleDbTypeChange(type: string, onChange: (v: string) => void) {
+    const dbType = type as DatabaseType;
+    onChange(dbType);
+    form.setValue('port', DEFAULT_PORTS[dbType], { shouldValidate: true });
   }
 
   async function onSubmit(data: ConnectionFormValues) {
     try {
       await createConnection.mutateAsync(data);
       toast.success('Connection added successfully');
-      reset();
+      form.reset();
       onOpenChange(false);
     } catch {
       toast.error('Failed to add connection. Please check your details.');
@@ -82,17 +90,9 @@ export function AddConnectionDialog({
   }
 
   function handleClose() {
-    reset();
+    form.reset();
     onOpenChange(false);
   }
-
-  const inputClass = (hasError: boolean) =>
-    cn(
-      'w-full rounded-lg border border-border bg-transparent px-3 py-2',
-      'font-sans text-[14px] text-foreground outline-none placeholder:text-muted/40',
-      'transition-colors focus:border-border-medium',
-      hasError && 'border-error',
-    );
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -122,132 +122,158 @@ export function AddConnectionDialog({
             Connect a database to enable natural language queries.
           </Dialog.Description>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-4" noValidate>
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-[13px] font-medium text-foreground">
-                Database Type
-              </label>
-              <select
-                {...register('database_type')}
-                onChange={handleDbTypeChange}
-                className={inputClass(false)}
-              >
-                {Object.values(DATABASE_TYPES).map((type) => (
-                  <option key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-[13px] font-medium text-foreground">
-                Connection Name
-              </label>
-              <input
-                {...register('name')}
-                placeholder="e.g. Production DB"
-                className={inputClass(!!errors.name)}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-4" noValidate>
+            <FieldGroup>
+              <Controller
+                control={form.control}
+                name="database_type"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Database Type</FieldLabel>
+                    <Select
+                      onValueChange={(v) => handleDbTypeChange(v, field.onChange)}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(DATABASE_TYPES).map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
               />
-              {errors.name && (
-                <p className="font-sans text-[12px] text-error">{errors.name.message}</p>
-              )}
-            </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              <div className="col-span-2 flex flex-col gap-1.5">
-                <label className="font-sans text-[13px] font-medium text-foreground">Host</label>
-                <input
-                  {...register('host')}
-                  placeholder="localhost"
-                  className={inputClass(!!errors.host)}
-                />
-                {errors.host && (
-                  <p className="font-sans text-[12px] text-error">{errors.host.message}</p>
+              <Controller
+                control={form.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Connection Name</FieldLabel>
+                    <Input
+                      {...field}
+                      id={field.name}
+                      placeholder="e.g. Production DB"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
                 )}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="font-sans text-[13px] font-medium text-foreground">Port</label>
-                <input
-                  {...register('port')}
-                  type="number"
-                  placeholder={String(DEFAULT_PORTS[dbType])}
-                  className={inputClass(!!errors.port)}
-                />
-                {errors.port && (
-                  <p className="font-sans text-[12px] text-error">{errors.port.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-[13px] font-medium text-foreground">
-                Database Name
-              </label>
-              <input
-                {...register('database_name')}
-                placeholder="my_database"
-                className={inputClass(!!errors.database_name)}
               />
-              {errors.database_name && (
-                <p className="font-sans text-[12px] text-error">{errors.database_name.message}</p>
-              )}
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <label className="font-sans text-[13px] font-medium text-foreground">Username</label>
-                <input
-                  {...register('username')}
-                  autoComplete="username"
-                  className={inputClass(!!errors.username)}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-2">
+                  <Controller
+                    control={form.control}
+                    name="host"
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor={field.name}>Host</FieldLabel>
+                        <Input
+                          {...field}
+                          id={field.name}
+                          placeholder="localhost"
+                          aria-invalid={fieldState.invalid}
+                        />
+                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                      </Field>
+                    )}
+                  />
+                </div>
+                <Controller
+                  control={form.control}
+                  name="port"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Port</FieldLabel>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        type="number"
+                        placeholder={String(DEFAULT_PORTS[dbType])}
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
+                  )}
                 />
-                {errors.username && (
-                  <p className="font-sans text-[12px] text-error">{errors.username.message}</p>
-                )}
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="font-sans text-[13px] font-medium text-foreground">Password</label>
-                <input
-                  {...register('password')}
-                  type="password"
-                  autoComplete="new-password"
-                  className={inputClass(!!errors.password)}
+
+              <Controller
+                control={form.control}
+                name="database_name"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Database Name</FieldLabel>
+                    <Input
+                      {...field}
+                      id={field.name}
+                      placeholder="my_database"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-3">
+                <Controller
+                  control={form.control}
+                  name="username"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Username</FieldLabel>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        autoComplete="username"
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
+                  )}
                 />
-                {errors.password && (
-                  <p className="font-sans text-[12px] text-error">{errors.password.message}</p>
-                )}
+                <Controller
+                  control={form.control}
+                  name="password"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        type="password"
+                        autoComplete="new-password"
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
+                  )}
+                />
               </div>
-            </div>
+            </FieldGroup>
 
             <div className="mt-2 flex items-center justify-end gap-2">
-              <Dialog.Close
+              <Button
                 type="button"
-                disabled={isSubmitting}
+                variant="outline"
+                disabled={form.formState.isSubmitting}
                 onClick={handleClose}
-                className={cn(
-                  'inline-flex items-center justify-center rounded-lg border border-border',
-                  'bg-surface-300 px-4 py-2 font-sans text-[14px] text-foreground',
-                  'transition-colors hover:bg-surface-400',
-                  'focus-visible:border-border-medium focus-visible:outline-none',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                )}
               >
                 Cancel
-              </Dialog.Close>
-              <button
+              </Button>
+              <Button
                 type="submit"
-                disabled={isSubmitting}
-                className={cn(
-                  'inline-flex items-center justify-center rounded-lg px-4 py-2',
-                  'bg-foreground font-sans text-[14px] text-background',
-                  'transition-colors hover:opacity-90',
-                  'focus-visible:outline-none',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                )}
+                disabled={form.formState.isSubmitting}
               >
-                {isSubmitting ? 'Adding…' : 'Add Connection'}
-              </button>
+                {form.formState.isSubmitting ? 'Adding…' : 'Add Connection'}
+              </Button>
             </div>
           </form>
         </Dialog.Popup>

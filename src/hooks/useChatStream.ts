@@ -87,7 +87,7 @@ function reducer(state: StreamState, action: Action): StreamState {
       if (lastBlock && lastBlock.type === 'text') {
         blocks[blocks.length - 1] = {
           ...lastBlock,
-          text: (lastBlock.text || '') + action.text,
+          text: action.text,
         };
       } else {
         blocks.push({ type: 'text', text: action.text });

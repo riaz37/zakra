@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Building2, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Building2, Plus, Pencil, Trash2, GitBranch } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
 
 import {
@@ -30,6 +30,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+import { Button } from '@/components/ui/button';
 import { CompanyForm, type CompanyFormData } from '@/components/features/companies/company-form';
 
 export default function CompaniesPage() {
@@ -38,13 +39,21 @@ export default function CompaniesPage() {
   const [page, setPage] = useState(0);
 
   const [createOpen, setCreateOpen] = useState(false);
+  const [createSubParent, setCreateSubParent] = useState<Company | null>(null);
   const [editTarget, setEditTarget] = useState<Company | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Company | null>(null);
 
+  // Main paginated companies
   const { data, isLoading, isError, refetch } = useCompanies({
     page: page + 1,
     page_size: DEFAULT_PAGE_SIZE,
     search: search || undefined,
+  });
+
+  // Flat list of potential parents for dropdown
+  const { data: allCompanies } = useCompanies({
+    page_size: 1000,
+    company_type: 'parent',
   });
 
   const createMutation = useCreateCompany();
@@ -54,25 +63,47 @@ export default function CompaniesPage() {
   const columns: ColumnDef<Company>[] = [
     {
       id: 'name',
-      header: 'Name',
+      header: 'Company',
       cell: ({ row }) => (
-        <button
-          type="button"
-          onClick={() => router.push(`/companies/${row.original.id}`)}
-          className="font-sans text-[14px] font-medium text-foreground hover:text-accent transition-colors text-left"
-        >
-          {row.original.name}
-        </button>
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center gap-2">
+            {row.original.parent_id && (
+              <GitBranch className="size-3 text-muted-foreground/50 rotate-90" />
+            )}
+            <Button
+              variant="link"
+              className="h-auto p-0 justify-start font-sans text-[16px] font-medium text-foreground hover:text-accent no-underline text-left"
+              onClick={() => router.push(`/companies/${row.original.id}`)}
+            >
+              {row.original.name}
+            </Button>
+          </div>
+          {row.original.description && (
+            <span className="font-sans text-caption text-muted line-clamp-1 max-w-[400px]">
+              {row.original.description}
+            </span>
+          )}
+        </div>
       ),
     },
     {
       id: 'type',
       header: 'Type',
-      cell: ({ row }) => (
-        <span className="font-sans text-[14px] text-muted capitalize">
-          {row.original.company_type}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const isSub = row.original.company_type === 'subsidiary';
+        return (
+          <div className="flex flex-col">
+            <span className="font-sans text-[14px] text-muted capitalize">
+              {row.original.company_type}
+            </span>
+            {isSub && row.original.parent_id && (
+              <span className="font-sans text-[10px] text-muted-foreground/60 uppercase tracking-tighter">
+                Under {allCompanies?.items?.find(c => c.id === row.original.parent_id)?.name || 'Parent'}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       id: 'status',
@@ -105,31 +136,47 @@ export default function CompaniesPage() {
     },
     {
       id: 'actions',
-      header: '',
+      header: 'Actions',
       cell: ({ row }) => (
-        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-          <button
-            type="button"
+        <div className="flex items-center justify-end gap-2">
+          {row.original.company_type === 'parent' && (
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCreateSubParent(row.original);
+              }}
+              title="Add Subsidiary"
+              className="h-8 w-8 text-accent hover:border-accent/50"
+            >
+              <GitBranch aria-hidden size={14} strokeWidth={1.75} />
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="icon-sm"
             onClick={(e) => {
               e.stopPropagation();
               setEditTarget(row.original);
             }}
             aria-label={`Edit ${row.original.name}`}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-foreground focus-visible:outline-none"
+            className="h-8 w-8"
           >
-            <Pencil aria-hidden size={13} strokeWidth={1.75} />
-          </button>
-          <button
-            type="button"
+            <Pencil aria-hidden size={14} strokeWidth={1.75} />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon-sm"
             onClick={(e) => {
               e.stopPropagation();
               setDeleteTarget(row.original);
             }}
             aria-label={`Delete ${row.original.name}`}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-300 hover:text-error focus-visible:outline-none"
+            className="h-8 w-8 hover:text-error hover:border-error/50"
           >
-            <Trash2 aria-hidden size={13} strokeWidth={1.75} />
-          </button>
+            <Trash2 aria-hidden size={14} strokeWidth={1.75} />
+          </Button>
         </div>
       ),
     },
@@ -138,14 +185,20 @@ export default function CompaniesPage() {
   const items = data?.items ?? [];
   const totalPages = data?.total_pages ?? 1;
 
+  const parentOptions = allCompanies?.items?.map(c => ({ id: c.id, name: c.name })) ?? [];
+
   async function handleCreate(formData: CompanyFormData) {
     const payload: CompanyCreate = {
       name: formData.name,
       slug: formData.slug,
       description: formData.description || undefined,
     };
-    await createMutation.mutateAsync({ data: payload });
+    await createMutation.mutateAsync({ 
+      data: payload, 
+      parentId: formData.parent_id 
+    });
     setCreateOpen(false);
+    setCreateSubParent(null);
   }
 
   async function handleUpdate(formData: CompanyFormData) {
@@ -169,19 +222,19 @@ export default function CompaniesPage() {
     <div className="px-6 py-8">
       <PageHeader
         title="Companies"
+        subtitle="Manage all organizations and their hierarchical relationships."
         action={
-          <button
-            type="button"
+          <Button
             onClick={() => setCreateOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none"
+            className="h-9 px-4 gap-2"
           >
-            <Plus aria-hidden size={15} strokeWidth={2} />
+            <Plus aria-hidden size={16} strokeWidth={2} />
             Create Company
-          </button>
+          </Button>
         }
       />
 
-      <div className="mb-4 max-w-sm">
+      <div className="mb-6 max-w-sm">
         <SearchInput
           value={search}
           onChange={(v) => {
@@ -198,18 +251,17 @@ export default function CompaniesPage() {
       ) : items.length === 0 && !isLoading ? (
         <EmptyState
           icon={Building2}
-          title="No companies yet"
-          description="Add your first company to start managing users and data access."
-          action={
-            <button
-              type="button"
+          title={search ? "No companies match your search" : "No companies yet"}
+          description={search ? "Try adjusting your search terms." : "Add your first company to start managing users and data access."}
+          action={!search ? (
+            <Button
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 font-sans text-[14px] font-medium text-background transition-colors hover:bg-foreground/90"
+              className="h-9 px-4 gap-2"
             >
-              <Plus aria-hidden size={15} strokeWidth={2} />
+              <Plus aria-hidden size={16} strokeWidth={2} />
               Create Company
-            </button>
-          }
+            </Button>
+          ) : undefined}
         />
       ) : (
         <DataTable
@@ -223,9 +275,11 @@ export default function CompaniesPage() {
           totalCount={data?.total}
           caption="Companies list"
           emptyMessage="No companies match your search."
+          onRowClick={(row) => router.push(`/companies/${row.id}`)}
         />
       )}
 
+      {/* Main Creation Dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -236,6 +290,26 @@ export default function CompaniesPage() {
             isPending={createMutation.isPending}
             onCancel={() => setCreateOpen(false)}
             submitLabel="Create Company"
+            parentCompanies={parentOptions}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Direct Subsidiary Creation Dialog */}
+      <Dialog open={!!createSubParent} onOpenChange={(open) => !open && setCreateSubParent(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Subsidiary to {createSubParent?.name}</DialogTitle>
+          </DialogHeader>
+          <CompanyForm
+            initial={{
+              parent_id: createSubParent?.id,
+            }}
+            onSubmit={handleCreate}
+            isPending={createMutation.isPending}
+            onCancel={() => setCreateSubParent(null)}
+            submitLabel="Create Subsidiary"
+            parentCompanies={parentOptions}
           />
         </DialogContent>
       </Dialog>
@@ -252,11 +326,13 @@ export default function CompaniesPage() {
                 slug: editTarget.slug,
                 description: editTarget.description ?? '',
                 status: editTarget.status as 'active' | 'inactive' | 'suspended',
+                parent_id: editTarget.parent_id ?? '',
               }}
               onSubmit={handleUpdate}
               isPending={updateMutation.isPending}
               onCancel={() => setEditTarget(null)}
               submitLabel="Save Changes"
+              parentCompanies={parentOptions.filter(p => p.id !== editTarget.id)}
             />
           )}
         </DialogContent>
