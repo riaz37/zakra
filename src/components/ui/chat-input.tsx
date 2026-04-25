@@ -58,12 +58,12 @@ const PASTE_THRESHOLD = 200;
 // ── File type helpers ──────────────────────────────────────────────────────
 
 function getFileIcon(type: string) {
-  if (type.startsWith("image/")) return <ImageIcon className="h-4 w-4" style={{ color: "var(--color-muted)" }} />;
-  if (type.startsWith("video/")) return <Video className="h-4 w-4" style={{ color: "var(--color-muted)" }} />;
-  if (type.startsWith("audio/")) return <Music className="h-4 w-4" style={{ color: "var(--color-muted)" }} />;
+  if (type.startsWith("image/")) return <ImageIcon className="h-4 w-4 text-muted" />;
+  if (type.startsWith("video/")) return <Video className="h-4 w-4 text-muted" />;
+  if (type.startsWith("audio/")) return <Music className="h-4 w-4 text-muted" />;
   if (type.includes("zip") || type.includes("rar") || type.includes("tar"))
-    return <Archive className="h-4 w-4" style={{ color: "var(--color-muted)" }} />;
-  return <FileText className="h-4 w-4" style={{ color: "var(--color-muted)" }} />;
+    return <Archive className="h-4 w-4 text-muted" />;
+  return <FileText className="h-4 w-4 text-muted" />;
 }
 
 function formatFileSize(bytes: number): string {
@@ -169,13 +169,12 @@ function FilePreviewCard({
         <div className="flex flex-col gap-1 p-2.5 h-full">
           {getFileIcon(file.type)}
           <p
-            className="font-sans text-caption font-medium truncate mt-auto"
-            style={{ color: "var(--color-foreground)" }}
+            className="font-sans text-caption font-medium truncate mt-auto text-foreground"
             title={file.file.name}
           >
             {file.file.name}
           </p>
-          <p className="font-mono text-micro" style={{ color: "var(--color-muted)" }}>
+          <p className="font-mono text-micro text-muted">
             {formatFileSize(file.file.size)}
           </p>
         </div>
@@ -197,22 +196,21 @@ function FilePreviewCard({
       {/* Status icons */}
       {file.uploadStatus === "uploading" && (
         <div className="absolute top-2 left-2">
-          <Loader2 className="h-3 w-3 animate-spin" style={{ color: "var(--color-accent)" }} />
+          <Loader2 className="h-3 w-3 animate-spin text-accent" />
         </div>
       )}
       {file.uploadStatus === "error" && (
         <div className="absolute top-2 left-2">
-          <AlertCircle className="h-3 w-3" style={{ color: "var(--color-error)" }} />
+          <AlertCircle className="h-3 w-3 text-error" />
         </div>
       )}
 
       {/* Remove button */}
       <button
-        className="absolute top-1.5 right-1.5 h-5 w-5 rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ background: "var(--color-surface-500)", border: "1px solid var(--color-border)" }}
+        className="absolute top-1.5 right-1.5 h-5 w-5 rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-surface-500 border border-border"
         onClick={() => onRemove(file.id)}
       >
-        <X className="h-3 w-3" style={{ color: "var(--color-foreground)" }} />
+        <X className="h-3 w-3 text-foreground" />
       </button>
     </div>
   );
@@ -241,14 +239,13 @@ function TextualFilePreviewCard({
       <div className="p-2 h-full overflow-hidden">
         {file.textContent ? (
           <p
-            className="text-[8px] leading-relaxed whitespace-pre-wrap break-words line-clamp-[9]"
-            style={{ fontFamily: "var(--font-mono)", color: "var(--color-muted)" }}
+            className="font-mono text-[8px] leading-relaxed whitespace-pre-wrap break-words line-clamp-[9] text-muted"
           >
             {file.textContent}
           </p>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <Loader2 className="h-4 w-4 animate-spin" style={{ color: "var(--color-muted)" }} />
+            <Loader2 className="h-4 w-4 animate-spin" className="text-muted" />
           </div>
         )}
       </div>
@@ -264,12 +261,12 @@ function TextualFilePreviewCard({
       {/* Status icons */}
       {file.uploadStatus === "uploading" && (
         <div className="absolute top-2 left-2">
-          <Loader2 className="h-3 w-3 animate-spin" style={{ color: "var(--color-accent)" }} />
+          <Loader2 className="h-3 w-3 animate-spin text-accent" />
         </div>
       )}
       {file.uploadStatus === "error" && (
         <div className="absolute top-2 left-2">
-          <AlertCircle className="h-3 w-3" style={{ color: "var(--color-error)" }} />
+          <AlertCircle className="h-3 w-3 text-error" />
         </div>
       )}
 
@@ -278,20 +275,20 @@ function TextualFilePreviewCard({
         {file.textContent && (
           <button
             className="h-5 w-5 rounded flex items-center justify-center"
-            style={{ background: "var(--color-surface-500)", border: "1px solid var(--color-border)" }}
+            className="bg-surface-500 border border-border"
             onClick={() => void navigator.clipboard.writeText(file.textContent ?? "")}
             title="Copy content"
           >
-            <Copy className="h-3 w-3" style={{ color: "var(--color-foreground)" }} />
+            <Copy className="h-3 w-3 text-foreground" />
           </button>
         )}
         <button
           className="h-5 w-5 rounded flex items-center justify-center"
-          style={{ background: "var(--color-surface-500)", border: "1px solid var(--color-border)" }}
+          className="bg-surface-500 border border-border"
           onClick={() => onRemove(file.id)}
           title="Remove"
         >
-          <X className="h-3 w-3" style={{ color: "var(--color-foreground)" }} />
+          <X className="h-3 w-3 text-foreground" />
         </button>
       </div>
     </div>
@@ -317,7 +314,7 @@ function PastedContentCard({
     >
       <div className="p-2 h-full overflow-hidden">
         <p
-          className="text-[8px] leading-relaxed whitespace-pre-wrap break-words line-clamp-[9]"
+          className="font-mono text-[8px] leading-relaxed whitespace-pre-wrap break-words line-clamp-[9] text-muted"
           style={{ fontFamily: "var(--font-mono)", color: "var(--color-muted)" }}
         >
           {content.content}
@@ -334,19 +331,19 @@ function PastedContentCard({
       <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           className="h-5 w-5 rounded flex items-center justify-center"
-          style={{ background: "var(--color-surface-500)", border: "1px solid var(--color-border)" }}
+          className="bg-surface-500 border border-border"
           onClick={() => void navigator.clipboard.writeText(content.content)}
           title="Copy"
         >
-          <Copy className="h-3 w-3" style={{ color: "var(--color-foreground)" }} />
+          <Copy className="h-3 w-3 text-foreground" />
         </button>
         <button
           className="h-5 w-5 rounded flex items-center justify-center"
-          style={{ background: "var(--color-surface-500)", border: "1px solid var(--color-border)" }}
+          className="bg-surface-500 border border-border"
           onClick={() => onRemove(content.id)}
           title="Remove"
         >
-          <X className="h-3 w-3" style={{ color: "var(--color-foreground)" }} />
+          <X className="h-3 w-3 text-foreground" />
         </button>
       </div>
     </div>
@@ -581,7 +578,7 @@ export function ChatInput({
         >
           <p
             className="font-sans text-button flex items-center gap-2"
-            style={{ color: "var(--color-accent)" }}
+            className="text-accent"
           >
             <ImageIcon className="h-4 w-4 opacity-60" />
             Drop files to attach
@@ -618,7 +615,7 @@ export function ChatInput({
           {/* Left: attach */}
           <button
             className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-40"
-            style={{ color: "var(--color-muted)" }}
+            className="text-muted"
             onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-surface-400)")}
             onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
             onClick={() => fileInputRef.current?.click()}
