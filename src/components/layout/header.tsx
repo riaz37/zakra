@@ -23,9 +23,8 @@ export function Header({ navOpen, onOpenNav }: HeaderProps) {
   return (
     <header
       className={cn(
-        'sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background-translucent px-4 backdrop-blur-md md:hidden',
+        'sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background-translucent px-4 backdrop-blur-md md:hidden min-h-topbar',
       )}
-      style={{ minHeight: 'var(--layout-topbar-h)' }}
     >
       <span className="font-display text-title text-foreground">
         ESAP<span className="text-accent">-</span>KB

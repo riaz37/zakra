@@ -301,6 +301,27 @@
   }
 }
 
+/* ==========  Layout dimension utilities  ========== */
+@utility h-topbar {
+  height: var(--layout-topbar-h);
+}
+
+@utility min-h-topbar {
+  min-height: var(--layout-topbar-h);
+}
+
+@utility w-sidebar {
+  width: var(--layout-sidebar-w);
+}
+
+@utility w-sidebar-collapsed {
+  width: var(--layout-sidebar-w-collapsed);
+}
+
+@utility h-row {
+  height: var(--layout-row-h);
+}
+
 /* ==========  OpenType feature utilities  ========== */
 @utility font-feat-ss09 {
   font-feature-settings: "ss09";

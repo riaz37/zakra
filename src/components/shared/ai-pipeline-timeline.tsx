@@ -35,10 +35,7 @@ function StepDot({ step }: { step: PipelineStep }) {
 
   if (step.status === 'pending') {
     return (
-      <span
-        className="mt-[3px] block h-[14px] w-[14px] shrink-0 rounded-full border"
-        style={{ borderColor: 'var(--color-border-medium)' }}
-      />
+      <span className="mt-[3px] block h-[14px] w-[14px] shrink-0 rounded-full border border-border-medium" />
     );
   }
 

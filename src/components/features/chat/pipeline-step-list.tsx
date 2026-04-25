@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import type { PipelineStep } from '@/hooks/useChatStream';
 import { stepColor } from './step-color';
 
@@ -20,8 +21,8 @@ export function PipelineStepList({ steps }: PipelineStepListProps) {
               style={{ background: color, opacity: isDone ? 0.5 : 1 }}
             />
             <span
-              className="font-mono text-caption"
-              style={{ color: isDone ? 'var(--color-muted)' : color }}
+              className={cn('font-mono text-caption', isDone && 'text-muted')}
+              style={isDone ? undefined : { color }}
             >
               {step.stepName}
               {!isDone && <span className="ml-0.5 opacity-60">…</span>}
