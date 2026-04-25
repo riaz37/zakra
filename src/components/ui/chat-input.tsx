@@ -245,7 +245,7 @@ function TextualFilePreviewCard({
           </p>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <Loader2 className="h-4 w-4 animate-spin" className="text-muted" />
+            <Loader2 className="h-4 w-4 animate-spin text-muted" />
           </div>
         )}
       </div>
@@ -315,7 +315,6 @@ function PastedContentCard({
       <div className="p-2 h-full overflow-hidden">
         <p
           className="font-mono text-[8px] leading-relaxed whitespace-pre-wrap break-words line-clamp-[9] text-muted"
-          style={{ fontFamily: "var(--font-mono)", color: "var(--color-muted)" }}
         >
           {content.content}
         </p>
@@ -672,8 +671,7 @@ export function ChatInput({
         {/* Attachment tray */}
         {hasAttachments && (
           <div
-            className="overflow-x-auto px-3 pb-3 pt-1"
-            style={{ borderTop: "1px solid var(--color-border)" }}
+            className="overflow-x-auto border-t border-border px-3 pb-3 pt-1"
           >
             <div className="flex gap-2">
               {pastedContent.map((c) => (
