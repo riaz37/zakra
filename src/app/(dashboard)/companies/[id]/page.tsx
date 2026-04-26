@@ -138,7 +138,7 @@ function SubsidiaryForm({
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5 py-2">
-      <span className="font-sans text-caption font-medium uppercase tracking-[0.08em] text-muted/60">{label}</span>
+      <span className="font-sans text-caption font-medium uppercase tracking-[0.08em] text-muted">{label}</span>
       <span className="font-sans text-button text-foreground">{value || '—'}</span>
     </div>
   );
