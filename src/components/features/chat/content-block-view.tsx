@@ -96,7 +96,7 @@ export function ContentBlockView({ block }: ContentBlockViewProps) {
             {block.report.title ?? 'View Report'}
           </p>
           {block.report.suggestion && (
-            <p className="line-clamp-1 font-sans text-caption text-muted/50">
+            <p className="line-clamp-1 font-sans text-caption text-muted">
               {block.report.suggestion}
             </p>
           )}
