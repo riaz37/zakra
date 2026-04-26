@@ -44,7 +44,7 @@ function selectedBgClass(level: ColumnPermission): string {
     case 'read': return 'bg-read';
     case 'read_masked': return 'bg-edit';
     case 'write': return 'bg-grep';
-    default: return 'bg-muted/50';
+    default: return 'bg-border';
   }
 }
 
@@ -318,12 +318,12 @@ export function PermissionMatrix({
                                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
                                 isSelected
                                   ? cn('border-0 scale-110', selectedBgClass(level))
-                                  : 'border border-border bg-transparent opacity-40 hover:opacity-100 hover:border-border-medium group-hover:opacity-60',
+                                  : 'border border-border-medium bg-surface-300 opacity-50 hover:opacity-100 hover:border-border group-hover:opacity-75',
                               )}
                             >
                               {isSelected && (
                                 <span
-                                  className="block h-2 w-2 rounded-full bg-background/60"
+                                  className="block h-2 w-2 rounded-full bg-foreground/70"
                                   aria-hidden="true"
                                 />
                               )}
