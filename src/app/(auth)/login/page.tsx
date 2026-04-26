@@ -79,7 +79,7 @@ export default function LoginPage() {
         <div className="flex flex-col">
           <label
             htmlFor="email"
-            className="mb-1.5 block font-sans text-caption text-muted"
+            className="mb-1.5 block font-sans text-caption text-foreground"
           >
             Email
           </label>
@@ -91,7 +91,7 @@ export default function LoginPage() {
             aria-invalid={!!errors.email}
             className={cn(
               'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              'placeholder:text-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               errors.email
                 ? 'border-error focus:border-error'
                 : 'border-border focus:border-accent',
@@ -109,7 +109,7 @@ export default function LoginPage() {
         <div className="mt-4 flex flex-col">
           <label
             htmlFor="password"
-            className="mb-1.5 block font-sans text-caption text-muted"
+            className="mb-1.5 block font-sans text-caption text-foreground"
           >
             Password
           </label>
@@ -121,7 +121,7 @@ export default function LoginPage() {
             aria-invalid={!!errors.password}
             className={cn(
               'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              'placeholder:text-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               errors.password
                 ? 'border-error focus:border-error'
                 : 'border-border focus:border-accent',
