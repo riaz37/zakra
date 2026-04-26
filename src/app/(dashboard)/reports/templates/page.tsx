@@ -35,7 +35,7 @@ export default function ReportTemplatesPage() {
             {row.original.name}
           </span>
           {row.original.description && (
-            <span className="font-sans text-caption text-muted line-clamp-1">
+            <span className="font-sans text-caption text-muted line-clamp-1 max-w-[400px]">
               {row.original.description}
             </span>
           )}
@@ -64,7 +64,7 @@ export default function ReportTemplatesPage() {
       id: 'created_at',
       header: 'Created',
       cell: ({ row }) => (
-        <span className="font-sans text-button text-muted">
+        <span className="whitespace-nowrap font-sans text-button text-muted">
           {formatDate(row.original.created_at)}
         </span>
       ),

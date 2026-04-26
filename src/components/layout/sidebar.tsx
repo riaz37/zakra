@@ -41,6 +41,19 @@ function isActivePath(currentPath: string, itemPath: string): boolean {
   return currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
 }
 
+interface EmailParts {
+  local: string;
+  domain: string | null;
+}
+
+function splitEmail(email: string): EmailParts {
+  const at = email.lastIndexOf('@');
+  if (at <= 0 || at === email.length - 1) {
+    return { local: email, domain: null };
+  }
+  return { local: email.slice(0, at), domain: email.slice(at + 1) };
+}
+
 function filterItemsByRole(
   items: readonly NavEntry[],
   isAdmin: boolean,
@@ -70,14 +83,10 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
 
   const collapsed = variant === 'rail';
   const email = user?.email ?? '';
+  const isSignedIn = email.length > 0;
   const initial = email.charAt(0).toUpperCase() || '?';
+  const { local: emailLocal, domain: emailDomain } = splitEmail(email);
   const showAdminGroup = (isAdmin || isSuperAdmin) && adminItems.length > 0;
-
-  const roleBadge = isSuperAdmin
-    ? { label: 'Super Admin', tone: 'gold' as const }
-    : isAdmin
-      ? { label: 'Admin', tone: 'accent' as const }
-      : null;
 
   async function handleSignOut() {
     await logout();
@@ -201,11 +210,11 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
         )}
       >
         {collapsed ? (
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-1.5">
             <span
               aria-label={email || 'User'}
-              title={email}
-              className="flex h-8 w-8 items-center justify-center rounded-pill bg-surface-300 font-sans text-button font-medium text-foreground"
+              title={email || 'Not signed in'}
+              className="flex h-8 w-8 items-center justify-center rounded-pill border border-border-medium bg-surface-300 font-sans text-button font-medium text-foreground"
             >
               {initial}
             </span>
@@ -214,46 +223,84 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               onClick={handleSignOut}
               aria-label="Sign out"
               title="Sign out"
-              className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-destructive/10 hover:text-error focus-visible:text-error focus-visible:outline-none"
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-md text-muted',
+                'transition-colors duration-150',
+                'hover:bg-surface-300 hover:text-error',
+                'focus-visible:bg-surface-300 focus-visible:text-error focus-visible:outline-none',
+              )}
             >
               <LogOut aria-hidden size={14} strokeWidth={1.75} />
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-2.5 rounded-md px-2 py-1.5">
+          <div
+            role="group"
+            aria-label={isSignedIn ? `Signed in as ${email}` : 'Account'}
+            className={cn(
+              'group flex items-center gap-2.5 rounded-md px-2 py-1.5',
+              'transition-colors duration-150',
+              'hover:bg-surface-300 focus-within:bg-surface-300',
+            )}
+          >
             {/* Avatar */}
             <span
               aria-hidden
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-pill bg-surface-300 font-sans text-button font-medium text-foreground"
+              className={cn(
+                'flex h-9 w-9 shrink-0 items-center justify-center rounded-pill',
+                'border border-border-medium bg-surface-400',
+                'font-sans text-button font-medium text-foreground',
+              )}
             >
               {initial}
             </span>
 
-            {/* Identity column */}
-            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="truncate font-sans text-caption text-muted-strong">
-                {email || 'Not signed in'}
-              </span>
-              {roleBadge && (
-                <span
-                  className={cn(
-                    'w-fit whitespace-nowrap rounded-sm px-1.5 py-px font-mono text-micro uppercase tracking-[0.06em] opacity-70',
-                    roleBadge.tone === 'accent' && 'text-accent',
-                    roleBadge.tone === 'gold' && 'text-gold',
-                  )}
-                >
-                  {roleBadge.label}
+            {/* Identity column — split email at @ for graceful wrapping */}
+            <div className="flex min-w-0 flex-1 flex-col">
+              {isSignedIn ? (
+                emailDomain ? (
+                  <>
+                    <span
+                      className="truncate font-sans text-caption font-medium text-foreground leading-tight"
+                      title={email}
+                    >
+                      {emailLocal}
+                    </span>
+                    <span
+                      className="truncate font-mono text-mono-sm text-muted leading-tight"
+                      title={email}
+                    >
+                      @{emailDomain}
+                    </span>
+                  </>
+                ) : (
+                  <span
+                    className="truncate font-sans text-caption font-medium text-foreground"
+                    title={email}
+                  >
+                    {emailLocal}
+                  </span>
+                )
+              ) : (
+                <span className="truncate font-sans text-caption text-muted">
+                  Not signed in
                 </span>
               )}
             </div>
 
-            {/* Sign out — icon button, right-aligned */}
+            {/* Sign out — ghost at rest, sharpens on group hover/focus */}
             <button
               type="button"
               onClick={handleSignOut}
               aria-label="Sign out"
               title="Sign out"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-destructive/10 hover:text-error focus-visible:text-error focus-visible:outline-none"
+              className={cn(
+                'flex h-8 w-8 shrink-0 items-center justify-center rounded-md',
+                'text-muted/70 transition-colors duration-150',
+                'group-hover:text-muted',
+                'hover:!bg-surface-400 hover:!text-error',
+                'focus-visible:bg-surface-400 focus-visible:text-error focus-visible:outline-none',
+              )}
             >
               <LogOut aria-hidden size={14} strokeWidth={1.75} />
             </button>
