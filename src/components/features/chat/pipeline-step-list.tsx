@@ -58,7 +58,7 @@ function StepRow({ step, index }: { step: PipelineStep; index: number }) {
 
       {/* Duration badge — only on completed steps */}
       {isDone && step.durationMs !== undefined && (
-        <span className="ml-auto font-mono text-mono-sm text-muted/25 animate-fade-in">
+        <span className="ml-auto font-mono text-mono-sm text-subtle animate-fade-in">
           {step.durationMs < 1000
             ? `${step.durationMs}ms`
             : `${(step.durationMs / 1000).toFixed(1)}s`}
@@ -118,7 +118,7 @@ export function PipelineSummary({ steps }: PipelineSummaryProps) {
     <div className="mb-3">
       <button
         onClick={() => setExpanded((e) => !e)}
-        className="flex items-center gap-1 font-mono text-mono-sm text-muted/35 transition-colors hover:text-muted/55 focus-visible:outline-none"
+        className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
       >
         <ChevronRight
           className={cn('h-3 w-3 transition-transform duration-150', expanded && 'rotate-90')}

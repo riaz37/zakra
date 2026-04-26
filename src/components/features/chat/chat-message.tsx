@@ -107,13 +107,13 @@ export function UserMessage({
       </div>
       <div className="flex items-center gap-2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
         {createdAt && (
-          <span className="font-mono text-mono-sm text-muted/30">
+          <span className="font-mono text-mono-sm text-subtle">
             {formatTime(createdAt)}
           </span>
         )}
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1 font-mono text-mono-sm text-muted/35 transition-colors hover:text-muted/65"
+          className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted"
           title="Copy message"
         >
           {copied ? (
@@ -168,7 +168,7 @@ export function AssistantMessage({
         <div className="mt-2 flex items-center gap-2.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 font-mono text-mono-sm text-muted/35 transition-colors hover:text-muted/65"
+            className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted"
             title="Copy response"
           >
             {copied ? (
@@ -179,7 +179,7 @@ export function AssistantMessage({
             {copied ? 'Copied' : 'Copy'}
           </button>
           {createdAt && (
-            <span className="font-mono text-mono-sm text-muted/25">
+            <span className="font-mono text-mono-sm text-subtle">
               {formatTime(createdAt)}
             </span>
           )}

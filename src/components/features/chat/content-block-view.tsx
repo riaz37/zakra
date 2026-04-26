@@ -19,7 +19,7 @@ function ReportPickerBlock({ data }: { data: ReportPickerData }) {
 
   return (
     <div className="mt-2 space-y-3 animate-fade-in">
-      <p className="font-sans text-button text-muted/65">{data.question}</p>
+      <p className="font-sans text-button text-muted">{data.question}</p>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {data.reports.map((item) => {
           const isSelected = selected === item.id;
@@ -42,10 +42,10 @@ function ReportPickerBlock({ data }: { data: ReportPickerData }) {
               <p className="pr-5 font-sans text-button font-medium text-foreground">
                 {item.title}
               </p>
-              <p className="mt-0.5 font-mono text-mono-sm text-muted/40">
+              <p className="mt-0.5 font-mono text-mono-sm text-subtle">
                 {item.section_count} {item.section_count === 1 ? 'section' : 'sections'}
               </p>
-              <p className="mt-1 line-clamp-2 font-sans text-caption text-muted/55">
+              <p className="mt-1 line-clamp-2 font-sans text-caption text-muted">
                 {item.executive_summary}
               </p>
             </button>
@@ -59,7 +59,7 @@ function ReportPickerBlock({ data }: { data: ReportPickerData }) {
           'flex items-center gap-2 rounded-lg px-4 py-2 font-sans text-button font-medium transition-all duration-150',
           selected
             ? 'bg-accent text-primary-foreground hover:bg-accent/90'
-            : 'cursor-not-allowed bg-surface-300 text-muted/35',
+            : 'cursor-not-allowed bg-surface-300 text-subtle',
         )}
       >
         Open Report
@@ -102,7 +102,7 @@ export function ContentBlockView({ block }: ContentBlockViewProps) {
           )}
         </div>
         <ArrowRight
-          className="h-4 w-4 shrink-0 text-muted/35 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-accent/55"
+          className="h-4 w-4 shrink-0 text-subtle transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-accent/55"
           strokeWidth={1.5}
         />
       </a>
@@ -113,7 +113,7 @@ export function ContentBlockView({ block }: ContentBlockViewProps) {
     const { results, query } = block.search_results;
     return (
       <div className="mt-2 space-y-2 animate-fade-in">
-        <p className="font-mono text-mono-sm text-muted/35">
+        <p className="font-mono text-mono-sm text-subtle">
           Search: &ldquo;{query}&rdquo;
         </p>
         {results.slice(0, 5).map((item, i) => (
@@ -130,12 +130,12 @@ export function ContentBlockView({ block }: ContentBlockViewProps) {
                 {item.title}
               </p>
               <ExternalLink
-                className="mt-0.5 h-3 w-3 shrink-0 text-muted/30 transition-colors group-hover:text-accent/45"
+                className="mt-0.5 h-3 w-3 shrink-0 text-subtle transition-colors group-hover:text-accent/45"
                 strokeWidth={1.5}
               />
             </div>
-            <p className="line-clamp-2 font-sans text-caption text-muted/55">{item.snippet}</p>
-            <p className="line-clamp-1 font-mono text-mono-sm text-muted/25">{item.url}</p>
+            <p className="line-clamp-2 font-sans text-caption text-muted">{item.snippet}</p>
+            <p className="line-clamp-1 font-mono text-mono-sm text-subtle">{item.url}</p>
           </a>
         ))}
       </div>

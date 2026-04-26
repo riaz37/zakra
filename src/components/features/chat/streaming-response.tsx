@@ -11,7 +11,7 @@ function StreamingStatusPill({ blockCount }: { blockCount: number }) {
   return (
     <div className="mb-1.5 flex items-center gap-1.5 animate-fade-in">
       <span className="h-1.5 w-1.5 rounded-full bg-accent/55 animate-pulse" />
-      <span className="font-mono text-mono-sm text-muted/40">
+      <span className="font-mono text-mono-sm text-subtle">
         {blockCount === 0 ? 'Generating…' : 'Writing…'}
       </span>
     </div>
