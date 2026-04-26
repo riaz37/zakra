@@ -60,7 +60,7 @@ export function ChatSidebar() {
                 <Link
                   href={`/chat/${session.id}`}
                   className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
+                    'flex items-center gap-3 rounded-md px-3 py-2 text-button transition-colors',
                     isActive
                       ? 'bg-accent/10 text-accent font-medium'
                       : 'text-foreground hover:bg-surface-300'

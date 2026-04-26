@@ -77,7 +77,7 @@ export function RecentActivity({ recentActivity, isLoading }: RecentActivityProp
                     className="flex flex-col gap-1 rounded-md border p-3 hover:bg-surface-300 transition-colors"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-sm truncate pr-4">{report.title || 'Untitled Report'}</span>
+                      <span className="font-medium text-button truncate pr-4">{report.title || 'Untitled Report'}</span>
                       <StatusBadge status={REPORT_STATUS_MAP[report.status]} label={report.status} size="sm" />
                     </div>
                     <div className="flex items-center text-micro text-muted gap-1">
@@ -105,7 +105,7 @@ export function RecentActivity({ recentActivity, isLoading }: RecentActivityProp
                     href={`/chat/${chat.id}`}
                     className="flex flex-col gap-1 rounded-md border p-3 hover:bg-surface-300 transition-colors"
                   >
-                    <span className="font-medium text-sm truncate">{chat.title || 'New Chat'}</span>
+                    <span className="font-medium text-button truncate">{chat.title || 'New Chat'}</span>
                     <div className="flex items-center text-micro text-muted gap-1">
                       <Clock className="size-3" />
                       {formatDate(chat.created_at)}
