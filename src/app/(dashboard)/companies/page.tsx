@@ -97,7 +97,7 @@ export default function CompaniesPage() {
               {row.original.company_type}
             </span>
             {isSub && row.original.parent_id && (
-              <span className="font-sans text-micro text-muted/60 uppercase tracking-tighter">
+              <span className="font-sans text-caption text-muted/60">
                 Under {allCompanies?.items?.find(c => c.id === row.original.parent_id)?.name || 'Parent'}
               </span>
             )}

@@ -35,7 +35,7 @@ function headerColorClass(level: ColumnPermission): string {
     case 'read': return 'text-read';
     case 'read_masked': return 'text-edit';
     case 'write': return 'text-grep';
-    default: return 'text-muted/50';
+    default: return 'text-muted';
   }
 }
 
@@ -247,14 +247,14 @@ export function PermissionMatrix({
         <table className="w-full min-w-[560px] border-collapse">
           <thead>
             <tr className="border-b border-border bg-surface-300">
-              <th className="px-4 py-2.5 text-left font-sans text-caption font-medium uppercase tracking-wide text-muted/50">
+              <th className="px-4 py-2.5 text-left font-sans text-caption font-medium text-muted">
                 Column
               </th>
               {PERMISSION_LEVELS.map((level) => (
                 <th
                   key={level}
                   className={cn(
-                    'w-24 px-2 py-2.5 text-center font-sans text-caption font-medium uppercase tracking-wide',
+                    'w-24 px-2 py-2.5 text-center font-sans text-caption font-medium',
                     headerColorClass(level),
                   )}
                 >
