@@ -212,7 +212,7 @@ function CreateCompanyForm({
             aria-invalid={!!errors.name}
             className={cn(
               'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              'placeholder:text-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               errors.name ? 'border-error' : 'border-border focus:border-accent',
             )}
             placeholder="Acme Corp"
@@ -235,7 +235,7 @@ function CreateCompanyForm({
             aria-invalid={!!errors.slug}
             className={cn(
               'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-mono text-button text-foreground transition-colors duration-150',
-              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              'placeholder:text-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               errors.slug ? 'border-error' : 'border-border focus:border-accent',
             )}
             placeholder="acme-corp"
@@ -249,18 +249,11 @@ function CreateCompanyForm({
 
         <Button
           type="submit"
-          disabled={isSubmitting}
+          isLoading={isSubmitting}
           size="lg"
-          className="mt-2 h-10 w-full"
+          className="mt-2 w-full"
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="size-4 animate-spin" />
-              Creating…
-            </>
-          ) : (
-            'Create company'
-          )}
+          {isSubmitting ? 'Creating…' : 'Create company'}
         </Button>
       </form>
     </div>

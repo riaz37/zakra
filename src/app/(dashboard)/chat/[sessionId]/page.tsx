@@ -171,7 +171,7 @@ export default function ChatSessionPage() {
       {showScrollDown && (
         <button
           onClick={() => scrollToBottom()}
-          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-full border border-border bg-surface-400 px-3 py-1.5 font-sans text-caption text-muted/65 shadow-[var(--shadow-elevated)] transition-all duration-150 hover:border-border-medium hover:bg-surface-500 hover:text-foreground animate-slide-in-bottom"
+          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-full border border-border bg-surface-400 px-3 py-1.5 font-sans text-caption text-muted shadow-[var(--shadow-elevated)] transition-all duration-150 hover:border-border-medium hover:bg-surface-500 hover:text-foreground animate-slide-in-bottom"
         >
           <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
           Latest

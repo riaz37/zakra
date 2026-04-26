@@ -404,7 +404,7 @@ function RuleDialog({
                 placeholder="e.g. Exclude test data"
                 className={cn(
                   'w-full rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-sans text-button text-foreground outline-none placeholder:text-muted/40',
+                  'font-sans text-button text-foreground outline-none placeholder:text-subtle',
                   'transition-colors focus:border-border-medium',
                   errors.name && 'border-error',
                 )}
@@ -440,7 +440,7 @@ function RuleDialog({
                 placeholder="Describe the business rule in plain language…"
                 className={cn(
                   'w-full resize-none rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-sans text-button text-foreground outline-none placeholder:text-muted/40',
+                  'font-sans text-button text-foreground outline-none placeholder:text-subtle',
                   'transition-colors focus:border-border-medium',
                   errors.rule_text && 'border-error',
                 )}
