@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
 import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
 import { useAuth, useAuthStore } from '@/store/authStore';
 import { useCompanyStore } from '@/store/companyStore';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -77,25 +77,14 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         {/* Email */}
         <div className="flex flex-col">
-          <label
-            htmlFor="email"
-            className="mb-1.5 block font-sans text-caption text-foreground"
-          >
-            Email
-          </label>
-          <input
+          <Label htmlFor="email">Email</Label>
+          <Input
             id="email"
             type="email"
             autoComplete="email"
             {...register('email')}
             aria-invalid={!!errors.email}
-            className={cn(
-              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              errors.email
-                ? 'border-error focus:border-error'
-                : 'border-border focus:border-accent',
-            )}
+            error={!!errors.email}
             placeholder="you@company.com"
           />
           {errors.email && (
@@ -107,25 +96,14 @@ export default function LoginPage() {
 
         {/* Password — 16px gap between fields */}
         <div className="mt-4 flex flex-col">
-          <label
-            htmlFor="password"
-            className="mb-1.5 block font-sans text-caption text-foreground"
-          >
-            Password
-          </label>
-          <input
+          <Label htmlFor="password">Password</Label>
+          <Input
             id="password"
             type="password"
             autoComplete="current-password"
             {...register('password')}
             aria-invalid={!!errors.password}
-            className={cn(
-              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              errors.password
-                ? 'border-error focus:border-error'
-                : 'border-border focus:border-accent',
-            )}
+            error={!!errors.password}
             placeholder="••••••••"
           />
           {errors.password && (
@@ -138,18 +116,11 @@ export default function LoginPage() {
         {/* Submit — 24px gap from last field */}
         <Button
           type="submit"
-          disabled={isSubmitting}
+          isLoading={isSubmitting}
           size="lg"
-          className="mt-6 h-10 w-full"
+          className="mt-6 w-full"
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="size-4 animate-spin" />
-              Signing in…
-            </>
-          ) : (
-            'Sign in'
-          )}
+          {isSubmitting ? 'Signing in…' : 'Sign in'}
         </Button>
 
         <p className="mt-4 font-sans text-caption text-muted">

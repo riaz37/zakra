@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -8,15 +9,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]",
+        default:
+          "bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]",
         outline:
           "border-border bg-background hover:bg-accent/10 hover:border-accent/30 hover:text-accent aria-expanded:bg-accent/10 aria-expanded:text-accent",
         secondary:
           "border-border/50 bg-secondary text-secondary-foreground hover:bg-accent/10 hover:text-accent aria-expanded:bg-accent/10 aria-expanded:text-accent",
         ghost:
           "border-transparent hover:bg-accent/10 hover:text-accent aria-expanded:bg-accent/10 aria-expanded:text-accent",
+        warning:
+          "border-warning-border bg-warning-bg text-warning hover:bg-warning/15 hover:border-warning/35 focus-visible:border-warning/40 focus-visible:ring-warning/20",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+          "border-transparent bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20",
+        "destructive-hard":
+          "bg-destructive text-destructive-foreground hover:bg-destructive/85 focus-visible:border-destructive/50 focus-visible:ring-destructive/30",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -24,12 +30,10 @@ const buttonVariants = cva(
           "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         xs: "h-6 gap-1 px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-7 gap-1 px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        lg: "h-10 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
         icon: "size-8",
-        "icon-xs":
-          "size-6 [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7",
+        "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-7",
         "icon-lg": "size-9",
       },
     },
@@ -40,19 +44,31 @@ const buttonVariants = cva(
   }
 )
 
+interface ButtonProps extends ButtonPrimitive.Props, VariantProps<typeof buttonVariants> {
+  /** Shows a spinner and disables the button. Children remain visible alongside the spinner. */
+  isLoading?: boolean
+}
+
 function Button({
   className,
   variant = "default",
   size = "default",
+  isLoading = false,
+  disabled,
+  children,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
   return (
     <ButtonPrimitive
       data-slot="button"
+      disabled={disabled || isLoading}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      {isLoading && <Loader2 className="size-4 animate-spin" />}
+      {children}
+    </ButtonPrimitive>
   )
 }
 
-export { Button, buttonVariants }
+export { Button, buttonVariants, type ButtonProps }

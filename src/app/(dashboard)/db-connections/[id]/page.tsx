@@ -19,6 +19,7 @@ import {
 import { useBusinessRules, useCreateBusinessRule, useUpdateBusinessRule, useDeleteBusinessRule } from '@/hooks/useBusinessRules';
 import { StatusBadge } from '@/components/shared/status-badge';
 import type { StatusVariant } from '@/components/shared/status-badge';
+import { Badge } from '@/components/ui/badge';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { cn } from '@/lib/utils';
@@ -572,9 +573,9 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
                     <p className="font-sans text-button font-medium text-foreground">
                       {rule.name}
                     </p>
-                    <span className="rounded-full bg-surface-300 px-2 py-0.5 font-sans text-caption text-muted">
+                    <Badge variant="default" size="sm">
                       {rule.scope_type}
-                    </span>
+                    </Badge>
                   </div>
                   <p className="mt-1 font-sans text-button text-muted line-clamp-2">
                     {rule.rule_text}

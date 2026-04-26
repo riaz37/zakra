@@ -18,7 +18,7 @@ export type { StatusBadgeProps, StatusVariant } from "./status-badge";
 
 export { EmptyState } from "./empty-state";
 
-export { Skeleton } from "./skeleton";
+export { Skeleton, SkeletonText, SkeletonAvatar, SkeletonCard } from "./skeleton";
 
 export { ErrorState } from "./error-state";
 

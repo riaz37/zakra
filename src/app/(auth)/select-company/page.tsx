@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import { useCompanies, useCreateCompany } from '@/hooks/useCompanies';
 import { useCompanyStore } from '@/store/companyStore';
 import { Button } from '@/components/ui/button';
+import { Input, MonoInput } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import type { Company } from '@/types';
 
@@ -150,7 +152,7 @@ function SelectCompanyList({
       <Button
         onClick={onCreateNew}
         size="lg"
-        className="mt-3 h-10 w-full"
+        className="mt-3 w-full"
       >
         <Plus className="size-4" />
         Create new company
@@ -198,10 +200,8 @@ function CreateCompanyForm({
 
       <form onSubmit={onSubmit} noValidate className="mt-6 flex flex-col gap-4">
         <div className="flex flex-col">
-          <label htmlFor="name" className="mb-1.5 font-sans text-caption text-muted">
-            Company name
-          </label>
-          <input
+          <Label htmlFor="name">Company name</Label>
+          <Input
             id="name"
             type="text"
             {...register('name')}
@@ -210,11 +210,7 @@ function CreateCompanyForm({
               onNameChange(e);
             }}
             aria-invalid={!!errors.name}
-            className={cn(
-              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              errors.name ? 'border-error' : 'border-border focus:border-accent',
-            )}
+            error={!!errors.name}
             placeholder="Acme Corp"
           />
           {errors.name && (
@@ -225,19 +221,13 @@ function CreateCompanyForm({
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="slug" className="mb-1.5 font-sans text-caption text-muted">
-            Slug
-          </label>
-          <input
+          <Label htmlFor="slug">Slug</Label>
+          <MonoInput
             id="slug"
             type="text"
             {...register('slug')}
             aria-invalid={!!errors.slug}
-            className={cn(
-              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-mono text-button text-foreground transition-colors duration-150',
-              'placeholder:text-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              errors.slug ? 'border-error' : 'border-border focus:border-accent',
-            )}
+            error={!!errors.slug}
             placeholder="acme-corp"
           />
           {errors.slug && (

@@ -1,3 +1,4 @@
+import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -5,48 +6,196 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  cn(
+    "group/badge inline-flex w-fit shrink-0 items-center justify-center gap-1.5",
+    "overflow-hidden rounded-full border whitespace-nowrap",
+    "font-sans font-medium leading-none",
+    "transition-colors duration-150",
+    "focus-visible:ring-2 focus-visible:ring-ring",
+    "[&>svg]:pointer-events-none [&>svg]:size-3",
+  ),
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        secondary:
-          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
-        destructive:
-          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+        // Semantic, dark-enterprise palette
+        default:
+          "border-border bg-surface-300 text-muted-strong",
+        success:
+          "border-accent-border bg-accent-bg text-accent",
+        warning:
+          "border-warning-border bg-warning-bg text-warning",
+        error:
+          "border-error-border bg-error-bg text-error",
+        info:
+          "border-info/20 bg-info-soft text-info",
         outline:
-          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
-        ghost:
-          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          "border-border bg-transparent text-muted",
+
+        // Legacy aliases — map to semantic variants so existing consumers
+        // (reports/history, reports/[reportId]) keep working without churn.
+        // `secondary` → info (running/pending state in reports table)
+        // `destructive` → error
+        secondary:
+          "border-info/20 bg-info-soft text-info",
+        destructive:
+          "border-error-border bg-error-bg text-error",
+      },
+      size: {
+        sm: "h-5 px-1.5 text-micro",
+        md: "h-6 px-2 text-caption",
       },
     },
     defaultVariants: {
       variant: "default",
+      size: "sm",
     },
-  }
+  },
 )
+
+type BadgeVariant = NonNullable<VariantProps<typeof badgeVariants>["variant"]>
+
+const DOT_COLOR: Record<BadgeVariant, string> = {
+  default: "bg-muted",
+  success: "bg-accent",
+  warning: "bg-warning",
+  error: "bg-error",
+  info: "bg-info",
+  outline: "bg-muted",
+  secondary: "bg-info",
+  destructive: "bg-error",
+}
+
+interface BadgeProps
+  extends Omit<useRender.ComponentProps<"span">, "render">,
+    VariantProps<typeof badgeVariants> {
+  /** Render a 6px coloured dot before the label. */
+  dot?: boolean
+  render?: useRender.ComponentProps<"span">["render"]
+}
 
 function Badge({
   className,
   variant = "default",
+  size = "sm",
+  dot = false,
+  children,
   render,
   ...props
-}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+}: BadgeProps) {
+  const resolvedVariant: BadgeVariant = variant ?? "default"
+
   return useRender({
     defaultTagName: "span",
     props: mergeProps<"span">(
       {
-        className: cn(badgeVariants({ variant }), className),
+        className: cn(badgeVariants({ variant, size }), className),
+        children: (
+          <>
+            {dot ? (
+              <span
+                aria-hidden
+                className={cn(
+                  "inline-block size-1.5 rounded-full",
+                  DOT_COLOR[resolvedVariant],
+                )}
+              />
+            ) : null}
+            {children}
+          </>
+        ),
       },
-      props
+      props,
     ),
     render,
     state: {
       slot: "badge",
-      variant,
+      variant: resolvedVariant,
     },
   })
 }
 
-export { Badge, badgeVariants }
+// ── StatusBadge ────────────────────────────────────────────────────────────
+
+const STATUS_VARIANT_MAP: Record<string, BadgeVariant> = {
+  // success
+  completed: "success",
+  active: "success",
+  online: "success",
+  connected: "success",
+  succeeded: "success",
+  ready: "success",
+
+  // warning
+  pending: "warning",
+  running: "warning",
+  processing: "warning",
+  queued: "warning",
+
+  // error
+  failed: "error",
+  error: "error",
+  offline: "error",
+  disconnected: "error",
+  cancelled: "error",
+  suspended: "error",
+
+  // info
+  info: "info",
+  draft: "info",
+  scheduled: "info",
+}
+
+function statusToVariant(status: string): BadgeVariant {
+  return STATUS_VARIANT_MAP[status.toLowerCase()] ?? "default"
+}
+
+function toLabel(status: string): string {
+  return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+}
+
+interface StatusBadgeProps
+  extends Omit<BadgeProps, "variant" | "children"> {
+  status: string
+  /** Override the rendered label. Defaults to a capitalized status value. */
+  label?: string
+}
+
+/**
+ * Convenience badge that maps a free-form status string to a semantic colour
+ * variant. Use this anywhere the platform shows job/connection/report state
+ * so the colour story stays consistent.
+ */
+function StatusBadge({
+  status,
+  label,
+  size = "sm",
+  dot = true,
+  className,
+  ...props
+}: StatusBadgeProps) {
+  const variant = statusToVariant(status)
+  const display = label ?? toLabel(status)
+
+  return (
+    <Badge
+      variant={variant}
+      size={size}
+      dot={dot}
+      aria-label={`Status: ${status}`}
+      className={className}
+      {...props}
+    >
+      {display}
+    </Badge>
+  )
+}
+
+export {
+  Badge,
+  StatusBadge,
+  badgeVariants,
+  statusToVariant,
+  type BadgeProps,
+  type BadgeVariant,
+  type StatusBadgeProps,
+}

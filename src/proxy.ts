@@ -13,7 +13,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (hasAuthCookie && isPublic) {
-    return NextResponse.redirect(new URL('/chat', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();

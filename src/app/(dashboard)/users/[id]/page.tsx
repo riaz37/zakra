@@ -37,6 +37,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { StatusBadge } from '@/components/shared/status-badge';
+import { Badge } from '@/components/ui/badge';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
@@ -51,19 +52,13 @@ import {
 function UserTypeBadge({ type }: { type: string }) {
   const label =
     type === 'super_admin' ? 'Super Admin' : type === 'admin' ? 'Admin' : 'Regular';
-  const classes =
-    type === 'super_admin'
-      ? 'bg-warning-bg text-gold border border-warning-border'
-      : type === 'admin'
-      ? 'bg-accent-bg text-accent border border-accent-border'
-      : 'bg-surface-300 text-muted border border-border';
+  const variant =
+    type === 'super_admin' ? 'warning' : type === 'admin' ? 'success' : 'default';
 
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 font-sans text-caption font-medium leading-none ${classes}`}
-    >
+    <Badge variant={variant} size="sm">
       {label}
-    </span>
+    </Badge>
   );
 }
 

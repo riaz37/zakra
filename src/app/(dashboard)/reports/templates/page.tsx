@@ -16,6 +16,7 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export default function ReportTemplatesPage() {
   const router = useRouter();
@@ -46,9 +47,9 @@ export default function ReportTemplatesPage() {
       id: 'type',
       header: 'Type',
       cell: ({ row }) => (
-        <span className="inline-flex items-center rounded-full bg-surface-300 px-2 py-0.5 font-mono text-caption font-medium text-muted-strong border border-border">
+        <Badge variant="default" size="sm" className="font-mono">
           {row.original.report_type}
-        </span>
+        </Badge>
       ),
     },
     {
