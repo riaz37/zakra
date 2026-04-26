@@ -44,7 +44,7 @@ export function CompanySwitcher({ collapsed = false }: CompanySwitcherProps) {
   return (
     <div className="px-3 pb-3">
       <p
-        className="mb-1.5 px-1 font-sans text-micro uppercase text-muted/50 tracking-[0.048px]"
+        className="mb-1.5 px-1 font-sans text-micro uppercase text-subtle tracking-[0.048px]"
       >
         Company context
       </p>
