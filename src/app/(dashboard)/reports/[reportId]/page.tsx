@@ -5,6 +5,7 @@ import { useReportGenerationDetail } from '@/hooks/useReportGenerations';
 import { useReportDownload } from '@/hooks/useReportDownload';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { MarkdownRenderer } from '@/components/shared/markdown-renderer';
+import { SectionChart } from '@/components/features/reports/section-chart';
 import type { ReportGenerationStatus } from '@/types';
 import { ChevronLeft, Download, AlertCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -139,7 +140,7 @@ export default function ReportViewerPage() {
         {/* Report sections */}
         {report.sections.length > 0 && (
           <div className="space-y-12">
-            {report.sections
+            {[...report.sections]
               .sort((a, b) => a.section_index - b.section_index)
               .map((section) => (
                 <section key={section.id}>
@@ -159,10 +160,22 @@ export default function ReportViewerPage() {
                     </p>
                   )}
 
+                  {/* Chart — rendered when chart_recommendation + query_result both present */}
+                  {section.chart_recommendation &&
+                    section.query_result &&
+                    section.query_result.row_count > 0 && (
+                      <div className="mt-6">
+                        <p className="mb-3 font-mono text-caption font-medium uppercase tracking-wider text-muted">
+                          {section.chart_recommendation.title}
+                        </p>
+                        <SectionChart section={section} />
+                      </div>
+                    )}
+
                   {/* Query result table */}
                   {section.query_result && section.query_result.row_count > 0 && (
                     <div className="mt-6 overflow-hidden rounded-lg border border-border bg-background">
-                      <div className="flex items-center justify-between border-bottom border-border bg-surface-100 px-4 py-2">
+                      <div className="flex items-center justify-between border-b border-border bg-surface-100 px-4 py-2">
                         <span className="font-mono text-caption font-medium text-muted uppercase tracking-wider">
                           Query Result
                         </span>

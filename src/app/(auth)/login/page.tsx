@@ -6,8 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
 import { z } from 'zod';
+import { Loader2 } from 'lucide-react';
 import { useAuth, useAuthStore } from '@/store/authStore';
 import { useCompanyStore } from '@/store/companyStore';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const loginSchema = z.object({
@@ -53,7 +55,7 @@ export default function LoginPage() {
     <div className="w-full max-w-[340px] animate-fade-up rounded-xl border border-border bg-surface-100 px-6 py-8">
       {/* Brand */}
       <div className="mb-8">
-        <div className="mb-3 flex items-center gap-2.5">
+        <div className="mb-3 flex items-center justify-center gap-2.5">
           <Image
             src="/logo/esaplogo.webp"
             alt="ESAP"
@@ -134,24 +136,21 @@ export default function LoginPage() {
         </div>
 
         {/* Submit — 24px gap from last field */}
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className={cn(
-            'mt-6 flex w-full items-center justify-center rounded-lg bg-accent py-2.5 font-sans text-button font-medium text-[#111]',
-            'transition-colors duration-150 hover:bg-accent/90',
-            'disabled:cursor-not-allowed disabled:opacity-60',
-          )}
+          size="lg"
+          className="mt-6 h-10 w-full"
         >
           {isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <Spinner />
+            <>
+              <Loader2 className="size-4 animate-spin" />
               Signing in…
-            </span>
+            </>
           ) : (
             'Sign in'
           )}
-        </button>
+        </Button>
 
         <p className="mt-4 font-sans text-caption text-muted">
           First time signing in? Check your invite email for credentials.
@@ -171,28 +170,3 @@ export default function LoginPage() {
   );
 }
 
-function Spinner() {
-  return (
-    <svg
-      className="h-4 w-4 animate-spin"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      aria-hidden
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-      />
-    </svg>
-  );
-}

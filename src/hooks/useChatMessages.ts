@@ -3,6 +3,7 @@
  */
 
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 import * as chatApi from '../api/chat';
 
 const PAGE_SIZE = 50;
@@ -22,15 +23,20 @@ export function useChatMessages(sessionId: string | undefined, companyId?: strin
       return undefined;
     },
     enabled: !!sessionId,
-    staleTime: 10_000,
+    staleTime: Infinity,         // manually invalidated after each stream — no auto-refetch
+    refetchOnWindowFocus: false, // prevents spurious refetches on tab focus
   });
 
-  const invalidate = () => {
-    return queryClient.invalidateQueries({ queryKey: ['chat-messages', sessionId] });
-  };
+  const invalidate = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: ['chat-messages', sessionId] }),
+    [queryClient, sessionId],
+  );
 
   // Flatten all pages into a single messages array
-  const messages = query.data?.pages.flatMap((page) => page.messages) ?? [];
+  const messages = useMemo(
+    () => query.data?.pages.flatMap((page) => page.messages) ?? [],
+    [query.data],
+  );
 
   return {
     ...query,

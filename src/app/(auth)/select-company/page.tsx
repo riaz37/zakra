@@ -10,6 +10,7 @@ import { Building2, Plus, Check, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCompanies, useCreateCompany } from '@/hooks/useCompanies';
 import { useCompanyStore } from '@/store/companyStore';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Company } from '@/types';
 
@@ -68,7 +69,7 @@ export default function SelectCompanyPage() {
   return (
     <div className="w-full max-w-[420px] animate-fade-up">
       {/* Brand */}
-      <div className="mb-8 flex items-center gap-2.5">
+      <div className="mb-8 flex items-center justify-center gap-2.5">
         <Image src="/logo/esaplogo.webp" alt="ESAP" width={32} height={32} priority />
         <Image src="/logo/esaplogo.svg" alt="ESAP employer solutions" width={65} height={21} priority />
       </div>
@@ -117,7 +118,7 @@ function SelectCompanyList({
         Choose the company you want to manage.
       </p>
 
-      <div className="mt-6 flex flex-col gap-2">
+      <div className="mt-6 flex max-h-[min(420px,55vh)] flex-col gap-2 overflow-y-auto pr-0.5">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="size-5 animate-spin text-muted" />
@@ -146,17 +147,14 @@ function SelectCompanyList({
         )}
       </div>
 
-      <button
+      <Button
         onClick={onCreateNew}
-        className={cn(
-          'mt-3 flex w-full items-center gap-2 rounded-lg border border-dashed border-border px-4 py-3',
-          'font-sans text-button text-muted transition-colors duration-150',
-          'hover:border-border-strong hover:text-foreground',
-        )}
+        size="lg"
+        className="mt-3 h-10 w-full"
       >
         <Plus className="size-4" />
         Create new company
-      </button>
+      </Button>
     </div>
   );
 }
@@ -249,15 +247,11 @@ function CreateCompanyForm({
           )}
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className={cn(
-            'mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-accent py-2.5',
-            'font-sans text-button font-medium text-[#111]',
-            'transition-colors duration-150 hover:bg-accent/90',
-            'disabled:cursor-not-allowed disabled:opacity-60',
-          )}
+          size="lg"
+          className="mt-2 h-10 w-full"
         >
           {isSubmitting ? (
             <>
@@ -267,7 +261,7 @@ function CreateCompanyForm({
           ) : (
             'Create company'
           )}
-        </button>
+        </Button>
       </form>
     </div>
   );

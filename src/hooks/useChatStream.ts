@@ -79,6 +79,7 @@ function reducer(state: StreamState, action: Action): StreamState {
         error: null,
       };
 
+    // text_delta carries full accumulated text (not incremental delta) — replace, not append
     case 'TEXT_DELTA': {
       const msg = ensureStreamingMessage(state);
       const blocks = [...msg.contentBlocks];
@@ -102,6 +103,10 @@ function reducer(state: StreamState, action: Action): StreamState {
 
     case 'QUERY_RESULT': {
       const msg = ensureStreamingMessage(state);
+      const exists = msg.contentBlocks.some(
+        (b) => b.type === 'query_result' && b.query_result?.sql === action.data.sql,
+      );
+      if (exists) return state;
       const blocks = [...msg.contentBlocks];
       blocks.push({ type: 'query_result', query_result: action.data });
       return {
@@ -113,6 +118,10 @@ function reducer(state: StreamState, action: Action): StreamState {
 
     case 'REPORT_LINK': {
       const msg = ensureStreamingMessage(state);
+      const exists = msg.contentBlocks.some(
+        (b) => b.type === 'report_link' && b.report?.page_url === action.data.page_url,
+      );
+      if (exists) return state;
       const blocks = [...msg.contentBlocks];
       blocks.push({ type: 'report_link', report: action.data });
       return {
@@ -124,6 +133,10 @@ function reducer(state: StreamState, action: Action): StreamState {
 
     case 'SEARCH_RESULT': {
       const msg = ensureStreamingMessage(state);
+      const exists = msg.contentBlocks.some(
+        (b) => b.type === 'search_result' && b.search_results?.query === action.data.query,
+      );
+      if (exists) return state;
       const blocks = [...msg.contentBlocks];
       blocks.push({ type: 'search_result', search_results: action.data });
       return {
@@ -135,6 +148,10 @@ function reducer(state: StreamState, action: Action): StreamState {
 
     case 'REPORT_PICKER': {
       const msg = ensureStreamingMessage(state);
+      const exists = msg.contentBlocks.some(
+        (b) => b.type === 'report_picker' && b.report_picker?.question === action.data.question,
+      );
+      if (exists) return state;
       const blocks = [...msg.contentBlocks];
       blocks.push({ type: 'report_picker', report_picker: action.data });
       return {
