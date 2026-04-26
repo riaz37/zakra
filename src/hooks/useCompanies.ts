@@ -56,10 +56,8 @@ export function useCreateCompany() {
   return useMutation({
     mutationFn: ({ data }: { data: CompanyCreate; parentId?: string }) =>
       companiesApi.createCompany(data),
-    onSuccess: (_, { parentId }) => {
-      queryClient.invalidateQueries({
-        queryKey: parentId ? [QUERY_KEY, parentId] : [QUERY_KEY],
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
     },
   });
 }

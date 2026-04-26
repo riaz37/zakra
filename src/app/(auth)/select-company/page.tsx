@@ -46,7 +46,7 @@ export default function SelectCompanyPage() {
 
   function handleSelect(company: Company) {
     setSelectedCompanyId(company.id);
-    router.push('/');
+    router.push('/overview');
   }
 
   async function onCreate(values: CreateFields) {
@@ -54,7 +54,7 @@ export default function SelectCompanyPage() {
       const company = await createCompany.mutateAsync({ data: { name: values.name, slug: values.slug } });
       setSelectedCompanyId(company.id);
       toast.success(`${company.name} created`);
-      router.push('/');
+      router.push('/overview');
     } catch {
       toast.error('Failed to create company. Please try again.');
     }

@@ -2,10 +2,10 @@
 
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useDashboardData } from '@/hooks/useDashboardData';
-import { MetricStrip } from './_components/metric-strip';
-import { ActivityChart } from './_components/activity-chart';
-import { StatusDistributionChart } from './_components/status-distribution-chart';
-import { RecentActivity } from './_components/recent-activity';
+import { MetricStrip } from '../_components/metric-strip';
+import { ActivityChart } from '../_components/activity-chart';
+import { StatusDistributionChart } from '../_components/status-distribution-chart';
+import { RecentActivity } from '../_components/recent-activity';
 import { PageHeader } from '@/components/shared/page-header';
 
 export default function OverviewPage() {

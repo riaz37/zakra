@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Building2, Plus, Pencil, Trash2, GitBranch } from 'lucide-react';
+import { Building2, Plus, Pencil, Trash2, GitBranch, List, Network } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
 
 import {
@@ -32,9 +32,14 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { CompanyForm, type CompanyFormData } from '@/components/features/companies/company-form';
+import { CompanyHierarchy } from '@/components/features/companies/company-hierarchy';
+import { cn } from '@/lib/utils';
+
+type CompaniesView = 'list' | 'hierarchy';
 
 export default function CompaniesPage() {
   const router = useRouter();
+  const [view, setView] = useState<CompaniesView>('list');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
 
@@ -70,13 +75,9 @@ export default function CompaniesPage() {
             {row.original.parent_id && (
               <GitBranch className="size-3 text-subtle rotate-90" />
             )}
-            <Button
-              variant="link"
-              className="h-auto p-0 justify-start font-sans text-[16px] font-medium text-foreground hover:text-accent no-underline text-left"
-              onClick={() => router.push(`/companies/${row.original.id}`)}
-            >
+            <span className="font-sans text-[16px] font-medium text-foreground">
               {row.original.name}
-            </Button>
+            </span>
           </div>
           {row.original.description && (
             <span className="font-sans text-caption text-muted line-clamp-1 max-w-[400px]">
@@ -234,49 +235,85 @@ export default function CompaniesPage() {
         }
       />
 
-      <div className="mb-6 max-w-sm">
-        <SearchInput
-          value={search}
-          onChange={(v) => {
-            setSearch(v);
-            setPage(0);
-          }}
-          placeholder="Search companies…"
-          ariaLabel="Search companies"
-        />
+      <div className="mb-6 flex items-center gap-1 rounded-md border border-border bg-surface-200 p-0.5 w-fit">
+        <button
+          type="button"
+          onClick={() => setView('list')}
+          aria-pressed={view === 'list'}
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-button transition-colors',
+            view === 'list'
+              ? 'bg-surface-400 text-foreground'
+              : 'text-muted hover:text-foreground',
+          )}
+        >
+          <List aria-hidden size={13} strokeWidth={1.75} />
+          List
+        </button>
+        <button
+          type="button"
+          onClick={() => setView('hierarchy')}
+          aria-pressed={view === 'hierarchy'}
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-button transition-colors',
+            view === 'hierarchy'
+              ? 'bg-surface-400 text-foreground'
+              : 'text-muted hover:text-foreground',
+          )}
+        >
+          <Network aria-hidden size={13} strokeWidth={1.75} />
+          Hierarchy
+        </button>
       </div>
 
-      {isError ? (
-        <ErrorState title="Failed to load companies" onRetry={() => refetch()} />
-      ) : items.length === 0 && !isLoading ? (
-        <EmptyState
-          icon={Building2}
-          title={search ? "No companies match your search" : "No companies yet"}
-          description={search ? "Try adjusting your search terms." : "Add your first company to start managing users and data access."}
-          action={!search ? (
-            <Button
-              onClick={() => setCreateOpen(true)}
-              className="h-9 px-4 gap-2"
-            >
-              <Plus aria-hidden size={16} strokeWidth={2} />
-              Create Company
-            </Button>
-          ) : undefined}
-        />
+      {view === 'list' ? (
+        <>
+          <div className="mb-6 max-w-sm">
+            <SearchInput
+              value={search}
+              onChange={(v) => {
+                setSearch(v);
+                setPage(0);
+              }}
+              placeholder="Search companies…"
+              ariaLabel="Search companies"
+            />
+          </div>
+
+          {isError ? (
+            <ErrorState title="Failed to load companies" onRetry={() => refetch()} />
+          ) : items.length === 0 && !isLoading ? (
+            <EmptyState
+              icon={Building2}
+              title={search ? "No companies match your search" : "No companies yet"}
+              description={search ? "Try adjusting your search terms." : "Add your first company to start managing users and data access."}
+              action={!search ? (
+                <Button
+                  onClick={() => setCreateOpen(true)}
+                  className="h-9 px-4 gap-2"
+                >
+                  <Plus aria-hidden size={16} strokeWidth={2} />
+                  Create Company
+                </Button>
+              ) : undefined}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={items}
+              isLoading={isLoading}
+              pageIndex={page}
+              pageCount={totalPages}
+              onPageChange={setPage}
+              pageSize={DEFAULT_PAGE_SIZE}
+              totalCount={data?.total}
+              caption="Companies list"
+              emptyMessage="No companies match your search."
+            />
+          )}
+        </>
       ) : (
-        <DataTable
-          columns={columns}
-          data={items}
-          isLoading={isLoading}
-          pageIndex={page}
-          pageCount={totalPages}
-          onPageChange={setPage}
-          pageSize={DEFAULT_PAGE_SIZE}
-          totalCount={data?.total}
-          caption="Companies list"
-          emptyMessage="No companies match your search."
-          onRowClick={(row) => router.push(`/companies/${row.id}`)}
-        />
+        <CompanyHierarchy />
       )}
 
       {/* Main Creation Dialog */}

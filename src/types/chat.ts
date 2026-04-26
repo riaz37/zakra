@@ -48,6 +48,13 @@ export interface QueryResultData {
   chart_config?: Record<string, unknown>;
 }
 
+export interface ReportKeyMetric {
+  metric: string;
+  value: string;
+  change_percent?: number;
+  context?: string;
+}
+
 export interface ReportLinkData {
   report_id?: string;
   query?: string;
@@ -57,6 +64,8 @@ export interface ReportLinkData {
   task_id?: string;
   title?: string;
   status?: string;
+  executive_summary?: string;
+  key_metrics?: ReportKeyMetric[];
 }
 
 export interface SearchResultItem {

@@ -42,7 +42,7 @@ export default function LoginPage() {
       if (!resolvedCompanyId) {
         router.push('/select-company');
       } else {
-        router.push('/');
+        router.push('/overview');
       }
     } catch (err) {
       setApiError(

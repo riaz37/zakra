@@ -560,7 +560,7 @@ export function ChatInput({
       )}
 
       <div
-        className="flex flex-col rounded-[var(--radius-xl)] border border-border-medium bg-surface-100 transition-colors duration-150 focus-within:border-border-strong"
+        className="flex flex-col rounded-[var(--radius-xl)] border border-border-medium bg-surface-100 transition-colors duration-150 focus-within:border-accent/50"
       >
         {/* Textarea */}
         <textarea
@@ -613,7 +613,7 @@ export function ChatInput({
                 disabled={!canSend}
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed",
-                  canSend ? "bg-foreground text-background" : "bg-surface-400 text-muted",
+                  canSend ? "bg-accent text-background" : "bg-surface-400 text-muted",
                 )}
                 title="Send (Enter)"
               >

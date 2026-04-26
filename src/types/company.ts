@@ -15,6 +15,7 @@ export interface Company {
   created_at: string;
   updated_at: string;
   subsidiaries?: Company[];
+  subsidiary_count?: number;
   admin_count?: number;
   user_count?: number;
 }

@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { ChevronDown, RefreshCw } from 'lucide-react';
+import { ChevronDown, Database, RefreshCw } from 'lucide-react';
 import { useChatStream } from '@/hooks/useChatStream';
 import { useChatMessages } from '@/hooks/useChatMessages';
+import { useChatSession } from '@/hooks/useChatSessions';
+import { useDbConnection } from '@/hooks/useDbConnections';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { ChatInput } from '@/components/ui/chat-input';
 import { ChatMessageView, UserMessage } from '@/components/features/chat/chat-message';
@@ -19,6 +21,11 @@ export default function ChatSessionPage() {
   const searchParams = useSearchParams();
   const sessionId = params.sessionId;
   const companyId = useCurrentCompanyId();
+  const { data: session } = useChatSession(sessionId, companyId);
+  const { data: connection } = useDbConnection(
+    session?.connection_id ?? undefined,
+    companyId,
+  );
 
   const { messages, invalidate, isLoading: messagesLoading } = useChatMessages(sessionId, companyId);
 
@@ -111,6 +118,27 @@ export default function ChatSessionPage() {
         <div className="flex items-center justify-center gap-2 border-b border-warning-border bg-warning-bg px-4 py-2 animate-fade-in">
           <RefreshCw className="h-3.5 w-3.5 text-warning animate-spin" strokeWidth={2} />
           <span className="font-sans text-caption text-warning">Reconnecting…</span>
+        </div>
+      )}
+
+      {connection && (
+        <div className="flex items-center justify-between border-b border-border bg-surface-200 px-6 py-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <Database
+              className="h-3.5 w-3.5 shrink-0 text-muted"
+              strokeWidth={1.5}
+            />
+            <span className="font-sans text-caption text-muted">
+              {connection.name}
+            </span>
+            <span className="text-subtle">·</span>
+            <span className="truncate font-mono text-mono-sm text-subtle">
+              {connection.database_name}
+            </span>
+          </div>
+          <span className="rounded-md border border-border bg-surface-300 px-1.5 py-0.5 font-mono text-mono-sm uppercase tracking-wide text-subtle">
+            {connection.database_type}
+          </span>
         </div>
       )}
 

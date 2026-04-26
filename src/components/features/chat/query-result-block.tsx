@@ -302,7 +302,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               {qr.columns.map((col) => (
                 <th
                   key={col}
-                  className="px-3 py-2 text-left font-mono text-mono-sm font-medium text-muted"
+                  className="px-3 py-2.5 text-left font-mono text-mono font-medium text-muted"
                 >
                   {col}
                 </th>
@@ -322,7 +322,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
                   const val = row[col];
                   const isNull = val === null || val === undefined;
                   return (
-                    <td key={col} className="px-3 py-2 font-mono text-mono-sm">
+                    <td key={col} className="px-3 py-2.5 font-mono text-mono">
                       {isNull ? (
                         <span className="italic text-subtle">null</span>
                       ) : (

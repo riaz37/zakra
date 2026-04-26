@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
 
 export interface MarkdownComponentsConfig {
-  /** Font size class for body text and list items. Default: 'text-[14px]' */
+  /** Font size class for body text and list items. Default: 'text-[15px]' */
   bodySize?: string;
   /** Whether to include table components. Default: true */
   tables?: boolean;
@@ -14,7 +14,7 @@ export interface MarkdownComponentsConfig {
 export function buildMarkdownComponents(
   config: MarkdownComponentsConfig = {},
 ): Components {
-  const { bodySize = 'text-[14px]', tables = true } = config;
+  const { bodySize = 'text-[15px]', tables = true } = config;
 
   const base: Components = {
     p: ({ children }) => (
@@ -58,17 +58,17 @@ export function buildMarkdownComponents(
       </pre>
     ),
     h1: ({ children }) => (
-      <h1 className="mb-2 mt-4 font-sans text-[16px] font-semibold tracking-tight text-foreground first:mt-0">
+      <h1 className="mb-2 mt-4 font-sans text-[18px] font-semibold tracking-tight text-foreground first:mt-0">
         {children}
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="mb-2 mt-3 font-sans text-[15px] font-semibold tracking-tight text-foreground first:mt-0">
+      <h2 className="mb-2 mt-3 font-sans text-[17px] font-semibold tracking-tight text-foreground first:mt-0">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="mb-1.5 mt-3 font-sans text-[14px] font-semibold text-foreground first:mt-0">
+      <h3 className="mb-1.5 mt-3 font-sans text-[16px] font-semibold text-foreground first:mt-0">
         {children}
       </h3>
     ),
@@ -98,19 +98,19 @@ export function buildMarkdownComponents(
     ...base,
     table: ({ children }) => (
       <div className="my-3 overflow-x-auto rounded-lg border border-border">
-        <table className="w-full text-[13px]">{children}</table>
+        <table className="w-full text-[14px]">{children}</table>
       </div>
     ),
     thead: ({ children }) => (
       <thead className="border-b border-border bg-surface-300">{children}</thead>
     ),
     th: ({ children }) => (
-      <th className="px-3 py-2 text-left font-sans text-[12px] font-medium text-muted">
+      <th className="px-3 py-2.5 text-left font-sans text-[13px] font-medium text-muted">
         {children}
       </th>
     ),
     td: ({ children }) => (
-      <td className="border-b border-border px-3 py-2 font-sans last:border-0">
+      <td className="border-b border-border px-3 py-2.5 font-sans last:border-0">
         {children}
       </td>
     ),
