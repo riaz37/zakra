@@ -20,7 +20,7 @@ import { useBusinessRules, useCreateBusinessRule, useUpdateBusinessRule, useDele
 import { StatusBadge } from '@/components/shared/status-badge';
 import type { StatusVariant } from '@/components/shared/status-badge';
 import { Badge } from '@/components/ui/badge';
-import { ConfirmDialog } from '@/components/shared/confirm-dialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { cn } from '@/lib/utils';
 import type { DatabaseConnection, BusinessRule, TableSchema } from '@/types';
@@ -164,7 +164,7 @@ function OverviewTab({ connection, companyId }: OverviewTabProps) {
         title="Delete Connection"
         description={`Are you sure you want to delete "${connection.name}"? This action cannot be undone.`}
         confirmLabel="Delete"
-        variant="danger"
+        variant="destructive"
         onConfirm={handleDelete}
         isLoading={deleteConnection.isPending}
       />
@@ -629,7 +629,7 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
         title="Delete Rule"
         description="Are you sure you want to delete this rule? This action cannot be undone."
         confirmLabel="Delete"
-        variant="danger"
+        variant="destructive"
         onConfirm={handleDelete}
         isLoading={deleteRule.isPending}
       />

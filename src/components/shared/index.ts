@@ -1,8 +1,5 @@
-export { ConfirmDialog } from "./confirm-dialog";
-export type {
-  ConfirmDialogProps,
-  ConfirmDialogVariant,
-} from "./confirm-dialog";
+export { ConfirmDialog } from "@/components/ui/confirm-dialog";
+export type { ConfirmDialogProps } from "@/components/ui/confirm-dialog";
 
 export { DataTable } from "./data-table";
 export type { DataTableProps } from "./data-table";
