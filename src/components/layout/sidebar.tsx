@@ -176,7 +176,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
           <>
             {!collapsed && (
               <div className="mt-5 mb-1 px-3">
-                <span className="font-sans text-micro uppercase tracking-[0.08em] text-muted/60">
+                <span className="font-sans text-micro uppercase tracking-[0.08em] text-subtle">
                   Admin
                 </span>
               </div>
@@ -296,7 +296,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               title="Sign out"
               className={cn(
                 'flex h-8 w-8 shrink-0 items-center justify-center rounded-md',
-                'text-muted/70 transition-colors duration-150',
+                'text-subtle transition-colors duration-150',
                 'group-hover:text-muted',
                 'hover:!bg-surface-400 hover:!text-error',
                 'focus-visible:bg-surface-400 focus-visible:text-error focus-visible:outline-none',
