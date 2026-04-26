@@ -79,7 +79,7 @@ function reducer(state: StreamState, action: Action): StreamState {
         error: null,
       };
 
-    // text_delta carries full accumulated text (not incremental delta) — replace, not append
+    // text_delta carries an incremental chunk — append to the last text block
     case 'TEXT_DELTA': {
       const msg = ensureStreamingMessage(state);
       const blocks = [...msg.contentBlocks];
@@ -88,7 +88,7 @@ function reducer(state: StreamState, action: Action): StreamState {
       if (lastBlock && lastBlock.type === 'text') {
         blocks[blocks.length - 1] = {
           ...lastBlock,
-          text: action.text,
+          text: lastBlock.text + action.text,
         };
       } else {
         blocks.push({ type: 'text', text: action.text });
