@@ -164,7 +164,10 @@ export default function ChatSessionPage() {
               <ChatMessageView key={msg.id} message={msg} />
             ))}
 
-            {pendingUserMessage && <UserMessage content={pendingUserMessage} />}
+            {pendingUserMessage &&
+              !messages.some((m) => m.role === 'user' && m.content === pendingUserMessage) && (
+                <UserMessage content={pendingUserMessage} />
+              )}
 
             {isStreaming && pipelineSteps.length === 0 && !streamingMessage && (
               <ThinkingIndicator />
