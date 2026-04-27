@@ -11,7 +11,8 @@ import { ChatWelcome } from '@/components/features/chat/chat-welcome';
 import { ChatInput } from '@/components/ui/chat-input';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
-import { setPendingChatQuery } from '@/store/pendingChatQuery';
+import { setPendingTask } from '@/store/pendingChatTask';
+import { sendMessage } from '@/api/chat';
 import {
   Dialog,
   DialogContent,
@@ -80,7 +81,10 @@ export default function NewChatPage() {
       if (selected) {
         queryClient.setQueryData(['db-connections', selectedConnectionId, companyId], selected);
       }
-      setPendingChatQuery(session.id, text.trim());
+      // Send the message BEFORE navigating so the session page only needs to
+      // subscribe to the SSE stream (no POST on mount, Strict Mode safe).
+      const { task_id } = await sendMessage(session.id, text.trim(), companyId);
+      setPendingTask(session.id, { taskId: task_id, userMessage: text.trim() });
       router.push(`/chat/${session.id}`);
     } catch {
       toast.error('Failed to create chat session.');

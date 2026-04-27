@@ -275,6 +275,97 @@ export function useChatStream(options?: UseChatStreamOptions) {
     dispatch({ type: 'COMPLETE' });
   }, []);
 
+  const handleSSEEvent = useCallback(
+    (dispatch: React.Dispatch<Action>, completedRef: React.MutableRefObject<boolean>) =>
+      (eventType: SSEEventType, data: Record<string, unknown>) => {
+        switch (eventType) {
+          case 'intermediate_result': {
+            const resultType = data.result_type as string;
+            const resultData = data.data as Record<string, unknown>;
+
+            if (resultType === 'text_delta') {
+              dispatch({ type: 'TEXT_DELTA', text: (resultData.text as string) || '' });
+            } else if (resultType === 'query_result') {
+              dispatch({ type: 'QUERY_RESULT', data: resultData as unknown as QueryResultData });
+            } else if (resultType === 'report_link') {
+              dispatch({ type: 'REPORT_LINK', data: resultData as unknown as ReportLinkData });
+            } else if (resultType === 'search_result') {
+              dispatch({ type: 'SEARCH_RESULT', data: resultData as unknown as SearchResultData });
+            } else if (resultType === 'report_picker') {
+              dispatch({ type: 'REPORT_PICKER', data: resultData as unknown as ReportPickerData });
+            }
+            break;
+          }
+          case 'step_start':
+            dispatch({
+              type: 'STEP_START',
+              stepNumber: data.step_number as number,
+              stepName: data.step_name as string,
+              description: data.description as string | undefined,
+            });
+            break;
+          case 'step_complete':
+            dispatch({
+              type: 'STEP_COMPLETE',
+              stepNumber: data.step_number as number,
+              stepName: data.step_name as string,
+              success: (data.success as boolean) ?? true,
+              resultSummary: data.result_summary as string | undefined,
+              durationMs: data.duration_ms as number | undefined,
+            });
+            break;
+          case 'agent_complete':
+            if (!completedRef.current) {
+              completedRef.current = true;
+              dispatch({ type: 'COMPLETE' });
+              onCompleteRef.current?.();
+            }
+            break;
+          case 'agent_error':
+            dispatch({
+              type: 'ERROR',
+              message: (data.error_message as string) || 'An error occurred',
+            });
+            break;
+          default:
+            break;
+        }
+      },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  // Connect to an already-submitted task by task_id (no new POST). Used when
+  // the message was sent before navigation and the session page just needs to
+  // subscribe to the in-progress SSE stream.
+  const connect = useCallback(
+    (taskId: string, userMessage: string) => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+      completedRef.current = false;
+
+      dispatch({ type: 'START', userMessage });
+
+      subscribeToSSEStream(
+        taskId,
+        handleSSEEvent(dispatch, completedRef),
+        (error) => { dispatch({ type: 'ERROR', message: error.message }); },
+        () => {
+          if (!completedRef.current) {
+            completedRef.current = true;
+            dispatch({ type: 'COMPLETE' });
+            onCompleteRef.current?.();
+          }
+        },
+        controller.signal,
+        3,
+        (attempt) => { dispatch({ type: 'RECONNECTING', attempt }); },
+      );
+    },
+    [handleSSEEvent],
+  );
+
   const send = useCallback(
     async (sessionId: string, content: string, companyId?: string, language?: string) => {
       abortRef.current?.abort();
@@ -289,83 +380,8 @@ export function useChatStream(options?: UseChatStreamOptions) {
 
         subscribeToSSEStream(
           task_id,
-          (eventType: SSEEventType, data: Record<string, unknown>) => {
-            switch (eventType) {
-              case 'intermediate_result': {
-                const resultType = data.result_type as string;
-                const resultData = data.data as Record<string, unknown>;
-
-                if (resultType === 'text_delta') {
-                  dispatch({
-                    type: 'TEXT_DELTA',
-                    text: (resultData.text as string) || '',
-                  });
-                } else if (resultType === 'query_result') {
-                  dispatch({
-                    type: 'QUERY_RESULT',
-                    data: resultData as unknown as QueryResultData,
-                  });
-                } else if (resultType === 'report_link') {
-                  dispatch({
-                    type: 'REPORT_LINK',
-                    data: resultData as unknown as ReportLinkData,
-                  });
-                } else if (resultType === 'search_result') {
-                  dispatch({
-                    type: 'SEARCH_RESULT',
-                    data: resultData as unknown as SearchResultData,
-                  });
-                } else if (resultType === 'report_picker') {
-                  dispatch({
-                    type: 'REPORT_PICKER',
-                    data: resultData as unknown as ReportPickerData,
-                  });
-                }
-                break;
-              }
-
-              case 'step_start':
-                dispatch({
-                  type: 'STEP_START',
-                  stepNumber: data.step_number as number,
-                  stepName: data.step_name as string,
-                  description: data.description as string | undefined,
-                });
-                break;
-
-              case 'step_complete':
-                dispatch({
-                  type: 'STEP_COMPLETE',
-                  stepNumber: data.step_number as number,
-                  stepName: data.step_name as string,
-                  success: (data.success as boolean) ?? true,
-                  resultSummary: data.result_summary as string | undefined,
-                  durationMs: data.duration_ms as number | undefined,
-                });
-                break;
-
-              case 'agent_complete':
-                if (!completedRef.current) {
-                  completedRef.current = true;
-                  dispatch({ type: 'COMPLETE' });
-                  onCompleteRef.current?.();
-                }
-                break;
-
-              case 'agent_error':
-                dispatch({
-                  type: 'ERROR',
-                  message: (data.error_message as string) || 'An error occurred',
-                });
-                break;
-
-              default:
-                break;
-            }
-          },
-          (error) => {
-            dispatch({ type: 'ERROR', message: error.message });
-          },
+          handleSSEEvent(dispatch, completedRef),
+          (error) => { dispatch({ type: 'ERROR', message: error.message }); },
           () => {
             if (!completedRef.current) {
               completedRef.current = true;
@@ -375,21 +391,19 @@ export function useChatStream(options?: UseChatStreamOptions) {
           },
           controller.signal,
           3,
-          (attempt) => {
-            dispatch({ type: 'RECONNECTING', attempt });
-          },
+          (attempt) => { dispatch({ type: 'RECONNECTING', attempt }); },
         );
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to send message';
+        const message = err instanceof Error ? err.message : 'Failed to send message';
         dispatch({ type: 'ERROR', message });
       }
     },
-    [], // stable — onComplete accessed via ref, not captured in closure
+    [handleSSEEvent],
   );
 
   return {
     send,
+    connect,
     reset,
     cancel,
     streamingMessage: state.streamingMessage,
@@ -400,3 +414,4 @@ export function useChatStream(options?: UseChatStreamOptions) {
     status: state.status,
   };
 }
+
