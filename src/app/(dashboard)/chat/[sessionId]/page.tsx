@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { ChevronDown, Database, RefreshCw } from 'lucide-react';
 import { useChatStream } from '@/hooks/useChatStream';
-import { consumePendingChatQuery } from '@/store/pendingChatQuery';
+import { getPendingTask, clearPendingTask } from '@/store/pendingChatTask';
 import { useChatMessages } from '@/hooks/useChatMessages';
 import { useChatSession } from '@/hooks/useChatSessions';
 import { useDbConnection } from '@/hooks/useDbConnections';
@@ -31,6 +31,7 @@ export default function ChatSessionPage() {
 
   const {
     send,
+    connect,
     cancel,
     reset,
     streamingMessage,
@@ -41,6 +42,7 @@ export default function ChatSessionPage() {
     status,
   } = useChatStream({
     onComplete: () => {
+      clearPendingTask(sessionId);
       void invalidate().then(() => reset());
     },
   });
@@ -50,7 +52,6 @@ export default function ChatSessionPage() {
     return () => { cancel(); };
   }, [cancel]);
 
-  const initialQuerySentRef = useRef(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
@@ -99,14 +100,15 @@ export default function ChatSessionPage() {
 
   const hasContent = messages.length > 0 || !!pendingUserMessage || !!streamingMessage;
 
-  // Auto-send the initial query passed from the new-chat page
+  // Connect to the in-progress SSE stream for the initial question.
+  // The message was already POSTed in the new-chat page before navigation,
+  // so we only need to subscribe — no duplicate POST, Strict Mode safe.
   useEffect(() => {
-    if (initialQuerySentRef.current || !sessionId || !companyId) return;
-    const initialQuery = consumePendingChatQuery(sessionId);
-    if (!initialQuery) return;
-    initialQuerySentRef.current = true;
-    void send(sessionId, initialQuery, companyId);
-  }, [sessionId, companyId, send]);
+    if (!sessionId || !companyId) return;
+    const pending = getPendingTask(sessionId);
+    if (!pending) return;
+    connect(pending.taskId, pending.userMessage);
+  }, [sessionId, companyId, connect]);
 
 
   return (
