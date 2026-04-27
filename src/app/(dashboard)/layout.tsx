@@ -23,14 +23,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      void fetchUser().then(() => {
-        if (!useAuthStore.getState().isAuthenticated) {
-          router.replace('/login');
-        }
-      });
-    }
-  }, [isAuthenticated, fetchUser, router]);
+    void fetchUser().then(() => {
+      if (!useAuthStore.getState().isAuthenticated) {
+        router.replace('/login');
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const closeNav = useCallback(() => {
     setNavOpen(false);

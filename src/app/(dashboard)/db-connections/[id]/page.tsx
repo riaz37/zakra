@@ -4,7 +4,7 @@ import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
-import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';

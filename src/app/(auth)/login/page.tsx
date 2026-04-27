@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth, useAuthStore } from '@/store/authStore';
 import { useCompanyStore } from '@/store/companyStore';
@@ -24,6 +24,13 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [apiError, setApiError] = useState<string | null>(null);
   const { selectedCompanyId } = useCompanyStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/overview');
+    }
+  }, [isAuthenticated, router]);
 
   const {
     register,

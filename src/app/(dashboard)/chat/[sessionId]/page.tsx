@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { ChevronDown, Database, RefreshCw } from 'lucide-react';
 import { useChatStream } from '@/hooks/useChatStream';
+import { consumePendingChatQuery } from '@/store/pendingChatQuery';
 import { useChatMessages } from '@/hooks/useChatMessages';
 import { useChatSession } from '@/hooks/useChatSessions';
 import { useDbConnection } from '@/hooks/useDbConnections';
@@ -18,7 +19,6 @@ import { ChatMessagesSkeleton } from '@/components/features/chat/chat-messages-s
 
 export default function ChatSessionPage() {
   const params = useParams<{ sessionId: string }>();
-  const searchParams = useSearchParams();
   const sessionId = params.sessionId;
   const companyId = useCurrentCompanyId();
   const { data: session } = useChatSession(sessionId, companyId);
@@ -99,17 +99,15 @@ export default function ChatSessionPage() {
 
   const hasContent = messages.length > 0 || !!pendingUserMessage || !!streamingMessage;
 
-  // Handle initial query from the "New Chat" page — ref guards against double-fire
-  // if companyId hydrates after searchParams (auth store loads late)
+  // Auto-send the initial query passed from the new-chat page
   useEffect(() => {
-    if (initialQuerySentRef.current) return;
-    const initialQuery = searchParams.get('q');
-    if (initialQuery && sessionId && companyId) {
-      initialQuerySentRef.current = true;
-      window.history.replaceState({}, '', `/chat/${sessionId}`);
-      void send(sessionId, initialQuery, companyId);
-    }
-  }, [searchParams, sessionId, companyId, send]);
+    if (initialQuerySentRef.current || !sessionId || !companyId) return;
+    const initialQuery = consumePendingChatQuery(sessionId);
+    if (!initialQuery) return;
+    initialQuerySentRef.current = true;
+    void send(sessionId, initialQuery, companyId);
+  }, [sessionId, companyId, send]);
+
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden">
