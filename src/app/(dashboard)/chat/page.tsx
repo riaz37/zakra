@@ -74,8 +74,9 @@ export default function NewChatPage() {
     setIsCreating(true);
     try {
       const session = await createSession.mutateAsync({ connection_id: selectedConnectionId });
-      // Pre-fill the single-connection cache so the session page's connection bar
-      // renders immediately without an extra round-trip.
+      // Pre-fill both caches so the session page's connection bar renders
+      // immediately without waiting for either round-trip.
+      queryClient.setQueryData(['chat-session', session.id, companyId], session);
       if (selected) {
         queryClient.setQueryData(['db-connections', selectedConnectionId, companyId], selected);
       }
