@@ -44,7 +44,7 @@ function selectedBgClass(level: ColumnPermission): string {
     case 'read': return 'bg-read';
     case 'read_masked': return 'bg-edit';
     case 'write': return 'bg-grep';
-    default: return 'bg-muted/50';
+    default: return 'bg-border';
   }
 }
 
@@ -171,7 +171,7 @@ export function PermissionMatrix({
         <div className="relative flex-1">
           <Search
             aria-hidden
-            className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted/50"
+            className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-subtle"
           />
           <input
             type="search"
@@ -182,7 +182,7 @@ export function PermissionMatrix({
             spellCheck={false}
             className={cn(
               'h-8 w-full rounded-lg border border-border bg-transparent pl-8 pr-8',
-              'font-sans text-button text-foreground outline-none placeholder:text-muted/40',
+              'font-sans text-button text-foreground outline-none placeholder:text-subtle',
               'transition-colors focus:border-border-medium',
               '[&::-webkit-search-cancel-button]:appearance-none',
             )}
@@ -192,7 +192,7 @@ export function PermissionMatrix({
               type="button"
               onClick={() => setColumnSearch('')}
               aria-label="Clear filter"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted/50 hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-subtle hover:text-foreground"
             >
               <X className="size-3.5" />
             </button>
@@ -201,7 +201,7 @@ export function PermissionMatrix({
 
         {/* Bulk actions */}
         <div className="flex items-center gap-1.5">
-          <span className="font-sans text-caption text-muted/50">All:</span>
+          <span className="font-sans text-caption text-muted">All:</span>
           {PERMISSION_LEVELS.map((level) => (
             <button
               key={level}
@@ -237,7 +237,7 @@ export function PermissionMatrix({
 
       {/* Column filter result count */}
       {columnSearch && (
-        <p className="font-sans text-caption text-muted/60">
+        <p className="font-sans text-caption text-muted">
           {filteredRows.length} of {rows.length} columns
         </p>
       )}
@@ -268,7 +268,7 @@ export function PermissionMatrix({
               <tr>
                 <td
                   colSpan={5}
-                  className="px-4 py-6 text-center font-sans text-button text-muted/60"
+                  className="px-4 py-6 text-center font-sans text-button text-muted"
                 >
                   No columns match &ldquo;{columnSearch}&rdquo;
                 </td>
@@ -291,7 +291,7 @@ export function PermissionMatrix({
                             {row.columnName}
                           </span>
                           {meta?.data_type && (
-                            <span className="rounded bg-surface-400 px-1.5 py-0.5 font-mono text-micro text-muted/60">
+                            <span className="rounded bg-surface-400 px-1.5 py-0.5 font-mono text-micro text-subtle">
                               {shortType(meta.data_type)}
                             </span>
                           )}
@@ -318,12 +318,12 @@ export function PermissionMatrix({
                                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
                                 isSelected
                                   ? cn('border-0 scale-110', selectedBgClass(level))
-                                  : 'border border-border bg-transparent opacity-40 hover:opacity-100 hover:border-border-medium group-hover:opacity-60',
+                                  : 'border border-border-medium bg-surface-300 opacity-50 hover:opacity-100 hover:border-border group-hover:opacity-75',
                               )}
                             >
                               {isSelected && (
                                 <span
-                                  className="block h-2 w-2 rounded-full bg-background/60"
+                                  className="block h-2 w-2 rounded-full bg-foreground/70"
                                   aria-hidden="true"
                                 />
                               )}
@@ -343,7 +343,7 @@ export function PermissionMatrix({
                           <div className="flex items-center gap-2.5">
                             <label
                               htmlFor={`mask-${row.columnName}`}
-                              className="shrink-0 font-sans text-caption text-muted/70"
+                              className="shrink-0 font-sans text-caption text-muted"
                             >
                               Mask pattern
                             </label>

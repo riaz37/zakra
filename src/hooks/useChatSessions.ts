@@ -12,6 +12,7 @@ export function useChatSessions(companyId?: string) {
   return useQuery({
     queryKey: [...SESSIONS_KEY, companyId],
     queryFn: () => chatApi.listSessions(0, 200, companyId),
+    enabled: !!companyId,
     staleTime: 30_000,
   });
 }

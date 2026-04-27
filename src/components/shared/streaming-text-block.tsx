@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
@@ -18,7 +19,7 @@ export interface StreamingTextBlockProps {
   className?: string;
 }
 
-export function StreamingTextBlock({
+export const StreamingTextBlock = memo(function StreamingTextBlock({
   text,
   isStreaming = false,
   className,
@@ -47,4 +48,4 @@ export function StreamingTextBlock({
       )}
     </div>
   );
-}
+});

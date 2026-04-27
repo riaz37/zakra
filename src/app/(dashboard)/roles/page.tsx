@@ -19,7 +19,7 @@ import { SearchInput } from '@/components/shared/search-input';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
-import { ConfirmDialog } from '@/components/shared/confirm-dialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 import {
   Dialog,
@@ -263,7 +263,7 @@ export default function RolesPage() {
         confirmLabel="Delete"
         onConfirm={handleDelete}
         isLoading={deleteMutation.isPending}
-        variant="danger"
+        variant="destructive"
       />
     </div>
   );

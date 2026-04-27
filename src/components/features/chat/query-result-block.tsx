@@ -214,8 +214,8 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
 
         {qr.execution_time_ms != null && (
           <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3 text-muted/30" strokeWidth={1.5} />
-            <span className="font-mono text-mono-sm tabular-nums text-muted/40">
+            <Clock className="h-3 w-3 text-subtle" strokeWidth={1.5} />
+            <span className="font-mono text-mono-sm tabular-nums text-subtle">
               {(qr.execution_time_ms / 1000).toFixed(2)}s
             </span>
           </div>
@@ -226,7 +226,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
             <>
               <button
                 onClick={() => setShowChart((s) => !s)}
-                className="flex items-center gap-1 font-mono text-mono-sm text-muted/35 transition-colors hover:text-muted/65 focus-visible:outline-none"
+                className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
                 title={showChart ? 'Hide chart' : 'Show chart'}
               >
                 <BarChart2 className="h-3 w-3" strokeWidth={2} />
@@ -239,7 +239,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
             <>
               <button
                 onClick={handleCopySql}
-                className="flex items-center gap-1 font-mono text-mono-sm text-muted/35 transition-colors hover:text-muted/65 focus-visible:outline-none"
+                className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
                 title="Copy SQL"
               >
                 {sqlCopied ? (
@@ -251,7 +251,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               <div className="h-3 w-px bg-border/60" />
               <button
                 onClick={() => setSqlOpen((o) => !o)}
-                className="flex items-center gap-1 font-mono text-mono-sm text-muted/45 transition-colors hover:text-muted/75 focus-visible:outline-none"
+                className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
               >
                 {sqlOpen ? (
                   <ChevronDown className="h-3 w-3" strokeWidth={2} />
@@ -277,7 +277,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
             {qr.sql}
           </pre>
           {qr.explanation && (
-            <p className="border-t border-border/40 px-4 py-2 font-sans text-mono-sm italic text-muted/55">
+            <p className="border-t border-border/40 px-4 py-2 font-sans text-mono-sm italic text-muted">
               {qr.explanation}
             </p>
           )}
@@ -302,7 +302,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               {qr.columns.map((col) => (
                 <th
                   key={col}
-                  className="px-3 py-2 text-left font-mono text-mono-sm font-medium text-muted/50"
+                  className="px-3 py-2.5 text-left font-mono text-mono font-medium text-muted"
                 >
                   {col}
                 </th>
@@ -322,9 +322,9 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
                   const val = row[col];
                   const isNull = val === null || val === undefined;
                   return (
-                    <td key={col} className="px-3 py-2 font-mono text-mono-sm">
+                    <td key={col} className="px-3 py-2.5 font-mono text-mono">
                       {isNull ? (
-                        <span className="italic text-muted/25">null</span>
+                        <span className="italic text-subtle">null</span>
                       ) : (
                         <span className="text-foreground/72">{String(val)}</span>
                       )}
@@ -340,7 +340,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
           <div className="border-t border-border/35 px-4 py-2 text-center">
             <button
               onClick={() => setShowAll(true)}
-              className="font-mono text-mono-sm text-muted/35 transition-colors hover:text-muted/60"
+              className="font-mono text-mono-sm text-subtle transition-colors hover:text-muted"
             >
               Show {overflow.toLocaleString()} more rows
             </button>

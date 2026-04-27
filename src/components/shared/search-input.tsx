@@ -97,7 +97,7 @@ export function SearchInput({
         className={cn(
           "w-full rounded-lg border border-border bg-transparent py-2 pl-9 pr-9",
           "font-sans text-button text-foreground outline-none",
-          "placeholder:text-muted/30",
+          "placeholder:text-subtle",
           "transition-colors focus:border-border-medium",
           // Strip the UA reveal/cancel button on WebKit so our own button is the only one.
           "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none",

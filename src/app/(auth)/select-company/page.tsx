@@ -4,13 +4,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Building2, Plus, Check, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCompanies, useCreateCompany } from '@/hooks/useCompanies';
 import { useCompanyStore } from '@/store/companyStore';
 import { Button } from '@/components/ui/button';
+import { Input, MonoInput } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import type { Company } from '@/types';
 
@@ -44,7 +46,7 @@ export default function SelectCompanyPage() {
 
   function handleSelect(company: Company) {
     setSelectedCompanyId(company.id);
-    router.push('/');
+    router.push('/overview');
   }
 
   async function onCreate(values: CreateFields) {
@@ -52,7 +54,7 @@ export default function SelectCompanyPage() {
       const company = await createCompany.mutateAsync({ data: { name: values.name, slug: values.slug } });
       setSelectedCompanyId(company.id);
       toast.success(`${company.name} created`);
-      router.push('/');
+      router.push('/overview');
     } catch {
       toast.error('Failed to create company. Please try again.');
     }
@@ -150,7 +152,7 @@ function SelectCompanyList({
       <Button
         onClick={onCreateNew}
         size="lg"
-        className="mt-3 h-10 w-full"
+        className="mt-3 w-full"
       >
         <Plus className="size-4" />
         Create new company
@@ -198,10 +200,8 @@ function CreateCompanyForm({
 
       <form onSubmit={onSubmit} noValidate className="mt-6 flex flex-col gap-4">
         <div className="flex flex-col">
-          <label htmlFor="name" className="mb-1.5 font-sans text-caption text-muted">
-            Company name
-          </label>
-          <input
+          <Label htmlFor="name">Company name</Label>
+          <Input
             id="name"
             type="text"
             {...register('name')}
@@ -210,11 +210,7 @@ function CreateCompanyForm({
               onNameChange(e);
             }}
             aria-invalid={!!errors.name}
-            className={cn(
-              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-sans text-button text-foreground transition-colors duration-150',
-              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              errors.name ? 'border-error' : 'border-border focus:border-accent',
-            )}
+            error={!!errors.name}
             placeholder="Acme Corp"
           />
           {errors.name && (
@@ -225,19 +221,13 @@ function CreateCompanyForm({
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="slug" className="mb-1.5 font-sans text-caption text-muted">
-            Slug
-          </label>
-          <input
+          <Label htmlFor="slug">Slug</Label>
+          <MonoInput
             id="slug"
             type="text"
             {...register('slug')}
             aria-invalid={!!errors.slug}
-            className={cn(
-              'w-full rounded-lg border bg-surface-200 px-3 py-2.5 font-mono text-button text-foreground transition-colors duration-150',
-              'placeholder:text-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-              errors.slug ? 'border-error' : 'border-border focus:border-accent',
-            )}
+            error={!!errors.slug}
             placeholder="acme-corp"
           />
           {errors.slug && (
@@ -249,18 +239,11 @@ function CreateCompanyForm({
 
         <Button
           type="submit"
-          disabled={isSubmitting}
+          isLoading={isSubmitting}
           size="lg"
-          className="mt-2 h-10 w-full"
+          className="mt-2 w-full"
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="size-4 animate-spin" />
-              Creating…
-            </>
-          ) : (
-            'Create company'
-          )}
+          {isSubmitting ? 'Creating…' : 'Create company'}
         </Button>
       </form>
     </div>

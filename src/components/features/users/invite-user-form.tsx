@@ -10,6 +10,7 @@ import {
   FieldError,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -146,21 +147,12 @@ export function InviteUserForm({ onSubmit, isPending, onCancel }: InviteUserForm
       </FieldGroup>
 
       <div className="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg border border-border bg-surface-300 px-4 py-2 font-sans text-button text-foreground transition-colors hover:bg-surface-400 disabled:opacity-50"
-        >
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
           Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 font-sans text-button font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-        >
-          {isPending ? 'Inviting…' : 'Invite User'}
-        </button>
+        </Button>
+        <Button type="submit" isLoading={isPending}>
+          Invite User
+        </Button>
       </div>
     </form>
   );

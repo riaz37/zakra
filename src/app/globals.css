@@ -531,6 +531,93 @@
   animation-delay: 600ms;
 }
 
+/* ==========  React Flow — dark warm overrides (scoped) ========== */
+.kb-hierarchy {
+  background: var(--color-background);
+}
+
+.kb-hierarchy .react-flow {
+  background: transparent;
+}
+
+.kb-hierarchy .react-flow__background {
+  background: var(--color-background);
+}
+
+.kb-hierarchy .react-flow__node {
+  outline: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+.kb-hierarchy .react-flow__node.selectable:focus,
+.kb-hierarchy .react-flow__node.selectable:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.kb-hierarchy .react-flow__edge-path {
+  stroke: rgba(235, 234, 229, 0.16);
+  stroke-width: 1.25;
+  transition: stroke 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kb-hierarchy .react-flow__edge.selected .react-flow__edge-path,
+.kb-hierarchy .react-flow__edge:focus .react-flow__edge-path,
+.kb-hierarchy .react-flow__edge:focus-visible .react-flow__edge-path {
+  stroke: var(--color-accent);
+}
+
+.kb-hierarchy .react-flow__attribution {
+  display: none;
+}
+
+.kb-hierarchy .react-flow__controls {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-200);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.kb-hierarchy .react-flow__controls-button {
+  background: var(--color-surface-200);
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--fg-muted);
+  width: 28px;
+  height: 28px;
+  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kb-hierarchy .react-flow__controls-button:last-child {
+  border-bottom: none;
+}
+
+.kb-hierarchy .react-flow__controls-button:hover {
+  background: var(--color-surface-300);
+  color: var(--color-foreground);
+}
+
+.kb-hierarchy .react-flow__controls-button svg {
+  fill: currentColor;
+  max-width: 14px;
+  max-height: 14px;
+}
+
+.kb-hierarchy .react-flow__handle {
+  background: transparent;
+  border: none;
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+}
+
 /* ==========  Reduced motion  ========== */
 @media (prefers-reduced-motion: reduce) {
   *,

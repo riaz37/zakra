@@ -112,7 +112,7 @@ export function DataTable<TData>({
                   <th
                     key={header.id}
                     scope="col"
-                    className="px-4 py-3 text-left align-middle font-sans text-caption font-medium uppercase tracking-[0.048px] text-muted"
+                    className="px-4 py-3 text-left align-middle font-sans text-caption font-medium tracking-[0.048px] text-muted"
                   >
                     {header.isPlaceholder
                       ? null
@@ -195,7 +195,7 @@ export function DataTable<TData>({
                     const label = columnLabels.get(cell.column.id);
                     return (
                       <div key={cell.id} className="contents">
-                        <dt className="font-sans text-caption font-medium uppercase tracking-[0.048px] text-muted">
+                        <dt className="font-sans text-caption font-medium tracking-[0.048px] text-muted">
                           {label}
                         </dt>
                         <dd className="font-sans text-button text-foreground">

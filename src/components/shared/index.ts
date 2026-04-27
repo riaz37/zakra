@@ -1,8 +1,5 @@
-export { ConfirmDialog } from "./confirm-dialog";
-export type {
-  ConfirmDialogProps,
-  ConfirmDialogVariant,
-} from "./confirm-dialog";
+export { ConfirmDialog } from "@/components/ui/confirm-dialog";
+export type { ConfirmDialogProps } from "@/components/ui/confirm-dialog";
 
 export { DataTable } from "./data-table";
 export type { DataTableProps } from "./data-table";
@@ -18,7 +15,7 @@ export type { StatusBadgeProps, StatusVariant } from "./status-badge";
 
 export { EmptyState } from "./empty-state";
 
-export { Skeleton } from "./skeleton";
+export { Skeleton, SkeletonText, SkeletonAvatar, SkeletonCard } from "./skeleton";
 
 export { ErrorState } from "./error-state";
 

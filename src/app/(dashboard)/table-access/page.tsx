@@ -43,9 +43,9 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
     <aside className="sticky top-6 lg:top-8 flex w-56 shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-surface-200 max-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-4rem)]">
       {/* Header */}
       <div className="border-b border-border px-3 py-2.5">
-        <p className="font-sans text-caption font-medium uppercase tracking-wide text-muted/60">
+        <p className="font-sans text-caption font-medium uppercase tracking-wide text-muted">
           Tables
-          <span className="ml-1.5 font-mono text-micro text-muted/40">{tables.length}</span>
+          <span className="ml-1.5 font-mono text-micro text-subtle">{tables.length}</span>
         </p>
       </div>
 
@@ -69,7 +69,7 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
         className="flex-1 overflow-y-auto"
       >
         {filtered.length === 0 ? (
-          <li className="px-3 py-4 text-center font-sans text-caption text-muted/50">
+          <li className="px-3 py-4 text-center font-sans text-caption text-muted">
             No tables match
           </li>
         ) : (
@@ -97,7 +97,7 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
                       {table.table_name}
                     </span>
                     {table.display_name && table.display_name !== table.table_name && (
-                      <span className="mt-0.5 block truncate font-sans text-caption text-muted/70">
+                      <span className="mt-0.5 block truncate font-sans text-caption text-muted">
                         {table.display_name}
                       </span>
                     )}
@@ -106,7 +106,7 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
                     <span
                       className={cn(
                         'mt-0.5 shrink-0 font-mono text-micro',
-                        isActive ? 'text-muted/60' : 'text-muted/40',
+                        isActive ? 'text-muted' : 'text-subtle',
                       )}
                     >
                       {table.columns.length}
@@ -181,16 +181,16 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
           <h2 className="font-sans text-[17px] font-semibold tracking-[-0.2px] text-foreground">
             {table.display_name || table.table_name}
           </h2>
-          <span className="font-mono text-caption text-muted/60">
+          <span className="font-mono text-caption text-muted">
             {table.schema_name}.{table.table_name}
           </span>
         </div>
 
         <div className="mt-1.5 flex items-center gap-3">
           {table.description && (
-            <p className="font-sans text-button text-muted/70">{table.description}</p>
+            <p className="font-sans text-button text-muted">{table.description}</p>
           )}
-          <div className="flex items-center gap-1 font-sans text-caption text-muted/50">
+          <div className="flex items-center gap-1 font-sans text-caption text-muted">
             <Columns size={12} strokeWidth={1.75} aria-hidden />
             {table.columns.length} column{table.columns.length !== 1 ? 's' : ''}
           </div>
@@ -214,7 +214,7 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
           ))}
         </div>
       ) : table.columns.length === 0 ? (
-        <p className="font-sans text-button text-muted/60">
+        <p className="font-sans text-button text-muted">
           No columns discovered for this table.
         </p>
       ) : (
@@ -288,7 +288,7 @@ export default function TableAccessPage() {
             <PermissionsPanel key={selectedTable.table_name} table={selectedTable} />
           ) : (
             <div className="flex flex-1 items-center justify-center py-16">
-              <p className="font-sans text-button text-muted/60">
+              <p className="font-sans text-button text-muted">
                 Select a table to manage column permissions.
               </p>
             </div>

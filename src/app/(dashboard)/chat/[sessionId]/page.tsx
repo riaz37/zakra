@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
-import { ChevronDown, RefreshCw } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { ChevronDown, Database, RefreshCw } from 'lucide-react';
 import { useChatStream } from '@/hooks/useChatStream';
+import { consumePendingChatQuery } from '@/store/pendingChatQuery';
 import { useChatMessages } from '@/hooks/useChatMessages';
+import { useChatSession } from '@/hooks/useChatSessions';
+import { useDbConnection } from '@/hooks/useDbConnections';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { ChatInput } from '@/components/ui/chat-input';
 import { ChatMessageView, UserMessage } from '@/components/features/chat/chat-message';
@@ -16,9 +19,13 @@ import { ChatMessagesSkeleton } from '@/components/features/chat/chat-messages-s
 
 export default function ChatSessionPage() {
   const params = useParams<{ sessionId: string }>();
-  const searchParams = useSearchParams();
   const sessionId = params.sessionId;
   const companyId = useCurrentCompanyId();
+  const { data: session } = useChatSession(sessionId, companyId);
+  const { data: connection } = useDbConnection(
+    session?.connection_id ?? undefined,
+    companyId,
+  );
 
   const { messages, invalidate, isLoading: messagesLoading } = useChatMessages(sessionId, companyId);
 
@@ -92,17 +99,15 @@ export default function ChatSessionPage() {
 
   const hasContent = messages.length > 0 || !!pendingUserMessage || !!streamingMessage;
 
-  // Handle initial query from the "New Chat" page — ref guards against double-fire
-  // if companyId hydrates after searchParams (auth store loads late)
+  // Auto-send the initial query passed from the new-chat page
   useEffect(() => {
-    if (initialQuerySentRef.current) return;
-    const initialQuery = searchParams.get('q');
-    if (initialQuery && sessionId && companyId) {
-      initialQuerySentRef.current = true;
-      window.history.replaceState({}, '', `/chat/${sessionId}`);
-      void send(sessionId, initialQuery, companyId);
-    }
-  }, [searchParams, sessionId, companyId, send]);
+    if (initialQuerySentRef.current || !sessionId || !companyId) return;
+    const initialQuery = consumePendingChatQuery(sessionId);
+    if (!initialQuery) return;
+    initialQuerySentRef.current = true;
+    void send(sessionId, initialQuery, companyId);
+  }, [sessionId, companyId, send]);
+
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden">
@@ -111,6 +116,27 @@ export default function ChatSessionPage() {
         <div className="flex items-center justify-center gap-2 border-b border-warning-border bg-warning-bg px-4 py-2 animate-fade-in">
           <RefreshCw className="h-3.5 w-3.5 text-warning animate-spin" strokeWidth={2} />
           <span className="font-sans text-caption text-warning">Reconnecting…</span>
+        </div>
+      )}
+
+      {connection && (
+        <div className="flex items-center justify-between border-b border-border bg-surface-200 px-6 py-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <Database
+              className="h-3.5 w-3.5 shrink-0 text-muted"
+              strokeWidth={1.5}
+            />
+            <span className="font-sans text-caption text-muted">
+              {connection.name}
+            </span>
+            <span className="text-subtle">·</span>
+            <span className="truncate font-mono text-mono-sm text-subtle">
+              {connection.database_name}
+            </span>
+          </div>
+          <span className="rounded-md border border-border bg-surface-300 px-1.5 py-0.5 font-mono text-mono-sm uppercase tracking-wide text-subtle">
+            {connection.database_type}
+          </span>
         </div>
       )}
 
@@ -171,7 +197,7 @@ export default function ChatSessionPage() {
       {showScrollDown && (
         <button
           onClick={() => scrollToBottom()}
-          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-full border border-border bg-surface-400 px-3 py-1.5 font-sans text-caption text-muted/65 shadow-[var(--shadow-elevated)] transition-all duration-150 hover:border-border-medium hover:bg-surface-500 hover:text-foreground animate-slide-in-bottom"
+          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-full border border-border bg-surface-400 px-3 py-1.5 font-sans text-caption text-muted shadow-[var(--shadow-elevated)] transition-all duration-150 hover:border-border-medium hover:bg-surface-500 hover:text-foreground animate-slide-in-bottom"
         >
           <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
           Latest

@@ -45,6 +45,7 @@ export function ChatWelcome({ onPrompt }: ChatWelcomeProps) {
           </button>
         ))}
       </div>
+
     </div>
   );
 }

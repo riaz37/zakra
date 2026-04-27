@@ -2,13 +2,11 @@
 
 import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
-import { standardSchemaResolver as zodResolver } from '@hookform/resolvers/standard-schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
-import { Dialog } from '@base-ui/react/dialog';
-
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import {
   useDbConnection,
@@ -19,8 +17,26 @@ import {
 import { useBusinessRules, useCreateBusinessRule, useUpdateBusinessRule, useDeleteBusinessRule } from '@/hooks/useBusinessRules';
 import { StatusBadge } from '@/components/shared/status-badge';
 import type { StatusVariant } from '@/components/shared/status-badge';
-import { ConfirmDialog } from '@/components/shared/confirm-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Field, FieldGroup, FieldLabel, FieldError } from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import type { DatabaseConnection, BusinessRule, TableSchema } from '@/types';
 
@@ -129,32 +145,22 @@ function OverviewTab({ connection, companyId }: OverviewTabProps) {
       </dl>
 
       <div className="flex items-center gap-2 pt-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={handleTest}
-          disabled={testConnection.isPending}
-          className={cn(
-            'inline-flex items-center justify-center rounded-lg border border-border',
-            'bg-surface-300 px-4 py-2 font-sans text-button text-foreground',
-            'transition-colors hover:bg-surface-400',
-            'focus-visible:border-border-medium focus-visible:outline-none',
-            'disabled:cursor-not-allowed disabled:opacity-50',
-          )}
+          isLoading={testConnection.isPending}
         >
-          {testConnection.isPending ? 'Testing…' : 'Test Connection'}
-        </button>
-        <button
+          Test Connection
+        </Button>
+        <Button
           type="button"
+          variant="outline"
           onClick={() => setConfirmDelete(true)}
-          className={cn(
-            'inline-flex items-center justify-center rounded-lg border border-border',
-            'bg-surface-300 px-4 py-2 font-sans text-button text-error',
-            'transition-colors hover:bg-surface-400',
-            'focus-visible:border-border-medium focus-visible:outline-none',
-          )}
+          className="text-destructive hover:text-destructive"
         >
           Delete
-        </button>
+        </Button>
       </div>
 
       <ConfirmDialog
@@ -163,7 +169,7 @@ function OverviewTab({ connection, companyId }: OverviewTabProps) {
         title="Delete Connection"
         description={`Are you sure you want to delete "${connection.name}"? This action cannot be undone.`}
         confirmLabel="Delete"
-        variant="danger"
+        variant="destructive"
         onConfirm={handleDelete}
         isLoading={deleteConnection.isPending}
       />
@@ -337,6 +343,7 @@ function RuleDialog({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<RuleFormValues>({
     resolver: zodResolver(ruleSchema),
@@ -372,117 +379,79 @@ function RuleDialog({
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Backdrop
-          className={cn(
-            'fixed inset-0 bg-foreground/10',
-            'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
-            'transition-opacity duration-200',
-          )}
-        />
-        <Dialog.Popup
-          className={cn(
-            'fixed left-1/2 top-1/2 z-50 w-[min(calc(100vw-2rem),32rem)]',
-            '-translate-x-1/2 -translate-y-1/2',
-            'rounded-xl border border-border bg-background p-6 shadow-elevated',
-            'outline-none',
-            'data-[starting-style]:opacity-0 data-[starting-style]:scale-[0.97]',
-            'data-[ending-style]:opacity-0 data-[ending-style]:scale-[0.97]',
-            'transition-[opacity,transform] duration-200',
-          )}
-        >
-          <Dialog.Title className="font-sans text-title font-normal text-foreground">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        showCloseButton={false}
+        className="w-[min(calc(100vw-2rem),32rem)] max-w-none gap-0 p-6"
+      >
+        <DialogHeader className="gap-1">
+          <DialogTitle className="font-sans text-title font-semibold tracking-[-0.11px] text-foreground">
             {editRule ? 'Edit Rule' : 'Add Rule'}
-          </Dialog.Title>
+          </DialogTitle>
+        </DialogHeader>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-4" noValidate>
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-button font-medium text-foreground">Name</label>
-              <input
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-4" noValidate>
+          <FieldGroup>
+            <Field data-invalid={!!errors.name}>
+              <FieldLabel htmlFor="rule-name">Name</FieldLabel>
+              <Input
                 {...register('name')}
+                id="rule-name"
                 placeholder="e.g. Exclude test data"
-                className={cn(
-                  'w-full rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-sans text-button text-foreground outline-none placeholder:text-muted/40',
-                  'transition-colors focus:border-border-medium',
-                  errors.name && 'border-error',
-                )}
+                aria-invalid={!!errors.name}
               />
-              {errors.name && (
-                <p className="font-sans text-caption text-error">{errors.name.message}</p>
+              {errors.name && <FieldError errors={[errors.name]} />}
+            </Field>
+
+            <Controller
+              control={control}
+              name="scope_type"
+              render={({ field }) => (
+                <Field>
+                  <FieldLabel htmlFor="rule-scope">Scope</FieldLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger id="rule-scope">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="global">Global</SelectItem>
+                      <SelectItem value="table">Table</SelectItem>
+                      <SelectItem value="user">User</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
               )}
-            </div>
+            />
 
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-button font-medium text-foreground">Scope</label>
-              <select
-                {...register('scope_type')}
-                className={cn(
-                  'w-full rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-sans text-button text-foreground outline-none',
-                  'transition-colors focus:border-border-medium',
-                )}
-              >
-                <option value="global">Global</option>
-                <option value="table">Table</option>
-                <option value="user">User</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-sans text-button font-medium text-foreground">
-                Rule Text
-              </label>
-              <textarea
+            <Field data-invalid={!!errors.rule_text}>
+              <FieldLabel htmlFor="rule-text">Rule Text</FieldLabel>
+              <Textarea
                 {...register('rule_text')}
+                id="rule-text"
                 rows={4}
                 placeholder="Describe the business rule in plain language…"
-                className={cn(
-                  'w-full resize-none rounded-lg border border-border bg-transparent px-3 py-2',
-                  'font-sans text-button text-foreground outline-none placeholder:text-muted/40',
-                  'transition-colors focus:border-border-medium',
-                  errors.rule_text && 'border-error',
-                )}
+                aria-invalid={!!errors.rule_text}
               />
-              {errors.rule_text && (
-                <p className="font-sans text-caption text-error">{errors.rule_text.message}</p>
-              )}
-            </div>
+              {errors.rule_text && <FieldError errors={[errors.rule_text]} />}
+            </Field>
+          </FieldGroup>
 
-            <div className="mt-2 flex items-center justify-end gap-2">
-              <Dialog.Close
-                type="button"
-                disabled={isSubmitting}
-                onClick={handleClose}
-                className={cn(
-                  'inline-flex items-center justify-center rounded-lg border border-border',
-                  'bg-surface-300 px-4 py-2 font-sans text-button text-foreground',
-                  'transition-colors hover:bg-surface-400',
-                  'focus-visible:border-border-medium focus-visible:outline-none',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                )}
-              >
-                Cancel
-              </Dialog.Close>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={cn(
-                  'inline-flex items-center justify-center rounded-lg px-4 py-2',
-                  'font-sans text-button text-white bg-accent',
-                  'transition-colors hover:opacity-90',
-                  'focus-visible:outline-none',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                )}
-              >
-                {isSubmitting ? 'Saving…' : editRule ? 'Update Rule' : 'Add Rule'}
-              </button>
-            </div>
-          </form>
-        </Dialog.Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
+          <div className="mt-2 flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting}
+              onClick={handleClose}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" isLoading={isSubmitting}>
+              {editRule ? 'Update Rule' : 'Add Rule'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -572,9 +541,9 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
                     <p className="font-sans text-button font-medium text-foreground">
                       {rule.name}
                     </p>
-                    <span className="rounded-full bg-surface-300 px-2 py-0.5 font-sans text-caption text-muted">
+                    <Badge variant="default" size="sm">
                       {rule.scope_type}
-                    </span>
+                    </Badge>
                   </div>
                   <p className="mt-1 font-sans text-button text-muted line-clamp-2">
                     {rule.rule_text}
@@ -628,7 +597,7 @@ function BusinessRulesTab({ connectionId, companyId }: BusinessRulesTabProps) {
         title="Delete Rule"
         description="Are you sure you want to delete this rule? This action cannot be undone."
         confirmLabel="Delete"
-        variant="danger"
+        variant="destructive"
         onConfirm={handleDelete}
         isLoading={deleteRule.isPending}
       />

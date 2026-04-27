@@ -76,7 +76,7 @@ export const MASK_PATTERNS = {
 // Routes
 export const ROUTES = {
   LOGIN: '/login',
-  DASHBOARD: '/',
+  DASHBOARD: '/overview',
   COMPANIES: '/companies',
   COMPANY_DETAIL: '/companies/:id',
   USERS: '/users',

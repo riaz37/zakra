@@ -31,7 +31,7 @@ export default function ReportHistoryPage() {
   const columns: ColumnDef<GeneratedReport>[] = [
     {
       id: 'title',
-      header: 'Report',
+      header: 'report',
       cell: ({ row }) => (
         <div className="flex flex-col gap-0.5">
           <span className="font-sans text-[16px] font-medium text-foreground">
@@ -47,7 +47,7 @@ export default function ReportHistoryPage() {
     },
     {
       id: 'status',
-      header: 'Status',
+      header: 'status',
       cell: ({ row }) => (
         <Badge variant={STATUS_VARIANTS[row.original.status] ?? "outline"}>
           {row.original.status}
@@ -56,7 +56,7 @@ export default function ReportHistoryPage() {
     },
     {
       id: 'created_at',
-      header: 'Created',
+      header: 'created',
       cell: ({ row }) => (
         <span className="font-sans text-button text-muted">
           {formatDate(row.original.created_at)}
