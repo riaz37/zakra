@@ -14,10 +14,19 @@ import {
   Loader2,
   AlertCircle,
   Copy,
+  Database,
+  ChevronDown,
+  Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import type { DatabaseConnection } from "@/types/db-connection";
 
 export interface FileWithPreview {
   id: string;
@@ -49,6 +58,11 @@ interface ChatInputProps {
   maxFiles?: number;
   maxFileSize?: number;
   acceptedFileTypes?: string[];
+  // Connection selector
+  connections?: DatabaseConnection[];
+  selectedConnectionId?: string | null;
+  onConnectionChange?: (id: string) => void;
+  connectionLocked?: boolean;
 }
 
 const MAX_FILES = 10;
@@ -328,6 +342,162 @@ function PastedContentCard({
   );
 }
 
+// ── DB selector button (lives in action bar) ───────────────────────────────
+
+const SEARCH_THRESHOLD = 7;
+
+function DbSelectorButton({
+  connections,
+  selectedConnectionId,
+  onConnectionChange,
+  locked = false,
+}: {
+  connections: DatabaseConnection[];
+  selectedConnectionId?: string | null;
+  onConnectionChange?: (id: string) => void;
+  locked?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const selected = connections.find((c) => c.id === selectedConnectionId);
+  const showSearch = connections.length > SEARCH_THRESHOLD;
+  const filtered = search.trim()
+    ? connections.filter(
+        (c) =>
+          c.name.toLowerCase().includes(search.toLowerCase()) ||
+          c.database_name.toLowerCase().includes(search.toLowerCase()),
+      )
+    : connections;
+
+  const handleSelect = (id: string) => {
+    onConnectionChange?.(id);
+    setOpen(false);
+    setSearch("");
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (!next) setSearch("");
+  };
+
+  // No connections — CTA link
+  if (connections.length === 0) {
+    return (
+      <a
+        href="/connections"
+        className="flex h-8 items-center gap-1.5 rounded-lg border border-dashed border-border px-2 font-sans text-caption text-muted transition-colors hover:border-border-medium hover:text-foreground"
+      >
+        <Database className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
+        <span>No databases</span>
+      </a>
+    );
+  }
+
+  // Locked — read-only display (session page)
+  if (locked) {
+    return (
+      <div
+        className="flex h-8 items-center gap-1.5 rounded-lg px-2 font-sans text-caption text-muted cursor-default select-none"
+        title="Connection locked to this session"
+      >
+        <Database className="h-3.5 w-3.5 shrink-0 text-muted" strokeWidth={1.5} />
+        <span className="text-foreground">{selected?.name ?? "—"}</span>
+        {selected?.database_name && (
+          <span className="font-mono text-mono-sm text-subtle">
+            · {selected.database_name}
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger
+        className={cn(
+          "flex h-8 items-center gap-1.5 rounded-lg border px-2 font-sans text-caption transition-colors focus-visible:outline-none",
+          selected
+            ? "border-border/60 text-foreground hover:border-border-medium hover:bg-surface-400"
+            : "border-accent/30 text-accent hover:border-accent/60 hover:bg-accent/5",
+        )}
+      >
+        <Database className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
+        <span className="max-w-[120px] truncate">
+          {selected ? selected.name : "Select database"}
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-3 w-3 shrink-0 transition-transform duration-150",
+            open && "rotate-180",
+          )}
+          strokeWidth={2}
+        />
+      </PopoverTrigger>
+
+      <PopoverContent
+        className="w-72 p-0 overflow-hidden"
+        side="top"
+        align="start"
+        sideOffset={8}
+      >
+        {showSearch && (
+          <div className="border-b border-border px-3 py-2">
+            <input
+              ref={searchRef}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search connections…"
+              autoFocus
+              className="w-full bg-transparent font-sans text-caption text-foreground placeholder:text-muted outline-none"
+            />
+          </div>
+        )}
+        <div className="max-h-[240px] overflow-y-auto py-1">
+          {filtered.length === 0 ? (
+            <p className="px-3 py-2 font-sans text-caption text-muted">
+              No results
+            </p>
+          ) : (
+            filtered.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => handleSelect(c.id)}
+                className={cn(
+                  "flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-surface-400",
+                  c.id === selectedConnectionId && "bg-surface-300",
+                )}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="font-sans text-caption text-foreground">
+                    {c.name}
+                  </p>
+                  {c.database_name && (
+                    <p className="font-mono text-mono-sm text-muted">
+                      {c.database_name}
+                    </p>
+                  )}
+                </div>
+                <span className="shrink-0 rounded border border-border px-1 py-0.5 font-mono text-[10px] uppercase tracking-wide text-subtle">
+                  {c.database_type}
+                </span>
+                {c.id === selectedConnectionId && (
+                  <Check
+                    className="h-3.5 w-3.5 shrink-0 text-accent"
+                    strokeWidth={2.5}
+                  />
+                )}
+              </button>
+            ))
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 // ── Main ChatInput ─────────────────────────────────────────────────────────
 
 export function ChatInput({
@@ -339,6 +509,10 @@ export function ChatInput({
   maxFiles = MAX_FILES,
   maxFileSize = MAX_FILE_SIZE,
   acceptedFileTypes,
+  connections,
+  selectedConnectionId,
+  onConnectionChange,
+  connectionLocked = false,
 }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState<FileWithPreview[]>([]);
@@ -578,15 +752,25 @@ export function ChatInput({
 
         {/* Action bar */}
         <div className="flex items-center justify-between px-3 pb-2.5">
-          {/* Left: attach */}
-          <button
-            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-40 text-muted hover:bg-surface-400"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={disabled || files.length >= maxFiles}
-            title={files.length >= maxFiles ? `Max ${maxFiles} files` : "Attach files"}
-          >
-            <Plus className="h-4 w-4" />
-          </button>
+          {/* Left: db selector + attach */}
+          <div className="flex items-center gap-1">
+            {connections !== undefined && (
+              <DbSelectorButton
+                connections={connections}
+                selectedConnectionId={selectedConnectionId}
+                onConnectionChange={onConnectionChange}
+                locked={connectionLocked}
+              />
+            )}
+            <button
+              className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-40 text-muted hover:bg-surface-400"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={disabled || files.length >= maxFiles}
+              title={files.length >= maxFiles ? `Max ${maxFiles} files` : "Attach files"}
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
 
           {/* Right: send / stop */}
           <div className="flex items-center gap-2">

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { ChevronDown, Database, RefreshCw } from 'lucide-react';
+import { ChevronDown, RefreshCw } from 'lucide-react';
 import { useChatStream } from '@/hooks/useChatStream';
 import { getPendingTask, clearPendingTask } from '@/store/pendingChatTask';
 import { useChatMessages } from '@/hooks/useChatMessages';
@@ -12,7 +12,7 @@ import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { ChatInput } from '@/components/ui/chat-input';
 import { ChatMessageView, UserMessage } from '@/components/features/chat/chat-message';
 import { ThinkingIndicator } from '@/components/features/chat/thinking-indicator';
-import { PipelineStepList } from '@/components/features/chat/pipeline-step-list';
+import { PipelineStepList, type NormalizedStep } from '@/components/features/chat/pipeline-step-list';
 import { StreamingResponse } from '@/components/features/chat/streaming-response';
 import { ChatWelcome } from '@/components/features/chat/chat-welcome';
 import { ChatMessagesSkeleton } from '@/components/features/chat/chat-messages-skeleton';
@@ -121,26 +121,6 @@ export default function ChatSessionPage() {
         </div>
       )}
 
-      {connection && (
-        <div className="flex items-center justify-between border-b border-border bg-surface-200 px-6 py-2">
-          <div className="flex min-w-0 items-center gap-2">
-            <Database
-              className="h-3.5 w-3.5 shrink-0 text-muted"
-              strokeWidth={1.5}
-            />
-            <span className="font-sans text-caption text-muted">
-              {connection.name}
-            </span>
-            <span className="text-subtle">·</span>
-            <span className="truncate font-mono text-mono-sm text-subtle">
-              {connection.database_name}
-            </span>
-          </div>
-          <span className="rounded-md border border-border bg-surface-300 px-1.5 py-0.5 font-mono text-mono-sm uppercase tracking-wide text-subtle">
-            {connection.database_type}
-          </span>
-        </div>
-      )}
 
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-6">
         {/* Top fade mask */}
@@ -174,7 +154,14 @@ export default function ChatSessionPage() {
             )}
 
             {pipelineSteps.length > 0 && !streamingMessage && (
-              <PipelineStepList steps={pipelineSteps} />
+              <PipelineStepList
+                steps={pipelineSteps.map((s): NormalizedStep => ({
+                  key: `${s.stepNumber}-${s.stepName}`,
+                  name: s.stepName,
+                  status: s.status,
+                  durationMs: s.durationMs,
+                }))}
+              />
             )}
 
             {streamingMessage && (
@@ -215,6 +202,9 @@ export default function ChatSessionPage() {
             onSendMessage={(message) => void handleSend(message)}
             onStop={cancel}
             isStreaming={isStreaming}
+            connections={connection ? [connection] : []}
+            selectedConnectionId={connection?.id ?? null}
+            connectionLocked
           />
         </div>
       </div>

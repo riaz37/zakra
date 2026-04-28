@@ -204,9 +204,9 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
   return (
     <div className="mt-2 overflow-hidden rounded-xl border border-border animate-fade-in">
       {/* Header bar */}
-      <div className="flex items-center gap-3 border-b border-border bg-surface-300 px-3 py-2">
+      <div className="flex items-center gap-3 border-b border-border px-3 py-2">
         <div className="flex items-center gap-1.5">
-          <Table2 className="h-3.5 w-3.5 text-accent/55" strokeWidth={1.5} />
+          <Table2 className="h-3.5 w-3.5 text-muted" strokeWidth={1.5} />
           <span className="font-mono text-mono-sm text-foreground/65">
             {qr.row_count.toLocaleString()} rows
           </span>

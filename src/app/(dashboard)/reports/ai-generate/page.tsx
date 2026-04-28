@@ -3,26 +3,25 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
-  Database,
   BarChart2,
   ArrowRight,
-  ChevronRight,
-  Check,
-  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useDbConnections } from '@/hooks/useDbConnections';
 import { useAIReportGeneration } from '@/hooks/useAIReportGeneration';
 import { ChatInput } from '@/components/ui/chat-input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import type { AIReportPipelineState, DatabaseConnection, ReportPipelineStep } from '@/types';
+import { PipelineStepList, PipelineSummary, type NormalizedStep } from '@/components/features/chat/pipeline-step-list';
+import type { AIReportPipelineState, ReportPipelineStep } from '@/types';
+
+function normalizeReportSteps(steps: ReportPipelineStep[]): NormalizedStep[] {
+  return steps.map((s) => ({
+    key: String(s.number),
+    name: s.name,
+    status: s.status,
+    durationMs: s.durationMs,
+  }));
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -35,88 +34,6 @@ interface CompletedTurn {
   steps: ReportPipelineStep[];
 }
 
-// ── Step row (shared between live + summary) ─────────────────────────────────
-
-function StepRow({ step, index }: { step: ReportPipelineStep; index: number }) {
-  const isDone = step.status === 'completed';
-  const isFailed = step.status === 'failed';
-  const isRunning = step.status === 'running';
-
-  return (
-    <div
-      className="flex h-6 items-center gap-2.5 animate-fade-up"
-      style={{ animationDelay: `${index * 30}ms` }}
-    >
-      <div className="flex h-3.5 w-3.5 shrink-0 items-center justify-center">
-        {isRunning && (
-          <div className="h-[6px] w-[6px] rounded-full bg-accent animate-pulse" />
-        )}
-        {isDone && (
-          <Check className="h-3 w-3 text-accent/60" strokeWidth={2.5} />
-        )}
-        {isFailed && (
-          <X className="h-3 w-3 text-destructive" strokeWidth={2.5} />
-        )}
-        {!isRunning && !isDone && !isFailed && (
-          <div className="h-[5px] w-[5px] rounded-full bg-border" />
-        )}
-      </div>
-
-      <span
-        className={cn(
-          'font-mono text-mono-sm leading-none transition-[color,opacity] duration-500',
-          isFailed && 'text-destructive',
-          isRunning && 'text-accent',
-          isDone && 'text-muted opacity-40',
-          !isRunning && !isDone && !isFailed && 'text-subtle',
-        )}
-      >
-        {step.name}
-        {isRunning && <span className="ml-0.5 animate-pulse opacity-40">…</span>}
-      </span>
-
-      {isDone && step.durationMs !== undefined && (
-        <span className="ml-auto font-mono text-mono-sm text-subtle animate-fade-in">
-          {step.durationMs < 1000
-            ? `${step.durationMs}ms`
-            : `${(step.durationMs / 1000).toFixed(1)}s`}
-        </span>
-      )}
-    </div>
-  );
-}
-
-// ── Collapsible step summary (after completion) ───────────────────────────────
-
-function StepSummary({ steps }: { steps: ReportPipelineStep[] }) {
-  const [expanded, setExpanded] = useState(false);
-  const done = steps.filter((s) => s.status === 'completed');
-  if (done.length === 0) return null;
-
-  return (
-    <div className="mb-3">
-      <button
-        onClick={() => setExpanded((v) => !v)}
-        className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
-      >
-        <ChevronRight
-          className={cn('h-3 w-3 transition-transform duration-150', expanded && 'rotate-90')}
-          strokeWidth={2}
-        />
-        <span>{done.length} steps</span>
-      </button>
-
-      {expanded && (
-        <div className="mt-2 border-l border-border/20 pl-3 animate-fade-up">
-          {done.map((step, idx) => (
-            <StepRow key={step.number} step={step} index={idx} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ── User query bubble ─────────────────────────────────────────────────────────
 
 function UserQueryBubble({ query }: { query: string }) {
@@ -126,36 +43,6 @@ function UserQueryBubble({ query }: { query: string }) {
         <p className="whitespace-pre-wrap font-sans text-[15px] leading-[1.65] text-foreground">
           {query}
         </p>
-      </div>
-    </div>
-  );
-}
-
-// ── Active pipeline view (live streaming) ─────────────────────────────────────
-
-function ActivePipelineView({
-  steps,
-}: {
-  steps: ReportPipelineStep[];
-}) {
-  const visible = steps.filter((s) => s.status !== 'pending');
-
-  return (
-    <div className="flex gap-3 animate-slide-in-bottom" aria-live="polite">
-      <div className="relative mt-0.5 shrink-0">
-        <span className="absolute inset-[-4px] rounded-full bg-accent/8 blur-[8px]" aria-hidden />
-        <Image
-          src="/logo/esaplogo.webp"
-          alt="ESAP"
-          width={22}
-          height={22}
-          className="relative opacity-70"
-        />
-      </div>
-      <div className="border-l border-border/20 pl-3">
-        {visible.map((step, idx) => (
-          <StepRow key={step.number} step={step} index={idx} />
-        ))}
       </div>
     </div>
   );
@@ -238,7 +125,7 @@ function CompletedTurnView({ turn }: { turn: CompletedTurn }) {
     <div className="space-y-4">
       <UserQueryBubble query={turn.query} />
       <div className="space-y-3">
-        <StepSummary steps={turn.steps} />
+        <PipelineSummary steps={normalizeReportSteps(turn.steps)} />
         <ReportCard turn={turn} />
       </div>
     </div>
@@ -285,67 +172,6 @@ function ReportWelcome({ onPrompt }: { onPrompt: (text: string) => void }) {
   );
 }
 
-// ── Persistent DB context bar (always visible, always switchable) ─────────────
-
-function ConnectionBar({
-  connections,
-  selectedId,
-  onSelect,
-}: {
-  connections: DatabaseConnection[];
-  selectedId: string | undefined;
-  onSelect: (id: string) => void;
-}) {
-  const selected = connections.find((c) => c.id === selectedId);
-
-  if (connections.length === 0) {
-    return (
-      <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface-200 px-6 py-2">
-        <Database className="h-3.5 w-3.5 shrink-0 text-muted" strokeWidth={1.5} />
-        <span className="font-sans text-caption text-muted">
-          No database connections — add one in{' '}
-          <a href="/connections" className="text-accent/80 hover:text-accent underline-offset-2 hover:underline">
-            Connections
-          </a>
-          .
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface-200 px-6 py-2">
-      <Database className="h-3.5 w-3.5 shrink-0 text-muted" strokeWidth={1.5} />
-      <Select value={selectedId ?? ''} onValueChange={(v) => { if (v) onSelect(v); }}>
-        <SelectTrigger className="h-6 w-auto min-w-[140px] border-border bg-transparent px-2 py-0 font-sans text-caption text-foreground focus:ring-0 focus:ring-offset-0 focus-visible:ring-1 focus-visible:ring-accent/40">
-          <SelectValue>
-            {selected?.name ?? (
-              <span className="text-muted-foreground">Select a connection…</span>
-            )}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {connections.map((c) => (
-            <SelectItem key={c.id} value={c.id}>
-              {c.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {selected && (
-        <>
-          <span className="font-sans text-caption text-subtle">·</span>
-          <span className="truncate font-mono text-mono-sm text-subtle">
-            {selected.database_name}
-          </span>
-          <span className="ml-auto rounded-md border border-border bg-surface-300 px-1.5 py-0.5 font-mono text-mono-sm uppercase tracking-wide text-subtle">
-            {selected.database_type}
-          </span>
-        </>
-      )}
-    </div>
-  );
-}
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
@@ -410,12 +236,6 @@ export default function AIReportChatPage() {
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden">
-      {/* Persistent DB context bar — always shown, always switchable */}
-      <ConnectionBar
-        connections={connections}
-        selectedId={selectedConnectionId}
-        onSelect={setSelectedConnectionId}
-      />
 
       {/* Message thread */}
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-6">
@@ -441,7 +261,7 @@ export default function AIReportChatPage() {
               <div className="space-y-4">
                 <UserQueryBubble query={pendingQuery} />
                 {state.steps.some((s) => s.status !== 'pending') && (
-                  <ActivePipelineView steps={state.steps} />
+                  <PipelineStepList steps={normalizeReportSteps(state.steps)} />
                 )}
                 {isGenerating && !state.steps.some((s) => s.status !== 'pending') && (
                   <div className="flex items-center gap-2 animate-fade-in">
@@ -483,8 +303,11 @@ export default function AIReportChatPage() {
             onSendMessage={(message) => void handleSend(message)}
             onStop={cancel}
             isStreaming={isGenerating}
-            disabled={!companyId || !selectedConnectionId}
+            disabled={!companyId}
             placeholder="Describe the report you want to generate…"
+            connections={connections}
+            selectedConnectionId={selectedConnectionId ?? null}
+            onConnectionChange={setSelectedConnectionId}
           />
         </div>
       </div>
