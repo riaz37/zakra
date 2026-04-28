@@ -59,7 +59,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-[340px] animate-fade-up rounded-xl border border-border bg-surface-100 px-6 py-8">
+    <div className="w-full max-w-[340px] animate-fade-up rounded-card border border-border bg-surface-100 px-6 py-8">
       {/* Brand */}
       <div className="mb-8">
         <div className="mb-3 flex items-center justify-center gap-2.5">

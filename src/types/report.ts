@@ -69,6 +69,13 @@ export interface ReportTemplateListResponse {
 
 export type ReportGenerationStatus = 'pending' | 'running' | 'completed' | 'failed';
 
+export const REPORT_STATUS_VARIANTS: Record<ReportGenerationStatus, "default" | "secondary" | "destructive" | "outline"> = {
+  pending: "outline",
+  running: "secondary",
+  completed: "default",
+  failed: "destructive",
+};
+
 export interface ReportGenerateResponse {
   task_id: string;
   generation_id: string;

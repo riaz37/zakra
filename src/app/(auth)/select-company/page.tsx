@@ -76,7 +76,7 @@ export default function SelectCompanyPage() {
         <Image src="/logo/esaplogo.svg" alt="ESAP employer solutions" width={65} height={21} priority />
       </div>
 
-      <div className="rounded-xl border border-border bg-surface-100 px-6 py-8">
+      <div className="rounded-card border border-border bg-surface-100 px-6 py-8">
         {showCreate ? (
           <CreateCompanyForm
             onSubmit={handleSubmit(onCreate)}
@@ -183,14 +183,15 @@ function CreateCompanyForm({
   return (
     <div>
       {canGoBack && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={onBack}
-          className="mb-4 flex items-center gap-1.5 font-sans text-caption text-muted hover:text-foreground transition-colors"
+          className="mb-4 h-auto px-0 py-0 flex items-center gap-1.5 font-sans text-caption text-muted hover:text-foreground hover:bg-transparent"
         >
           <ArrowLeft className="size-3.5" />
           Back to list
-        </button>
+        </Button>
       )}
 
       <h1 className="font-sans text-title font-semibold text-foreground">Create company</h1>

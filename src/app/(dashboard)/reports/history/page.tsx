@@ -1,30 +1,29 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { type ColumnDef } from '@tanstack/react-table';
 import { FileText, Eye } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
 
 import { useReportGenerations } from '@/hooks/useReportGenerations';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
-import type { GeneratedReport, ReportGenerationStatus } from '@/types';
+import type { GeneratedReport } from '@/types';
 
 import { PageHeader } from '@/components/shared/page-header';
+import {
+  ScaffoldContainer,
+  ScaffoldFilterAndContent,
+} from '@/components/shared/scaffold';
+import { reportNavigationItems } from '@/components/features/reports/nav';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
+import { StatusBadge } from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-
-const STATUS_VARIANTS: Record<ReportGenerationStatus, "default" | "secondary" | "destructive" | "outline"> = {
-  pending: "outline",
-  running: "secondary",
-  completed: "default",
-  failed: "destructive",
-};
 
 export default function ReportHistoryPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const companyId = useCurrentCompanyId();
   const { data, isLoading, isError, refetch } = useReportGenerations(companyId);
 
@@ -48,11 +47,7 @@ export default function ReportHistoryPage() {
     {
       id: 'status',
       header: 'status',
-      cell: ({ row }) => (
-        <Badge variant={STATUS_VARIANTS[row.original.status] ?? "outline"}>
-          {row.original.status}
-        </Badge>
-      ),
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
     },
     {
       id: 'created_at',
@@ -88,38 +83,41 @@ export default function ReportHistoryPage() {
   const generations = data?.generations ?? [];
 
   return (
-    <div className="px-6 py-8">
+    <ScaffoldContainer>
       <PageHeader
-        title="Report History"
+        title="Reports"
         subtitle="All generated reports for your workspace."
+        navigationItems={reportNavigationItems(pathname)}
       />
 
-      {isError ? (
-        <ErrorState title="Failed to load history" onRetry={() => refetch()} />
-      ) : generations.length === 0 && !isLoading ? (
-        <EmptyState
-          icon={FileText}
-          title="No reports generated yet"
-          description="Generate your first AI report from a template."
-          action={
-            <Button
-              onClick={() => router.push('/reports/ai-generate')}
-              className="h-9 px-4"
-            >
-              Generate a report
-            </Button>
-          }
-        />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={generations}
-          isLoading={isLoading}
-          caption="Report history list"
-          emptyMessage="No reports found."
-          onRowClick={(row) => router.push(`/reports/${row.id}`)}
-        />
-      )}
-    </div>
+      <ScaffoldFilterAndContent className="mt-6">
+        {isError ? (
+          <ErrorState title="Failed to load history" onRetry={() => refetch()} />
+        ) : generations.length === 0 && !isLoading ? (
+          <EmptyState
+            icon={FileText}
+            title="No reports generated yet"
+            description="Generate your first AI report from a template."
+            action={
+              <Button
+                onClick={() => router.push('/reports/ai-generate')}
+                className="h-9 px-4"
+              >
+                Generate a report
+              </Button>
+            }
+          />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={generations}
+            isLoading={isLoading}
+            caption="Report history list"
+            emptyMessage="No reports found."
+            onRowClick={(row) => router.push(`/reports/${row.id}`)}
+          />
+        )}
+      </ScaffoldFilterAndContent>
+    </ScaffoldContainer>
   );
 }

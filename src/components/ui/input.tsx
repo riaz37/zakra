@@ -40,14 +40,14 @@ function Input({
       aria-invalid={error || undefined}
       className={cn(
         // Layout
-        "block w-full rounded-lg px-3 py-2.5",
+        "block w-full rounded-[6px] px-3 py-2.5",
         // Surface + border
         "border bg-surface-200 text-foreground",
         // Type
         mono ? "font-mono text-button" : "font-sans text-button",
         "placeholder:text-foreground/35",
         // Motion
-        "transition-colors duration-150",
+        "transition-colors duration-[120ms]",
         // Default state
         !error && "border-border focus:border-accent",
         // Focus ring (always shown on keyboard focus)

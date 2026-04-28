@@ -22,8 +22,7 @@ type NavEntry = (typeof NAV_ITEMS)[number];
 const PRIMARY_LABELS = new Set<string>([
   'Overview',
   'Chat',
-  'Generate Report',
-  'Report History',
+  'Reports',
 ]);
 
 const ADMIN_LABELS = new Set<string>([
@@ -31,12 +30,23 @@ const ADMIN_LABELS = new Set<string>([
   'Companies',
   'Databases',
   'Table Access',
-  'Templates',
+  'Roles',
 ]);
+
+// Reports sidebar item points to /reports/history but should be active for any /reports/* route
+const SECTION_ROOTS: Record<string, string> = {
+  '/reports/history': '/reports',
+  '/reports/ai-generate': '/reports',
+  '/reports/templates': '/reports',
+};
 
 function isActivePath(currentPath: string, itemPath: string): boolean {
   if (itemPath === '/') {
     return currentPath === '/';
+  }
+  const sectionRoot = SECTION_ROOTS[itemPath];
+  if (sectionRoot) {
+    return currentPath.startsWith(sectionRoot);
   }
   return currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
 }
@@ -97,9 +107,9 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
     <aside
       className={cn(
         'flex h-dvh flex-col border-r border-border bg-surface-100',
-        variant === 'full' && 'w-60',
-        variant === 'rail' && 'w-16',
-        variant === 'overlay' && 'w-60',
+        variant === 'full' && 'w-56',
+        variant === 'rail' && 'w-[52px]',
+        variant === 'overlay' && 'w-56',
       )}
     >
       {/* Brand */}

@@ -67,12 +67,13 @@ export function NavItem({
       onClick={onNavigate}
       className={cn(
         // base
-        'relative flex min-h-10 items-center gap-2.5 rounded-md px-3 py-2.5 font-sans text-button outline-none transition-colors duration-150',
+        'relative flex h-8 items-center gap-2.5 rounded-md font-sans text-button outline-none transition-colors duration-[120ms]',
+        'border-l-2 pl-[10px] pr-3',
         'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/40',
         active
-          ? 'bg-accent/[0.08] font-medium text-accent'
-          : 'text-muted hover:bg-surface-300 hover:text-foreground',
-        collapsed && 'justify-center px-0',
+          ? 'border-l-accent bg-accent-soft font-medium text-foreground'
+          : 'border-l-transparent text-muted hover:bg-surface-300 hover:text-foreground',
+        collapsed && 'justify-center border-l-0 px-0 pl-0',
       )}
     >
       {Icon ? (

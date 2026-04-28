@@ -11,11 +11,16 @@ import {
   useBulkGrantPermissions,
 } from '@/hooks/useTableAccess';
 import { PageHeader } from '@/components/shared/page-header';
+import {
+  ScaffoldContainer,
+  ScaffoldFilterAndContent,
+} from '@/components/shared/scaffold';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PermissionMatrix } from '@/components/shared/permission-matrix';
 import type { ColumnPermissionRow } from '@/components/shared/permission-matrix';
 import { SearchInput } from '@/components/shared/search-input';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/shared/skeleton';
 import type { ManagedTable, ColumnPermission, MaskPattern, ColumnPermissionGrant } from '@/types';
 
 // ── Table List Panel ──────────────────────────────────────────────────────────
@@ -40,7 +45,7 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
   }, [tables, search]);
 
   return (
-    <aside className="sticky top-6 lg:top-8 flex w-56 shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-surface-200 max-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-4rem)]">
+    <aside className="sticky top-6 lg:top-8 flex w-56 shrink-0 flex-col overflow-hidden rounded-card border border-border bg-surface-200 max-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-4rem)]">
       {/* Header */}
       <div className="border-b border-border px-3 py-2.5">
         <p className="font-sans text-caption font-medium uppercase tracking-wide text-muted">
@@ -206,11 +211,7 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
       {isLoading ? (
         <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-10 animate-pulse rounded-lg border border-border bg-surface-300"
-              aria-hidden="true"
-            />
+            <Skeleton key={i} className="h-10" rounded="lg" />
           ))}
         </div>
       ) : table.columns.length === 0 ? (
@@ -250,51 +251,52 @@ export default function TableAccessPage() {
   }, [tables, selectedTableName]);
 
   return (
-    <div className="p-6 lg:p-8">
-      <PageHeader title="Table Access" />
+    <ScaffoldContainer size="large">
+      <PageHeader
+        title="Table Access"
+        subtitle="Control which columns each role can read, mask, or modify."
+      />
 
-      {isLoading && (
-        <div className="flex gap-4">
-          <div className="h-64 w-56 shrink-0 animate-pulse rounded-xl border border-border bg-surface-300" />
-          <div className="flex-1 space-y-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-10 animate-pulse rounded-lg border border-border bg-surface-300"
-                aria-hidden="true"
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {!isLoading && tables.length === 0 && (
-        <EmptyState
-          icon={Table}
-          title="No managed tables"
-          description="Enable column-level access control for your connected database tables."
-        />
-      )}
-
-      {!isLoading && tables.length > 0 && (
-        <div className="flex items-start gap-5">
-          <TableListPanel
-            tables={tables}
-            selectedTableName={selectedTableName}
-            onSelect={setSelectedTableName}
-          />
-
-          {selectedTable ? (
-            <PermissionsPanel key={selectedTable.table_name} table={selectedTable} />
-          ) : (
-            <div className="flex flex-1 items-center justify-center py-16">
-              <p className="font-sans text-button text-muted">
-                Select a table to manage column permissions.
-              </p>
+      <ScaffoldFilterAndContent>
+        {isLoading && (
+          <div className="flex gap-4">
+            <Skeleton className="h-64 w-56 shrink-0" rounded="xl" />
+            <div className="flex-1 space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-10" rounded="lg" />
+              ))}
             </div>
-          )}
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+
+        {!isLoading && tables.length === 0 && (
+          <EmptyState
+            icon={Table}
+            title="No managed tables"
+            description="Enable column-level access control for your connected database tables."
+          />
+        )}
+
+        {!isLoading && tables.length > 0 && (
+          <div className="flex items-start gap-5">
+            <TableListPanel
+              tables={tables}
+              selectedTableName={selectedTableName}
+              onSelect={setSelectedTableName}
+            />
+
+            {selectedTable ? (
+              <PermissionsPanel key={selectedTable.table_name} table={selectedTable} />
+            ) : (
+              <div className="flex flex-1 items-center justify-center py-16">
+                <p className="font-sans text-button text-muted">
+                  Select a table to manage column permissions.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </ScaffoldFilterAndContent>
+    </ScaffoldContainer>
   );
 }

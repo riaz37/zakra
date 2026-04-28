@@ -7,29 +7,40 @@ import { ActivityChart } from '../_components/activity-chart';
 import { StatusDistributionChart } from '../_components/status-distribution-chart';
 import { RecentActivity } from '../_components/recent-activity';
 import { PageHeader } from '@/components/shared/page-header';
+import { ScaffoldContainer } from '@/components/shared/scaffold';
 
 export default function OverviewPage() {
   const companyId = useCurrentCompanyId();
   const { isLoading, metrics, activityData, statusData, recentActivity } = useDashboardData(companyId || undefined);
 
   return (
-    <div className="px-6 py-8 flex-1 flex flex-col gap-6">
-      <PageHeader title="Overview" />
+    <ScaffoldContainer size="large">
+      <PageHeader
+        title="Overview"
+        subtitle={
+          companyId
+            ? 'Analytics and activity across your workspace.'
+            : undefined
+        }
+      />
 
-      <div className="flex flex-col gap-4 animate-in fade-in-50">
+      <div className="mt-6 flex flex-col gap-4 animate-in fade-in-50">
         <MetricStrip metrics={metrics} isLoading={isLoading} />
 
         {!companyId ? (
-          <p className="text-caption text-muted">
+          <div
+            role="status"
+            className="rounded-card border border-border bg-surface-100 px-4 py-3 font-sans text-caption text-muted"
+          >
             Select a company from the sidebar to filter analytics and activity by workspace.
-          </p>
+          </div>
         ) : null}
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <div className="col-span-4">
+        <div className="grid gap-4 @md:grid-cols-2 @lg:grid-cols-7">
+          <div className="@lg:col-span-4 @md:col-span-2">
             <ActivityChart data={activityData} isLoading={isLoading} />
           </div>
-          <div className="col-span-3">
+          <div className="@lg:col-span-3 @md:col-span-2">
             <StatusDistributionChart data={statusData} isLoading={isLoading} />
           </div>
         </div>
@@ -38,6 +49,6 @@ export default function OverviewPage() {
           <RecentActivity recentActivity={recentActivity} isLoading={isLoading} />
         </div>
       </div>
-    </div>
+    </ScaffoldContainer>
   );
 }

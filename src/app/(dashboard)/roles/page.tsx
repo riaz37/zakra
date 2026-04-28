@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Shield, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Shield, Plus } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
 
 import {
@@ -13,34 +13,34 @@ import {
 } from '@/hooks/useRoles';
 import type { Role, RoleCreate, RoleUpdate } from '@/types';
 import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
+import { useResourceList } from '@/hooks/useResourceList';
 
 import { PageHeader } from '@/components/shared/page-header';
+import {
+  ScaffoldContainer,
+  ScaffoldFilterAndContent,
+  ScaffoldActionsContainer,
+} from '@/components/shared/scaffold';
 import { SearchInput } from '@/components/shared/search-input';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormDialog } from '@/components/shared/form-dialog';
+import { RowActions } from '@/components/shared/row-actions';
 
 import { Button } from '@/components/ui/button';
 import { RoleTypeBadge } from '@/components/features/roles/role-type-badge';
 import { RoleForm, type RoleFormData } from '@/components/features/roles/role-form';
 
 export default function RolesPage() {
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(0);
+  const { search, page, queryPage, setPage, searchProps, isEmpty } = useResourceList();
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Role | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Role | null>(null);
 
   const { data, isLoading, isError, refetch } = useRoles({
-    page: page + 1,
+    page: queryPage,
     page_size: DEFAULT_PAGE_SIZE,
     search: search || undefined,
   });
@@ -100,33 +100,14 @@ export default function RolesPage() {
       cell: ({ row }) => {
         const isSystem = row.original.role_type === 'system';
         return (
-          <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setEditTarget(row.original);
-              }}
-              disabled={isSystem}
-              aria-label={`Edit ${row.original.name}`}
-            >
-              <Pencil aria-hidden size={13} strokeWidth={1.75} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setDeleteTarget(row.original);
-              }}
-              disabled={isSystem}
-              aria-label={`Delete ${row.original.name}`}
-              className="hover:text-error"
-            >
-              <Trash2 aria-hidden size={13} strokeWidth={1.75} />
-            </Button>
-          </div>
+          <RowActions
+            onEdit={(e) => { e.stopPropagation(); setEditTarget(row.original); }}
+            onDelete={(e) => { e.stopPropagation(); setDeleteTarget(row.original); }}
+            editLabel={`Edit ${row.original.name}`}
+            deleteLabel={`Delete ${row.original.name}`}
+            disableEdit={isSystem}
+            disableDelete={isSystem}
+          />
         );
       },
     },
@@ -162,10 +143,11 @@ export default function RolesPage() {
   }
 
   return (
-    <div className="px-6 py-8">
+    <ScaffoldContainer>
       <PageHeader
         title="Roles"
-        action={
+        subtitle="Define permission bundles that control what users can access."
+        primaryActions={
           <Button
             onClick={() => setCreateOpen(true)}
             className="h-9 px-4"
@@ -176,84 +158,74 @@ export default function RolesPage() {
         }
       />
 
-      <div className="mb-4 max-w-sm">
-        <SearchInput
-          value={search}
-          onChange={(v) => {
-            setSearch(v);
-            setPage(0);
-          }}
-          placeholder="Search roles…"
-          ariaLabel="Search roles"
-        />
-      </div>
+      <ScaffoldFilterAndContent>
+        <ScaffoldActionsContainer>
+          <div className="w-full max-w-sm">
+            <SearchInput {...searchProps} placeholder="Search roles…" ariaLabel="Search roles" />
+          </div>
+        </ScaffoldActionsContainer>
 
-      {isError ? (
-        <ErrorState title="Failed to load roles" onRetry={() => refetch()} />
-      ) : items.length === 0 && !isLoading ? (
-        <EmptyState
-          icon={Shield}
-          title={search ? "No roles match your search" : "No roles defined"}
-          description={search ? "Try adjusting your search terms." : "Create roles to control what each user type can access."}
-          action={!search ? (
-            <Button
-              onClick={() => setCreateOpen(true)}
-              className="h-9 px-4"
-            >
-              <Plus aria-hidden size={15} strokeWidth={2} />
-              New Role
-            </Button>
-          ) : undefined}
-        />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={items}
-          isLoading={isLoading}
-          pageIndex={page}
-          pageCount={totalPages}
-          onPageChange={setPage}
-          pageSize={DEFAULT_PAGE_SIZE}
-          totalCount={data?.total}
-          caption="Roles list"
-          emptyMessage="No roles found."
-        />
-      )}
-
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>New Role</DialogTitle>
-          </DialogHeader>
-          <RoleForm
-            onSubmit={handleCreate}
-            isPending={createMutation.isPending}
-            onCancel={() => setCreateOpen(false)}
-            submitLabel="Create Role"
+        {isError ? (
+          <ErrorState title="Failed to load roles" onRetry={() => refetch()} />
+        ) : isEmpty(items, isLoading) ? (
+          <EmptyState
+            icon={Shield}
+            title={search ? "No roles match your search" : "No roles defined"}
+            description={search ? "Try adjusting your search terms." : "Create roles to control what each user type can access."}
+            action={!search ? (
+              <Button
+                onClick={() => setCreateOpen(true)}
+                className="h-9 px-4"
+              >
+                <Plus aria-hidden size={15} strokeWidth={2} />
+                New Role
+              </Button>
+            ) : undefined}
           />
-        </DialogContent>
-      </Dialog>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={items}
+            isLoading={isLoading}
+            pageIndex={page}
+            pageCount={totalPages}
+            onPageChange={setPage}
+            pageSize={DEFAULT_PAGE_SIZE}
+            totalCount={data?.total}
+            caption="Roles list"
+            emptyMessage="No roles found."
+          />
+        )}
+      </ScaffoldFilterAndContent>
 
-      <Dialog open={!!editTarget} onOpenChange={(open) => !open && setEditTarget(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit Role</DialogTitle>
-          </DialogHeader>
-          {editTarget && (
-            <RoleForm
-              initial={{
-                name: editTarget.name,
-                slug: editTarget.slug,
-                description: editTarget.description ?? '',
-              }}
-              onSubmit={handleUpdate}
-              isPending={updateMutation.isPending}
-              onCancel={() => setEditTarget(null)}
-              submitLabel="Save Changes"
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      <FormDialog open={createOpen} onOpenChange={setCreateOpen} title="New Role">
+        <RoleForm
+          onSubmit={handleCreate}
+          isPending={createMutation.isPending}
+          onCancel={() => setCreateOpen(false)}
+          submitLabel="Create Role"
+        />
+      </FormDialog>
+
+      <FormDialog
+        open={!!editTarget}
+        onOpenChange={(open) => !open && setEditTarget(null)}
+        title="Edit Role"
+      >
+        {editTarget && (
+          <RoleForm
+            initial={{
+              name: editTarget.name,
+              slug: editTarget.slug,
+              description: editTarget.description ?? '',
+            }}
+            onSubmit={handleUpdate}
+            isPending={updateMutation.isPending}
+            onCancel={() => setEditTarget(null)}
+            submitLabel="Save Changes"
+          />
+        )}
+      </FormDialog>
 
       <ConfirmDialog
         open={!!deleteTarget}
@@ -265,6 +237,6 @@ export default function RolesPage() {
         isLoading={deleteMutation.isPending}
         variant="destructive"
       />
-    </div>
+    </ScaffoldContainer>
   );
 }

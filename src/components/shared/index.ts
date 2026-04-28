@@ -5,7 +5,24 @@ export { DataTable } from "./data-table";
 export type { DataTableProps } from "./data-table";
 
 export { PageHeader } from "./page-header";
-export type { PageHeaderProps } from "./page-header";
+export type { PageHeaderProps, BreadcrumbCrumb } from "./page-header";
+
+export {
+  ScaffoldContainer,
+  ScaffoldHeader,
+  ScaffoldTitle,
+  ScaffoldDescription,
+  ScaffoldSection,
+  ScaffoldSectionDetail,
+  ScaffoldSectionContent,
+  ScaffoldSectionTitle,
+  ScaffoldSectionDescription,
+  ScaffoldDivider,
+  ScaffoldFilterAndContent,
+  ScaffoldActionsContainer,
+  ScaffoldActionsGroup,
+} from "./scaffold";
+export type { ScaffoldSize } from "./scaffold";
 
 export { SearchInput } from "./search-input";
 export type { SearchInputProps } from "./search-input";
@@ -31,3 +48,6 @@ export type { MarkdownRendererProps } from "./markdown-renderer";
 export { ConnectionCard } from "./connection-card";
 
 export { PermissionMatrix } from "./permission-matrix";
+
+export { FormDialog } from "./form-dialog";
+export { RowActions } from "./row-actions";

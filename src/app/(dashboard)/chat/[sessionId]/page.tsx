@@ -111,11 +111,34 @@ export default function ChatSessionPage() {
   }, [sessionId, companyId, connect]);
 
 
+  const sessionTitle = session?.title?.trim() || 'Chat';
+
   return (
     <div className="relative flex h-full flex-col overflow-hidden">
+      {/* Sticky session header */}
+      <header className="shrink-0 border-b border-border bg-background">
+        <div className="mx-auto flex w-full max-w-[720px] items-center justify-between gap-4 px-6 py-3">
+          <h1
+            className="min-w-0 truncate font-sans text-button font-medium text-foreground"
+            title={sessionTitle}
+          >
+            {sessionTitle}
+          </h1>
+          {connection ? (
+            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-pill border border-border bg-surface-200 px-2.5 py-1 font-mono text-micro text-muted">
+              <span aria-hidden className="size-1.5 rounded-full bg-accent" />
+              <span className="max-w-[180px] truncate">{connection.name}</span>
+            </span>
+          ) : null}
+        </div>
+      </header>
+
       {/* Reconnecting banner */}
       {status === 'reconnecting' && (
-        <div className="flex items-center justify-center gap-2 border-b border-warning-border bg-warning-bg px-4 py-2 animate-fade-in">
+        <div
+          role="status"
+          className="flex items-center justify-center gap-2 border-b border-warning-border bg-warning-bg px-4 py-2 animate-fade-in"
+        >
           <RefreshCw className="h-3.5 w-3.5 text-warning animate-spin" strokeWidth={2} />
           <span className="font-sans text-caption text-warning">Reconnecting…</span>
         </div>
@@ -173,7 +196,7 @@ export default function ChatSessionPage() {
 
             {error && (
               <div
-                className="rounded-lg border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error animate-fade-in"
+                className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error animate-fade-in"
                 role="alert"
               >
                 {error}
@@ -188,8 +211,10 @@ export default function ChatSessionPage() {
       {/* Jump to latest button */}
       {showScrollDown && (
         <button
+          type="button"
+          aria-label="Jump to latest message"
           onClick={() => scrollToBottom()}
-          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-full border border-border bg-surface-400 px-3 py-1.5 font-sans text-caption text-muted shadow-[var(--shadow-elevated)] transition-all duration-150 hover:border-border-medium hover:bg-surface-500 hover:text-foreground animate-slide-in-bottom"
+          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-pill border border-border bg-surface-300 px-3 py-1.5 font-sans text-caption text-foreground transition-colors duration-[120ms] hover:border-border-strong hover:bg-surface-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 animate-slide-in-bottom"
         >
           <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
           Latest

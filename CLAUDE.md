@@ -7,7 +7,7 @@ Stack, layout, auth, forms, data, state, and review rules are injected dynamical
 ## Sources of truth (read on demand, not every prompt)
 
 - **`AGENTS.md`** — Next.js 16 breaking-changes warning. Always loaded.
-- **`.impeccable.md`** — visual system source of truth. Read **before any UI work** (dark enterprise, Geist/Geist Mono, Supabase green accent). DESIGN.md is superseded.
+- **`DESIGN.md`** — visual system source of truth. Read **before any UI work**. Supersedes `.impeccable.md`. Contains palette, typography, elevation, all component specs, and interactive state matrix.
 - **`.serena/memories/`** — deeper docs: `project_overview`, `project_structure`, `code_style_conventions`, `suggested_commands`, `patterns_api`, `patterns_auth`, `patterns_frontend`, `patterns_state`, `task_completion_checklist`, `carl_system`. Read via Serena tools when relevant.
 - **`.claude/skills/shadcn/SKILL.md`** — auto-activates on `components.json`. Use it for adding/composing shadcn primitives.
 
@@ -20,18 +20,17 @@ Stack, layout, auth, forms, data, state, and review rules are injected dynamical
 **Primary goal:** Trust. The interface earns credibility through consistency,
 restraint, and visual stability — not ornamentation.
 
-**Aesthetic:** Dark-only. Supabase-inspired. Geist + Geist Mono. Supabase green
-(`#3ecf8e`) is the sole accent — used only for active states, primary CTAs, and
-positive signals. Depth via border contrast, not drop shadows.
+**Aesthetic:** Dark-only. Warm dark enterprise. Supabase green (`#3ecf8e`) sole accent.
+Archivo + JetBrains Mono type stack. Depth via border contrast and surface hierarchy.
 
 **Non-negotiables:**
 - Dark-only — never ship a light-mode variant
 - No glowing effects, gradient text, or nested cards
 - No AI-slop palette (cyan/purple gradients, neon on dark)
-- Geist / Geist Mono — the only typefaces in this system
+- Archivo + JetBrains Mono — the only typefaces. Never Geist, Inter, system-ui.
 
 **Known audit targets:** login screen, dashboard home, all pages (spacing +
-hierarchy consistency pass). Full context in `.impeccable.md`.
+hierarchy consistency pass). Full component specs in `DESIGN.md`.
 
 ## Conventions baked in (don't re-derive)
 

@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Building2, Plus, Pencil, Trash2, GitBranch, List, Network } from 'lucide-react';
+import { Building2, Plus, GitBranch, List, Network } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
 
 import {
@@ -14,21 +13,23 @@ import {
 } from '@/hooks/useCompanies';
 import type { Company, CompanyCreate, CompanyUpdate } from '@/types';
 import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
+import { useResourceList } from '@/hooks/useResourceList';
 
 import { PageHeader } from '@/components/shared/page-header';
+import {
+  ScaffoldContainer,
+  ScaffoldFilterAndContent,
+  ScaffoldActionsContainer,
+  ScaffoldActionsGroup,
+} from '@/components/shared/scaffold';
 import { SearchInput } from '@/components/shared/search-input';
 import { DataTable } from '@/components/shared/data-table';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { FormDialog } from '@/components/shared/form-dialog';
+import { RowActions } from '@/components/shared/row-actions';
 
 import { Button } from '@/components/ui/button';
 import { CompanyForm, type CompanyFormData } from '@/components/features/companies/company-form';
@@ -38,10 +39,8 @@ import { cn } from '@/lib/utils';
 type CompaniesView = 'list' | 'hierarchy';
 
 export default function CompaniesPage() {
-  const router = useRouter();
   const [view, setView] = useState<CompaniesView>('list');
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(0);
+  const { search, page, queryPage, setPage, searchProps, isEmpty } = useResourceList();
 
   const [createOpen, setCreateOpen] = useState(false);
   const [createSubParent, setCreateSubParent] = useState<Company | null>(null);
@@ -50,7 +49,7 @@ export default function CompaniesPage() {
 
   // Main paginated companies
   const { data, isLoading, isError, refetch } = useCompanies({
-    page: page + 1,
+    page: queryPage,
     page_size: DEFAULT_PAGE_SIZE,
     search: search || undefined,
   });
@@ -109,13 +108,7 @@ export default function CompaniesPage() {
     {
       id: 'status',
       header: 'Status',
-      cell: ({ row }) => {
-        const s = row.original.status;
-        if (s === 'active' || s === 'inactive' || s === 'suspended') {
-          return <StatusBadge status={s} />;
-        }
-        return <span className="font-sans text-button text-muted">{s}</span>;
-      },
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
     },
     {
       id: 'subsidiaries',
@@ -144,40 +137,20 @@ export default function CompaniesPage() {
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCreateSubParent(row.original);
-              }}
+              onClick={(e) => { e.stopPropagation(); setCreateSubParent(row.original); }}
               title="Add Subsidiary"
               className="h-8 w-8 text-accent hover:border-accent/50"
             >
               <GitBranch aria-hidden size={14} strokeWidth={1.75} />
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="icon-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setEditTarget(row.original);
-            }}
-            aria-label={`Edit ${row.original.name}`}
-            className="h-8 w-8"
-          >
-            <Pencil aria-hidden size={14} strokeWidth={1.75} />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteTarget(row.original);
-            }}
-            aria-label={`Delete ${row.original.name}`}
-            className="h-8 w-8 hover:text-error hover:border-error/50"
-          >
-            <Trash2 aria-hidden size={14} strokeWidth={1.75} />
-          </Button>
+          <RowActions
+            variant="outline-icon"
+            onEdit={(e) => { e.stopPropagation(); setEditTarget(row.original); }}
+            onDelete={(e) => { e.stopPropagation(); setDeleteTarget(row.original); }}
+            editLabel={`Edit ${row.original.name}`}
+            deleteLabel={`Delete ${row.original.name}`}
+          />
         </div>
       ),
     },
@@ -194,9 +167,9 @@ export default function CompaniesPage() {
       slug: formData.slug,
       description: formData.description || undefined,
     };
-    await createMutation.mutateAsync({ 
-      data: payload, 
-      parentId: formData.parent_id 
+    await createMutation.mutateAsync({
+      data: payload,
+      parentId: formData.parent_id
     });
     setCreateOpen(false);
     setCreateSubParent(null);
@@ -220,11 +193,11 @@ export default function CompaniesPage() {
   }
 
   return (
-    <div className="px-6 py-8">
+    <ScaffoldContainer>
       <PageHeader
         title="Companies"
         subtitle="Manage all organizations and their hierarchical relationships."
-        action={
+        primaryActions={
           <Button
             onClick={() => setCreateOpen(true)}
             className="h-9 px-4 gap-2"
@@ -235,7 +208,7 @@ export default function CompaniesPage() {
         }
       />
 
-      <div className="mb-6 flex items-center gap-1 rounded-md border border-border bg-surface-200 p-0.5 w-fit">
+      <div className="mt-2 flex items-center gap-1 rounded-md border border-border bg-surface-200 p-0.5 w-fit">
         <button
           type="button"
           onClick={() => setView('list')}
@@ -267,22 +240,17 @@ export default function CompaniesPage() {
       </div>
 
       {view === 'list' ? (
-        <>
-          <div className="mb-6 max-w-sm">
-            <SearchInput
-              value={search}
-              onChange={(v) => {
-                setSearch(v);
-                setPage(0);
-              }}
-              placeholder="Search companies…"
-              ariaLabel="Search companies"
-            />
-          </div>
+        <ScaffoldFilterAndContent className="mt-6">
+          <ScaffoldActionsContainer>
+            <div className="w-full max-w-sm">
+              <SearchInput {...searchProps} placeholder="Search companies…" ariaLabel="Search companies" />
+            </div>
+            <ScaffoldActionsGroup />
+          </ScaffoldActionsContainer>
 
           {isError ? (
             <ErrorState title="Failed to load companies" onRetry={() => refetch()} />
-          ) : items.length === 0 && !isLoading ? (
+          ) : isEmpty(items, isLoading) ? (
             <EmptyState
               icon={Building2}
               title={search ? "No companies match your search" : "No companies yet"}
@@ -311,69 +279,64 @@ export default function CompaniesPage() {
               emptyMessage="No companies match your search."
             />
           )}
-        </>
+        </ScaffoldFilterAndContent>
       ) : (
-        <CompanyHierarchy />
+        <div className="mt-6">
+          <CompanyHierarchy />
+        </div>
       )}
 
       {/* Main Creation Dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Create Company</DialogTitle>
-          </DialogHeader>
-          <CompanyForm
-            onSubmit={handleCreate}
-            isPending={createMutation.isPending}
-            onCancel={() => setCreateOpen(false)}
-            submitLabel="Create Company"
-            parentCompanies={parentOptions}
-          />
-        </DialogContent>
-      </Dialog>
+      <FormDialog open={createOpen} onOpenChange={setCreateOpen} title="Create Company">
+        <CompanyForm
+          onSubmit={handleCreate}
+          isPending={createMutation.isPending}
+          onCancel={() => setCreateOpen(false)}
+          submitLabel="Create Company"
+          parentCompanies={parentOptions}
+        />
+      </FormDialog>
 
       {/* Direct Subsidiary Creation Dialog */}
-      <Dialog open={!!createSubParent} onOpenChange={(open) => !open && setCreateSubParent(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Add Subsidiary to {createSubParent?.name}</DialogTitle>
-          </DialogHeader>
+      <FormDialog
+        open={!!createSubParent}
+        onOpenChange={(open) => !open && setCreateSubParent(null)}
+        title={`Add Subsidiary to ${createSubParent?.name ?? ''}`}
+      >
+        <CompanyForm
+          initial={{
+            parent_id: createSubParent?.id,
+          }}
+          onSubmit={handleCreate}
+          isPending={createMutation.isPending}
+          onCancel={() => setCreateSubParent(null)}
+          submitLabel="Create Subsidiary"
+          parentCompanies={parentOptions}
+        />
+      </FormDialog>
+
+      <FormDialog
+        open={!!editTarget}
+        onOpenChange={(open) => !open && setEditTarget(null)}
+        title="Edit Company"
+      >
+        {editTarget && (
           <CompanyForm
             initial={{
-              parent_id: createSubParent?.id,
+              name: editTarget.name,
+              slug: editTarget.slug,
+              description: editTarget.description ?? '',
+              status: editTarget.status as 'active' | 'inactive' | 'suspended',
+              parent_id: editTarget.parent_id ?? '',
             }}
-            onSubmit={handleCreate}
-            isPending={createMutation.isPending}
-            onCancel={() => setCreateSubParent(null)}
-            submitLabel="Create Subsidiary"
-            parentCompanies={parentOptions}
+            onSubmit={handleUpdate}
+            isPending={updateMutation.isPending}
+            onCancel={() => setEditTarget(null)}
+            submitLabel="Save Changes"
+            parentCompanies={parentOptions.filter(p => p.id !== editTarget.id)}
           />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!editTarget} onOpenChange={(open) => !open && setEditTarget(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit Company</DialogTitle>
-          </DialogHeader>
-          {editTarget && (
-            <CompanyForm
-              initial={{
-                name: editTarget.name,
-                slug: editTarget.slug,
-                description: editTarget.description ?? '',
-                status: editTarget.status as 'active' | 'inactive' | 'suspended',
-                parent_id: editTarget.parent_id ?? '',
-              }}
-              onSubmit={handleUpdate}
-              isPending={updateMutation.isPending}
-              onCancel={() => setEditTarget(null)}
-              submitLabel="Save Changes"
-              parentCompanies={parentOptions.filter(p => p.id !== editTarget.id)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+        )}
+      </FormDialog>
 
       <ConfirmDialog
         open={!!deleteTarget}
@@ -385,6 +348,6 @@ export default function CompaniesPage() {
         isLoading={deleteMutation.isPending}
         variant="destructive"
       />
-    </div>
+    </ScaffoldContainer>
   );
 }
