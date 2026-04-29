@@ -10,6 +10,7 @@ import {
   useTablePermissions,
   useBulkGrantPermissions,
 } from '@/hooks/useTableAccess';
+import { useRoles } from '@/hooks/useRoles';
 import { PageHeader } from '@/components/shared/page-header';
 import {
   ScaffoldContainer,
@@ -19,6 +20,13 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { PermissionMatrix } from '@/components/shared/permission-matrix';
 import type { ColumnPermissionRow } from '@/components/shared/permission-matrix';
 import { SearchInput } from '@/components/shared/search-input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/shared/skeleton';
 import type { ManagedTable, ColumnPermission, MaskPattern, ColumnPermissionGrant } from '@/types';
@@ -131,12 +139,14 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
 
 interface PermissionsPanelProps {
   table: ManagedTable;
+  roleId: string;
 }
 
-function PermissionsPanel({ table }: PermissionsPanelProps) {
+function PermissionsPanel({ table, roleId }: PermissionsPanelProps) {
   const { data: permissionsData, isLoading } = useTablePermissions(
     table.table_name,
     table.schema_name,
+    roleId,
   );
 
   const bulkGrant = useBulkGrantPermissions(table.table_name, table.schema_name);
@@ -146,7 +156,8 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
     { permission: ColumnPermission; maskPattern?: MaskPattern | null }
   >;
 
-  const grants: ColumnPermissionGrant[] = Array.isArray(permissionsData) ? permissionsData : [];
+  const allGrants: ColumnPermissionGrant[] = Array.isArray(permissionsData) ? permissionsData : [];
+  const grants = allGrants.filter((g) => g.grantee_id === roleId);
 
   const initialPermissions = useMemo<PermissionMap>(() => {
     const map: PermissionMap = {};
@@ -159,7 +170,7 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
     return map;
   // grants reference changes when permissionsData changes; stringify is not needed
   // because TanStack Query returns a stable reference on cache hit
-  }, [grants]);
+  }, [grants]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSave(rows: ColumnPermissionRow[]) {
     try {
@@ -167,7 +178,7 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
         grants: rows.map((row) => ({
           column_name: row.columnName,
           grantee_type: 'role' as const,
-          grantee_id: 'default',
+          grantee_id: roleId,
           permission: row.permission,
           ...(row.maskPattern ? { mask_pattern: row.maskPattern } : {}),
         })),
@@ -235,20 +246,29 @@ function PermissionsPanel({ table }: PermissionsPanelProps) {
 export default function TableAccessPage() {
   const companyId = useCurrentCompanyId();
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
 
   const { data, isLoading } = useManagedTables(
     companyId ? { company_id: companyId, page_size: 500 } : undefined,
   );
+  const { data: rolesData, isLoading: rolesLoading } = useRoles({ page_size: 100 });
 
   const tables: ManagedTable[] = data?.items ?? [];
+  const roles = rolesData?.items ?? [];
   const selectedTable = tables.find((t) => t.table_name === selectedTableName) ?? null;
 
-  // Auto-select first table once data arrives — must be in useEffect, not render.
   useEffect(() => {
     if (!selectedTableName && tables.length > 0) {
       setSelectedTableName(tables[0].table_name);
     }
   }, [tables, selectedTableName]);
+
+  useEffect(() => {
+    if (!selectedRoleId && roles.length > 0) {
+      const defaultRole = roles.find((r) => r.is_default) ?? roles[0];
+      setSelectedRoleId(defaultRole.id);
+    }
+  }, [roles, selectedRoleId]);
 
   return (
     <ScaffoldContainer size="large">
@@ -258,6 +278,34 @@ export default function TableAccessPage() {
       />
 
       <ScaffoldFilterAndContent>
+        {/* Role selector */}
+        <div className="mb-5 flex items-center gap-3">
+          <span className="font-sans text-button text-muted">Role</span>
+          {rolesLoading ? (
+            <Skeleton className="h-8 w-48" rounded="lg" />
+          ) : (
+            <Select
+              value={selectedRoleId ?? ''}
+              onValueChange={setSelectedRoleId}
+              disabled={roles.length === 0}
+            >
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Select a role…" />
+              </SelectTrigger>
+              <SelectContent>
+                {roles.map((role) => (
+                  <SelectItem key={role.id} value={role.id} label={role.name}>
+                    <span>{role.name}</span>
+                    {role.is_default && (
+                      <span className="ml-2 font-sans text-caption text-muted">default</span>
+                    )}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+
         {isLoading && (
           <div className="flex gap-4">
             <Skeleton className="h-64 w-56 shrink-0" rounded="xl" />
@@ -285,8 +333,12 @@ export default function TableAccessPage() {
               onSelect={setSelectedTableName}
             />
 
-            {selectedTable ? (
-              <PermissionsPanel key={selectedTable.table_name} table={selectedTable} />
+            {selectedTable && selectedRoleId ? (
+              <PermissionsPanel
+                key={`${selectedTable.table_name}-${selectedRoleId}`}
+                table={selectedTable}
+                roleId={selectedRoleId}
+              />
             ) : (
               <div className="flex flex-1 items-center justify-center py-16">
                 <p className="font-sans text-button text-muted">

@@ -4,7 +4,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface RowActionsProps {
-  onEdit: (e: React.MouseEvent) => void;
+  onEdit?: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
   editLabel?: string;
   deleteLabel?: string;
@@ -25,16 +25,18 @@ export function RowActions({
   if (variant === 'outline-icon') {
     return (
       <div className="flex items-center justify-end gap-2">
-        <Button
-          variant="outline"
-          size="icon-sm"
-          onClick={onEdit}
-          disabled={disableEdit}
-          aria-label={editLabel ?? 'Edit'}
-          className="h-8 w-8"
-        >
-          <Pencil aria-hidden size={14} strokeWidth={1.75} />
-        </Button>
+        {onEdit && (
+          <Button
+            variant="outline"
+            size="icon-sm"
+            onClick={onEdit}
+            disabled={disableEdit}
+            aria-label={editLabel ?? 'Edit'}
+            className="h-8 w-8"
+          >
+            <Pencil aria-hidden size={14} strokeWidth={1.75} />
+          </Button>
+        )}
         <Button
           variant="outline"
           size="icon-sm"
@@ -51,15 +53,17 @@ export function RowActions({
 
   return (
     <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        onClick={onEdit}
-        disabled={disableEdit}
-        aria-label={editLabel ?? 'Edit'}
-      >
-        <Pencil aria-hidden size={13} strokeWidth={1.75} />
-      </Button>
+      {onEdit && (
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={onEdit}
+          disabled={disableEdit}
+          aria-label={editLabel ?? 'Edit'}
+        >
+          <Pencil aria-hidden size={13} strokeWidth={1.75} />
+        </Button>
+      )}
       <Button
         variant="ghost"
         size="icon-sm"

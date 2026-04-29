@@ -54,11 +54,12 @@ export async function getManagedTable(tableName: string, schemaName = 'public'):
  */
 export async function getTablePermissions(
   tableName: string,
-  schemaName = 'public'
+  schemaName = 'public',
+  granteeId?: string,
 ): Promise<ColumnPermissionGrant[]> {
   const response = await api.get<ColumnPermissionGrant[]>(
     `/data/tables/${tableName}/permissions`,
-    { params: { schema_name: schemaName } }
+    { params: { schema_name: schemaName, ...(granteeId ? { grantee_id: granteeId } : {}) } }
   );
   return response.data;
 }

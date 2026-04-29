@@ -1,28 +1,241 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { AlertCircle, Download, Loader2 } from 'lucide-react';
+
 import { useReportGenerationDetail } from '@/hooks/useReportGenerations';
 import { useReportDownload } from '@/hooks/useReportDownload';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
+
 import { MarkdownRenderer } from '@/components/shared/markdown-renderer';
 import { SectionChart } from '@/components/features/reports/section-chart';
-import { REPORT_STATUS_VARIANTS, type ReportGenerationStatus } from '@/types';
-import { Skeleton } from '@/components/shared/skeleton';
-import { ChevronLeft, Download, AlertCircle, Clock } from 'lucide-react';
+import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
+import { ErrorState } from '@/components/shared/error-state';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { formatDate } from '@/lib/format-date';
-import { cn } from '@/lib/utils';
+import { StatusBadge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/page-header';
 import { ScaffoldContainer } from '@/components/shared/scaffold';
+import { formatDateTime } from '@/lib/format-date';
+import { cn } from '@/lib/utils';
+import type { GeneratedReportSection } from '@/types/report';
+
+const ROW_LIMIT = 20;
+
+function formatIndex(index: number): string {
+  return String(index + 1).padStart(2, '0');
+}
+
+function formatCell(value: unknown): {
+  display: string;
+  isNumeric: boolean;
+  isEmpty: boolean;
+} {
+  if (value === null || value === undefined || value === '') {
+    return { display: '—', isNumeric: false, isEmpty: true };
+  }
+  if (typeof value === 'boolean') {
+    return { display: value ? 'Yes' : 'No', isNumeric: false, isEmpty: false };
+  }
+  if (typeof value === 'number') {
+    return { display: String(value), isNumeric: true, isEmpty: false };
+  }
+  const str = String(value);
+  const isNumeric = str.trim() !== '' && !isNaN(Number(str));
+  return { display: str, isNumeric, isEmpty: false };
+}
+
+interface SectionBlockProps {
+  section: GeneratedReportSection;
+  index: number;
+}
+
+function SectionBlock({ section, index }: SectionBlockProps) {
+  const hasData = !!section.query_result?.row_count;
+  const hasChart = hasData && !!section.chart_recommendation;
+  const [tableOpen, setTableOpen] = useState(true);
+
+  const rows = section.query_result?.rows ?? [];
+  const columns = section.query_result?.columns ?? [];
+  const rowCount = section.query_result?.row_count ?? 0;
+  const truncated = section.query_result?.truncated;
+
+  const numericColumns = new Set<number>();
+  if (hasData && rows.length > 0) {
+    const firstRow = rows[0];
+    const cells = Array.isArray(firstRow)
+      ? firstRow
+      : columns.map((col) => (firstRow as Record<string, unknown>)[col]);
+    cells.forEach((cell, i) => {
+      if (formatCell(cell).isNumeric) numericColumns.add(i);
+    });
+  }
+
+  const visibleRows = (rows as unknown[]).slice(0, ROW_LIMIT);
+
+  return (
+    <section className="border-t border-border pt-8">
+      <div className="flex items-baseline gap-3">
+        <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-subtle">
+          {formatIndex(index)}
+        </span>
+        <h2 className="font-sans text-[18px] font-semibold tracking-[-0.025em] text-foreground">
+          {section.title}
+        </h2>
+      </div>
+
+      <div className="mt-5 max-w-[68ch]">
+        {section.status === 'pending' || section.status === 'running' ? (
+          <p className="flex items-center gap-2 font-sans text-button text-muted">
+            <Loader2 aria-hidden className="size-3.5 animate-spin" />
+            Generating analysis…
+          </p>
+        ) : section.status === 'failed' ? (
+          <p className="flex items-start gap-2 font-sans text-button text-error">
+            <AlertCircle aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+            <span>{section.error_message || 'Section generation failed.'}</span>
+          </p>
+        ) : section.analysis_text ? (
+          <MarkdownRenderer content={section.analysis_text} />
+        ) : (
+          <p className="font-sans text-button italic text-muted">
+            No content generated
+          </p>
+        )}
+      </div>
+
+      {hasData ? (
+        <div className="mt-8 space-y-6">
+          {hasChart && section.chart_recommendation ? (
+            <div>
+              <p className="font-sans text-[14px] font-medium text-foreground">
+                {section.chart_recommendation.title}
+              </p>
+              <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.06em] text-subtle">
+                {section.chart_recommendation.chart_type}
+                <span className="mx-1.5 text-subtle/60">·</span>
+                {rowCount} {rowCount === 1 ? 'point' : 'points'}
+              </p>
+              <div className="mt-4">
+                <SectionChart section={section} />
+              </div>
+            </div>
+          ) : null}
+
+          <div>
+            {hasChart ? (
+              <button
+                type="button"
+                onClick={() => setTableOpen((v) => !v)}
+                aria-expanded={tableOpen}
+                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.06em] text-muted transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+              >
+                Query Result
+                <span className="text-subtle">·</span>
+                <span>{rowCount} rows</span>
+                <span
+                  aria-hidden
+                  className={cn(
+                    'ml-1 inline-block transition-transform duration-200',
+                    tableOpen ? 'rotate-90' : 'rotate-0',
+                  )}
+                >
+                  ›
+                </span>
+              </button>
+            ) : null}
+
+            {tableOpen ? (
+              <div className={cn(hasChart && 'mt-3')}>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-caption">
+                    <thead>
+                      <tr className="border-b border-border bg-surface-200">
+                        {columns.map((col, i) => (
+                          <th
+                            key={col}
+                            className={cn(
+                              'px-4 py-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-subtle',
+                              numericColumns.has(i) ? 'text-right' : 'text-left',
+                            )}
+                          >
+                            {col}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visibleRows.map((row, i) => {
+                        const cells = Array.isArray(row)
+                          ? row
+                          : columns.map(
+                              (col) => (row as Record<string, unknown>)[col],
+                            );
+                        return (
+                          <tr
+                            key={i}
+                            className={cn(
+                              'border-b border-border/50 last:border-0',
+                              i % 2 === 0 ? 'bg-background' : 'bg-surface-100',
+                            )}
+                          >
+                            {cells.map((cell, colIdx) => {
+                              const formatted = formatCell(cell);
+                              return (
+                                <td
+                                  key={colIdx}
+                                  className={cn(
+                                    'px-4 py-2.5 font-mono',
+                                    numericColumns.has(colIdx)
+                                      ? 'text-right tabular-nums'
+                                      : 'text-left',
+                                    formatted.isEmpty
+                                      ? 'text-subtle'
+                                      : 'text-foreground',
+                                  )}
+                                >
+                                  {formatted.display}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                {rowCount > ROW_LIMIT || truncated ? (
+                  <div className="border-t border-border bg-surface-100 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.06em] text-subtle">
+                    Showing {visibleRows.length} of {rowCount} rows
+                    {truncated ? ' (truncated)' : ''}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
 
 export default function ReportViewerPage() {
   const { reportId } = useParams<{ reportId: string }>();
   const router = useRouter();
   const companyId = useCurrentCompanyId();
 
-  const { data: report, isLoading } = useReportGenerationDetail(reportId, companyId);
+  const { data: report, isLoading } = useReportGenerationDetail(
+    reportId,
+    companyId,
+  );
   const { download, isDownloading, error: downloadError } = useReportDownload();
+
+  useEffect(() => {
+    if (downloadError) {
+      toast.error(downloadError);
+    }
+  }, [downloadError]);
 
   const handleDownload = () => {
     void download(reportId, companyId, `report-${reportId.slice(0, 8)}.pdf`);
@@ -31,13 +244,28 @@ export default function ReportViewerPage() {
   if (isLoading) {
     return (
       <ScaffoldContainer size="small">
-        <div className="py-6">
-          <Skeleton className="mb-4 h-4 w-40" />
-          <Skeleton className="mb-8 h-10 w-2/3" />
-          <Skeleton className="h-32" rounded="lg" />
-          <div className="mt-8 space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-24" rounded="lg" />
+        <div className="flex flex-col gap-4 py-6">
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-8 w-72" />
+          <Skeleton className="h-4 w-96" />
+
+          <div className="mt-8 max-w-[68ch] border-l-[3px] border-accent/30 pl-5 py-1">
+            <Skeleton className="mb-3 h-3 w-32" />
+            <SkeletonText lines={3} />
+          </div>
+
+          <div className="mt-8 space-y-10">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="border-t border-border pt-8">
+                <div className="flex items-baseline gap-3">
+                  <Skeleton className="h-3 w-6" />
+                  <Skeleton className="h-5 w-64" />
+                </div>
+                <div className="mt-5 max-w-[68ch]">
+                  <SkeletonText lines={3} />
+                </div>
+                <Skeleton className="mt-8 h-48 w-full" rounded="lg" />
+              </div>
             ))}
           </div>
         </div>
@@ -48,53 +276,57 @@ export default function ReportViewerPage() {
   if (!report) {
     return (
       <ScaffoldContainer size="small">
-        <PageHeader
-          breadcrumbs={[
-            { label: 'Reports', href: '/reports/history' },
-            { label: 'Not found' },
-          ]}
-          title="Report not found"
-        />
-        <div className="mt-6 flex flex-col items-center rounded-card border border-border bg-surface-100 px-6 py-16 text-center">
-          <AlertCircle aria-hidden className="h-10 w-10 text-muted" />
-          <p className="mt-4 max-w-[42ch] font-sans text-button text-muted">
-            This report may have been deleted, or you may not have access to it.
-          </p>
-          <Button
-            variant="outline"
-            onClick={() => router.push('/reports/history')}
-            className="mt-6 gap-1.5"
-          >
-            <ChevronLeft aria-hidden size={14} strokeWidth={2} />
-            Back to history
-          </Button>
+        <div className="py-10">
+          <ErrorState
+            title="Report not found"
+            description="This report may have been deleted, or you may not have access to it."
+            onRetry={() => router.push('/reports/ai-generate')}
+          />
         </div>
       </ScaffoldContainer>
     );
   }
 
+  const sortedSections = [...report.sections].sort(
+    (a, b) => a.section_index - b.section_index,
+  );
+  const failedCount = sortedSections.filter((s) => s.status === 'failed').length;
+  const totalCount = sortedSections.length;
+  const showPartialFailure =
+    report.status !== 'failed' && failedCount > 0 && totalCount > 0;
+  const showWholeFailure = report.status === 'failed' && !!report.error_message;
+
+  const durationLabel = report.duration_ms
+    ? `${(report.duration_ms / 1000).toFixed(1)}s`
+    : null;
+
   return (
     <ScaffoldContainer size="small">
       <PageHeader
         breadcrumbs={[
-          { label: 'Reports', href: '/reports/history' },
+          { label: 'Reports', href: '/reports/ai-generate' },
           { label: report.title ?? 'Report' },
         ]}
         title={report.title || 'Untitled Report'}
         subtitle={
-          <span className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 font-mono text-caption text-muted">
-              <Clock aria-hidden size={14} strokeWidth={1.75} />
-              {formatDate(report.created_at)}
+          <span className="flex flex-wrap items-center gap-2">
+            <span className="font-sans text-button text-muted">
+              {formatDateTime(report.created_at)}
             </span>
-            {report.duration_ms && (
-              <span className="font-mono text-caption text-muted">
-                · {(report.duration_ms / 1000).toFixed(1)}s
-              </span>
-            )}
-            <Badge variant={REPORT_STATUS_VARIANTS[report.status as ReportGenerationStatus] ?? 'outline'}>
-              {report.status}
-            </Badge>
+            {durationLabel ? (
+              <>
+                <span className="text-subtle">·</span>
+                <span className="font-mono text-mono-sm text-muted">
+                  {durationLabel}
+                </span>
+              </>
+            ) : null}
+            <span className="text-subtle">·</span>
+            <span className="font-mono text-mono-sm text-muted">
+              {totalCount} {totalCount === 1 ? 'section' : 'sections'}
+            </span>
+            <span className="text-subtle">·</span>
+            <StatusBadge status={report.status} dot />
           </span>
         }
         primaryActions={
@@ -104,6 +336,11 @@ export default function ReportViewerPage() {
               size="sm"
               onClick={handleDownload}
               disabled={isDownloading}
+              aria-label={
+                isDownloading
+                  ? 'Downloading report PDF'
+                  : 'Download report as PDF'
+              }
               className="h-8 gap-2"
             >
               <Download aria-hidden size={14} strokeWidth={1.75} />
@@ -113,145 +350,60 @@ export default function ReportViewerPage() {
         }
       />
 
-      <div className="mt-6 max-w-[760px]">
-        {/* Download error */}
-        {downloadError && (
+      <div className="mt-2">
+        {showWholeFailure ? (
           <div
             role="alert"
-            className="mb-6 rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error"
+            className="mb-8 flex items-start gap-3 rounded-lg border border-error-border bg-error-bg px-4 py-3"
           >
-            {downloadError}
+            <AlertCircle
+              aria-hidden
+              className="mt-0.5 size-4 shrink-0 text-error"
+            />
+            <div>
+              <p className="font-sans text-button font-medium text-error">
+                Report generation failed
+              </p>
+              <p className="mt-1 font-sans text-button leading-relaxed text-error">
+                {report.error_message}
+              </p>
+            </div>
           </div>
-        )}
+        ) : null}
 
-        {/* Executive summary */}
-        {report.executive_summary && (
-          <div className="mb-12 rounded-card border border-border bg-surface-100 p-8">
-            <p className="mb-4 font-mono text-caption font-medium uppercase tracking-wider text-muted">
+        {showPartialFailure ? (
+          <div
+            role="alert"
+            className="mb-6 flex items-start gap-3 rounded-lg border border-warning-border bg-warning-bg px-4 py-3"
+          >
+            <AlertCircle
+              aria-hidden
+              className="mt-0.5 size-4 shrink-0 text-warning"
+            />
+            <p className="font-sans text-button text-foreground">
+              {failedCount} of {totalCount} sections failed to generate.
+            </p>
+          </div>
+        ) : null}
+
+        {report.executive_summary ? (
+          <div className="mb-12 max-w-[68ch] border-l-[3px] border-accent/30 py-1 pl-5">
+            <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-subtle">
               Executive Summary
             </p>
-            <p className="font-sans text-[15px] leading-relaxed text-foreground">
+            <p className="font-serif text-[16px] leading-relaxed text-foreground">
               {report.executive_summary}
             </p>
           </div>
-        )}
+        ) : null}
 
-        {/* Report sections */}
-        {report.sections.length > 0 && (
-          <div className="space-y-12">
-            {[...report.sections]
-              .sort((a, b) => a.section_index - b.section_index)
-              .map((section) => (
-                <section key={section.id}>
-                  <h2 className="mb-5 font-display text-[22px] font-semibold tracking-[-0.2px] text-foreground">
-                    {section.title}
-                  </h2>
-
-                  {section.analysis_text ? (
-                    <MarkdownRenderer content={section.analysis_text} />
-                  ) : section.status === 'failed' ? (
-                    <p className="font-sans text-button text-error italic">
-                      {section.error_message || 'Section generation failed.'}
-                    </p>
-                  ) : (
-                    <p className="font-sans text-button text-muted italic">
-                      No content generated for this section.
-                    </p>
-                  )}
-
-                  {/* Chart — rendered when chart_recommendation + query_result both present */}
-                  {section.chart_recommendation &&
-                    section.query_result &&
-                    section.query_result.row_count > 0 && (
-                      <div className="mt-6">
-                        <p className="mb-3 font-mono text-caption font-medium uppercase tracking-wider text-muted">
-                          {section.chart_recommendation.title}
-                        </p>
-                        <SectionChart section={section} />
-                      </div>
-                    )}
-
-                  {/* Query result table */}
-                  {section.query_result && section.query_result.row_count > 0 && (
-                    <div className="mt-6 overflow-hidden rounded-card border border-border bg-background">
-                      <div className="flex items-center justify-between border-b border-border bg-surface-100 px-4 py-2">
-                        <span className="font-mono text-caption font-medium text-muted uppercase tracking-wider">
-                          Query Result
-                        </span>
-                        <span className="font-mono text-caption text-muted">
-                          {section.query_result.row_count} rows
-                          {section.query_result.truncated && ' (truncated)'}
-                        </span>
-                      </div>
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-caption border-collapse">
-                          <thead>
-                            <tr className="border-b border-border bg-surface-50">
-                              {section.query_result.columns.map((col) => (
-                                <th
-                                  key={col}
-                                  className="px-4 py-2.5 text-left font-mono font-medium text-muted uppercase tracking-wider"
-                                >
-                                  {col}
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {(section.query_result.rows as unknown[]).slice(0, 20).map((row, i) => {
-                              const cells = Array.isArray(row)
-                                ? row
-                                : section.query_result!.columns.map(
-                                    (col) => (row as Record<string, unknown>)[col],
-                                  );
-                              return (
-                                <tr
-                                  key={i}
-                                  className={cn(
-                                    "border-b border-border/50 last:border-0",
-                                    i % 2 === 0 ? "bg-background" : "bg-surface-50/30"
-                                  )}
-                                >
-                                  {cells.map((cell, colIdx) => (
-                                    <td
-                                      key={colIdx}
-                                      className="px-4 py-2.5 font-mono text-foreground"
-                                    >
-                                      {String(cell ?? '')}
-                                    </td>
-                                  ))}
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
-                </section>
-              ))}
+        {sortedSections.length > 0 ? (
+          <div className="space-y-10">
+            {sortedSections.map((section, i) => (
+              <SectionBlock key={section.id} section={section} index={i} />
+            ))}
           </div>
-        )}
-
-        {/* Error state for failed report */}
-        {report.status === 'failed' && report.error_message && (
-          <div
-            role="alert"
-            className="mt-10 rounded-card border border-error/20 bg-error/5 p-6"
-          >
-            <div className="flex items-start gap-4">
-              <AlertCircle aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-error" />
-              <div>
-                <p className="font-sans text-[15px] font-semibold text-error">
-                  Report generation failed
-                </p>
-                <p className="mt-1 font-sans text-button text-error/80 leading-relaxed">
-                  {report.error_message}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        ) : null}
       </div>
     </ScaffoldContainer>
   );

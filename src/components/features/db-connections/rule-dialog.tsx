@@ -1,14 +1,24 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { useCreateBusinessRule, useUpdateBusinessRule } from '@/hooks/useBusinessRules';
+
+import {
+  useCreateBusinessRule,
+  useUpdateBusinessRule,
+} from '@/hooks/useBusinessRules';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Field, FieldGroup, FieldLabel, FieldError } from '@/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
 import {
   Select,
   SelectContent,
@@ -17,11 +27,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from '@/components/ui/sheet';
 import type { BusinessRule } from '@/types';
 
 const ruleSchema = z.object({
@@ -33,12 +44,19 @@ const ruleSchema = z.object({
 
 type RuleFormValues = z.infer<typeof ruleSchema>;
 
+const EMPTY_DEFAULTS: RuleFormValues = {
+  name: '',
+  rule_text: '',
+  scope_type: 'global',
+  scope_value: '',
+};
+
 export interface RuleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   connectionId: string;
   companyId?: string;
-  editRule?: BusinessRule | null;
+  editingRule?: BusinessRule | null;
 }
 
 export function RuleDialog({
@@ -46,8 +64,10 @@ export function RuleDialog({
   onOpenChange,
   connectionId,
   companyId,
-  editRule,
+  editingRule,
 }: RuleDialogProps) {
+  const isEdit = !!editingRule;
+
   const createRule = useCreateBusinessRule(connectionId, companyId);
   const updateRule = useUpdateBusinessRule(connectionId, companyId);
 
@@ -59,26 +79,35 @@ export function RuleDialog({
     formState: { errors, isSubmitting },
   } = useForm<RuleFormValues>({
     resolver: zodResolver(ruleSchema),
-    defaultValues: editRule
-      ? {
-          name: editRule.name,
-          rule_text: editRule.rule_text,
-          scope_type: editRule.scope_type,
-          scope_value: editRule.scope_value ?? '',
-        }
-      : { name: '', rule_text: '', scope_type: 'global', scope_value: '' },
+    defaultValues: EMPTY_DEFAULTS,
   });
+
+  const scopeType = useWatch({ control, name: 'scope_type' });
+
+  useEffect(() => {
+    if (!open) return;
+    if (editingRule) {
+      reset({
+        name: editingRule.name,
+        rule_text: editingRule.rule_text,
+        scope_type: editingRule.scope_type,
+        scope_value: editingRule.scope_value ?? '',
+      });
+    } else {
+      reset(EMPTY_DEFAULTS);
+    }
+  }, [open, editingRule, reset]);
 
   async function onSubmit(data: RuleFormValues) {
     try {
-      if (editRule) {
-        await updateRule.mutateAsync({ ruleId: editRule.id, data });
+      if (editingRule) {
+        await updateRule.mutateAsync({ ruleId: editingRule.id, data });
         toast.success('Rule updated');
       } else {
         await createRule.mutateAsync(data);
         toast.success('Rule created');
       }
-      reset();
+      reset(EMPTY_DEFAULTS);
       onOpenChange(false);
     } catch {
       toast.error('Failed to save rule');
@@ -86,69 +115,112 @@ export function RuleDialog({
   }
 
   function handleClose() {
-    reset();
+    reset(EMPTY_DEFAULTS);
     onOpenChange(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className="w-[min(calc(100vw-2rem),32rem)] max-w-none gap-0 p-6"
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="right"
+        className="flex w-full flex-col sm:max-w-[560px]"
       >
-        <DialogHeader className="gap-1">
-          <DialogTitle className="font-sans text-title font-semibold tracking-[-0.11px] text-foreground">
-            {editRule ? 'Edit Rule' : 'Add Rule'}
-          </DialogTitle>
-        </DialogHeader>
+        <SheetHeader className="border-b border-border pb-4">
+          <SheetTitle>{isEdit ? 'Edit rule' : 'Add rule'}</SheetTitle>
+          {editingRule && (
+            <p className="font-mono text-mono-sm text-muted">
+              {editingRule.name}
+            </p>
+          )}
+        </SheetHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-4" noValidate>
-          <FieldGroup>
-            <Field data-invalid={!!errors.name}>
-              <FieldLabel htmlFor="rule-name">Name</FieldLabel>
-              <Input
-                {...register('name')}
-                id="rule-name"
-                placeholder="e.g. Exclude test data"
-                aria-invalid={!!errors.name}
-              />
-              {errors.name && <FieldError errors={[errors.name]} />}
-            </Field>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-1 flex-col gap-0 overflow-hidden"
+          noValidate
+        >
+          <div className="flex-1 overflow-y-auto px-4 py-5">
+            <FieldGroup>
+              <Field data-invalid={!!errors.name}>
+                <FieldLabel htmlFor="rule-name">Name</FieldLabel>
+                <Input
+                  {...register('name')}
+                  id="rule-name"
+                  placeholder="e.g. Exclude test data"
+                  aria-invalid={!!errors.name}
+                />
+                {errors.name && <FieldError errors={[errors.name]} />}
+              </Field>
 
-            <Controller
-              control={control}
-              name="scope_type"
-              render={({ field }) => (
-                <Field>
-                  <FieldLabel htmlFor="rule-scope">Scope</FieldLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <SelectTrigger id="rule-scope">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="global">Global</SelectItem>
-                      <SelectItem value="table">Table</SelectItem>
-                      <SelectItem value="user">User</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-              )}
-            />
+              <div className="grid grid-cols-2 gap-4">
+                <Controller
+                  control={control}
+                  name="scope_type"
+                  render={({ field }) => (
+                    <Field>
+                      <FieldLabel htmlFor="rule-scope">Scope</FieldLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger id="rule-scope">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="global">Global</SelectItem>
+                          <SelectItem value="table">Table</SelectItem>
+                          <SelectItem value="user">User</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                  )}
+                />
 
-            <Field data-invalid={!!errors.rule_text}>
-              <FieldLabel htmlFor="rule-text">Rule Text</FieldLabel>
-              <Textarea
-                {...register('rule_text')}
-                id="rule-text"
-                rows={4}
-                placeholder="Describe the business rule in plain language…"
-                aria-invalid={!!errors.rule_text}
-              />
-              {errors.rule_text && <FieldError errors={[errors.rule_text]} />}
-            </Field>
-          </FieldGroup>
+                {(scopeType === 'table' || scopeType === 'user') && (
+                  <Field data-invalid={!!errors.scope_value}>
+                    <FieldLabel htmlFor="rule-scope-value">
+                      {scopeType === 'table' ? 'Table name' : 'User ID'}
+                    </FieldLabel>
+                    <Input
+                      {...register('scope_value')}
+                      id="rule-scope-value"
+                      placeholder={
+                        scopeType === 'table' ? 'e.g. invoices' : 'User UUID'
+                      }
+                      aria-invalid={!!errors.scope_value}
+                    />
+                    {errors.scope_value && (
+                      <FieldError errors={[errors.scope_value]} />
+                    )}
+                  </Field>
+                )}
+              </div>
 
-          <div className="mt-2 flex items-center justify-end gap-2">
+              <Field data-invalid={!!errors.rule_text}>
+                <FieldLabel htmlFor="rule-text">Rule text</FieldLabel>
+                <p className="mb-1.5 font-sans text-caption text-muted">
+                  Write in plain language. You can include markdown, SQL
+                  snippets, or structured notes — the AI uses this verbatim.
+                </p>
+                <Textarea
+                  {...register('rule_text')}
+                  id="rule-text"
+                  rows={16}
+                  className="font-mono text-mono-sm resize-none"
+                  placeholder={
+                    'Describe the business rule in plain language…\n\nExample:\nWhen querying invoices, always filter by company_id = @CompanyId\nand exclude records where status = \'void\'.'
+                  }
+                  aria-invalid={!!errors.rule_text}
+                />
+                {errors.rule_text && (
+                  <FieldError errors={[errors.rule_text]} />
+                )}
+              </Field>
+            </FieldGroup>
+          </div>
+
+          <SheetFooter className="border-t border-border">
             <Button
               type="button"
               variant="outline"
@@ -158,11 +230,11 @@ export function RuleDialog({
               Cancel
             </Button>
             <Button type="submit" isLoading={isSubmitting}>
-              {editRule ? 'Update Rule' : 'Add Rule'}
+              {isEdit ? 'Save changes' : 'Add rule'}
             </Button>
-          </div>
+          </SheetFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

@@ -1,10 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { type ColumnDef } from '@tanstack/react-table';
 import { Users, UserPlus } from 'lucide-react';
-import { formatDate } from '@/lib/format-date';
 
 import {
   useUsers,
@@ -23,20 +20,16 @@ import {
 } from '@/components/shared/scaffold';
 import { SearchInput } from '@/components/shared/search-input';
 import { DataTable } from '@/components/shared/data-table';
-import { StatusBadge } from '@/components/shared/status-badge';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { FormDialog } from '@/components/shared/form-dialog';
-import { RowActions } from '@/components/shared/row-actions';
 
 import { Button } from '@/components/ui/button';
 import { InviteUserForm, type InviteFormData } from '@/components/features/users/invite-user-form';
-import { UserTypeBadge } from '@/components/features/users/user-type-badge';
-import { AvatarInitial } from '@/components/features/users/avatar-initial';
+import { getUsersColumns } from '@/components/features/users/users-columns';
 
 export default function UsersPage() {
-  const router = useRouter();
   const { search, page, queryPage, setPage, searchProps, isEmpty } = useResourceList();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<ListUser | null>(null);
@@ -50,67 +43,9 @@ export default function UsersPage() {
   const createMutation = useCreateUser();
   const deleteMutation = useDeleteUser();
 
-  const columns: ColumnDef<ListUser>[] = [
-    {
-      id: 'name',
-      header: 'Name',
-      cell: ({ row }) => {
-        const fullName = [row.original.first_name, row.original.last_name]
-          .filter(Boolean)
-          .join(' ');
-        return (
-          <Button
-            variant="link"
-            className="flex h-auto items-center gap-2.5 p-0 text-left hover:text-accent font-medium text-foreground no-underline"
-            onClick={() => router.push(`/users/${row.original.id}`)}
-          >
-            <AvatarInitial name={fullName} email={row.original.email} />
-            <span className="font-sans text-button">
-              {fullName || row.original.email}
-            </span>
-          </Button>
-        );
-      },
-    },
-    {
-      id: 'email',
-      header: 'Email',
-      cell: ({ row }) => (
-        <span className="font-sans text-button text-muted">{row.original.email}</span>
-      ),
-    },
-    {
-      id: 'type',
-      header: 'Type',
-      cell: ({ row }) => <UserTypeBadge type={row.original.user_type} />,
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      cell: ({ row }) => <StatusBadge status={row.original.status} />,
-    },
-    {
-      id: 'created_at',
-      header: 'Created',
-      cell: ({ row }) => (
-        <span className="font-sans text-button text-muted">
-          {formatDate(row.original.created_at)}
-        </span>
-      ),
-    },
-    {
-      id: 'actions',
-      header: '',
-      cell: ({ row }) => (
-        <RowActions
-          onEdit={(e) => { e.stopPropagation(); router.push(`/users/${row.original.id}`); }}
-          onDelete={(e) => { e.stopPropagation(); setDeleteTarget(row.original); }}
-          editLabel={`Edit ${row.original.email}`}
-          deleteLabel={`Delete ${row.original.email}`}
-        />
-      ),
-    },
-  ];
+  const columns = getUsersColumns({
+    onDelete: (user) => setDeleteTarget(user),
+  });
 
   const items = data?.items ?? [];
   const totalPages = data?.total_pages ?? 1;
@@ -143,7 +78,7 @@ export default function UsersPage() {
             onClick={() => setInviteOpen(true)}
             className="h-9 px-4"
           >
-            <UserPlus aria-hidden size={15} strokeWidth={2} />
+            <UserPlus aria-hidden size={16} strokeWidth={1.5} />
             Invite User
           </Button>
         }
@@ -168,7 +103,7 @@ export default function UsersPage() {
                 onClick={() => setInviteOpen(true)}
                 className="h-9 px-4"
               >
-                <UserPlus aria-hidden size={15} strokeWidth={2} />
+                <UserPlus aria-hidden size={16} strokeWidth={1.5} />
                 Invite User
               </Button>
             ) : undefined}

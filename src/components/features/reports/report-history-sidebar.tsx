@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, Plus } from 'lucide-react';
+import { ChevronRight, FileText, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/shared/skeleton';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useReportGenerations } from '@/hooks/useReportGenerations';
 import type { GeneratedReport } from '@/types';
+
+const SIDEBAR_DISPLAY_LIMIT = 10;
 
 function groupByDate(reports: GeneratedReport[]) {
   const today: GeneratedReport[] = [];
@@ -33,7 +35,13 @@ export function ReportHistorySidebar() {
   const pathname = usePathname();
   const companyId = useCurrentCompanyId();
   const { data, isLoading } = useReportGenerations(companyId);
-  const reports = data?.generations ?? [];
+  const allReports = data?.generations ?? [];
+  const totalCount = data?.total ?? allReports.length;
+  // Cap sidebar to 10 most-recent. The fetch buffers 20 for snappier nav,
+  // but the sidebar is a quick-access surface — full browsing lives in
+  // /reports/history.
+  const reports = allReports.slice(0, SIDEBAR_DISPLAY_LIMIT);
+  const hasMore = totalCount > reports.length;
   const { today, previous7Days, older } = groupByDate(reports);
 
   const renderGroup = (title: string, group: GeneratedReport[]) => {
@@ -116,6 +124,26 @@ export function ReportHistorySidebar() {
             {renderGroup('Today', today)}
             {renderGroup('Previous 7 Days', previous7Days)}
             {renderGroup('Older', older)}
+
+            {hasMore && (
+              <div className="px-4 pt-2">
+                <Link
+                  href="/reports/history"
+                  className={cn(
+                    'group inline-flex items-center gap-1 font-sans text-caption text-muted',
+                    'transition-colors hover:text-foreground focus-visible:text-foreground',
+                    'focus-visible:outline-none',
+                  )}
+                >
+                  <span>View all reports</span>
+                  <ChevronRight
+                    aria-hidden
+                    className="h-3 w-3 transition-transform duration-150 group-hover:translate-x-0.5"
+                    strokeWidth={1.75}
+                  />
+                </Link>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -34,10 +34,14 @@ export function useManagedTable(tableName: string | undefined, schemaName = 'pub
 /**
  * Hook for fetching table permissions
  */
-export function useTablePermissions(tableName: string | undefined, schemaName = 'public') {
+export function useTablePermissions(
+  tableName: string | undefined,
+  schemaName = 'public',
+  granteeId?: string,
+) {
   return useQuery({
-    queryKey: [QUERY_KEY, tableName, schemaName, 'permissions'],
-    queryFn: () => tableAccessApi.getTablePermissions(tableName!, schemaName),
+    queryKey: [QUERY_KEY, tableName, schemaName, 'permissions', granteeId],
+    queryFn: () => tableAccessApi.getTablePermissions(tableName!, schemaName, granteeId),
     enabled: !!tableName,
   });
 }

@@ -34,7 +34,7 @@ const badgeVariants = cva(
           "border-thinking/25 bg-thinking/12 text-thinking",
 
         // Legacy aliases — map to semantic variants so existing consumers
-        // (reports/history, reports/[reportId]) keep working without churn.
+        // (reports/[reportId], etc.) keep working without churn.
         // `secondary` → info (running/pending state in reports table)
         // `destructive` → error
         secondary:

@@ -45,8 +45,6 @@ export type { StreamingTextBlockProps } from "./streaming-text-block";
 export { MarkdownRenderer } from "./markdown-renderer";
 export type { MarkdownRendererProps } from "./markdown-renderer";
 
-export { ConnectionCard } from "./connection-card";
-
 export { PermissionMatrix } from "./permission-matrix";
 
 export { FormDialog } from "./form-dialog";

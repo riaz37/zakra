@@ -1,11 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ChevronLeft } from 'lucide-react';
 import { useCreateReportTemplate } from '@/hooks/useReportTemplates';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useDbConnections } from '@/hooks/useDbConnections';
-import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/shared/page-header';
+import { ScaffoldContainer } from '@/components/shared/scaffold';
 import { ReportTemplateForm, type ReportTemplateFormData } from '@/components/features/reports/report-template-form';
 
 export default function NewTemplatePage() {
@@ -32,21 +32,15 @@ export default function NewTemplatePage() {
   };
 
   return (
-    <div className="mx-auto max-w-[680px] px-6 py-8">
-      {/* Back nav */}
-      <Button
-        variant="link"
-        onClick={() => router.back()}
-        className="mb-6 h-auto p-0 font-sans text-button text-muted hover:text-foreground no-underline"
-      >
-        <ChevronLeft aria-hidden size={14} strokeWidth={1.75} />
-        Back to Templates
-      </Button>
-
-      {/* Page heading */}
-      <h1 className="mb-8 font-sans text-[26px] font-semibold tracking-[-0.52px] text-foreground">
-        New Template
-      </h1>
+    <ScaffoldContainer size="large">
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Templates', href: '/reports/templates' },
+          { label: 'New Template' },
+        ]}
+        title="New Template"
+        subtitle="Define the structure and sections for your AI-generated report."
+      />
 
       <ReportTemplateForm
         onSubmit={handleSubmit}
@@ -54,6 +48,6 @@ export default function NewTemplatePage() {
         onCancel={() => router.push('/reports/templates')}
         connections={connections}
       />
-    </div>
+    </ScaffoldContainer>
   );
 }

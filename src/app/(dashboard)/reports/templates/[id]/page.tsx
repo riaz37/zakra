@@ -7,14 +7,7 @@ import { useDbConnections } from '@/hooks/useDbConnections';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/shared/skeleton';
 import { PageHeader } from '@/components/shared/page-header';
-import {
-  ScaffoldContainer,
-  ScaffoldSection,
-  ScaffoldSectionContent,
-  ScaffoldSectionDetail,
-  ScaffoldSectionTitle,
-  ScaffoldSectionDescription,
-} from '@/components/shared/scaffold';
+import { ScaffoldContainer } from '@/components/shared/scaffold';
 import { ReportTemplateForm, type ReportTemplateFormData } from '@/components/features/reports/report-template-form';
 
 export default function EditTemplatePage() {
@@ -75,10 +68,9 @@ export default function EditTemplatePage() {
   }
 
   return (
-    <ScaffoldContainer>
+    <ScaffoldContainer size="large">
       <PageHeader
         breadcrumbs={[
-          { label: 'Reports', href: '/reports/templates' },
           { label: 'Templates', href: '/reports/templates' },
           { label: template.name },
         ]}
@@ -86,31 +78,20 @@ export default function EditTemplatePage() {
         subtitle="Edit template details and sections."
       />
 
-      <ScaffoldSection>
-        <ScaffoldSectionDetail>
-          <ScaffoldSectionTitle>Template</ScaffoldSectionTitle>
-          <ScaffoldSectionDescription>
-            Configure the report scope, source connection, and section structure.
-          </ScaffoldSectionDescription>
-        </ScaffoldSectionDetail>
-
-        <ScaffoldSectionContent>
-          <ReportTemplateForm
-            initial={{
-              name: template.name,
-              description: template.description ?? '',
-              connection_id: template.connection_id,
-              report_type: template.report_type,
-              sections: template.sections,
-            }}
-            onSubmit={handleSubmit}
-            isPending={updateTemplate.isPending}
-            onCancel={() => router.push('/reports/templates')}
-            connections={connections}
-            submitLabel="Save changes"
-          />
-        </ScaffoldSectionContent>
-      </ScaffoldSection>
+      <ReportTemplateForm
+        initial={{
+          name: template.name,
+          description: template.description ?? '',
+          connection_id: template.connection_id,
+          report_type: template.report_type,
+          sections: template.sections,
+        }}
+        onSubmit={handleSubmit}
+        isPending={updateTemplate.isPending}
+        onCancel={() => router.push('/reports/templates')}
+        connections={connections}
+        submitLabel="Save changes"
+      />
     </ScaffoldContainer>
   );
 }

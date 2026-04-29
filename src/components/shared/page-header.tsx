@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Building2 } from "lucide-react";
+import React from "react";
 import type { ReactNode } from "react";
 
 import {
@@ -107,10 +108,12 @@ export function PageHeader({
             {breadcrumbs!.map((crumb, idx) => {
               const isLast = idx === breadcrumbs!.length - 1;
               return (
-                <BreadcrumbItem key={`${crumb.label ?? "crumb"}-${idx}`}>
-                  {renderCrumb(crumb, isLast)}
+                <React.Fragment key={`${crumb.label ?? "crumb"}-${idx}`}>
+                  <BreadcrumbItem>
+                    {renderCrumb(crumb, isLast)}
+                  </BreadcrumbItem>
                   {!isLast ? <BreadcrumbSeparator /> : null}
-                </BreadcrumbItem>
+                </React.Fragment>
               );
             })}
           </BreadcrumbList>
@@ -135,7 +138,7 @@ export function PageHeader({
           <div className="flex min-w-0 flex-col gap-1">
             <h1
               className={cn(
-                "font-sans font-medium tracking-[-0.01em] text-foreground",
+                "font-sans font-semibold tracking-[-0.03em] text-foreground",
                 isCompact ? "text-xl" : "text-2xl",
               )}
             >

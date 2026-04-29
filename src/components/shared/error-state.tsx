@@ -41,7 +41,7 @@ export function ErrorState({
         <button
           type="button"
           onClick={onRetry}
-          className="mt-2 font-sans text-caption text-muted-strong underline-offset-4 transition-colors duration-150 hover:text-foreground hover:underline focus-visible:outline-none"
+          className="mt-2 font-sans text-caption text-muted-strong underline-offset-4 transition-colors duration-150 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
         >
           Try again
         </button>

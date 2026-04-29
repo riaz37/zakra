@@ -27,15 +27,14 @@ const PRIMARY_LABELS = new Set<string>([
 
 const ADMIN_LABELS = new Set<string>([
   'Users',
+  'Roles',
   'Companies',
   'Databases',
   'Table Access',
-  'Roles',
 ]);
 
-// Reports sidebar item points to /reports/history but should be active for any /reports/* route
+// Reports sidebar item points to /reports/ai-generate but should be active for any /reports/* route
 const SECTION_ROOTS: Record<string, string> = {
-  '/reports/history': '/reports',
   '/reports/ai-generate': '/reports',
   '/reports/templates': '/reports',
 };
