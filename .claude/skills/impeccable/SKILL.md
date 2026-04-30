@@ -24,7 +24,7 @@ Individual skills may require additional context. Check the skill's preparation 
 
 **Gathering order:**
 1. **Check current instructions (instant)**: If your loaded instructions already contain a **Design Context** section, proceed immediately.
-2. **Check .impeccable.md (fast)**: If not in instructions, read `.impeccable.md` from the project root. If it exists and contains the required context, proceed.
+2. **Check DESIGN.md (fast)**: If not in instructions, read `DESIGN.md` from the project root. If it exists and contains the required context, proceed. (Legacy: also check `.impeccable.md` if `DESIGN.md` is absent.)
 3. **Run impeccable teach (REQUIRED)**: If neither source has context, you MUST run /impeccable teach NOW before doing anything else. Do NOT skip this step. Do NOT attempt to infer context from the codebase instead.
 
 ---
@@ -336,7 +336,7 @@ Synthesize your findings and the user's answers into a `## Design Context` secti
 [3-5 principles derived from the conversation that should guide all design decisions]
 ```
 
-Write this section to `.impeccable.md` in the project root. If the file already exists, update the Design Context section in place.
+Write this section to `DESIGN.md` in the project root. If the file already exists, update the Design Context section in place.
 
 Then STOP and call the AskUserQuestion tool to clarify. whether they'd also like the Design Context appended to CLAUDE.md. If yes, append or update the section there as well.
 

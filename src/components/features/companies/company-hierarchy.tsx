@@ -90,10 +90,10 @@ function CompanyHierarchyInner() {
         suspendedIds.has(edge.source) || suspendedIds.has(edge.target);
       return {
         ...edge,
-        animated: false,
+        animated: true,
         style: touchesSuspended
-          ? { stroke: 'rgba(232, 71, 106, 0.34)', strokeDasharray: '4 4' }
-          : { stroke: 'rgba(235, 234, 229, 0.16)' },
+          ? { stroke: 'rgba(232, 71, 106, 0.55)', strokeDasharray: '3 5', strokeWidth: 1.5 }
+          : { stroke: 'rgba(62, 207, 142, 0.45)', strokeDasharray: '3 5', strokeWidth: 1.5 },
       };
     });
   }, [edges, items]);
@@ -258,7 +258,8 @@ function CompanyHierarchyInner() {
           onPaneClick={closeDetail}
           defaultEdgeOptions={{
             type: 'smoothstep',
-            style: { stroke: 'rgba(235, 234, 229, 0.16)' },
+            animated: true,
+            style: { stroke: 'rgba(62, 207, 142, 0.45)', strokeDasharray: '3 5', strokeWidth: 1.5 },
           }}
         >
           <Background

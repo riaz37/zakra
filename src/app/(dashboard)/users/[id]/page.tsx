@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { type ColumnDef } from '@tanstack/react-table';
-import { ArrowLeft, Shield, Plus, X } from 'lucide-react';
+import { Shield, Plus, X } from 'lucide-react';
 import { formatDate, formatDateTime } from '@/lib/format-date';
 
 import {
@@ -15,20 +14,17 @@ import {
 import { useRoles } from '@/hooks/useRoles';
 import type { UserRole, AssignRolesRequest } from '@/types';
 
+import { PageHeader } from '@/components/shared/page-header';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ScaffoldContainer,
+  ScaffoldSection,
+  ScaffoldSectionContent,
+  ScaffoldSectionDetail,
+  ScaffoldSectionTitle,
+  ScaffoldSectionDescription,
+  ScaffoldDivider,
+} from '@/components/shared/scaffold';
+import { FormDialog } from '@/components/shared/form-dialog';
 import {
   Select,
   SelectContent,
@@ -37,7 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { StatusBadge } from '@/components/shared/status-badge';
-import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/shared/skeleton';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
@@ -46,21 +42,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/ui/field';
-
-// ─── User type badge ──────────────────────────────────────────────────────────
-
-function UserTypeBadge({ type }: { type: string }) {
-  const label =
-    type === 'super_admin' ? 'Super Admin' : type === 'admin' ? 'Admin' : 'Regular';
-  const variant =
-    type === 'super_admin' ? 'warning' : type === 'admin' ? 'success' : 'default';
-
-  return (
-    <Badge variant={variant} size="sm">
-      {label}
-    </Badge>
-  );
-}
+import { UserTypeBadge } from '@/components/features/users/user-type-badge';
 
 // ─── Assign role form ─────────────────────────────────────────────────────────
 
@@ -203,27 +185,29 @@ export default function UserDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="px-6 py-8">
-        <div className="space-y-4">
-          <div className="h-5 w-36 animate-pulse rounded bg-surface-300" />
-          <div className="h-24 w-full max-w-md animate-pulse rounded-lg bg-surface-300" />
+      <ScaffoldContainer>
+        <div className="space-y-4 py-6">
+          <Skeleton className="h-5 w-36" />
+          <Skeleton className="h-24 w-full max-w-md" rounded="lg" />
         </div>
-      </div>
+      </ScaffoldContainer>
     );
   }
 
   if (isError || !user) {
     return (
-      <div className="px-6 py-8">
-        <p className="font-sans text-button text-error">Failed to load user.</p>
-        <Button
-          variant="link"
-          className="mt-3 p-0 h-auto font-sans text-button text-muted underline hover:text-foreground no-underline"
-          onClick={() => router.push('/users')}
-        >
-          Back to Users
-        </Button>
-      </div>
+      <ScaffoldContainer>
+        <div className="py-6">
+          <p className="font-sans text-button text-error">Failed to load user.</p>
+          <Button
+            variant="link"
+            className="mt-3 p-0 h-auto font-sans text-button text-muted underline hover:text-foreground no-underline"
+            onClick={() => router.push('/users')}
+          >
+            Back to Users
+          </Button>
+        </div>
+      </ScaffoldContainer>
     );
   }
 
@@ -232,91 +216,76 @@ export default function UserDetailPage() {
   const initial = (user.first_name?.charAt(0) ?? user.email.charAt(0)).toUpperCase();
 
   return (
-    <div className="px-6 py-8">
-      {/* Breadcrumb */}
-      <Breadcrumb className="mb-4">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink render={<Link href="/users" />}>Users</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{fullName}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+    <ScaffoldContainer>
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Users', href: '/users' },
+          { label: fullName },
+        ]}
+        title={fullName}
+      />
 
-      {/* Back + title */}
-      <div className="mb-6 flex items-center gap-3">
-        <Button
-          variant="outline"
-          size="icon-sm"
-          onClick={() => router.push('/users')}
-          aria-label="Back to Users"
-          className="text-muted hover:text-foreground"
-        >
-          <ArrowLeft aria-hidden size={14} strokeWidth={1.75} />
-        </Button>
-        <h1 className="font-sans text-title font-normal text-foreground">
-          {fullName}
-        </h1>
-      </div>
+      <ScaffoldSection>
+        <ScaffoldSectionDetail>
+          <ScaffoldSectionTitle>Profile</ScaffoldSectionTitle>
+          <ScaffoldSectionDescription>
+            Account information and current access type.
+          </ScaffoldSectionDescription>
+        </ScaffoldSectionDetail>
 
-      {/* Profile card */}
-      <div className="mb-8 rounded-lg border border-border bg-background p-6">
-        <div className="flex items-start gap-5">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-surface-300 font-sans text-[22px] font-medium text-foreground">
-            {initial}
-          </div>
-          <div className="flex flex-col gap-3">
-            <div>
-              <p className="font-sans text-[18px] font-medium text-foreground">
-                {fullName}
-              </p>
-              <p className="font-sans text-button text-muted">{user.email}</p>
+        <ScaffoldSectionContent>
+          <div className="rounded-card border border-border bg-background p-6">
+            <div className="flex items-start gap-5">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-surface-300 font-sans text-[22px] font-medium text-foreground">
+                {initial}
+              </div>
+              <div className="flex flex-col gap-3">
+                <div>
+                  <p className="font-sans text-[18px] font-medium text-foreground">
+                    {fullName}
+                  </p>
+                  <p className="font-sans text-button text-muted">{user.email}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <UserTypeBadge type={user.user_type} />
+                  <StatusBadge status={user.status} />
+                </div>
+                {user.last_login_at && (
+                  <p className="font-sans text-caption text-muted">
+                    Last login: {formatDateTime(user.last_login_at)}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <UserTypeBadge type={user.user_type} />
-              {(user.status === 'active' ||
-                user.status === 'inactive' ||
-                user.status === 'suspended' ||
-                user.status === 'pending') && (
-                <StatusBadge status={user.status} />
-              )}
-            </div>
-            {user.last_login_at && (
-              <p className="font-sans text-caption text-muted">
-                Last login:{' '}
-                {formatDateTime(user.last_login_at)}
-              </p>
-            )}
           </div>
-        </div>
-      </div>
+        </ScaffoldSectionContent>
+      </ScaffoldSection>
 
-      {/* Roles section */}
-      <div className="rounded-lg border border-border bg-background">
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <h2 className="font-sans text-[16px] font-medium text-foreground">
-            Assigned Roles
-          </h2>
-          <Button
-            onClick={() => setAssignRoleOpen(true)}
-            className="h-9 px-4"
-          >
-            <Plus aria-hidden size={14} strokeWidth={2} />
-            Assign Role
-          </Button>
-        </div>
+      <ScaffoldDivider />
 
-        <div className="p-4">
+      <ScaffoldSection>
+        <ScaffoldSectionDetail>
+          <ScaffoldSectionTitle>Assigned Roles</ScaffoldSectionTitle>
+          <ScaffoldSectionDescription>
+            Roles determine what data and actions this user can access.
+          </ScaffoldSectionDescription>
+        </ScaffoldSectionDetail>
+
+        <ScaffoldSectionContent>
+          <div className="flex items-center justify-end">
+            <Button
+              onClick={() => setAssignRoleOpen(true)}
+              className="h-9 px-4"
+            >
+              <Plus aria-hidden size={14} strokeWidth={2} />
+              Assign Role
+            </Button>
+          </div>
+
           {rolesLoading ? (
             <div className="space-y-2">
               {Array.from({ length: 2 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-10 animate-pulse rounded bg-surface-300"
-                />
+                <Skeleton key={i} className="h-10" />
               ))}
             </div>
           ) : !userRoles || userRoles.length === 0 ? (
@@ -332,23 +301,17 @@ export default function UserDetailPage() {
               caption="Assigned roles"
             />
           )}
-        </div>
-      </div>
+        </ScaffoldSectionContent>
+      </ScaffoldSection>
 
-      {/* Assign role dialog */}
-      <Dialog open={assignRoleOpen} onOpenChange={setAssignRoleOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Assign Role</DialogTitle>
-          </DialogHeader>
-          <AssignRoleForm
-            userId={id}
-            currentRoleIds={userRoles?.map((r) => r.id) ?? []}
-            onSuccess={() => setAssignRoleOpen(false)}
-            onCancel={() => setAssignRoleOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
-    </div>
+      <FormDialog open={assignRoleOpen} onOpenChange={setAssignRoleOpen} title="Assign Role">
+        <AssignRoleForm
+          userId={id}
+          currentRoleIds={userRoles?.map((r) => r.id) ?? []}
+          onSuccess={() => setAssignRoleOpen(false)}
+          onCancel={() => setAssignRoleOpen(false)}
+        />
+      </FormDialog>
+    </ScaffoldContainer>
   );
 }

@@ -8,6 +8,6 @@ PROJECT_RULE_3=Forms: react-hook-form + @hookform/resolvers + zod schemas. Alway
 PROJECT_RULE_4=Backend is external — base URL via NEXT_PUBLIC_API_BASE_URL. All calls go through src/api/*.ts modules. Never bypass the axios instance.
 PROJECT_RULE_5=Auth flow: tokens in localStorage (ACCESS_TOKEN_KEY/REFRESH_TOKEN_KEY in src/utils/constants.ts), auto-refresh on 401 via interceptor queue. Don't read tokens directly — use src/api/axios.ts helpers.
 PROJECT_RULE_6=Directory layout: src/app (routes), src/components/ui (shadcn), src/api (clients), src/hooks (TanStack Query hooks), src/store (Zustand), src/types (shared types), src/utils (helpers), src/lib/utils.ts (cn helper).
-PROJECT_RULE_7=Design system: Warm dark enterprise. Read .impeccable.md before any UI work — dark-only surfaces (#1a1916 bg, #21201c cards), Archivo/JetBrains Mono type stack, Supabase green (#3ecf8e) as the sole accent. Dark-only — no light mode. Never use Cursor Orange (#f54e00) or cool pure-gray backgrounds.
+PROJECT_RULE_7=Design system: Warm dark enterprise. Read DESIGN.md before any UI work — dark-only surfaces (#1a1916 bg, #21201c cards), Archivo/JetBrains Mono type stack, Supabase green (#3ecf8e) as the sole accent. Dark-only — no light mode. Never use Cursor Orange (#f54e00), cool pure-gray backgrounds, or Geist/Inter/system-ui fonts.
 PROJECT_RULE_8=Path alias: @/* → src/*. Use it for all internal imports.
 PROJECT_RULE_9=Package manager is pnpm (pnpm-workspace.yaml exists). Never run npm/yarn install commands.

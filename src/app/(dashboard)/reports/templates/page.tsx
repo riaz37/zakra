@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Plus, FilePlus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, FilePlus } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
 
 import { useReportTemplates, useDeleteReportTemplate } from '@/hooks/useReportTemplates';
@@ -11,15 +11,22 @@ import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import type { ReportTemplate } from '@/types';
 
 import { PageHeader } from '@/components/shared/page-header';
+import {
+  ScaffoldContainer,
+  ScaffoldFilterAndContent,
+} from '@/components/shared/scaffold';
+import { reportNavigationItems } from '@/components/features/reports/nav';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { RowActions } from '@/components/shared/row-actions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 export default function ReportTemplatesPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const companyId = useCurrentCompanyId();
   const [deleteTarget, setDeleteTarget] = useState<ReportTemplate | null>(null);
 
@@ -74,31 +81,12 @@ export default function ReportTemplatesPage() {
       id: 'actions',
       header: '',
       cell: ({ row }) => (
-        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/reports/templates/${row.original.id}`);
-            }}
-            aria-label={`Edit ${row.original.name}`}
-          >
-            <Pencil aria-hidden size={13} strokeWidth={1.75} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteTarget(row.original);
-            }}
-            aria-label={`Delete ${row.original.name}`}
-            className="hover:text-error"
-          >
-            <Trash2 aria-hidden size={13} strokeWidth={1.75} />
-          </Button>
-        </div>
+        <RowActions
+          onEdit={(e) => { e.stopPropagation(); router.push(`/reports/templates/${row.original.id}`); }}
+          onDelete={(e) => { e.stopPropagation(); setDeleteTarget(row.original); }}
+          editLabel={`Edit ${row.original.name}`}
+          deleteLabel={`Delete ${row.original.name}`}
+        />
       ),
     },
   ];
@@ -112,10 +100,12 @@ export default function ReportTemplatesPage() {
   }
 
   return (
-    <div className="px-6 py-8">
+    <ScaffoldContainer>
       <PageHeader
-        title="Report Templates"
-        action={
+        title="Reports"
+        subtitle="Reusable templates for your AI-generated reports."
+        navigationItems={reportNavigationItems(pathname)}
+        primaryActions={
           <Button
             onClick={() => router.push('/reports/templates/new')}
             className="h-9 px-4"
@@ -126,32 +116,34 @@ export default function ReportTemplatesPage() {
         }
       />
 
-      {isError ? (
-        <ErrorState title="Failed to load templates" onRetry={() => refetch()} />
-      ) : templates.length === 0 && !isLoading ? (
-        <EmptyState
-          icon={FilePlus}
-          title="No report templates"
-          description="Create templates to standardize your AI-generated reports."
-          action={
-            <Button
-              onClick={() => router.push('/reports/templates/new')}
-              className="h-9 px-4"
-            >
-              <Plus aria-hidden size={15} strokeWidth={2} />
-              New Template
-            </Button>
-          }
-        />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={templates}
-          isLoading={isLoading}
-          caption="Report templates list"
-          emptyMessage="No templates found."
-        />
-      )}
+      <ScaffoldFilterAndContent className="mt-6">
+        {isError ? (
+          <ErrorState title="Failed to load templates" onRetry={() => refetch()} />
+        ) : templates.length === 0 && !isLoading ? (
+          <EmptyState
+            icon={FilePlus}
+            title="No report templates"
+            description="Create templates to standardize your AI-generated reports."
+            action={
+              <Button
+                onClick={() => router.push('/reports/templates/new')}
+                className="h-9 px-4"
+              >
+                <Plus aria-hidden size={15} strokeWidth={2} />
+                New Template
+              </Button>
+            }
+          />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={templates}
+            isLoading={isLoading}
+            caption="Report templates list"
+            emptyMessage="No templates found."
+          />
+        )}
+      </ScaffoldFilterAndContent>
 
       <ConfirmDialog
         open={!!deleteTarget}
@@ -162,6 +154,6 @@ export default function ReportTemplatesPage() {
         confirmLabel="Delete"
         variant="destructive"
       />
-    </div>
+    </ScaffoldContainer>
   );
 }

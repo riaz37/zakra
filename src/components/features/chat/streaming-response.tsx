@@ -5,7 +5,16 @@ import { StreamingTextBlock } from '@/components/shared/streaming-text-block';
 import type { PipelineStep } from '@/hooks/useChatStream';
 import type { StreamingMessage } from '@/types/chat';
 import { ContentBlockView } from './content-block-view';
-import { PipelineSummary } from './pipeline-step-list';
+import { PipelineSummary, type NormalizedStep } from './pipeline-step-list';
+
+function normalizeChatSteps(steps: PipelineStep[]): NormalizedStep[] {
+  return steps.map((s) => ({
+    key: `${s.stepNumber}-${s.stepName}`,
+    name: s.stepName,
+    status: s.status,
+    durationMs: s.durationMs,
+  }));
+}
 
 function StreamingStatusPill({ blockCount }: { blockCount: number }) {
   return (
@@ -30,21 +39,18 @@ export function StreamingResponse({
   return (
     <div className="flex gap-3 animate-slide-in-bottom">
       <div className="relative mt-[3px] shrink-0">
-        {streamingMessage.isStreaming && (
-          <span className="absolute inset-[-4px] rounded-full bg-accent/8 blur-[8px]" aria-hidden />
-        )}
         <Image
           src="/logo/esaplogo.webp"
           alt="ESAP"
           width={22}
           height={22}
-          className="relative opacity-70"
+          className="opacity-70"
         />
       </div>
 
       <div className="min-w-0 flex-1">
         {pipelineSteps.length > 0 && (
-          <PipelineSummary steps={pipelineSteps} />
+          <PipelineSummary steps={normalizeChatSteps(pipelineSteps)} />
         )}
 
         {streamingMessage.isStreaming && streamingMessage.contentBlocks.length === 0 && (

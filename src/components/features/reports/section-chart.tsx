@@ -19,21 +19,21 @@ import type { GeneratedReportSection } from '@/types/report';
 
 const MAX_ROWS = 50;
 
-const GRID_STROKE = '#2a2825';
-const AXIS_FILL = '#8b8680';
-const ACCENT = '#3ecf8e';
+const GRID_STROKE = 'var(--color-border)';
+const AXIS_FILL = 'var(--color-muted)';
+const ACCENT = 'var(--color-accent)';
 
-const PIE_PALETTE = ['#3ecf8e', '#2a9d6b', '#1f7550', '#164f36', '#0d2e1f'];
+const PIE_PALETTE = ['#3ecf8e', '#60a5fa', '#f59e0b', '#a78bfa', '#fb923c'];
 
 const TOOLTIP_CONTENT_STYLE = {
-  background: '#21201c',
-  border: '1px solid #2a2825',
+  background: 'var(--color-surface-200)',
+  border: '1px solid var(--color-border)',
   borderRadius: '6px',
-  fontFamily: 'monospace',
+  fontFamily: 'var(--font-mono)',
   fontSize: '12px',
 } as const;
 
-const TOOLTIP_LABEL_STYLE = { color: '#e8e4df' } as const;
+const TOOLTIP_LABEL_STYLE = { color: 'var(--color-foreground)' } as const;
 const TOOLTIP_ITEM_STYLE = { color: ACCENT } as const;
 
 type ChartRow = Record<string, unknown>;
@@ -92,12 +92,12 @@ export function SectionChart({ section }: SectionChartProps) {
           <XAxis
             dataKey={xKey}
             stroke={GRID_STROKE}
-            tick={{ fill: AXIS_FILL, fontSize: 11, fontFamily: 'monospace' }}
+            tick={{ fill: AXIS_FILL, fontSize: 11, fontFamily: 'var(--font-mono)' }}
             tickLine={false}
           />
           <YAxis
             stroke={GRID_STROKE}
-            tick={{ fill: AXIS_FILL, fontSize: 11, fontFamily: 'monospace' }}
+            tick={{ fill: AXIS_FILL, fontSize: 11, fontFamily: 'var(--font-mono)' }}
             tickLine={false}
           />
           <Tooltip
@@ -129,12 +129,12 @@ export function SectionChart({ section }: SectionChartProps) {
           <XAxis
             dataKey={xKey}
             stroke={GRID_STROKE}
-            tick={{ fill: AXIS_FILL, fontSize: 11, fontFamily: 'monospace' }}
+            tick={{ fill: AXIS_FILL, fontSize: 11, fontFamily: 'var(--font-mono)' }}
             tickLine={false}
           />
           <YAxis
             stroke={GRID_STROKE}
-            tick={{ fill: AXIS_FILL, fontSize: 11, fontFamily: 'monospace' }}
+            tick={{ fill: AXIS_FILL, fontSize: 11, fontFamily: 'var(--font-mono)' }}
             tickLine={false}
           />
           <Tooltip
@@ -173,7 +173,7 @@ export function SectionChart({ section }: SectionChartProps) {
           />
           <Legend
             wrapperStyle={{
-              fontFamily: 'monospace',
+              fontFamily: 'var(--font-mono)',
               fontSize: '11px',
               color: AXIS_FILL,
             }}

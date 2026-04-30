@@ -129,7 +129,7 @@
   --text-body-serif-sm--line-height: 1.5;
   --text-body-serif-sm--font-weight: 400;
 
-  --text-body: 1rem;
+  --text-body: 0.875rem;
   --text-body--line-height: 1.5;
   --text-body--font-weight: 400;
 
@@ -156,7 +156,7 @@
   --text-mono-sm--font-weight: 400;
 
   /* ==========  Motion tokens  ========== */
-  --default-transition-duration: 150ms;
+  --default-transition-duration: 120ms;
   --default-transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -176,16 +176,16 @@
   --color-brand-deep: var(--brand-deep);
 
   /* Radius aliases */
-  --radius-card: 10px;
-  --radius-btn: 8px;
-  --radius-input: 8px;
-  --radius-badge: 9999px;
+  --radius-card: 8px;
+  --radius-btn: 6px;
+  --radius-input: 6px;
+  --radius-badge: 4px;
 
   /* Layout dimensions */
   --layout-topbar-h: 56px;
-  --layout-sidebar-w: 240px;
-  --layout-sidebar-w-collapsed: 64px;
-  --layout-row-h: 44px;
+  --layout-sidebar-w: 224px;
+  --layout-sidebar-w-collapsed: 52px;
+  --layout-row-h: 36px;
   --layout-anchor-width: 16rem;
 
   /* Motion */
@@ -234,9 +234,9 @@
   --radius: 8px;
 
   --topbar-h: 56px;
-  --sidebar-w: 240px;
-  --sidebar-w-collapsed: 64px;
-  --row-h: 44px;
+  --sidebar-w: 224px;
+  --sidebar-w-collapsed: 52px;
+  --row-h: 36px;
   --anchor-width: 16rem;
 }
 
@@ -562,7 +562,7 @@
 .kb-hierarchy .react-flow__edge-path {
   stroke: rgba(235, 234, 229, 0.16);
   stroke-width: 1.25;
-  transition: stroke 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: stroke 120ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .kb-hierarchy .react-flow__edge.selected .react-flow__edge-path,
@@ -590,8 +590,8 @@
   color: var(--fg-muted);
   width: 28px;
   height: 28px;
-  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 120ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 120ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .kb-hierarchy .react-flow__controls-button:last-child {
@@ -617,6 +617,12 @@
   min-width: 0;
   min-height: 0;
 }
+
+/* ==========  Sonner toast — left-border type differentiation  ========== */
+[data-sonner-toast][data-type="success"] { border-left: 3px solid var(--color-accent); }
+[data-sonner-toast][data-type="error"]   { border-left: 3px solid var(--color-destructive); }
+[data-sonner-toast][data-type="warning"] { border-left: 3px solid var(--color-warning); }
+[data-sonner-toast][data-type="info"]    { border-left: 3px solid var(--color-info); }
 
 /* ==========  Reduced motion  ========== */
 @media (prefers-reduced-motion: reduce) {

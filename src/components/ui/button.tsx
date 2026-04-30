@@ -5,18 +5,18 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-clip-padding font-sans text-button font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 duration-150",
+  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center rounded-[6px] border border-transparent bg-clip-padding font-sans text-button font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 duration-[120ms]",
   {
     variants: {
       variant: {
         default:
           "bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]",
         outline:
-          "border-border bg-background hover:bg-accent/10 hover:border-accent/30 hover:text-accent aria-expanded:bg-accent/10 aria-expanded:text-accent",
+          "border-border bg-background hover:bg-surface-300 hover:border-border-strong aria-expanded:bg-surface-300",
         secondary:
-          "border-border/50 bg-secondary text-secondary-foreground hover:bg-accent/10 hover:text-accent aria-expanded:bg-accent/10 aria-expanded:text-accent",
+          "border-border/50 bg-secondary text-secondary-foreground hover:bg-surface-300 hover:text-foreground aria-expanded:bg-surface-300 aria-expanded:text-foreground",
         ghost:
-          "border-transparent hover:bg-accent/10 hover:text-accent aria-expanded:bg-accent/10 aria-expanded:text-accent",
+          "border-transparent hover:bg-surface-300 hover:text-foreground aria-expanded:bg-surface-300 aria-expanded:text-foreground",
         warning:
           "border-warning-border bg-warning-bg text-warning hover:bg-warning/15 hover:border-warning/35 focus-visible:border-warning/40 focus-visible:ring-warning/20",
         destructive:

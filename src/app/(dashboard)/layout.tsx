@@ -128,7 +128,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           aria-modal="true"
           aria-label="Main navigation"
           className={cn(
-            'absolute left-0 top-0 h-dvh w-60 transform transition-transform duration-200 ease-out',
+            'absolute left-0 top-0 h-dvh w-56 transform transition-transform duration-200 ease-out',
             navOpen ? 'translate-x-0' : '-translate-x-full',
           )}
         >

@@ -90,10 +90,13 @@ async function refreshAccessToken(): Promise<string | null> {
 /**
  * Request interceptor - attach JWT token to requests
  */
+const AUTH_PUBLIC_PATHS = ['/auth/login', '/auth/refresh'];
+
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const isPublic = AUTH_PUBLIC_PATHS.some(path => config.url?.includes(path));
     const token = getAccessToken();
-    if (token && config.headers) {
+    if (token && config.headers && !isPublic) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

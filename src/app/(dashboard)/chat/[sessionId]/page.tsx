@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { ChevronDown, Database, RefreshCw } from 'lucide-react';
+import { ChevronDown, RefreshCw } from 'lucide-react';
 import { useChatStream } from '@/hooks/useChatStream';
 import { getPendingTask, clearPendingTask } from '@/store/pendingChatTask';
 import { useChatMessages } from '@/hooks/useChatMessages';
@@ -12,7 +12,7 @@ import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { ChatInput } from '@/components/ui/chat-input';
 import { ChatMessageView, UserMessage } from '@/components/features/chat/chat-message';
 import { ThinkingIndicator } from '@/components/features/chat/thinking-indicator';
-import { PipelineStepList } from '@/components/features/chat/pipeline-step-list';
+import { PipelineStepList, type NormalizedStep } from '@/components/features/chat/pipeline-step-list';
 import { StreamingResponse } from '@/components/features/chat/streaming-response';
 import { ChatWelcome } from '@/components/features/chat/chat-welcome';
 import { ChatMessagesSkeleton } from '@/components/features/chat/chat-messages-skeleton';
@@ -111,41 +111,44 @@ export default function ChatSessionPage() {
   }, [sessionId, companyId, connect]);
 
 
+  const sessionTitle = session?.title?.trim() || 'Chat';
+
   return (
     <div className="relative flex h-full flex-col overflow-hidden">
+      {/* Sticky session header */}
+      <header className="shrink-0 border-b border-border bg-background">
+        <div className="mx-auto flex w-full max-w-[720px] items-center justify-between gap-4 px-6 py-3">
+          <h1
+            className="min-w-0 truncate font-sans text-button font-medium text-foreground"
+            title={sessionTitle}
+          >
+            {sessionTitle}
+          </h1>
+          {connection ? (
+            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-pill border border-border bg-surface-200 px-2.5 py-1 font-mono text-micro text-muted">
+              <span aria-hidden className="size-1.5 rounded-full bg-accent" />
+              <span className="max-w-[180px] truncate">{connection.name}</span>
+            </span>
+          ) : null}
+        </div>
+      </header>
+
       {/* Reconnecting banner */}
       {status === 'reconnecting' && (
-        <div className="flex items-center justify-center gap-2 border-b border-warning-border bg-warning-bg px-4 py-2 animate-fade-in">
+        <div
+          role="status"
+          className="flex items-center justify-center gap-2 border-b border-warning-border bg-warning-bg px-4 py-2 animate-fade-in"
+        >
           <RefreshCw className="h-3.5 w-3.5 text-warning animate-spin" strokeWidth={2} />
           <span className="font-sans text-caption text-warning">Reconnecting…</span>
         </div>
       )}
 
-      {connection && (
-        <div className="flex items-center justify-between border-b border-border bg-surface-200 px-6 py-2">
-          <div className="flex min-w-0 items-center gap-2">
-            <Database
-              className="h-3.5 w-3.5 shrink-0 text-muted"
-              strokeWidth={1.5}
-            />
-            <span className="font-sans text-caption text-muted">
-              {connection.name}
-            </span>
-            <span className="text-subtle">·</span>
-            <span className="truncate font-mono text-mono-sm text-subtle">
-              {connection.database_name}
-            </span>
-          </div>
-          <span className="rounded-md border border-border bg-surface-300 px-1.5 py-0.5 font-mono text-mono-sm uppercase tracking-wide text-subtle">
-            {connection.database_type}
-          </span>
-        </div>
-      )}
 
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-6">
-        {/* Top fade mask */}
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 pb-6">
+        {/* Top fade mask — sits above content so first message is never covered */}
         <div
-          className="pointer-events-none sticky top-0 z-10 -mt-6 h-8 w-full"
+          className="pointer-events-none sticky top-0 z-10 h-8 w-full"
           style={{
             background:
               'linear-gradient(to bottom, var(--color-background) 0%, transparent 100%)',
@@ -153,12 +156,14 @@ export default function ChatSessionPage() {
         />
 
         <div className="mx-auto max-w-[720px]">
-          {messagesLoading && <ChatMessagesSkeleton />}
+          {/* Only show skeleton when loading history with no streaming content yet */}
+          {messagesLoading && !pendingUserMessage && !isStreaming && <ChatMessagesSkeleton />}
 
           {!messagesLoading && !hasContent && (
             <ChatWelcome onPrompt={(text) => void handleSend(text)} />
           )}
 
+          {(messages.length > 0 || !!pendingUserMessage || !!streamingMessage) && (
           <div className="space-y-6">
             {messages.map((msg) => (
               <ChatMessageView key={msg.id} message={msg} />
@@ -174,7 +179,14 @@ export default function ChatSessionPage() {
             )}
 
             {pipelineSteps.length > 0 && !streamingMessage && (
-              <PipelineStepList steps={pipelineSteps} />
+              <PipelineStepList
+                steps={pipelineSteps.map((s): NormalizedStep => ({
+                  key: `${s.stepNumber}-${s.stepName}`,
+                  name: s.stepName,
+                  status: s.status,
+                  durationMs: s.durationMs,
+                }))}
+              />
             )}
 
             {streamingMessage && (
@@ -186,7 +198,7 @@ export default function ChatSessionPage() {
 
             {error && (
               <div
-                className="rounded-lg border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error animate-fade-in"
+                className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error animate-fade-in"
                 role="alert"
               >
                 {error}
@@ -195,14 +207,17 @@ export default function ChatSessionPage() {
 
             <div ref={messagesEndRef} />
           </div>
+          )}
         </div>
       </div>
 
       {/* Jump to latest button */}
       {showScrollDown && (
         <button
+          type="button"
+          aria-label="Jump to latest message"
           onClick={() => scrollToBottom()}
-          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-full border border-border bg-surface-400 px-3 py-1.5 font-sans text-caption text-muted shadow-[var(--shadow-elevated)] transition-all duration-150 hover:border-border-medium hover:bg-surface-500 hover:text-foreground animate-slide-in-bottom"
+          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-pill border border-border bg-surface-300 px-3 py-1.5 font-sans text-caption text-foreground transition-colors duration-[120ms] hover:border-border-strong hover:bg-surface-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 animate-slide-in-bottom"
         >
           <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
           Latest
@@ -215,6 +230,9 @@ export default function ChatSessionPage() {
             onSendMessage={(message) => void handleSend(message)}
             onStop={cancel}
             isStreaming={isStreaming}
+            connections={connection ? [connection] : []}
+            selectedConnectionId={connection?.id ?? null}
+            connectionLocked
           />
         </div>
       </div>

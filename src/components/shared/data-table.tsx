@@ -11,6 +11,7 @@ import { useMemo } from "react";
 
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Skeleton } from "@/components/shared/skeleton";
 
 export interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -112,7 +113,7 @@ export function DataTable<TData>({
                   <th
                     key={header.id}
                     scope="col"
-                    className="px-4 py-3 text-left align-middle font-sans text-caption font-medium tracking-[0.048px] text-muted"
+                    className="px-4 py-2.5 text-left align-middle font-sans text-[11px] font-medium uppercase tracking-[0.06em] text-fg-subtle whitespace-nowrap"
                   >
                     {header.isPlaceholder
                       ? null
@@ -142,20 +143,21 @@ export function DataTable<TData>({
               rows.map((row) => (
                 <tr
                   key={row.id}
+                  tabIndex={onRowClick ? 0 : undefined}
                   className={cn(
                     "group border-b border-border last:border-b-0",
-                    "transition-all hover:bg-accent/5",
-                    onRowClick && "cursor-pointer"
+                    "transition-all hover:bg-surface-300",
+                    onRowClick && "cursor-pointer focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
                   )}
                   onClick={() => onRowClick?.(row.original)}
+                  onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row.original); } } : undefined}
                 >
-                  {row.getVisibleCells().map((cell, cellIdx) => (
+                  {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
                       className={cn(
-                        "px-4 py-3 align-middle font-sans text-button text-foreground",
-                        "relative",
-                        cellIdx === 0 && "before:absolute before:left-0 before:top-0 before:h-full before:w-[2px] before:bg-accent before:opacity-0 before:transition-opacity group-hover:before:opacity-100"
+                        "px-4 py-2 align-middle font-sans text-button text-foreground",
+                        "relative"
                       )}
                     >
                       {flexRender(
@@ -299,15 +301,7 @@ function SkeletonRows({ columnCount }: { columnCount: number }) {
         >
           {Array.from({ length: columnCount }).map((_, cellIdx) => (
             <td key={cellIdx} className="px-4 py-3">
-              <div
-                className="h-5 rounded"
-                style={{
-                  background:
-                    "linear-gradient(90deg, var(--color-surface-300) 25%, var(--color-surface-400) 50%, var(--color-surface-300) 75%)",
-                  backgroundSize: "200% 100%",
-                  animation: "shimmer 1.5s ease-in-out infinite",
-                }}
-              />
+              <Skeleton className="h-5" />
             </td>
           ))}
         </tr>
@@ -327,15 +321,7 @@ function MobileSkeletonCards() {
           key={idx}
           className="rounded-lg border border-border bg-surface-200 p-3"
         >
-          <div
-            className="h-10 rounded"
-            style={{
-              background:
-                "linear-gradient(90deg, var(--color-surface-300) 25%, var(--color-surface-400) 50%, var(--color-surface-300) 75%)",
-              backgroundSize: "200% 100%",
-              animation: "shimmer 1.5s ease-in-out infinite",
-            }}
-          />
+          <Skeleton className="h-10" rounded="lg" />
         </li>
       ))}
     </ul>

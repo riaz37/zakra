@@ -1,66 +1,176 @@
+import Link from "next/link";
 import { Building2 } from "lucide-react";
+import React from "react";
 import type { ReactNode } from "react";
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { NavMenuList, type NavigationItem } from "@/components/ui/nav-menu";
 import { cn } from "@/lib/utils";
 
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export interface BreadcrumbCrumb {
+  label?: string;
+  href?: string;
+  /** Override rendering of this crumb entirely (e.g. with an icon). */
+  element?: ReactNode;
+}
+
 export interface PageHeaderProps {
-  title: string;
+  title: ReactNode;
+  /** Subtitle / description shown below the title. */
+  subtitle?: ReactNode;
+  /** Optional leading icon shown alongside the title. */
+  icon?: ReactNode;
+  /** Crumb list rendered above the title. The last crumb is rendered as the current page. */
+  breadcrumbs?: BreadcrumbCrumb[];
   /**
-   * Right-aligned slot, typically a primary action button. Caller styles it.
-   *
-   * Preferred primary action style:
-   *   "rounded-lg bg-accent px-3.5 py-2 font-sans text-button font-medium
-   *    text-[#111] hover:bg-accent/90"
+   * Right-aligned primary actions slot (typically the main page CTA).
+   * Caller styles the buttons.
+   */
+  primaryActions?: ReactNode;
+  /** Right-aligned secondary actions slot (rendered before primaryActions). */
+  secondaryActions?: ReactNode;
+  /**
+   * Backward-compat alias for `primaryActions`. Existing call sites use `action`.
    */
   action?: ReactNode;
-  /** Scope pill shown next to the title, e.g. a company name. */
+  /** Scope pill rendered next to the title (legacy). */
   scopeLabel?: string;
-  /** Optional subtitle shown under the title. */
-  subtitle?: string;
+  /**
+   * Renders a horizontal NavMenu (border-bottom tabs) below the header.
+   */
+  navigationItems?: NavigationItem[];
+  /** Reduce vertical padding for tighter layouts. */
+  isCompact?: boolean;
   className?: string;
 }
 
+// ── Crumb renderer ────────────────────────────────────────────────────────────
+
+function renderCrumb(crumb: BreadcrumbCrumb, isLast: boolean) {
+  if (crumb.element) {
+    return crumb.element;
+  }
+  if (isLast || !crumb.href) {
+    return <BreadcrumbPage>{crumb.label}</BreadcrumbPage>;
+  }
+  return (
+    <BreadcrumbLink render={<Link href={crumb.href} />}>
+      {crumb.label}
+    </BreadcrumbLink>
+  );
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 /**
- * Canonical page header — renders the single `<h1>` for the route.
- *
- * Precise 22px title, tight tracking, bottom border separator so the header
- * reads as a true section boundary in the dark surface system.
+ * Canonical page header. Renders the single `<h1>` for the route alongside
+ * optional breadcrumbs, descriptive subtitle, primary/secondary actions, and
+ * a horizontal navigation menu underneath.
  */
 export function PageHeader({
   title,
+  subtitle,
+  icon,
+  breadcrumbs,
+  primaryActions,
+  secondaryActions,
   action,
   scopeLabel,
-  subtitle,
+  navigationItems,
+  isCompact,
   className,
 }: PageHeaderProps) {
+  const resolvedPrimary = primaryActions ?? action;
+  const hasActions = Boolean(resolvedPrimary || secondaryActions);
+  const hasBreadcrumbs = !!breadcrumbs && breadcrumbs.length > 0;
+  const hasNav = !!navigationItems && navigationItems.length > 0;
+
   return (
     <div
       className={cn(
-        "mb-4 flex flex-col items-start gap-3 border-b border-border pb-3",
-        "sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+        "flex w-full flex-col",
+        isCompact ? "gap-2 py-3" : "gap-4 py-6",
         className,
       )}
     >
-      <div className="flex flex-col gap-1">
-        <h1 className="font-sans text-title font-normal text-foreground">
-          {title}
-          {scopeLabel ? (
+      {hasBreadcrumbs ? (
+        <Breadcrumb>
+          <BreadcrumbList>
+            {breadcrumbs!.map((crumb, idx) => {
+              const isLast = idx === breadcrumbs!.length - 1;
+              return (
+                <React.Fragment key={`${crumb.label ?? "crumb"}-${idx}`}>
+                  <BreadcrumbItem>
+                    {renderCrumb(crumb, isLast)}
+                  </BreadcrumbItem>
+                  {!isLast ? <BreadcrumbSeparator /> : null}
+                </React.Fragment>
+              );
+            })}
+          </BreadcrumbList>
+        </Breadcrumb>
+      ) : null}
+
+      <div
+        className={cn(
+          "flex flex-col items-start gap-3",
+          "sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+        )}
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          {icon ? (
             <span
-              className="ml-3 inline-flex items-center gap-1 rounded-full bg-surface-300 px-2 py-0.5 align-middle font-sans text-caption font-medium text-muted-strong"
-              aria-label={`Scope: ${scopeLabel}`}
+              aria-hidden
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-surface-200 text-foreground"
             >
-              <Building2 aria-hidden="true" className="size-3" />
-              {scopeLabel}
+              {icon}
             </span>
           ) : null}
-        </h1>
-        {subtitle ? (
-          <p className="font-sans text-caption text-muted">{subtitle}</p>
+          <div className="flex min-w-0 flex-col gap-1">
+            <h1
+              className={cn(
+                "font-sans font-semibold tracking-[-0.03em] text-foreground",
+                isCompact ? "text-xl" : "text-2xl",
+              )}
+            >
+              {title}
+              {scopeLabel ? (
+                <span
+                  className="ml-3 inline-flex items-center gap-1 rounded-full bg-surface-300 px-2 py-0.5 align-middle font-sans text-caption font-medium text-muted-strong"
+                  aria-label={`Scope: ${scopeLabel}`}
+                >
+                  <Building2 aria-hidden className="size-3" />
+                  {scopeLabel}
+                </span>
+              ) : null}
+            </h1>
+            {subtitle ? (
+              <p className="font-sans text-sm text-muted">{subtitle}</p>
+            ) : null}
+          </div>
+        </div>
+
+        {hasActions ? (
+          <div className="flex shrink-0 items-center gap-2">
+            {secondaryActions}
+            {resolvedPrimary}
+          </div>
         ) : null}
       </div>
 
-      {action ? (
-        <div className="flex shrink-0 items-center gap-2">{action}</div>
+      {hasNav ? (
+        <div className="pt-1">
+          <NavMenuList items={navigationItems!} />
+        </div>
       ) : null}
     </div>
   );

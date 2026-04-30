@@ -1,10 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Plus, Trash2 } from 'lucide-react';
-import type { ReportSectionConfig, ReportType, DatabaseConnection } from '@/types';
+import { Plus, Trash2, FileText, AlertCircle } from 'lucide-react';
+import type { ReportType, DatabaseConnection } from '@/types';
 import {
   Field,
   FieldGroup,
@@ -22,6 +23,8 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+
+// ── Schema ────────────────────────────────────────────────────────────────────
 
 const REPORT_TYPES: { value: ReportType; label: string }[] = [
   { value: 'financial', label: 'Financial' },
@@ -52,6 +55,8 @@ const templateSchema = z.object({
 
 export type ReportTemplateFormData = z.infer<typeof templateSchema>;
 
+// ── Props ─────────────────────────────────────────────────────────────────────
+
 interface ReportTemplateFormProps {
   initial?: Partial<ReportTemplateFormData>;
   onSubmit: (data: ReportTemplateFormData) => void;
@@ -61,6 +66,8 @@ interface ReportTemplateFormProps {
   connections: DatabaseConnection[];
 }
 
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export function ReportTemplateForm({
   initial,
   onSubmit,
@@ -69,6 +76,8 @@ export function ReportTemplateForm({
   submitLabel = 'Save template',
   connections,
 }: ReportTemplateFormProps) {
+  const [activeIdx, setActiveIdx] = useState(0);
+
   const form = useForm<ReportTemplateFormData>({
     resolver: zodResolver(templateSchema),
     defaultValues: {
@@ -95,228 +104,371 @@ export function ReportTemplateForm({
     name: 'sections',
   });
 
+  const sectionErrors = form.formState.errors.sections;
+
+  function addSection() {
+    append({
+      title: '',
+      description: '',
+      query_hint: '',
+      chart_preference: 'auto',
+      include_table: true,
+      include_chart: true,
+      order: fields.length,
+    });
+    setActiveIdx(fields.length);
+  }
+
+  function removeSection(idx: number) {
+    remove(idx);
+    setActiveIdx((prev) => Math.min(prev, fields.length - 2));
+  }
+
+  const sectionTitles = form.watch('sections');
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-      <section className="rounded-xl border border-border bg-surface-100 p-6">
-        <h2 className="mb-5 font-sans text-button font-medium uppercase tracking-[0.06em] text-muted">
-          Basic info
-        </h2>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <div className="flex h-[calc(100dvh-220px)] min-h-[560px] max-h-[900px] overflow-hidden rounded-xl border border-border bg-surface-100">
 
-        <FieldGroup className="gap-5">
-          <Controller
-            control={form.control}
-            name="name"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Name *</FieldLabel>
-                <Input
-                  {...field}
-                  id={field.name}
-                  placeholder="e.g. Monthly Revenue Report"
-                  aria-invalid={fieldState.invalid}
-                />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-              </Field>
-            )}
-          />
+        {/* ── LEFT: Config panel ──────────────────────────────────────── */}
+        <div className="flex w-[300px] shrink-0 flex-col border-r border-border">
 
-          <Controller
-            control={form.control}
-            name="description"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-                <Textarea
-                  {...field}
-                  id={field.name}
-                  placeholder="What does this template generate?"
-                  rows={2}
-                  className="resize-none"
-                  aria-invalid={fieldState.invalid}
-                />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-              </Field>
-            )}
-          />
+          {/* Scrollable content: basic info + section list */}
+          <div className="flex-1 overflow-y-auto">
 
-          <div className="grid grid-cols-2 gap-4">
-            <Controller
-              control={form.control}
-              name="connection_id"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Database Connection *</FieldLabel>
-                  <Select
-                    onValueChange={(v) => field.onChange(v || '')}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
-                      <SelectValue placeholder="Select a connection…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {connections.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-              )}
-            />
+          {/* Basic info */}
+          <div className="space-y-4 p-5">
+            <p className="font-mono text-micro font-medium uppercase tracking-[0.08em] text-muted">
+              Basic Info
+            </p>
 
-            <Controller
-              control={form.control}
-              name="report_type"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Report Type</FieldLabel>
-                  <Select
-                    onValueChange={(v) => field.onChange(v || 'custom')}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {REPORT_TYPES.map((t) => (
-                        <SelectItem key={t.value} value={t.value}>
-                          {t.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-              )}
-            />
+            <FieldGroup className="gap-4">
+              <Controller
+                control={form.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Name *</FieldLabel>
+                    <Input
+                      {...field}
+                      id={field.name}
+                      placeholder="e.g. Monthly Revenue Report"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="description"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                    <Textarea
+                      {...field}
+                      id={field.name}
+                      placeholder="What does this template generate?"
+                      rows={2}
+                      className="resize-none"
+                      aria-invalid={fieldState.invalid}
+                    />
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="connection_id"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Connection *</FieldLabel>
+                    <Select
+                      onValueChange={(v) => field.onChange(v || '')}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
+                        <SelectValue placeholder="Select a connection…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {connections.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="report_type"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Report Type</FieldLabel>
+                    <Select
+                      onValueChange={(v) => field.onChange(v || 'custom')}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger id={field.name}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {REPORT_TYPES.map((t) => (
+                          <SelectItem key={t.value} value={t.value}>
+                            {t.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )}
+              />
+            </FieldGroup>
           </div>
-        </FieldGroup>
-      </section>
 
-      <section className="rounded-xl border border-border bg-surface-100 p-6">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="font-sans text-button font-medium uppercase tracking-[0.06em] text-muted">
-            Sections
-          </h2>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              append({
-                title: '',
-                description: '',
-                query_hint: '',
-                chart_preference: 'auto',
-                include_table: true,
-                include_chart: true,
-                order: fields.length,
-              })
-            }
-          >
-            <Plus aria-hidden size={14} strokeWidth={2} />
-            Add section
-          </Button>
+          {/* Section list */}
+          <div className="border-t border-border">
+            <div className="flex items-center justify-between px-5 py-3">
+              <p className="font-mono text-micro font-medium uppercase tracking-[0.08em] text-muted">
+                Sections
+                <span className="ml-1.5 tabular-nums text-subtle">
+                  ({fields.length})
+                </span>
+              </p>
+              <button
+                type="button"
+                onClick={addSection}
+                className="flex items-center gap-1 rounded-md px-2 py-1 font-sans text-caption text-muted transition-colors hover:bg-surface-300 hover:text-foreground focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              >
+                <Plus aria-hidden size={13} strokeWidth={1.5} />
+                Add
+              </button>
+            </div>
+
+            <ul className="px-3 pb-3">
+              {fields.map((field, idx) => {
+                const title = sectionTitles?.[idx]?.title;
+                const hasError = !!sectionErrors?.[idx];
+                const isActive = activeIdx === idx;
+
+                return (
+                  <li key={field.id}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveIdx(idx)}
+                      className={cn(
+                        'group/item flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left transition-colors',
+                        isActive
+                          ? 'bg-surface-400 text-foreground'
+                          : 'text-muted hover:bg-surface-300 hover:text-foreground',
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'flex size-5 shrink-0 items-center justify-center rounded font-mono text-micro tabular-nums',
+                          isActive
+                            ? 'bg-surface-500 text-foreground'
+                            : 'bg-surface-300 text-muted',
+                        )}
+                      >
+                        {idx + 1}
+                      </span>
+
+                      <span className="min-w-0 flex-1 truncate font-sans text-caption">
+                        {title || (
+                          <span className="italic text-subtle">Untitled</span>
+                        )}
+                      </span>
+
+                      {hasError && (
+                        <AlertCircle
+                          aria-label="Section has errors"
+                          className="size-3.5 shrink-0 text-error"
+                        />
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+
+              {fields.length === 0 && (
+                <li className="px-3 py-4 text-center font-sans text-caption text-subtle">
+                  No sections yet
+                </li>
+              )}
+            </ul>
+          </div>
+
+          </div>{/* end scrollable content */}
+
+          {/* Footer actions */}
+          <div className="shrink-0 border-t border-border p-4">
+            {sectionErrors && !Array.isArray(sectionErrors) && (
+              <p className="mb-3 font-sans text-caption text-error">
+                {(sectionErrors as { message?: string }).message}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                disabled={isPending}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isPending} className="flex-1">
+                {isPending ? 'Saving…' : submitLabel}
+              </Button>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-0">
-          {fields.map((field, idx) => (
-            <div
-              key={field.id}
-              className={cn(
-                'space-y-4 py-6',
-                idx > 0 && 'border-t border-border',
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-caption font-medium text-muted uppercase tracking-wider">
-                  Section {idx + 1}
-                </span>
+        {/* ── RIGHT: Section editor ───────────────────────────────────── */}
+        <div className="flex flex-1 flex-col">
+          {fields.length === 0 ? (
+            <div className="flex flex-1 flex-col items-center justify-center gap-4 p-10 text-center">
+              <div className="flex size-12 items-center justify-center rounded-xl border border-border bg-surface-200">
+                <FileText aria-hidden className="size-5 text-muted" strokeWidth={1.5} />
+              </div>
+              <div className="space-y-1">
+                <p className="font-sans text-button font-medium text-foreground">
+                  No sections yet
+                </p>
+                <p className="max-w-[32ch] font-sans text-caption text-muted">
+                  Each section generates an AI analysis with an optional chart or data table.
+                </p>
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={addSection}>
+                <Plus aria-hidden size={16} strokeWidth={1.5} />
+                Add first section
+              </Button>
+            </div>
+          ) : (
+            fields[activeIdx] && (
+              <div className="flex flex-1 flex-col gap-6 p-8">
+                {/* Section header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-7 items-center justify-center rounded-lg border border-border bg-surface-200 font-mono text-caption font-medium tabular-nums text-muted">
+                      {activeIdx + 1}
+                    </span>
+                    <div>
+                      <p className="font-mono text-micro uppercase tracking-[0.08em] text-muted">
+                        Section {activeIdx + 1} of {fields.length}
+                      </p>
+                    </div>
+                  </div>
+
+                  {fields.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-error hover:bg-error-bg hover:text-error"
+                      onClick={() => removeSection(activeIdx)}
+                    >
+                      <Trash2 aria-hidden size={13} strokeWidth={1.75} />
+                      Remove section
+                    </Button>
+                  )}
+                </div>
+
+                {/* Section fields */}
+                <FieldGroup className="flex-1 gap-6">
+                  <Controller
+                    control={form.control}
+                    name={`sections.${activeIdx}.title`}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor={field.name}>Section Title *</FieldLabel>
+                        <Input
+                          {...field}
+                          id={field.name}
+                          placeholder="e.g. Revenue Overview"
+                          aria-invalid={fieldState.invalid}
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+
+                  <Controller
+                    control={form.control}
+                    name={`sections.${activeIdx}.query_hint`}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor={field.name}>Query Hint *</FieldLabel>
+                        <Textarea
+                          {...field}
+                          id={field.name}
+                          placeholder="Describe what data this section should query and analyse. Be specific — the AI uses this to generate the SQL query and write the analysis."
+                          className="h-20 resize-none"
+                          aria-invalid={fieldState.invalid}
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+
+                  <Controller
+                    control={form.control}
+                    name={`sections.${activeIdx}.description`}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor={field.name}>
+                          Description{' '}
+                          <span className="font-normal text-muted">(optional)</span>
+                        </FieldLabel>
+                        <Textarea
+                          {...field}
+                          id={field.name}
+                          placeholder="Internal note about this section's purpose"
+                          className="h-36 resize-none"
+                          aria-invalid={fieldState.invalid}
+                        />
+                      </Field>
+                    )}
+                  />
+                </FieldGroup>
+
+                {/* Section navigation */}
                 {fields.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 px-2 text-error hover:text-error hover:bg-error/5"
-                    onClick={() => remove(idx)}
-                  >
-                    <Trash2 aria-hidden size={13} strokeWidth={1.75} />
-                    Remove
-                  </Button>
+                  <div className="mt-auto flex items-center gap-2 border-t border-border pt-6">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={activeIdx === 0}
+                      onClick={() => setActiveIdx((i) => i - 1)}
+                    >
+                      ← Previous
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={activeIdx === fields.length - 1}
+                      onClick={() => setActiveIdx((i) => i + 1)}
+                    >
+                      Next →
+                    </Button>
+                  </div>
                 )}
               </div>
-
-              <FieldGroup className="gap-4">
-                <Controller
-                  control={form.control}
-                  name={`sections.${idx}.title`}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>Section Title *</FieldLabel>
-                      <Input
-                        {...field}
-                        id={field.name}
-                        placeholder="e.g. Revenue Overview"
-                        aria-invalid={fieldState.invalid}
-                      />
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                    </Field>
-                  )}
-                />
-
-                <Controller
-                  control={form.control}
-                  name={`sections.${idx}.query_hint`}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>Query Hint *</FieldLabel>
-                      <Input
-                        {...field}
-                        id={field.name}
-                        placeholder="e.g. Show monthly revenue for the current year"
-                        aria-invalid={fieldState.invalid}
-                      />
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                    </Field>
-                  )}
-                />
-
-                <Controller
-                  control={form.control}
-                  name={`sections.${idx}.description`}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-                      <Input
-                        {...field}
-                        id={field.name}
-                        placeholder="Optional description for this section"
-                        aria-invalid={fieldState.invalid}
-                      />
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
-            </div>
-          ))}
+            )
+          )}
         </div>
-      </section>
-
-      <div className="flex items-center justify-end gap-2 pt-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={isPending}
-        >
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isPending}>
-          {isPending ? 'Saving…' : submitLabel}
-        </Button>
       </div>
     </form>
   );

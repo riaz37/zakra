@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils"
 const badgeVariants = cva(
   cn(
     "group/badge inline-flex w-fit shrink-0 items-center justify-center gap-1.5",
-    "overflow-hidden rounded-full border whitespace-nowrap",
+    "overflow-hidden rounded-[4px] border whitespace-nowrap",
     "font-sans font-medium leading-none",
-    "transition-colors duration-150",
+    "transition-colors duration-[120ms]",
     "focus-visible:ring-2 focus-visible:ring-ring",
     "[&>svg]:pointer-events-none [&>svg]:size-3",
   ),
@@ -30,9 +30,11 @@ const badgeVariants = cva(
           "border-info/20 bg-info-soft text-info",
         outline:
           "border-border bg-transparent text-muted",
+        processing:
+          "border-thinking/25 bg-thinking/12 text-thinking",
 
         // Legacy aliases — map to semantic variants so existing consumers
-        // (reports/history, reports/[reportId]) keep working without churn.
+        // (reports/[reportId], etc.) keep working without churn.
         // `secondary` → info (running/pending state in reports table)
         // `destructive` → error
         secondary:
@@ -61,6 +63,7 @@ const DOT_COLOR: Record<BadgeVariant, string> = {
   error: "bg-error",
   info: "bg-info",
   outline: "bg-muted",
+  processing: "bg-thinking",
   secondary: "bg-info",
   destructive: "bg-error",
 }
@@ -128,8 +131,11 @@ const STATUS_VARIANT_MAP: Record<string, BadgeVariant> = {
   // warning
   pending: "warning",
   running: "warning",
-  processing: "warning",
   queued: "warning",
+
+  // processing (AI pipeline)
+  processing: "processing",
+  thinking: "processing",
 
   // error
   failed: "error",

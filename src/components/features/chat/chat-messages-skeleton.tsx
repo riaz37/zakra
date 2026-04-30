@@ -1,37 +1,38 @@
 'use client';
 
+import { SkeletonAvatar, SkeletonText } from '@/components/shared/skeleton';
 import { Skeleton } from '@/components/shared/skeleton';
 
 export function ChatMessagesSkeleton() {
   return (
-    <div className="space-y-6 pt-4">
-      {/* Assistant Skeleton */}
-      <div className="flex gap-3">
-        <div className="mt-0.5 shrink-0">
-          <Skeleton className="h-[22px] w-[22px] rounded-full" />
-        </div>
-        <div className="min-w-0 flex-1 space-y-2">
-          <Skeleton className="h-4 w-3/4 rounded-md" />
-          <Skeleton className="h-4 w-1/2 rounded-md" />
-        </div>
-      </div>
-
-      {/* User Skeleton */}
+    <div className="space-y-6 pt-2">
+      {/* User bubble */}
       <div className="flex justify-end">
-        <div className="max-w-[75%] w-[400px] rounded-2xl border border-border bg-surface-300 px-4 py-3">
-          <Skeleton className="h-4 w-full rounded-md" />
+        <div className="max-w-[75%] w-[360px] rounded-2xl border border-border bg-surface-300 px-4 py-3">
+          <Skeleton className="h-4 w-full" />
         </div>
       </div>
 
-      {/* Assistant Skeleton */}
+      {/* Assistant reply */}
       <div className="flex gap-3">
-        <div className="mt-0.5 shrink-0">
-          <Skeleton className="h-[22px] w-[22px] rounded-full" />
+        <SkeletonAvatar size={22} />
+        <div className="min-w-0 flex-1 pt-0.5">
+          <SkeletonText lines={3} lastLineWidth="w-2/5" />
         </div>
-        <div className="min-w-0 flex-1 space-y-2">
-          <Skeleton className="h-4 w-5/6 rounded-md" />
-          <Skeleton className="h-4 w-4/6 rounded-md" />
-          <Skeleton className="h-4 w-2/6 rounded-md" />
+      </div>
+
+      {/* User bubble */}
+      <div className="flex justify-end">
+        <div className="max-w-[75%] w-[280px] rounded-2xl border border-border bg-surface-300 px-4 py-3">
+          <Skeleton className="h-4 w-full" />
+        </div>
+      </div>
+
+      {/* Assistant reply */}
+      <div className="flex gap-3">
+        <SkeletonAvatar size={22} />
+        <div className="min-w-0 flex-1 pt-0.5">
+          <SkeletonText lines={2} lastLineWidth="w-3/5" />
         </div>
       </div>
     </div>

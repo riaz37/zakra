@@ -88,7 +88,6 @@ export const ROUTES = {
   REPORT_TEMPLATES: '/reports/templates',
   REPORT_TEMPLATE_NEW: '/reports/templates/new',
   REPORT_TEMPLATE_DETAIL: '/reports/templates/:id',
-  REPORT_HISTORY: '/reports/history',
   REPORT_AI_GENERATE: '/reports/ai-generate',
   REPORT_GENERATE: '/reports/generate/:templateId',
   REPORT_VIEW: '/reports/:reportId',
@@ -103,12 +102,10 @@ export type RequiredRole = 'admin' | 'super_admin';
 export const NAV_ITEMS = [
   { label: 'Overview', path: ROUTES.DASHBOARD, icon: 'LayoutDashboard' },
   { label: 'Chat', path: ROUTES.CHAT, icon: 'MessageCircle' },
+  { label: 'Reports', path: ROUTES.REPORT_AI_GENERATE, icon: 'FileBarChart' },
   { label: 'Companies', path: ROUTES.COMPANIES, icon: 'Building2', requiredRole: 'admin' as RequiredRole },
   { label: 'Users', path: ROUTES.USERS, icon: 'Users', requiredRole: 'admin' as RequiredRole },
   { label: 'Roles', path: ROUTES.ROLES, icon: 'Shield', requiredRole: 'admin' as RequiredRole },
   { label: 'Databases', path: ROUTES.DB_CONNECTIONS, icon: 'Database', requiredRole: 'admin' as RequiredRole },
   { label: 'Table Access', path: ROUTES.TABLE_ACCESS, icon: 'Table', requiredRole: 'admin' as RequiredRole },
-  { label: 'Templates', path: ROUTES.REPORT_TEMPLATES, icon: 'FileBarChart', requiredRole: 'admin' as RequiredRole },
-  { label: 'Generate Report', path: ROUTES.REPORT_AI_GENERATE, icon: 'Sparkles' },
-  { label: 'Report History', path: ROUTES.REPORT_HISTORY, icon: 'History' },
 ] as const;
