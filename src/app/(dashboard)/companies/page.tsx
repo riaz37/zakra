@@ -24,7 +24,7 @@ import {
 } from '@/components/shared/scaffold';
 import { SearchInput } from '@/components/shared/search-input';
 import { DataTable } from '@/components/shared/data-table';
-import { StatusBadge } from '@/components/shared/status-badge';
+import { StatusBadge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';

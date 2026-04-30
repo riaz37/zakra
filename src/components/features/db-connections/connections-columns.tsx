@@ -5,13 +5,13 @@ import { type ColumnDef } from '@tanstack/react-table';
 import { Loader2, Zap } from 'lucide-react';
 
 import type { DatabaseConnection } from '@/types';
-import { StatusBadge } from '@/components/shared/status-badge';
+import { StatusBadge } from '@/components/ui/badge';
 import { RowActions } from '@/components/shared/row-actions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/format-date';
 
-import type { StatusVariant } from '@/components/shared/status-badge';
+type StatusVariant = 'active' | 'inactive' | 'suspended' | 'pending' | 'completed' | 'failed';
 
 function resolveStatus(connection: DatabaseConnection): {
   status: StatusVariant;

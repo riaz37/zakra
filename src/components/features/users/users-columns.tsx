@@ -4,7 +4,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import type { ListUser } from '@/types';
 import { formatDate } from '@/lib/format-date';
-import { StatusBadge } from '@/components/shared/status-badge';
+import { StatusBadge } from '@/components/ui/badge';
 import { RowActions } from '@/components/shared/row-actions';
 import { AvatarInitial } from '@/components/features/users/avatar-initial';
 import { UserTypeBadge } from '@/components/features/users/user-type-badge';
