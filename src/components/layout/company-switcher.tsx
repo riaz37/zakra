@@ -46,7 +46,7 @@ export function CompanySwitcher({ collapsed = false }: CompanySwitcherProps) {
       <p
         className="mb-1.5 px-1 font-sans text-micro uppercase text-subtle tracking-[0.048px]"
       >
-        Company context
+        Active company
       </p>
 
       <Select

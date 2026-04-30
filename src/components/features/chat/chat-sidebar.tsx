@@ -102,15 +102,30 @@ export function ChatSidebar() {
         )}
 
         {isLoading && companyId && (
-          <div className="space-y-4 px-4 mt-2">
-            <Skeleton className="h-3 w-16 mb-2" />
-            <div className="space-y-1">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center gap-3 px-3 py-2">
-                  <Skeleton className="h-4 w-4 shrink-0" />
-                  <Skeleton className="h-4 w-3/4" />
-                </div>
-              ))}
+          <div className="mt-2 space-y-6 px-4">
+            {/* Today group */}
+            <div>
+              <Skeleton className="mb-3 h-2.5 w-10" />
+              <div className="space-y-1">
+                {[0.75, 1, 0.6].map((w, i) => (
+                  <div key={i} className="flex items-center gap-3 px-3 py-2">
+                    <Skeleton className="h-4 w-4 shrink-0" />
+                    <Skeleton className="h-3.5" style={{ width: `${w * 100}%` }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Previous 7 Days group */}
+            <div>
+              <Skeleton className="mb-3 h-2.5 w-20" />
+              <div className="space-y-1">
+                {[0.85, 0.55].map((w, i) => (
+                  <div key={i} className="flex items-center gap-3 px-3 py-2">
+                    <Skeleton className="h-4 w-4 shrink-0" />
+                    <Skeleton className="h-3.5" style={{ width: `${w * 100}%` }} />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

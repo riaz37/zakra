@@ -14,13 +14,19 @@ export function useReportGenerations(companyId?: string, skip = 0, limit = 20) {
   });
 }
 
+interface UseReportGenerationDetailOptions {
+  refetchInterval?: number | false;
+}
+
 export function useReportGenerationDetail(
   generationId: string | undefined,
   companyId?: string,
+  options?: UseReportGenerationDetailOptions,
 ) {
   return useQuery({
     queryKey: [QUERY_KEY, generationId, companyId],
     queryFn: () => getReportGeneration(generationId!, companyId),
     enabled: !!generationId,
+    refetchInterval: options?.refetchInterval ?? false,
   });
 }

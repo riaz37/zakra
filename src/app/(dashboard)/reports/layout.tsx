@@ -16,9 +16,9 @@ import { ReportHistorySidebar } from '@/components/features/reports/report-histo
  */
 export default function ReportsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const showSidebar =
-    !pathname.startsWith('/reports/templates') &&
-    !pathname.startsWith('/reports/history');
+  // Sidebar only on the generation workflow — individual report view is a
+  // document reader that needs full width for charts and tables.
+  const showSidebar = pathname === '/reports/ai-generate';
 
   if (!showSidebar) {
     return <>{children}</>;

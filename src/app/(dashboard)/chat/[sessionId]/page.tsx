@@ -145,10 +145,10 @@ export default function ChatSessionPage() {
       )}
 
 
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-6">
-        {/* Top fade mask */}
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 pb-6">
+        {/* Top fade mask — sits above content so first message is never covered */}
         <div
-          className="pointer-events-none sticky top-0 z-10 -mt-6 h-8 w-full"
+          className="pointer-events-none sticky top-0 z-10 h-8 w-full"
           style={{
             background:
               'linear-gradient(to bottom, var(--color-background) 0%, transparent 100%)',
@@ -156,12 +156,14 @@ export default function ChatSessionPage() {
         />
 
         <div className="mx-auto max-w-[720px]">
-          {messagesLoading && <ChatMessagesSkeleton />}
+          {/* Only show skeleton when loading history with no streaming content yet */}
+          {messagesLoading && !pendingUserMessage && !isStreaming && <ChatMessagesSkeleton />}
 
           {!messagesLoading && !hasContent && (
             <ChatWelcome onPrompt={(text) => void handleSend(text)} />
           )}
 
+          {(messages.length > 0 || !!pendingUserMessage || !!streamingMessage) && (
           <div className="space-y-6">
             {messages.map((msg) => (
               <ChatMessageView key={msg.id} message={msg} />
@@ -205,6 +207,7 @@ export default function ChatSessionPage() {
 
             <div ref={messagesEndRef} />
           </div>
+          )}
         </div>
       </div>
 

@@ -11,6 +11,7 @@ import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 
 import { MarkdownRenderer } from '@/components/shared/markdown-renderer';
 import { SectionChart } from '@/components/features/reports/section-chart';
+import { ReportTOC } from '@/components/features/reports/report-toc';
 import { Skeleton, SkeletonText } from '@/components/shared/skeleton';
 import { ErrorState } from '@/components/shared/error-state';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ import { StatusBadge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/page-header';
 import { ScaffoldContainer } from '@/components/shared/scaffold';
 import { formatDateTime } from '@/lib/format-date';
+import { formatColumnHeader } from '@/lib/format-column';
 import { cn } from '@/lib/utils';
 import type { GeneratedReportSection } from '@/types/report';
 
@@ -55,6 +57,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
   const hasData = !!section.query_result?.row_count;
   const hasChart = hasData && !!section.chart_recommendation;
   const [tableOpen, setTableOpen] = useState(true);
+  const [tableExpanded, setTableExpanded] = useState(false);
 
   const rows = section.query_result?.rows ?? [];
   const columns = section.query_result?.columns ?? [];
@@ -72,10 +75,19 @@ function SectionBlock({ section, index }: SectionBlockProps) {
     });
   }
 
-  const visibleRows = (rows as unknown[]).slice(0, ROW_LIMIT);
+  const visibleRows = (rows as unknown[]).slice(
+    0,
+    tableExpanded ? rows.length : ROW_LIMIT,
+  );
+
+  const showExpandToggle = rowCount > ROW_LIMIT || truncated;
+  const hiddenCount = Math.max(0, rowCount - ROW_LIMIT);
 
   return (
-    <section className="border-t border-border pt-8">
+    <section
+      id={`section-${section.id}`}
+      className="scroll-mt-20 border-t border-border pt-8"
+    >
       <div className="flex items-baseline gap-3">
         <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-subtle">
           {formatIndex(index)}
@@ -100,7 +112,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
           <MarkdownRenderer content={section.analysis_text} />
         ) : (
           <p className="font-sans text-button italic text-muted">
-            No content generated
+            No data available for this section.
           </p>
         )}
       </div>
@@ -156,11 +168,11 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                           <th
                             key={col}
                             className={cn(
-                              'px-4 py-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-subtle',
+                              'px-4 py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.06em] text-muted',
                               numericColumns.has(i) ? 'text-right' : 'text-left',
                             )}
                           >
-                            {col}
+                            {formatColumnHeader(col)}
                           </th>
                         ))}
                       </tr>
@@ -182,14 +194,15 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                           >
                             {cells.map((cell, colIdx) => {
                               const formatted = formatCell(cell);
+                              const isNumeric = numericColumns.has(colIdx);
                               return (
                                 <td
                                   key={colIdx}
                                   className={cn(
-                                    'px-4 py-2.5 font-mono',
-                                    numericColumns.has(colIdx)
-                                      ? 'text-right tabular-nums'
-                                      : 'text-left',
+                                    'px-4 py-2',
+                                    isNumeric
+                                      ? 'text-right font-mono tabular-nums'
+                                      : 'text-left font-sans',
                                     formatted.isEmpty
                                       ? 'text-subtle'
                                       : 'text-foreground',
@@ -205,10 +218,26 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                     </tbody>
                   </table>
                 </div>
-                {rowCount > ROW_LIMIT || truncated ? (
-                  <div className="border-t border-border bg-surface-100 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.06em] text-subtle">
-                    Showing {visibleRows.length} of {rowCount} rows
-                    {truncated ? ' (truncated)' : ''}
+                {showExpandToggle ? (
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-surface-100 px-4 py-2">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-subtle">
+                      Showing {visibleRows.length} of {rowCount} rows
+                      {truncated && !tableExpanded
+                        ? ' (result truncated by server)'
+                        : ''}
+                    </span>
+                    {hiddenCount > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => setTableExpanded((v) => !v)}
+                        aria-expanded={tableExpanded}
+                        className="cursor-pointer font-mono text-[11px] text-subtle transition-colors hover:text-muted focus-visible:text-muted focus-visible:outline-none"
+                      >
+                        {tableExpanded
+                          ? 'Show less ↑'
+                          : `Show ${hiddenCount} more rows ↓`}
+                      </button>
+                    ) : null}
                   </div>
                 ) : null}
               </div>
@@ -225,10 +254,28 @@ export default function ReportViewerPage() {
   const router = useRouter();
   const companyId = useCurrentCompanyId();
 
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 120);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const { data: report, isLoading } = useReportGenerationDetail(
     reportId,
     companyId,
   );
+  const isInProgress =
+    report?.status === 'running' || report?.status === 'pending';
+
+  // Poll while the report is still generating. We use a separate polling
+  // hook call that only kicks in when `isInProgress` is true; queries share
+  // the same key so the result feeds the same cache entry that `report`
+  // reads from above.
+  useReportGenerationDetail(reportId, companyId, {
+    refetchInterval: isInProgress ? 3000 : false,
+  });
   const { download, isDownloading, error: downloadError } = useReportDownload();
 
   useEffect(() => {
@@ -291,6 +338,9 @@ export default function ReportViewerPage() {
     (a, b) => a.section_index - b.section_index,
   );
   const failedCount = sortedSections.filter((s) => s.status === 'failed').length;
+  const completedCount = sortedSections.filter(
+    (s) => s.status === 'completed',
+  ).length;
   const totalCount = sortedSections.length;
   const showPartialFailure =
     report.status !== 'failed' && failedCount > 0 && totalCount > 0;
@@ -300,111 +350,156 @@ export default function ReportViewerPage() {
     ? `${(report.duration_ms / 1000).toFixed(1)}s`
     : null;
 
+  const hasTOC = sortedSections.length >= 3;
+
   return (
-    <ScaffoldContainer size="small">
-      <PageHeader
-        breadcrumbs={[
-          { label: 'Reports', href: '/reports/ai-generate' },
-          { label: report.title ?? 'Report' },
-        ]}
-        title={report.title || 'Untitled Report'}
-        subtitle={
-          <span className="flex flex-wrap items-center gap-2">
-            <span className="font-sans text-button text-muted">
-              {formatDateTime(report.created_at)}
-            </span>
-            {durationLabel ? (
-              <>
-                <span className="text-subtle">·</span>
-                <span className="font-mono text-mono-sm text-muted">
-                  {durationLabel}
-                </span>
-              </>
-            ) : null}
-            <span className="text-subtle">·</span>
-            <span className="font-mono text-mono-sm text-muted">
-              {totalCount} {totalCount === 1 ? 'section' : 'sections'}
-            </span>
-            <span className="text-subtle">·</span>
-            <StatusBadge status={report.status} dot />
+    <>
+      {scrolled && report ? (
+        <div className="fixed top-0 left-56 right-0 z-20 flex items-center gap-4 border-b border-border bg-background/95 px-6 py-2.5 backdrop-blur-sm animate-fade-in">
+          <span className="min-w-0 flex-1 truncate font-sans text-button font-medium text-foreground">
+            {report.title || 'Untitled Report'}
           </span>
-        }
-        primaryActions={
-          report.has_pdf ? (
+          <StatusBadge status={report.status} dot />
+          {report.has_pdf ? (
             <Button
               variant="outline"
               size="sm"
               onClick={handleDownload}
               disabled={isDownloading}
-              aria-label={
-                isDownloading
-                  ? 'Downloading report PDF'
-                  : 'Download report as PDF'
-              }
-              className="h-8 gap-2"
+              className="h-7 gap-1.5 text-[12px]"
             >
-              <Download aria-hidden size={14} strokeWidth={1.75} />
-              {isDownloading ? 'Downloading…' : 'Download PDF'}
+              <Download aria-hidden size={13} strokeWidth={1.75} />
+              {isDownloading ? 'Downloading…' : 'PDF'}
             </Button>
-          ) : undefined
-        }
-      />
+          ) : null}
+        </div>
+      ) : null}
 
-      <div className="mt-2">
-        {showWholeFailure ? (
-          <div
-            role="alert"
-            className="mb-8 flex items-start gap-3 rounded-lg border border-error-border bg-error-bg px-4 py-3"
-          >
-            <AlertCircle
-              aria-hidden
-              className="mt-0.5 size-4 shrink-0 text-error"
-            />
-            <div>
-              <p className="font-sans text-button font-medium text-error">
-                Report generation failed
-              </p>
-              <p className="mt-1 font-sans text-button leading-relaxed text-error">
-                {report.error_message}
-              </p>
-            </div>
-          </div>
-        ) : null}
+      <div className="@container mx-auto flex w-full max-w-[1100px] gap-8 px-4 pb-16 @lg:px-6 @xl:px-10">
+        <div className="min-w-0 flex-1 max-w-[768px]">
+          <PageHeader
+            breadcrumbs={[
+              { label: 'Reports', href: '/reports/ai-generate' },
+              { label: report.title ?? 'Report' },
+            ]}
+            title={report.title || 'Untitled Report'}
+            subtitle={
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="font-sans text-button text-muted">
+                  {formatDateTime(report.created_at)}
+                </span>
+                {durationLabel ? (
+                  <>
+                    <span className="text-subtle">·</span>
+                    <span className="font-mono text-mono-sm text-muted">
+                      {durationLabel}
+                    </span>
+                  </>
+                ) : null}
+                <span className="text-subtle">·</span>
+                <span className="font-mono text-mono-sm text-muted">
+                  {totalCount} {totalCount === 1 ? 'section' : 'sections'}
+                </span>
+                <span className="text-subtle">·</span>
+                <StatusBadge status={report.status} dot />
+              </span>
+            }
+            primaryActions={
+              report.has_pdf ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  aria-label={
+                    isDownloading
+                      ? 'Downloading report PDF'
+                      : 'Download report as PDF'
+                  }
+                  className="h-8 gap-2"
+                >
+                  <Download aria-hidden size={14} strokeWidth={1.75} />
+                  {isDownloading ? 'Downloading…' : 'Download PDF'}
+                </Button>
+              ) : undefined
+            }
+          />
 
-        {showPartialFailure ? (
-          <div
-            role="alert"
-            className="mb-6 flex items-start gap-3 rounded-lg border border-warning-border bg-warning-bg px-4 py-3"
-          >
-            <AlertCircle
-              aria-hidden
-              className="mt-0.5 size-4 shrink-0 text-warning"
-            />
-            <p className="font-sans text-button text-foreground">
-              {failedCount} of {totalCount} sections failed to generate.
-            </p>
-          </div>
-        ) : null}
+          <div className="mt-2">
+            {isInProgress ? (
+              <div className="mb-6 flex items-center gap-2.5 rounded-lg border border-border bg-surface-200 px-4 py-3">
+                <Loader2 className="size-4 animate-spin text-accent" />
+                <span className="font-sans text-button text-foreground">
+                  Generating report…
+                </span>
+                <span className="ml-auto font-mono text-mono-sm text-muted">
+                  {completedCount} / {totalCount} sections
+                </span>
+              </div>
+            ) : null}
 
-        {report.executive_summary ? (
-          <div className="mb-12 max-w-[68ch] border-l-[3px] border-accent/30 py-1 pl-5">
-            <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-subtle">
-              Executive Summary
-            </p>
-            <p className="font-serif text-[16px] leading-relaxed text-foreground">
-              {report.executive_summary}
-            </p>
-          </div>
-        ) : null}
+            {showWholeFailure ? (
+              <div
+                role="alert"
+                className="mb-8 flex items-start gap-3 rounded-lg border border-error-border bg-error-bg px-4 py-3"
+              >
+                <AlertCircle
+                  aria-hidden
+                  className="mt-0.5 size-4 shrink-0 text-error"
+                />
+                <div>
+                  <p className="font-sans text-button font-medium text-error">
+                    Report generation failed
+                  </p>
+                  <p className="mt-1 font-sans text-button leading-relaxed text-error">
+                    {report.error_message}
+                  </p>
+                </div>
+              </div>
+            ) : null}
 
-        {sortedSections.length > 0 ? (
-          <div className="space-y-10">
-            {sortedSections.map((section, i) => (
-              <SectionBlock key={section.id} section={section} index={i} />
-            ))}
+            {showPartialFailure ? (
+              <div
+                role="alert"
+                className="mb-6 flex items-start gap-3 rounded-lg border border-warning-border bg-warning-bg px-4 py-3"
+              >
+                <AlertCircle
+                  aria-hidden
+                  className="mt-0.5 size-4 shrink-0 text-warning"
+                />
+                <p className="font-sans text-button text-foreground">
+                  {failedCount} of {totalCount} sections failed to generate.
+                </p>
+              </div>
+            ) : null}
+
+            {report.executive_summary ? (
+              <div className="mb-12 max-w-[68ch] border-l-[3px] border-accent/30 py-1 pl-5">
+                <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-subtle">
+                  Executive Summary
+                </p>
+                <p className="font-sans text-[15px] leading-relaxed text-foreground">
+                  {report.executive_summary}
+                </p>
+              </div>
+            ) : null}
+
+            {sortedSections.length > 0 ? (
+              <div className="space-y-10">
+                {sortedSections.map((section, i) => (
+                  <SectionBlock key={section.id} section={section} index={i} />
+                ))}
+              </div>
+            ) : null}
           </div>
+        </div>
+
+        {hasTOC ? (
+          <aside className="hidden xl:block w-[200px] shrink-0">
+            <ReportTOC sections={sortedSections} />
+          </aside>
         ) : null}
       </div>
-    </ScaffoldContainer>
+    </>
   );
 }

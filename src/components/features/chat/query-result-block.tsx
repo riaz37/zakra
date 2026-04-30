@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import { ChevronDown, ChevronRight, Clock, Table2, Copy, Check, BarChart2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatColumnHeader } from '@/lib/format-column';
 import type { MessageContentBlock } from '@/types/chat';
 
 type QueryResult = NonNullable<MessageContentBlock['query_result']>;
@@ -194,6 +195,21 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
   const displayRows = showAll ? qr.rows : qr.rows.slice(0, 10);
   const overflow = qr.row_count - 10;
 
+  // Detect numeric columns from the first row so we can apply mono +
+  // right-alignment selectively. Text columns render in font-sans.
+  const numericColumns = new Set<string>();
+  if (qr.rows.length > 0) {
+    const first = qr.rows[0];
+    for (const col of qr.columns) {
+      const v = first[col];
+      if (typeof v === 'number') {
+        numericColumns.add(col);
+      } else if (typeof v === 'string' && v.trim() !== '' && !isNaN(Number(v))) {
+        numericColumns.add(col);
+      }
+    }
+  }
+
   const handleCopySql = () => {
     if (!qr.sql) return;
     void navigator.clipboard.writeText(qr.sql);
@@ -299,14 +315,20 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
         >
           <thead>
             <tr className="border-b border-border bg-surface-300/50">
-              {qr.columns.map((col) => (
-                <th
-                  key={col}
-                  className="px-3 py-2.5 text-left font-mono text-mono font-medium text-muted"
-                >
-                  {col}
-                </th>
-              ))}
+              {qr.columns.map((col) => {
+                const isNumeric = numericColumns.has(col);
+                return (
+                  <th
+                    key={col}
+                    className={cn(
+                      'px-3 py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.06em] text-muted',
+                      isNumeric ? 'text-right' : 'text-left',
+                    )}
+                  >
+                    {formatColumnHeader(col)}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
@@ -321,12 +343,21 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
                 {qr.columns.map((col) => {
                   const val = row[col];
                   const isNull = val === null || val === undefined;
+                  const isNumeric = numericColumns.has(col);
                   return (
-                    <td key={col} className="px-3 py-2.5 font-mono text-mono">
+                    <td
+                      key={col}
+                      className={cn(
+                        'px-3 py-2 text-mono',
+                        isNumeric
+                          ? 'text-right font-mono tabular-nums'
+                          : 'text-left font-sans',
+                      )}
+                    >
                       {isNull ? (
                         <span className="italic text-subtle">null</span>
                       ) : (
-                        <span className="text-foreground/72">{String(val)}</span>
+                        <span className="text-foreground/80">{String(val)}</span>
                       )}
                     </td>
                   );
