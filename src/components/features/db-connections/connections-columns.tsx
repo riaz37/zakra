@@ -82,7 +82,7 @@ export function getConnectionsColumns({
       id: 'last_tested',
       header: 'Last tested',
       cell: ({ row }) => (
-        <span className="font-sans text-button text-muted">
+        <span className="font-mono text-mono text-muted">
           {row.original.last_connected_at
             ? formatDate(row.original.last_connected_at)
             : 'Never'}

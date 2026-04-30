@@ -562,7 +562,7 @@
 .kb-hierarchy .react-flow__edge-path {
   stroke: rgba(235, 234, 229, 0.16);
   stroke-width: 1.25;
-  transition: stroke 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: stroke 120ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .kb-hierarchy .react-flow__edge.selected .react-flow__edge-path,
@@ -590,8 +590,8 @@
   color: var(--fg-muted);
   width: 28px;
   height: 28px;
-  transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1),
-    color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 120ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 120ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .kb-hierarchy .react-flow__controls-button:last-child {

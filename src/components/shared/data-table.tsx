@@ -113,7 +113,7 @@ export function DataTable<TData>({
                   <th
                     key={header.id}
                     scope="col"
-                    className="px-4 py-3 text-left align-middle font-sans text-caption font-medium tracking-[0.048px] text-muted"
+                    className="px-4 py-2.5 text-left align-middle font-sans text-[11px] font-medium uppercase tracking-[0.06em] text-fg-subtle whitespace-nowrap"
                   >
                     {header.isPlaceholder
                       ? null
@@ -156,7 +156,7 @@ export function DataTable<TData>({
                     <td
                       key={cell.id}
                       className={cn(
-                        "px-4 py-3 align-middle font-sans text-button text-foreground",
+                        "px-4 py-2 align-middle font-sans text-button text-foreground",
                         "relative"
                       )}
                     >
