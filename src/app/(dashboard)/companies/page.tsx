@@ -91,17 +91,16 @@ export default function CompaniesPage() {
       header: 'Type',
       cell: ({ row }) => {
         const isSub = row.original.company_type === 'subsidiary';
+        const parentName = isSub && row.original.parent_id
+          ? allCompanies?.items?.find(c => c.id === row.original.parent_id)?.name ?? 'Parent'
+          : undefined;
         return (
-          <div className="flex flex-col">
-            <span className="font-sans text-button text-muted capitalize">
-              {row.original.company_type}
-            </span>
-            {isSub && row.original.parent_id && (
-              <span className="font-sans text-caption text-muted">
-                Under {allCompanies?.items?.find(c => c.id === row.original.parent_id)?.name || 'Parent'}
-              </span>
-            )}
-          </div>
+          <span
+            className="font-sans text-button text-muted capitalize"
+            title={parentName ? `Under ${parentName}` : undefined}
+          >
+            {row.original.company_type}
+          </span>
         );
       },
     },
