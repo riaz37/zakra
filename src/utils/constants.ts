@@ -105,7 +105,6 @@ export const NAV_ITEMS = [
   { label: 'Reports', path: ROUTES.REPORT_AI_GENERATE, icon: 'FileBarChart' },
   { label: 'Companies', path: ROUTES.COMPANIES, icon: 'Building2', requiredRole: 'admin' as RequiredRole },
   { label: 'Users', path: ROUTES.USERS, icon: 'Users', requiredRole: 'admin' as RequiredRole },
-  { label: 'Roles', path: ROUTES.ROLES, icon: 'Shield', requiredRole: 'admin' as RequiredRole },
   { label: 'Databases', path: ROUTES.DB_CONNECTIONS, icon: 'Database', requiredRole: 'admin' as RequiredRole },
   { label: 'Table Access', path: ROUTES.TABLE_ACCESS, icon: 'Table', requiredRole: 'admin' as RequiredRole },
 ] as const;

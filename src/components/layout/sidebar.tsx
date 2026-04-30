@@ -27,7 +27,6 @@ const PRIMARY_LABELS = new Set<string>([
 
 const ADMIN_LABELS = new Set<string>([
   'Users',
-  'Roles',
   'Companies',
   'Databases',
   'Table Access',
