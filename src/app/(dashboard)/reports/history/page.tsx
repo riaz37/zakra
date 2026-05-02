@@ -7,6 +7,7 @@ import { FileText } from 'lucide-react';
 import { useReportGenerations } from '@/hooks/useReportGenerations';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import type { GeneratedReport, ReportGenerationStatus } from '@/types';
+import { AnimatedPage } from '@/components/shared/animated-container';
 
 import { PageHeader } from '@/components/shared/page-header';
 import {
@@ -87,75 +88,77 @@ export default function ReportHistoryPage() {
         navigationItems={reportNavigationItems(pathname)}
       />
 
-      <ScaffoldFilterAndContent className="mt-6">
-        <ScaffoldActionsContainer>
-          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="w-full sm:max-w-sm">
-              <SearchInput
-                value={search}
-                onChange={setSearch}
-                placeholder="Search by title…"
-                ariaLabel="Search reports by title"
-              />
-            </div>
-            <Select
-              value={statusFilter}
-              onValueChange={(v) => setStatusFilter(v as StatusFilter)}
-            >
-              <SelectTrigger
-                aria-label="Filter by status"
-                className="h-9 w-full sm:w-[180px]"
+      <AnimatedPage>
+        <ScaffoldFilterAndContent className="mt-6">
+          <ScaffoldActionsContainer>
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="w-full sm:max-w-sm">
+                <SearchInput
+                  value={search}
+                  onChange={setSearch}
+                  placeholder="Search by title…"
+                  ariaLabel="Search reports by title"
+                />
+              </div>
+              <Select
+                value={statusFilter}
+                onValueChange={(v) => setStatusFilter(v as StatusFilter)}
               >
-                <SelectValue placeholder="All statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                {STATUS_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </ScaffoldActionsContainer>
+                <SelectTrigger
+                  aria-label="Filter by status"
+                  className="h-9 w-full sm:w-[180px]"
+                >
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </ScaffoldActionsContainer>
 
-        {isError ? (
-          <ErrorState
-            title="Failed to load report history"
-            onRetry={() => refetch()}
-          />
-        ) : reports.length === 0 && !isLoading ? (
-          <EmptyState
-            icon={FileText}
-            title={
-              hasActiveFilters
-                ? 'No reports match your filters'
-                : 'No reports generated yet'
-            }
-            description={
-              hasActiveFilters
-                ? 'Try clearing the search term or status filter.'
-                : 'Generated reports will appear here as soon as you create one.'
-            }
-          />
-        ) : (
-          <>
-            <DataTable
-              columns={columns}
-              data={reports}
-              isLoading={isLoading}
-              caption="Generated reports history"
-              emptyMessage="No reports match your filters."
-              onRowClick={(report) => router.push(`/reports/${report.id}`)}
+          {isError ? (
+            <ErrorState
+              title="Failed to load report history"
+              onRetry={() => refetch()}
             />
-            {showTruncationNotice && (
-              <p className="mt-3 font-mono text-micro uppercase tracking-[0.06em] text-fg-subtle">
-                Showing the {HISTORY_FETCH_LIMIT} most recent of {totalCount}
-              </p>
-            )}
-          </>
-        )}
-      </ScaffoldFilterAndContent>
+          ) : reports.length === 0 && !isLoading ? (
+            <EmptyState
+              icon={FileText}
+              title={
+                hasActiveFilters
+                  ? 'No reports match your filters'
+                  : 'No reports generated yet'
+              }
+              description={
+                hasActiveFilters
+                  ? 'Try clearing the search term or status filter.'
+                  : 'Generated reports will appear here as soon as you create one.'
+              }
+            />
+          ) : (
+            <>
+              <DataTable
+                columns={columns}
+                data={reports}
+                isLoading={isLoading}
+                caption="Generated reports history"
+                emptyMessage="No reports match your filters."
+                onRowClick={(report) => router.push(`/reports/${report.id}`)}
+              />
+              {showTruncationNotice && (
+                <p className="mt-3 font-mono text-micro uppercase tracking-[0.06em] text-fg-subtle">
+                  Showing the {HISTORY_FETCH_LIMIT} most recent of {totalCount}
+                </p>
+              )}
+            </>
+          )}
+        </ScaffoldFilterAndContent>
+      </AnimatedPage>
     </ScaffoldContainer>
   );
 }

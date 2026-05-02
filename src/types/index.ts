@@ -11,9 +11,12 @@ export * from './report';
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;
-  page: number;
-  page_size: number;
-  total_pages: number;
+  limit?: number;
+  skip?: number;
+  // These fields are not returned by the API — computed locally where needed
+  page?: number;
+  page_size?: number;
+  total_pages?: number;
 }
 
 export interface ApiError {

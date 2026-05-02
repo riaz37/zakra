@@ -31,7 +31,7 @@ export function TemplateCard({
         }
       }}
       className={cn(
-        'group relative flex cursor-pointer flex-col rounded-lg border border-border bg-surface-200 p-5 transition-all duration-[120ms]',
+        'group relative flex h-full cursor-pointer flex-col rounded-lg border border-border bg-surface-200 p-5 transition-all duration-[120ms]',
         'hover:border-border-medium hover:bg-surface-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
       )}
     >
@@ -55,7 +55,7 @@ export function TemplateCard({
       </div>
 
       {/* Body Snippet */}
-      <div className="mt-4 flex-1">
+      <div className="mt-4 flex-1 min-h-[3rem]">
         <p className="line-clamp-2 text-body leading-relaxed text-fg-muted">
           {template.description || 'No description provided.'}
         </p>
@@ -109,7 +109,7 @@ export function TemplateCard({
 
 export function TemplateCardSkeleton() {
   return (
-    <div className="flex flex-col rounded-lg border border-border bg-surface-200 p-5">
+    <div className="flex h-full flex-col rounded-lg border border-border bg-surface-200 p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <Skeleton className="size-10 rounded-lg" />

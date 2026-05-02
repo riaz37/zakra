@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Shield, Plus, X } from 'lucide-react';
@@ -37,6 +38,8 @@ import { Skeleton } from '@/components/shared/skeleton';
 import { DataTable } from '@/components/shared/data-table';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
+import { AnimatedPage, StaggerList, StaggerItem } from '@/components/shared/animated-container';
+import { fadeUp } from '@/lib/motion';
 import {
   Field,
   FieldGroup,
@@ -225,87 +228,97 @@ export default function UserDetailPage() {
         title={fullName}
       />
 
-      <ScaffoldSection>
-        <ScaffoldSectionDetail>
-          <ScaffoldSectionTitle>Profile</ScaffoldSectionTitle>
-          <ScaffoldSectionDescription>
-            Account information and current access type.
-          </ScaffoldSectionDescription>
-        </ScaffoldSectionDetail>
+      <AnimatedPage>
+        <StaggerList className="flex flex-col">
+          <StaggerItem>
+            <ScaffoldSection>
+              <ScaffoldSectionDetail>
+                <ScaffoldSectionTitle>Profile</ScaffoldSectionTitle>
+                <ScaffoldSectionDescription>
+                  Account information and current access type.
+                </ScaffoldSectionDescription>
+              </ScaffoldSectionDetail>
 
-        <ScaffoldSectionContent>
-          <div className="rounded-card border border-border bg-background p-6">
-            <div className="flex items-start gap-5">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-surface-300 font-sans text-heading font-medium text-foreground">
-                {initial}
-              </div>
-              <div className="flex flex-col gap-3">
-                <div>
-                  <p className="font-sans text-heading font-medium text-foreground">
-                    {fullName}
-                  </p>
-                  <p className="font-sans text-body text-fg-muted">{user.email}</p>
+              <ScaffoldSectionContent>
+                <div className="rounded-card border border-border bg-background p-6">
+                  <div className="flex items-start gap-5">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-surface-300 font-sans text-heading font-medium text-foreground">
+                      {initial}
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <p className="font-sans text-heading font-medium text-foreground">
+                          {fullName}
+                        </p>
+                        <p className="font-sans text-body text-fg-muted">{user.email}</p>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <UserTypeBadge type={user.user_type} />
+                        <StatusBadge status={user.status} />
+                      </div>
+                      {user.last_login_at && (
+                        <p className="font-sans text-body text-fg-muted">
+                          Last login: {formatDateTime(user.last_login_at)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <UserTypeBadge type={user.user_type} />
-                  <StatusBadge status={user.status} />
+              </ScaffoldSectionContent>
+            </ScaffoldSection>
+          </StaggerItem>
+
+          <StaggerItem>
+            <ScaffoldDivider />
+          </StaggerItem>
+
+          <StaggerItem>
+            <ScaffoldSection>
+              <ScaffoldSectionDetail>
+                <ScaffoldSectionTitle>Assigned Roles</ScaffoldSectionTitle>
+                <ScaffoldSectionDescription>
+                  Roles determine what data and actions this user can access.
+                </ScaffoldSectionDescription>
+              </ScaffoldSectionDetail>
+
+              <ScaffoldSectionContent>
+                <div className="flex items-center justify-end">
+                  <Button
+                    onClick={() => setAssignRoleOpen(true)}
+                    className="h-9 px-4"
+                  >
+                    <Plus aria-hidden size={14} strokeWidth={2} />
+                    Assign Role
+                  </Button>
                 </div>
-                {user.last_login_at && (
-                  <p className="font-sans text-body text-fg-muted">
-                    Last login: {formatDateTime(user.last_login_at)}
-                  </p>
+
+                {rolesLoading || !userRoles || userRoles.length === 0 ? (
+                  rolesLoading ? (
+                    <DataTable
+                      columns={roleColumns}
+                      data={[]}
+                      isLoading={true}
+                      caption="Assigned roles"
+                    />
+                  ) : (
+                    <EmptyState
+                      icon={Shield}
+                      title="No roles assigned"
+                      description="Assign roles to control what this user can access."
+                    />
+                  )
+                ) : (
+                  <DataTable
+                    columns={roleColumns}
+                    data={userRoles}
+                    caption="Assigned roles"
+                  />
                 )}
-              </div>
-            </div>
-          </div>
-        </ScaffoldSectionContent>
-      </ScaffoldSection>
-
-      <ScaffoldDivider />
-
-      <ScaffoldSection>
-        <ScaffoldSectionDetail>
-          <ScaffoldSectionTitle>Assigned Roles</ScaffoldSectionTitle>
-          <ScaffoldSectionDescription>
-            Roles determine what data and actions this user can access.
-          </ScaffoldSectionDescription>
-        </ScaffoldSectionDetail>
-
-        <ScaffoldSectionContent>
-          <div className="flex items-center justify-end">
-            <Button
-              onClick={() => setAssignRoleOpen(true)}
-              className="h-9 px-4"
-            >
-              <Plus aria-hidden size={14} strokeWidth={2} />
-              Assign Role
-            </Button>
-          </div>
-
-          {rolesLoading || !userRoles || userRoles.length === 0 ? (
-            rolesLoading ? (
-              <DataTable
-                columns={roleColumns}
-                data={[]}
-                isLoading={true}
-                caption="Assigned roles"
-              />
-            ) : (
-              <EmptyState
-                icon={Shield}
-                title="No roles assigned"
-                description="Assign roles to control what this user can access."
-              />
-            )
-          ) : (
-            <DataTable
-              columns={roleColumns}
-              data={userRoles}
-              caption="Assigned roles"
-            />
-          )}
-        </ScaffoldSectionContent>
-      </ScaffoldSection>
+              </ScaffoldSectionContent>
+            </ScaffoldSection>
+          </StaggerItem>
+        </StaggerList>
+      </AnimatedPage>
 
       <FormDialog open={assignRoleOpen} onOpenChange={setAssignRoleOpen} title="Assign Role">
         <AssignRoleForm

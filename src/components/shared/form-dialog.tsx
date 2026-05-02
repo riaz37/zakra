@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogBody,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
@@ -29,7 +30,9 @@ export function FormDialog({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        {children}
+        <DialogBody>
+          {children}
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );

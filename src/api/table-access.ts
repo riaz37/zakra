@@ -84,9 +84,25 @@ export async function grantColumnPermission(
 /**
  * Bulk grant permissions
  */
+export interface BulkGrantPermissionRecord {
+  id: string;
+  table_id: string;
+  column_name: string;
+  grantee_type: 'user' | 'role';
+  grantee_id: string;
+  permission: string;
+  mask_pattern: string | null;
+  row_filter: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BulkGrantResult {
-  granted: number;
-  failed_grants?: Array<{ column_name: string; grantee_id: string; reason: string }>;
+  table_id: string;
+  grantee_type: 'user' | 'role';
+  grantee_id: string;
+  permissions: BulkGrantPermissionRecord[];
+  message: string;
 }
 
 export async function bulkGrantPermissions(

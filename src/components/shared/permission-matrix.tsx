@@ -14,6 +14,8 @@ import type { ManagedColumn, ColumnPermission, MaskPattern } from '@/types';
 import { COLUMN_PERMISSIONS, MASK_PATTERNS } from '@/utils/constants';
 import { Search, X } from 'lucide-react';
 import { Skeleton } from '@/components/shared/skeleton';
+import { motion, AnimatePresence } from 'framer-motion';
+import { staggerContainer, staggerItem, fadeUp } from '@/lib/motion';
 
 const PERMISSION_LEVELS: ColumnPermission[] = [
   COLUMN_PERMISSIONS.NONE,
@@ -269,7 +271,11 @@ export function PermissionMatrix({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <motion.tbody
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
             {filteredRows.length === 0 ? (
               <tr>
                 <td
@@ -285,7 +291,8 @@ export function PermissionMatrix({
                 const meta = columnMeta[row.columnName];
                 return (
                   <React.Fragment key={row.columnName}>
-                    <tr
+                    <motion.tr
+                      variants={staggerItem}
                       className={cn(
                         'group transition-colors hover:bg-surface-300/40',
                         !isLast && row.permission !== 'read_masked' && 'border-b border-border',
@@ -337,48 +344,59 @@ export function PermissionMatrix({
                           </td>
                         );
                       })}
-                    </tr>
-                    {row.permission === 'read_masked' && (
-                      <tr
-                        className={cn(
-                          'bg-surface-200',
-                          !isLast && 'border-b border-border',
-                        )}
-                      >
-                        <td colSpan={5} className="px-4 pb-2.5 pt-1">
-                          <div className="flex items-center gap-2.5">
-                            <label
-                              htmlFor={`mask-${row.columnName}`}
-                              className="shrink-0 font-sans text-caption text-muted"
+                    </motion.tr>
+                    <AnimatePresence>
+                      {row.permission === 'read_masked' && (
+                        <tr
+                          key={`mask-row-${row.columnName}`}
+                          className={cn(
+                            'bg-surface-200',
+                            !isLast && 'border-b border-border',
+                          )}
+                        >
+                          <td colSpan={5} className="p-0">
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                              className="overflow-hidden"
                             >
-                              Mask pattern
-                            </label>
-                            <Select
-                              value={row.maskPattern ?? 'PARTIAL'}
-                              onValueChange={(v) =>
-                                handleMaskPatternChange(row.columnName, v as MaskPattern)
-                              }
-                            >
-                              <SelectTrigger id={`mask-${row.columnName}`} size="sm">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent side="bottom">
-                                {MASK_PATTERN_OPTIONS.map((pattern) => (
-                                  <SelectItem key={pattern} value={pattern} label={pattern}>
-                                    {pattern}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
+                              <div className="flex items-center gap-2.5 px-4 pb-2.5 pt-1">
+                                <label
+                                  htmlFor={`mask-${row.columnName}`}
+                                  className="shrink-0 font-sans text-caption text-muted"
+                                >
+                                  Mask pattern
+                                </label>
+                                <Select
+                                  value={row.maskPattern ?? 'PARTIAL'}
+                                  onValueChange={(v) =>
+                                    handleMaskPatternChange(row.columnName, v as MaskPattern)
+                                  }
+                                >
+                                  <SelectTrigger id={`mask-${row.columnName}`} size="sm">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent side="bottom">
+                                    {MASK_PATTERN_OPTIONS.map((pattern) => (
+                                      <SelectItem key={pattern} value={pattern} label={pattern}>
+                                        {pattern}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </motion.div>
+                          </td>
+                        </tr>
+                      )}
+                    </AnimatePresence>
                   </React.Fragment>
                 );
               })
             )}
-          </tbody>
+          </motion.tbody>
         </table>
       </div>
     </div>

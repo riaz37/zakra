@@ -54,7 +54,7 @@ export function DatabaseCard({
     <Link
       href={`/db-connections/${connection.id}`}
       className={cn(
-        'group relative flex flex-col rounded-lg border border-border bg-surface-200 p-5 transition-all duration-[120ms]',
+        'group relative flex h-full flex-col rounded-lg border border-border bg-surface-200 p-5 transition-all duration-[120ms]',
         'hover:border-border-medium hover:bg-surface-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent',
       )}
     >

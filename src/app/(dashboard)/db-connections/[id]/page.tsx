@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Zap, Trash2 } from 'lucide-react';
@@ -21,6 +22,8 @@ import {
 } from '@/components/shared/scaffold';
 import { ErrorState } from '@/components/shared/error-state';
 import { Skeleton } from '@/components/shared/skeleton';
+import { AnimatedPage } from '@/components/shared/animated-container';
+import { fadeUp } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 
 import { SchemaExplorerTab } from '@/components/features/db-connections/schema-explorer-tab';
@@ -45,6 +48,7 @@ export default function DbConnectionDetailPage({
   const companyId = useCurrentCompanyId();
   const [activeTab, setActiveTab] = useState<TabId>('schema');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const reduced = useReducedMotion();
 
   const { data: connection, isLoading, isError } = useDbConnection(
     id,
@@ -159,30 +163,55 @@ export default function DbConnectionDetailPage({
         }))}
       />
 
-      <ScaffoldFilterAndContent>
-        {connection.last_error ? (
-          <div
-            role="alert"
-            className={cn(
-              'mb-4 rounded-lg border border-error-border bg-error-bg px-4 py-3',
-            )}
-          >
-            <p className="font-sans text-micro uppercase tracking-[0.048px] text-error">
-              Last error
-            </p>
-            <p className="mt-1.5 font-mono text-mono-sm leading-[1.5] text-error">
-              {connection.last_error}
-            </p>
-          </div>
-        ) : null}
+      <AnimatedPage>
+        <ScaffoldFilterAndContent>
+          <AnimatePresence>
+            {connection.last_error ? (
+              <motion.div
+                role="alert"
+                initial={reduced ? {} : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className={cn(
+                  'mb-4 rounded-lg border border-error-border bg-error-bg px-4 py-3',
+                )}
+              >
+                <p className="font-sans text-micro uppercase tracking-[0.048px] text-error">
+                  Last error
+                </p>
+                <p className="mt-1.5 font-mono text-mono-sm leading-[1.5] text-error">
+                  {connection.last_error}
+                </p>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
 
-        {activeTab === 'schema' ? (
-          <SchemaExplorerTab connectionId={id} />
-        ) : null}
-        {activeTab === 'rules' ? (
-          <BusinessRulesTab connectionId={id} companyId={companyId} />
-        ) : null}
-      </ScaffoldFilterAndContent>
+          <AnimatePresence mode="wait">
+            {activeTab === 'schema' ? (
+              <motion.div
+                key="schema"
+                variants={fadeUp}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+                exit="exit"
+              >
+                <SchemaExplorerTab connectionId={id} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="rules"
+                variants={fadeUp}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+                exit="exit"
+              >
+                <BusinessRulesTab connectionId={id} companyId={companyId} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </ScaffoldFilterAndContent>
+      </AnimatedPage>
 
       <ConfirmDialog
         open={confirmDelete}

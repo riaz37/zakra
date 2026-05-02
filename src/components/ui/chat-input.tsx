@@ -7,6 +7,7 @@ import {
   Square,
   X,
   FileText,
+  Paperclip,
   ImageIcon,
   Video,
   Music,
@@ -768,7 +769,7 @@ export function ChatInput({
               disabled={disabled || files.length >= maxFiles}
               title={files.length >= maxFiles ? `Max ${maxFiles} files` : "Attach files"}
             >
-              <Plus className="h-4 w-4" />
+              <Paperclip className="h-4 w-4" />
             </button>
           </div>
 

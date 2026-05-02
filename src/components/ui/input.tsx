@@ -42,14 +42,14 @@ function Input({
         // Layout
         "block w-full rounded-[6px] px-3 py-2.5",
         // Surface + border
-        "border bg-surface-200 text-foreground",
+        "border bg-surface-100 text-foreground",
         // Type
         mono ? "font-mono text-body" : "font-sans text-body",
         "placeholder:text-fg-subtle",
         // Motion
         "transition-colors duration-[120ms]",
         // Default state
-        !error && "border-border focus:border-accent",
+        !error && "border-border-medium focus:border-accent",
         // Focus ring (always shown on keyboard focus)
         "outline-none focus-visible:ring-2 focus-visible:ring-ring",
         // Error state — overrides default border + focus colour

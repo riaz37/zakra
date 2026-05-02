@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -31,7 +32,8 @@ function DialogOverlay({
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/70 supports-backdrop-filter:bg-black/60 supports-backdrop-filter:backdrop-blur-sm duration-100 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-50 bg-black/75 supports-backdrop-filter:bg-black/60 supports-backdrop-filter:backdrop-blur-md",
+        "data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 duration-200",
         className
       )}
       {...props}
@@ -53,7 +55,8 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-3 rounded-xl bg-popover text-body text-popover-foreground shadow-elevated border border-border-strong duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-0 rounded-xl bg-surface-200 text-body text-foreground shadow-elevated border border-border-strong outline-none sm:max-w-sm",
+          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 duration-220 ease-out",
           className
         )}
         {...props}
@@ -70,8 +73,7 @@ function DialogContent({
               />
             }
           >
-            <XIcon
-            />
+            <XIcon />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

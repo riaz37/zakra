@@ -8,6 +8,7 @@ import { StatusDistributionChart } from '../_components/status-distribution-char
 import { RecentActivity } from '../_components/recent-activity';
 import { PageHeader } from '@/components/shared/page-header';
 import { ScaffoldContainer } from '@/components/shared/scaffold';
+import { AnimatedPage, StaggerList, StaggerItem } from '@/components/shared/animated-container';
 
 export default function OverviewPage() {
   const companyId = useCurrentCompanyId();
@@ -24,31 +25,41 @@ export default function OverviewPage() {
         }
       />
 
-      <div className="mt-6 flex flex-col gap-4 animate-in fade-in-50">
-        <MetricStrip metrics={metrics} isLoading={isLoading} />
+      <AnimatedPage>
+        <StaggerList className="mt-6 flex flex-col gap-4">
+          <StaggerItem>
+            <MetricStrip metrics={metrics} isLoading={isLoading} />
+          </StaggerItem>
 
-        {!companyId ? (
-          <div
-            role="status"
-            className="rounded-card border border-border bg-surface-200 px-4 py-3 font-sans text-caption text-muted"
-          >
-            Select a company from the sidebar to filter analytics and activity by workspace.
-          </div>
-        ) : null}
+          {!companyId ? (
+            <StaggerItem>
+              <div
+                role="status"
+                className="rounded-card border border-border bg-surface-200 px-4 py-3 font-sans text-caption text-muted"
+              >
+                Select a company from the sidebar to filter analytics and activity by workspace.
+              </div>
+            </StaggerItem>
+          ) : null}
 
-        <div className="grid gap-4 @md:grid-cols-2 @lg:grid-cols-7">
-          <div className="@lg:col-span-4 @md:col-span-2">
-            <ActivityChart data={activityData} isLoading={isLoading} />
-          </div>
-          <div className="@lg:col-span-3 @md:col-span-2">
-            <StatusDistributionChart data={statusData} isLoading={isLoading} />
-          </div>
-        </div>
+          <StaggerItem>
+            <div className="grid gap-4 @md:grid-cols-2 @lg:grid-cols-7">
+              <div className="@lg:col-span-4 @md:col-span-2">
+                <ActivityChart data={activityData} isLoading={isLoading} />
+              </div>
+              <div className="@lg:col-span-3 @md:col-span-2">
+                <StatusDistributionChart data={statusData} isLoading={isLoading} />
+              </div>
+            </div>
+          </StaggerItem>
 
-        <div className="grid gap-4">
-          <RecentActivity recentActivity={recentActivity} isLoading={isLoading} />
-        </div>
-      </div>
+          <StaggerItem>
+            <div className="grid gap-4">
+              <RecentActivity recentActivity={recentActivity} isLoading={isLoading} />
+            </div>
+          </StaggerItem>
+        </StaggerList>
+      </AnimatedPage>
     </ScaffoldContainer>
   );
 }

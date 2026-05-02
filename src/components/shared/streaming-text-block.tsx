@@ -3,6 +3,7 @@
 import { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { motion } from 'framer-motion';
 import {
   buildMarkdownComponents,
   normalizeMarkdown,
@@ -19,6 +20,22 @@ export interface StreamingTextBlockProps {
   className?: string;
 }
 
+function Cursor() {
+  return (
+    <motion.span
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0, 1, 0.4] }}
+      transition={{
+        duration: 0.8,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+      className="ml-1 inline-block h-4 w-1.5 translate-y-0.5 rounded-[1px] bg-accent/60"
+      aria-hidden
+    />
+  );
+}
+
 export const StreamingTextBlock = memo(function StreamingTextBlock({
   text,
   isStreaming = false,
@@ -26,11 +43,8 @@ export const StreamingTextBlock = memo(function StreamingTextBlock({
 }: StreamingTextBlockProps) {
   if (!text && isStreaming) {
     return (
-      <div className="flex items-center py-0.5">
-        <span
-          className="inline-block h-[16px] w-[2px] rounded-sm bg-accent/60 animate-cursor-blink align-middle"
-          aria-label="Generating response"
-        />
+      <div className="flex items-center py-1">
+        <Cursor />
       </div>
     );
   }
@@ -40,12 +54,7 @@ export const StreamingTextBlock = memo(function StreamingTextBlock({
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={streamingComponents}>
         {normalizeMarkdown(text)}
       </ReactMarkdown>
-      {isStreaming && (
-        <span
-          className="ml-0.5 inline-block h-[14px] w-[2px] rounded-sm bg-accent/50 animate-cursor-blink align-text-bottom"
-          aria-hidden
-        />
-      )}
+      {isStreaming && <Cursor />}
     </div>
   );
 });

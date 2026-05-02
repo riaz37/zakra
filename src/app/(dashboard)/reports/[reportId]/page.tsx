@@ -22,6 +22,7 @@ import { formatDateTime } from '@/lib/format-date';
 import { formatColumnHeader } from '@/lib/format-column';
 import { cn } from '@/lib/utils';
 import type { GeneratedReportSection } from '@/types/report';
+import { AnimatedPage, StaggerList, StaggerItem } from '@/components/shared/animated-container';
 
 const ROW_LIMIT = 20;
 
@@ -375,7 +376,7 @@ export default function ReportViewerPage() {
         </div>
       ) : null}
 
-      <div className="@container mx-auto flex w-full max-w-[1100px] gap-8 px-4 pb-16 @lg:px-6 @xl:px-10">
+      <AnimatedPage className="@container mx-auto flex w-full max-w-[1100px] gap-8 px-4 pb-16 @lg:px-6 @xl:px-10">
         <div className="min-w-0 flex-1 max-w-[768px]">
           <PageHeader
             breadcrumbs={[
@@ -499,7 +500,7 @@ export default function ReportViewerPage() {
             <ReportTOC sections={sortedSections} />
           </aside>
         ) : null}
-      </div>
+      </AnimatedPage>
     </>
   );
 }

@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { useRouter } from 'next/navigation';
 import { X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth, useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
 import { Sidebar } from '@/components/layout/sidebar';
@@ -100,52 +101,60 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <Sidebar variant="full" />
       </div>
 
-      {/* Mobile slide-in overlay */}
-      <div
-        aria-hidden={!navOpen}
-        className={cn(
-          'fixed inset-0 z-40 md:hidden',
-          navOpen ? 'pointer-events-auto' : 'pointer-events-none',
-        )}
-      >
-        {/* Backdrop */}
-        <button
-          type="button"
-          tabIndex={-1}
-          aria-label="Close navigation"
-          onClick={closeNav}
-          className={cn(
-            'absolute inset-0 bg-black/70 transition-opacity duration-200',
-            navOpen ? 'opacity-100' : 'opacity-0',
-          )}
-        />
-
-        {/* Drawer */}
-        <div
-          ref={overlayRef}
-          id="mobile-navigation"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Main navigation"
-          className={cn(
-            'absolute left-0 top-0 h-dvh w-56 transform transition-transform duration-200 ease-out',
-            navOpen ? 'translate-x-0' : '-translate-x-full',
-          )}
-        >
-          <div className="relative h-full">
-            <Sidebar variant="overlay" onNavigate={closeNav} />
-            <button
-              ref={closeButtonRef}
+      {/* Mobile slide-in overlay — Framer Motion for spring-physics feel */}
+      <AnimatePresence>
+        {navOpen && (
+          <div
+            aria-hidden={!navOpen}
+            className="fixed inset-0 z-40 md:hidden pointer-events-auto"
+          >
+            {/* Backdrop */}
+            <motion.button
               type="button"
-              onClick={closeNav}
+              tabIndex={-1}
               aria-label="Close navigation"
-              className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-300 text-foreground shadow-ring transition-all duration-200 hover:text-error hover:shadow-focus focus-visible:text-error focus-visible:shadow-focus focus-visible:outline-none"
+              onClick={closeNav}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-black/70"
+            />
+
+            {/* Drawer */}
+            <motion.div
+              ref={overlayRef}
+              id="mobile-navigation"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Main navigation"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{
+                type: 'spring',
+                stiffness: 400,
+                damping: 35,
+                mass: 0.8,
+              }}
+              className="absolute left-0 top-0 h-dvh w-56"
             >
-              <X aria-hidden size={16} strokeWidth={1.75} />
-            </button>
+              <div className="relative h-full">
+                <Sidebar variant="overlay" onNavigate={closeNav} />
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  onClick={closeNav}
+                  aria-label="Close navigation"
+                  className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-300 text-foreground shadow-ring transition-all duration-200 hover:text-error hover:shadow-focus focus-visible:text-error focus-visible:shadow-focus focus-visible:outline-none"
+                >
+                  <X aria-hidden size={16} strokeWidth={1.75} />
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      </div>
+        )}
+      </AnimatePresence>
 
       {/* Main content */}
       <main className="flex-1 overflow-auto">{children}</main>
