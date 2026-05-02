@@ -4,8 +4,6 @@ import { useMemo, useState, useEffect } from 'react';
 import {
   Columns,
   Database,
-  Key,
-  Link2,
   RefreshCw,
   Table2,
 } from 'lucide-react';
@@ -22,6 +20,8 @@ import { SearchInput } from '@/components/shared/search-input';
 import { Skeleton } from '@/components/shared/skeleton';
 import type { ColumnSchema, TableSchema } from '@/types';
 import { cn } from '@/lib/utils';
+import { DataTable } from '@/components/shared/data-table';
+import { getSchemaColumns } from './schema-columns';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -263,138 +263,81 @@ function SchemaTreePanel({
 
 interface TableDetailPanelProps {
   table: TableSchema;
-  query: string;
 }
 
-function TableDetailPanel({ table, query }: TableDetailPanelProps) {
+function TableDetailPanel({ table }: TableDetailPanelProps) {
+  const [colSearch, setColSearch] = useState('');
+  
+  const columns = useMemo(() => getSchemaColumns(), []);
+  
+  const filteredColumns = useMemo(() => {
+    if (!colSearch.trim()) return table.columns;
+    const term = colSearch.toLowerCase();
+    return table.columns.filter((c) => 
+      c.name.toLowerCase().includes(term) || 
+      c.data_type.toLowerCase().includes(term)
+    );
+  }, [table.columns, colSearch]);
+
   return (
-    <div className="min-w-0 flex-1">
+    <div className="min-w-0 flex-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
       {/* Detail header */}
-      <div className="mb-5">
-        <div className="flex items-baseline gap-2.5">
-          <h2 className="font-sans text-[17px] font-semibold tracking-[-0.2px] text-foreground">
-            {table.display_name || table.table_name}
-          </h2>
-          <span className="font-mono text-caption text-muted">
-            {table.schema_name}.{table.table_name}
-          </span>
+      <div className="mb-6 flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <h2 className="font-sans text-xl font-semibold tracking-tight text-foreground">
+              {table.display_name || table.table_name}
+            </h2>
+            <span className="font-mono text-caption text-muted">
+              {table.schema_name}.{table.table_name}
+            </span>
+          </div>
+          {table.description ? (
+            <p className="max-w-2xl font-sans text-button text-muted">
+              {table.description}
+            </p>
+          ) : (
+            <p className="font-sans text-button italic text-subtle">
+              No description provided for this table.
+            </p>
+          )}
         </div>
 
-        <div className="mt-1.5 flex items-center gap-3">
-          {table.description ? (
-            <p className="font-sans text-button text-muted">{table.description}</p>
-          ) : null}
-
-          <div className="flex items-center gap-1 font-sans text-caption text-muted">
-            <Columns size={12} strokeWidth={1.75} aria-hidden />
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 rounded-pill bg-surface-300 px-2.5 py-1 font-sans text-[11px] font-medium text-muted-strong shadow-sm ring-1 ring-border">
+            <Columns size={12} strokeWidth={1.75} className="text-muted" />
             {table.columns.length} {table.columns.length === 1 ? 'column' : 'columns'}
           </div>
 
-          {table.row_count != null && table.row_count > 0 ? (
-            <span className="font-mono text-caption tabular-nums text-muted">
-              {formatRowCount(table.row_count)}
-            </span>
-          ) : null}
+          {table.row_count != null && (
+            <div className="flex items-center gap-1.5 rounded-pill bg-surface-300 px-2.5 py-1 font-sans text-[11px] font-medium text-muted-strong shadow-sm ring-1 ring-border">
+              <span className="font-mono">{formatRowCount(table.row_count)}</span>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Column list */}
-      {table.columns.length === 0 ? (
-        <p className="font-sans text-button text-muted">
-          No columns discovered for this table.
-        </p>
-      ) : (
-        <div className="overflow-hidden rounded-lg border border-border bg-surface-200">
-          {table.columns.map((col) => (
-            <ColumnRow key={col.name} column={col} query={query} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── ColumnRow ─────────────────────────────────────────────────────────────────
-
-interface ColumnRowProps {
-  column: ColumnSchema;
-  query: string;
-}
-
-function ColumnRow({ column, query }: ColumnRowProps) {
-  const Icon = column.is_primary_key
-    ? Key
-    : column.is_foreign_key
-    ? Link2
-    : Columns;
-  const iconClass = column.is_primary_key
-    ? 'text-accent'
-    : column.is_foreign_key
-    ? 'text-muted'
-    : 'text-subtle';
-
-  const isMatch =
-    query.length > 0 &&
-    column.name.toLowerCase().includes(query.toLowerCase());
-
-  const hasDescription = !!column.description?.trim();
-
-  return (
-    <div
-      className={cn(
-        'flex flex-col gap-1 border-b border-border px-4 py-2 last:border-0',
-        'transition-colors hover:bg-surface-300',
-        isMatch && 'bg-accent/[0.04]',
-      )}
-    >
-      <div className="flex items-center gap-2.5">
-        <Icon
-          aria-hidden
-          size={12}
-          strokeWidth={1.75}
-          className={cn('shrink-0', iconClass)}
-        />
-
-        <span className="truncate font-mono text-mono-sm text-foreground">
-          {column.name}
-        </span>
-
-        {column.is_primary_key ? (
-          <span className="shrink-0 font-mono text-[10px] font-semibold uppercase tracking-[0.06em] text-accent">
-            PK
-          </span>
-        ) : null}
-
-        {column.is_foreign_key && column.references ? (
-          <span
-            title={`References ${column.references}`}
-            className="min-w-0 max-w-[40%] truncate font-mono text-[10px] text-subtle"
-          >
-            → {column.references}
-          </span>
-        ) : null}
-
-        <div className="ml-auto flex shrink-0 items-center gap-2">
-          <span className="rounded-[3px] bg-surface-300 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.04em] text-muted-strong">
-            {column.data_type}
-          </span>
-
-          <span
-            title={column.is_nullable ? 'Nullable' : 'Required'}
-            aria-label={column.is_nullable ? 'Nullable' : 'Required'}
-            className={cn(
-              'inline-block size-1.5 rounded-full',
-              column.is_nullable ? 'bg-subtle' : 'bg-accent',
-            )}
+      {/* Internal Column Search */}
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="w-full max-w-sm">
+          <SearchInput
+            value={colSearch}
+            onChange={setColSearch}
+            placeholder="Search columns by name or type…"
+            ariaLabel="Search table columns"
           />
         </div>
       </div>
 
-      {hasDescription ? (
-        <p className="pl-[22px] font-sans text-caption italic text-subtle">
-          {column.description}
-        </p>
-      ) : null}
+      {/* Column list — using production DataTable */}
+      <div className="w-full">
+        <DataTable
+          columns={columns}
+          data={filteredColumns}
+          caption={`${table.table_name} columns definition`}
+          emptyMessage="No columns found matching your search."
+        />
+      </div>
     </div>
   );
 }
@@ -537,7 +480,6 @@ export function SchemaExplorerTab({ connectionId }: SchemaExplorerTabProps) {
         <TableDetailPanel
           key={selectedTable.table_name}
           table={selectedTable}
-          query={query}
         />
       ) : (
         <div className="flex flex-1 items-center justify-center py-16">

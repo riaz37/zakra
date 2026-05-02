@@ -282,18 +282,21 @@ export default function UserDetailPage() {
             </Button>
           </div>
 
-          {rolesLoading ? (
-            <div className="space-y-2">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <Skeleton key={i} className="h-10" />
-              ))}
-            </div>
-          ) : !userRoles || userRoles.length === 0 ? (
-            <EmptyState
-              icon={Shield}
-              title="No roles assigned"
-              description="Assign roles to control what this user can access."
-            />
+          {rolesLoading || !userRoles || userRoles.length === 0 ? (
+            rolesLoading ? (
+              <DataTable
+                columns={roleColumns}
+                data={[]}
+                isLoading={true}
+                caption="Assigned roles"
+              />
+            ) : (
+              <EmptyState
+                icon={Shield}
+                title="No roles assigned"
+                description="Assign roles to control what this user can access."
+              />
+            )
           ) : (
             <DataTable
               columns={roleColumns}

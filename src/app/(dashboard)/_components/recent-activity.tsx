@@ -41,10 +41,21 @@ export function RecentActivity({ recentActivity, isLoading }: RecentActivityProp
           <CardDescription>Latest chats and reports</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-5 w-24" rounded="sm" />
+              <div className="flex flex-col gap-3">
+                <Skeleton className="h-[68px] w-full" rounded="md" />
+                <Skeleton className="h-[68px] w-full" rounded="md" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-5 w-24" rounded="sm" />
+              <div className="flex flex-col gap-3">
+                <Skeleton className="h-[68px] w-full" rounded="md" />
+                <Skeleton className="h-[68px] w-full" rounded="md" />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

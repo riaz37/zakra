@@ -19,15 +19,19 @@ export function MetricStrip({
   isLoading: boolean;
 }) {
   return (
-    <dl className="grid grid-cols-2 overflow-hidden rounded-lg border border-border bg-surface-200 md:grid-cols-4">
+    <dl className="grid grid-cols-1 overflow-hidden rounded-lg border border-border bg-surface-200 sm:grid-cols-2 lg:grid-cols-4">
       {METRICS.map(({ key, label }, i) => (
         <div
           key={key}
           className={cn(
             'flex flex-col gap-1.5 px-5 py-4',
-            i < 2 && 'border-b border-border md:border-b-0',
-            i % 2 === 0 && 'border-r border-border',
-            i < METRICS.length - 1 && 'md:border-r md:border-border',
+            // Mobile: border bottom on all but last
+            i < METRICS.length - 1 && 'border-b border-border',
+            // SM (2 cols): remove border-b on 3rd/4th, add border-l on even items
+            'sm:even:border-l sm:even:border-border sm:odd:border-r-0', 
+            i >= 2 && 'sm:border-b-0',
+            // LG (4 cols): reset borders to handle horizontal row
+            'lg:border-b-0 lg:border-r lg:border-border lg:last:border-r-0',
           )}
         >
           <dt className="font-sans text-caption font-medium uppercase tracking-[0.08em] text-muted">

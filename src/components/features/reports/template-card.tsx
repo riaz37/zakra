@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import type { ReportTemplate } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/shared/skeleton';
 import { formatDate } from '@/lib/format-date';
 
 interface TemplateCardProps {
@@ -100,6 +101,36 @@ export function TemplateCard({
           >
             <Trash2 size={14} strokeWidth={2} />
           </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TemplateCardSkeleton() {
+  return (
+    <div className="flex flex-col rounded-xl border border-border bg-surface-100 p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-10 rounded-lg" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        </div>
+      </div>
+      <div className="mt-4 flex-1 space-y-2">
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-3 w-3/4" />
+      </div>
+      <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+        <div className="space-y-1">
+          <Skeleton className="h-2.5 w-12" />
+          <Skeleton className="h-2.5 w-20" />
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="size-8 rounded-md" />
+          <Skeleton className="size-8 rounded-md" />
         </div>
       </div>
     </div>

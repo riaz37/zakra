@@ -17,7 +17,7 @@ import {
   ScaffoldFilterAndContent,
 } from '@/components/shared/scaffold';
 import { EmptyState } from '@/components/shared/empty-state';
-import { PermissionMatrix } from '@/components/shared/permission-matrix';
+import { PermissionMatrix, PermissionMatrixSkeleton } from '@/components/shared/permission-matrix';
 import type { ColumnPermissionRow } from '@/components/shared/permission-matrix';
 import { SearchInput } from '@/components/shared/search-input';
 import {
@@ -227,11 +227,7 @@ function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
 
       {/* Loading skeleton */}
       {isLoading ? (
-        <div className="space-y-2">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-10" rounded="lg" />
-          ))}
-        </div>
+        <PermissionMatrixSkeleton />
       ) : table.columns.length === 0 ? (
         <p className="font-sans text-button text-muted">
           No columns discovered for this table.

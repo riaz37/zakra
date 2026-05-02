@@ -13,6 +13,7 @@ import {
 import type { ManagedColumn, ColumnPermission, MaskPattern } from '@/types';
 import { COLUMN_PERMISSIONS, MASK_PATTERNS } from '@/utils/constants';
 import { Search, X } from 'lucide-react';
+import { Skeleton } from '@/components/shared/skeleton';
 
 const PERMISSION_LEVELS: ColumnPermission[] = [
   COLUMN_PERMISSIONS.NONE,
@@ -377,6 +378,52 @@ export function PermissionMatrix({
                 );
               })
             )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+export function PermissionMatrixSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <Skeleton className="h-8 w-full max-w-xs" rounded="lg" />
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-8 w-48" rounded="sm" />
+          <div className="h-4 w-px bg-border" />
+          <Skeleton className="h-8 w-16" rounded="sm" />
+        </div>
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full min-w-[560px] border-collapse">
+          <thead>
+            <tr className="border-b border-border bg-surface-300">
+              <th className="px-4 py-2.5 text-left font-sans text-caption font-medium text-muted">Column</th>
+              {PERMISSION_LEVELS.map((level) => (
+                <th key={level} className="w-24 px-2 py-2.5 text-center font-sans text-caption font-medium text-muted">
+                  {PERMISSION_LABELS[level]}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <tr key={idx} className="border-b border-border last:border-b-0">
+                <td className="px-4 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                </td>
+                {PERMISSION_LEVELS.map((level) => (
+                  <td key={level} className="px-2 py-2.5 text-center">
+                    <Skeleton className="mx-auto size-5 rounded-full" />
+                  </td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

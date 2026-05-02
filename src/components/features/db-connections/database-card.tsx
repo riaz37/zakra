@@ -21,15 +21,15 @@ function resolveStatus(connection: DatabaseConnection): {
   return { status: 'pending', label: 'Untested' };
 }
 
-function EngineIcon({ engine, className }: { engine: string; className?: string }) {
+function EngineIcon({ engine, className, size, strokeWidth }: { engine: string; className?: string; size?: number; strokeWidth?: number }) {
   // Can expand to specific SVG logos later if needed
   switch (engine.toLowerCase()) {
     case 'postgresql':
     case 'mysql':
     case 'mssql':
-      return <Database className={className} />;
+      return <Database className={className} size={size} strokeWidth={strokeWidth} />;
     default:
-      return <Server className={className} />;
+      return <Server className={className} size={size} strokeWidth={strokeWidth} />;
   }
 }
 

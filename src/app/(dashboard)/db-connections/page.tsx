@@ -16,12 +16,9 @@ import { useResourceList } from '@/hooks/useResourceList';
 import type { DatabaseConnection } from '@/types';
 
 import { PageHeader } from '@/components/shared/page-header';
-import {
-  ScaffoldContainer,
-  ScaffoldFilterAndContent,
-  ScaffoldActionsContainer,
-} from '@/components/shared/scaffold';
+import { ScaffoldContainer, ScaffoldFilterAndContent, ScaffoldActionsContainer } from '@/components/shared/scaffold';
 import { SearchInput } from '@/components/shared/search-input';
+import { Skeleton } from '@/components/shared/skeleton';
 
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
@@ -29,8 +26,8 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 import { AddConnectionDialog } from '@/components/features/db-connections/add-connection-dialog';
 import { DatabaseCard } from '@/components/features/db-connections/database-card';
-
 export default function DbConnectionsPage() {
+
   const router = useRouter();
   const companyId = useCurrentCompanyId();
   const { search, searchProps, isEmpty } = useResourceList();
@@ -110,7 +107,6 @@ export default function DbConnectionsPage() {
     }
   }
 
-  // No longer using getConnectionsColumns
 
   const showEmpty = isEmpty(filtered, isLoading) && !isError;
 
@@ -163,8 +159,14 @@ export default function DbConnectionsPage() {
                 : undefined
             }
           />
+        ) : isLoading ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-[120px] w-full" rounded="xl" />
+            ))}
+          </div>
         ) : (
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((connection) => (
               <DatabaseCard
                 key={connection.id}

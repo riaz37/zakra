@@ -18,7 +18,7 @@ import { ErrorState } from '@/components/shared/error-state';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Button } from '@/components/ui/button';
-import { TemplateCard } from '@/components/features/reports/template-card';
+import { TemplateCard, TemplateCardSkeleton } from '@/components/features/reports/template-card';
 
 export default function ReportTemplatesPage() {
   const router = useRouter();
@@ -57,7 +57,13 @@ export default function ReportTemplatesPage() {
       <ScaffoldFilterAndContent className="mt-6">
         {isError ? (
           <ErrorState title="Failed to load templates" onRetry={() => refetch()} />
-        ) : templates.length === 0 && !isLoading ? (
+        ) : isLoading ? (
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <TemplateCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : templates.length === 0 ? (
           <EmptyState
             icon={FilePlus}
             title="No report templates"
