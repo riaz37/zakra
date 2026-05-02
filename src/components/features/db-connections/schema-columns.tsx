@@ -25,8 +25,8 @@ export function getSchemaColumns(): ColumnDef<ColumnSchema>[] {
         const iconClass = col.is_primary_key
           ? 'text-accent'
           : col.is_foreign_key
-          ? 'text-muted'
-          : 'text-subtle';
+          ? 'text-fg-muted'
+          : 'text-fg-subtle';
 
         return (
           <div className="flex items-center justify-center">
@@ -53,13 +53,13 @@ export function getSchemaColumns(): ColumnDef<ColumnSchema>[] {
                 {col.name}
               </span>
               {col.is_primary_key && (
-                <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.06em] text-accent">
+                <span className="font-mono text-micro font-semibold uppercase tracking-[0.06em] text-accent">
                   PK
                 </span>
               )}
             </div>
             {col.is_foreign_key && col.references && (
-              <div className="flex items-center gap-1 font-mono text-[10px] text-subtle">
+              <div className="flex items-center gap-1 font-mono text-micro text-fg-subtle">
                 <Link2 size={10} className="shrink-0" />
                 <span className="truncate" title={`References ${col.references}`}>
                   {col.references}
@@ -74,7 +74,7 @@ export function getSchemaColumns(): ColumnDef<ColumnSchema>[] {
       accessorKey: 'data_type',
       header: 'Data Type',
       cell: ({ row }) => (
-        <span className="rounded-[3px] bg-surface-300 px-1.5 py-0.5 font-mono text-[10px] tracking-[0.04em] text-muted-strong">
+        <span className="rounded-[3px] bg-surface-300 px-1.5 py-0.5 font-mono text-micro tracking-[0.04em] text-muted-strong">
           {row.original.data_type}
         </span>
       ),
@@ -89,10 +89,10 @@ export function getSchemaColumns(): ColumnDef<ColumnSchema>[] {
             <span
               className={cn(
                 'size-1.5 rounded-full',
-                isNullable ? 'bg-accent' : 'bg-subtle/30',
+                isNullable ? 'bg-accent' : 'bg-surface-400',
               )}
             />
-            <span className="font-sans text-[11px] text-muted">
+            <span className="font-sans text-micro text-fg-muted">
               {isNullable ? 'Yes' : 'No'}
             </span>
           </div>

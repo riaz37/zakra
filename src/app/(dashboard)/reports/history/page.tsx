@@ -149,7 +149,7 @@ export default function ReportHistoryPage() {
               onRowClick={(report) => router.push(`/reports/${report.id}`)}
             />
             {showTruncationNotice && (
-              <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.06em] text-subtle">
+              <p className="mt-3 font-mono text-micro uppercase tracking-[0.06em] text-fg-subtle">
                 Showing the {HISTORY_FETCH_LIMIT} most recent of {totalCount}
               </p>
             )}

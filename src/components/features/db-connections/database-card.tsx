@@ -54,21 +54,21 @@ export function DatabaseCard({
     <Link
       href={`/db-connections/${connection.id}`}
       className={cn(
-        'group relative flex flex-col rounded-xl border border-border bg-surface-100 p-5 transition-all duration-200',
-        'hover:border-border-medium hover:bg-surface-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
+        'group relative flex flex-col rounded-lg border border-border bg-surface-200 p-5 transition-all duration-[120ms]',
+        'hover:border-border-medium hover:bg-surface-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent',
       )}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-surface-300 text-muted-strong shadow-sm ring-1 ring-border transition-colors group-hover:text-foreground">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-surface-300 text-muted-strong ring-1 ring-border transition-colors group-hover:text-foreground">
             <EngineIcon engine={connection.database_type} size={20} strokeWidth={1.5} />
           </div>
           <div>
-            <h3 className="font-sans text-[15px] font-semibold tracking-tight text-foreground line-clamp-1">
+            <h3 className="font-sans text-subheading font-semibold tracking-tight text-foreground line-clamp-1">
               {connection.name}
             </h3>
-            <span className="font-mono text-[11px] uppercase tracking-wider text-muted-strong">
+            <span className="font-mono text-micro uppercase tracking-wider text-muted-strong">
               {connection.database_type}
             </span>
           </div>
@@ -85,22 +85,22 @@ export function DatabaseCard({
       </div>
 
       {/* Body */}
-      <div className="mt-5 grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
+      <div className="mt-5 grid grid-cols-2 gap-y-3 gap-x-4 text-body">
         <div>
-          <p className="font-sans text-caption text-muted mb-0.5">Host</p>
-          <p className="font-mono text-xs text-foreground truncate" title={`${connection.host}:${connection.port}`}>
+          <p className="font-sans text-caption text-fg-muted mb-0.5">Host</p>
+          <p className="font-mono text-caption text-foreground truncate" title={`${connection.host}:${connection.port}`}>
             {connection.host}<span className="text-subtle">:{connection.port}</span>
           </p>
         </div>
         <div>
-          <p className="font-sans text-caption text-muted mb-0.5">Database</p>
-          <p className="font-mono text-xs text-foreground truncate" title={connection.database_name}>
+          <p className="font-sans text-caption text-fg-muted mb-0.5">Database</p>
+          <p className="font-mono text-caption text-foreground truncate" title={connection.database_name}>
             {connection.database_name}
           </p>
         </div>
         <div className="col-span-2">
-          <p className="font-sans text-caption text-muted mb-0.5">Last tested</p>
-          <p className="font-mono text-xs text-muted-strong">
+          <p className="font-sans text-caption text-fg-muted mb-0.5">Last tested</p>
+          <p className="font-mono text-caption text-muted-strong">
             {connection.last_connected_at ? formatDate(connection.last_connected_at) : 'Never'}
           </p>
         </div>
@@ -121,7 +121,7 @@ export function DatabaseCard({
           disabled={isTesting}
         >
           {isTesting ? (
-            <Loader2 aria-hidden size={14} strokeWidth={2} className="animate-spin text-muted" />
+            <Loader2 aria-hidden size={14} strokeWidth={2} className="animate-spin text-fg-muted" />
           ) : (
             <Zap aria-hidden size={14} strokeWidth={2} className="text-muted-strong" />
           )}
@@ -133,7 +133,7 @@ export function DatabaseCard({
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="text-muted hover:text-foreground"
+            className="text-fg-muted hover:text-foreground"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -147,7 +147,7 @@ export function DatabaseCard({
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="text-muted hover:text-error"
+            className="text-fg-muted hover:text-error"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();

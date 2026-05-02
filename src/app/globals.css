@@ -497,25 +497,12 @@
   }
 }
 
-@keyframes glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(62, 207, 142, 0);
-  }
-  50% {
-    box-shadow: 0 0 0 5px rgba(62, 207, 142, 0.18);
-  }
-}
-
 @utility animate-slide-in-bottom {
   animation: slide-in-bottom 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @utility animate-scale-in {
   animation: scale-in 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@utility animate-glow-pulse {
-  animation: glow-pulse 0.7s ease-in-out;
 }
 
 /* ==========  Extended stagger delays  ========== */

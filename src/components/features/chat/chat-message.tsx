@@ -100,24 +100,24 @@ export function UserMessage({
 
   return (
     <div className="group flex flex-col items-end gap-1 animate-slide-in-bottom">
-      <div className="max-w-[78%] rounded-2xl border border-border/60 bg-surface-300 px-4 py-2.5 shadow-[var(--shadow-ring)]">
-        <p className="whitespace-pre-wrap font-sans text-[15px] leading-[1.65] text-foreground">
+      <div className="max-w-[78%] rounded-xl border border-border bg-surface-300 px-4 py-2.5 shadow-[var(--shadow-ring)]">
+        <p className="whitespace-pre-wrap font-sans text-subheading leading-[1.65] text-foreground">
           {content}
         </p>
       </div>
       <div className="flex items-center gap-2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
         {createdAt && (
-          <span className="font-mono text-mono-sm text-subtle">
+          <span className="font-mono text-mono-sm text-fg-subtle">
             {formatTime(createdAt)}
           </span>
         )}
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted"
+          className="flex items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted"
           title="Copy message"
         >
           {copied ? (
-            <Check className="h-3 w-3 text-accent/60" strokeWidth={2.5} />
+            <Check className="h-3 w-3 text-accent" strokeWidth={2.5} />
           ) : (
             <Copy className="h-3 w-3" strokeWidth={2} />
           )}
@@ -157,7 +157,7 @@ export function AssistantMessage({
         />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="space-y-3 border-l-2 border-accent/[0.13] pl-3">
+        <div className="space-y-3 border-l-2 border-accent/15 pl-3">
           <MarkdownContent>{content}</MarkdownContent>
           {blocks?.map((block, idx) => (
             <div key={idx} className="animate-fade-in animation-delay-100">
@@ -168,18 +168,18 @@ export function AssistantMessage({
         <div className="mt-2 flex items-center gap-2.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted"
+            className="flex items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted"
             title="Copy response"
           >
             {copied ? (
-              <Check className="h-3 w-3 text-accent/60" strokeWidth={2.5} />
+              <Check className="h-3 w-3 text-accent" strokeWidth={2.5} />
             ) : (
               <Copy className="h-3 w-3" strokeWidth={2} />
             )}
             {copied ? 'Copied' : 'Copy'}
           </button>
           {createdAt && (
-            <span className="font-mono text-mono-sm text-subtle">
+            <span className="font-mono text-mono-sm text-fg-subtle">
               {formatTime(createdAt)}
             </span>
           )}

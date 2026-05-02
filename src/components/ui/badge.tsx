@@ -27,18 +27,18 @@ const badgeVariants = cva(
         error:
           "border-error-border bg-error-bg text-error",
         info:
-          "border-info/20 bg-info-soft text-info",
+          "border-info-border bg-info-soft text-info",
         outline:
-          "border-border bg-transparent text-muted",
+          "border-border bg-transparent text-fg-muted",
         processing:
-          "border-thinking/25 bg-thinking/12 text-thinking",
+          "border-thinking-border bg-thinking-soft text-thinking",
 
         // Legacy aliases — map to semantic variants so existing consumers
         // (reports/[reportId], etc.) keep working without churn.
         // `secondary` → info (running/pending state in reports table)
         // `destructive` → error
         secondary:
-          "border-info/20 bg-info-soft text-info",
+          "border-info-border bg-info-soft text-info",
         destructive:
           "border-error-border bg-error-bg text-error",
       },

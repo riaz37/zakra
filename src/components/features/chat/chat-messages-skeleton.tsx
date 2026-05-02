@@ -8,7 +8,7 @@ export function ChatMessagesSkeleton() {
     <div className="space-y-6 pt-2">
       {/* User bubble */}
       <div className="flex justify-end">
-        <div className="max-w-[75%] w-[360px] rounded-2xl border border-border bg-surface-300 px-4 py-3">
+        <div className="max-w-[75%] w-[360px] rounded-xl border border-border bg-surface-300 px-4 py-3">
           <Skeleton className="h-4 w-full" />
         </div>
       </div>
@@ -23,7 +23,7 @@ export function ChatMessagesSkeleton() {
 
       {/* User bubble */}
       <div className="flex justify-end">
-        <div className="max-w-[75%] w-[280px] rounded-2xl border border-border bg-surface-300 px-4 py-3">
+        <div className="max-w-[75%] w-[280px] rounded-xl border border-border bg-surface-300 px-4 py-3">
           <Skeleton className="h-4 w-full" />
         </div>
       </div>

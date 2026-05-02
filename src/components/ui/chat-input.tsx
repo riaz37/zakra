@@ -139,7 +139,7 @@ function readFileAsText(file: File): Promise<string> {
 function CardBadge({ label }: { label: string }) {
   return (
     <span
-      className="capitalize font-mono text-caption px-1.5 py-0.5 rounded-md bg-surface-500 text-foreground border border-border"
+      className="capitalize font-mono text-micro px-1.5 py-0.5 rounded-md bg-surface-500 text-foreground border border-border"
     >
       {label}
     </span>
@@ -174,7 +174,7 @@ function FilePreviewCard({
         <div className="flex flex-col gap-1 p-2.5 h-full">
           {getFileIcon(file.type)}
           <p
-            className="font-sans text-caption font-medium truncate mt-auto text-foreground"
+            className="font-sans text-body font-medium truncate mt-auto text-foreground"
             title={file.file.name}
           >
             {file.file.name}
@@ -240,7 +240,7 @@ function TextualFilePreviewCard({
       <div className="p-2 h-full overflow-hidden">
         {file.textContent ? (
           <p
-            className="font-mono text-[8px] leading-relaxed whitespace-pre-wrap break-words line-clamp-[9] text-muted"
+            className="font-mono text-micro leading-relaxed whitespace-pre-wrap break-words line-clamp-[9] text-fg-muted"
           >
             {file.textContent}
           </p>
@@ -309,7 +309,7 @@ function PastedContentCard({
     >
       <div className="p-2 h-full overflow-hidden">
         <p
-          className="font-mono text-[8px] leading-relaxed whitespace-pre-wrap break-words line-clamp-[9] text-muted"
+          className="font-mono text-micro leading-relaxed whitespace-pre-wrap break-words line-clamp-[9] text-fg-muted"
         >
           {content.content}
         </p>
@@ -387,7 +387,7 @@ function DbSelectorButton({
     return (
       <a
         href="/connections"
-        className="flex h-8 items-center gap-1.5 rounded-lg border border-dashed border-border px-2 font-sans text-caption text-muted transition-colors hover:border-border-medium hover:text-foreground"
+        className="flex h-8 items-center gap-1.5 rounded-lg border border-dashed border-border px-2 font-sans text-body text-fg-muted transition-colors hover:border-border-medium hover:text-foreground"
       >
         <Database className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
         <span>No databases</span>
@@ -399,7 +399,7 @@ function DbSelectorButton({
   if (locked) {
     return (
       <div
-        className="flex h-8 items-center gap-1.5 rounded-lg px-2 font-sans text-caption text-muted cursor-default select-none"
+        className="flex h-8 items-center gap-1.5 rounded-lg px-2 font-sans text-body text-fg-muted cursor-default select-none"
         title="Connection locked to this session"
       >
         <Database className="h-3.5 w-3.5 shrink-0 text-muted" strokeWidth={1.5} />
@@ -417,7 +417,7 @@ function DbSelectorButton({
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         className={cn(
-          "flex h-8 items-center gap-1.5 rounded-lg border px-2 font-sans text-caption transition-colors focus-visible:outline-none",
+          "flex h-8 items-center gap-1.5 rounded-lg border px-2 font-sans text-body transition-colors focus-visible:outline-none",
           selected
             ? "border-border/60 text-foreground hover:border-border-medium hover:bg-surface-400"
             : "border-accent/30 text-accent hover:border-accent/60 hover:bg-accent/5",
@@ -450,13 +450,13 @@ function DbSelectorButton({
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search connections…"
               autoFocus
-              className="w-full bg-transparent font-sans text-caption text-foreground placeholder:text-muted outline-none"
+              className="w-full bg-transparent font-sans text-body text-foreground placeholder:text-fg-subtle outline-none"
             />
           </div>
         )}
         <div className="max-h-[240px] overflow-y-auto py-1">
           {filtered.length === 0 ? (
-            <p className="px-3 py-2 font-sans text-caption text-muted">
+            <p className="px-3 py-2 font-sans text-body text-fg-muted">
               No results
             </p>
           ) : (
@@ -471,7 +471,7 @@ function DbSelectorButton({
                 )}
               >
                 <div className="min-w-0 flex-1">
-                  <p className="font-sans text-caption text-foreground">
+                  <p className="font-sans text-body text-foreground">
                     {c.name}
                   </p>
                   {c.database_name && (
@@ -480,7 +480,7 @@ function DbSelectorButton({
                     </p>
                   )}
                 </div>
-                <span className="shrink-0 rounded border border-border px-1 py-0.5 font-mono text-[10px] uppercase tracking-wide text-subtle">
+                <span className="shrink-0 rounded border border-border px-1 py-0.5 font-mono text-mono-sm uppercase tracking-wide text-fg-subtle">
                   {c.database_type}
                 </span>
                 {c.id === selectedConnectionId && (
@@ -725,7 +725,7 @@ export function ChatInput({
           className="absolute inset-0 z-50 rounded-[var(--radius-xl)] flex items-center justify-center pointer-events-none bg-accent-soft border-2 border-dashed border-accent"
         >
           <p
-            className="font-sans text-button flex items-center gap-2 text-accent"
+            className="font-sans text-body flex items-center gap-2 text-accent"
           >
             <ImageIcon className="h-4 w-4 opacity-60" />
             Drop files to attach
@@ -734,7 +734,7 @@ export function ChatInput({
       )}
 
       <div
-        className="flex flex-col rounded-[var(--radius-xl)] border border-border-medium bg-surface-100 transition-colors duration-150 focus-within:border-accent/50"
+        className="flex flex-col rounded-[var(--radius-xl)] border border-border-medium bg-surface-200 transition-colors duration-150 focus-within:border-accent/50"
       >
         {/* Textarea */}
         <textarea
@@ -746,7 +746,7 @@ export function ChatInput({
           placeholder={placeholder}
           disabled={disabled || isStreaming}
           rows={1}
-          className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-[15px] outline-none focus-visible:shadow-none disabled:opacity-50 font-sans text-foreground leading-normal max-h-[120px] overflow-y-auto"
+          className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-subheading outline-none focus-visible:shadow-none disabled:opacity-50 font-sans text-foreground leading-normal max-h-[120px] overflow-y-auto"
           style={{ caretColor: "var(--color-accent)" }}
         />
 
@@ -777,7 +777,7 @@ export function ChatInput({
             {/* File count badge */}
             {files.length > 0 && (
               <span
-                className="font-mono text-caption px-1.5 py-0.5 rounded-md text-muted bg-surface-400"
+                className="font-mono text-micro px-1.5 py-0.5 rounded-md text-fg-muted bg-surface-400"
               >
                 {files.length}/{maxFiles}
               </span>
@@ -786,7 +786,7 @@ export function ChatInput({
             {isStreaming ? (
               <button
                 onClick={onStop}
-                className="flex items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 font-sans text-button transition-colors hover:opacity-80 bg-error text-foreground"
+                className="flex items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 font-sans text-body transition-colors hover:opacity-80 bg-error text-foreground"
               >
                 <Square className="h-3.5 w-3.5" />
                 Stop

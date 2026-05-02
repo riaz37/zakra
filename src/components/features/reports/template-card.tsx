@@ -31,18 +31,18 @@ export function TemplateCard({
         }
       }}
       className={cn(
-        'group relative flex cursor-pointer flex-col rounded-xl border border-border bg-surface-100 p-5 transition-all duration-200',
+        'group relative flex cursor-pointer flex-col rounded-lg border border-border bg-surface-200 p-5 transition-all duration-[120ms]',
         'hover:border-border-medium hover:bg-surface-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
       )}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-surface-300 text-muted-strong shadow-sm ring-1 ring-border transition-colors group-hover:text-foreground">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-surface-300 text-muted-strong ring-1 ring-border transition-colors group-hover:text-foreground">
             <LayoutTemplate size={20} strokeWidth={1.5} />
           </div>
           <div>
-            <h3 className="line-clamp-1 font-sans text-[15px] font-semibold tracking-tight text-foreground">
+            <h3 className="line-clamp-1 font-sans text-subheading font-semibold tracking-tight text-foreground">
               {template.name}
             </h3>
             <div className="mt-1 flex items-center gap-2">
@@ -56,7 +56,7 @@ export function TemplateCard({
 
       {/* Body Snippet */}
       <div className="mt-4 flex-1">
-        <p className="line-clamp-2 text-sm leading-relaxed text-muted">
+        <p className="line-clamp-2 text-body leading-relaxed text-fg-muted">
           {template.description || 'No description provided.'}
         </p>
       </div>
@@ -64,10 +64,10 @@ export function TemplateCard({
       {/* Footer Meta & Actions */}
       <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
         <div className="flex flex-col gap-0.5">
-          <span className="font-mono text-[10px] uppercase tracking-[0.06em] text-muted-strong">
+          <span className="font-mono text-micro uppercase tracking-[0.06em] text-muted-strong">
             {template.sections.length} Section{template.sections.length !== 1 ? 's' : ''}
           </span>
-          <span className="font-sans text-xs text-subtle">
+          <span className="font-sans text-caption text-fg-subtle">
             Created {formatDate(template.created_at)}
           </span>
         </div>
@@ -109,7 +109,7 @@ export function TemplateCard({
 
 export function TemplateCardSkeleton() {
   return (
-    <div className="flex flex-col rounded-xl border border-border bg-surface-100 p-5">
+    <div className="flex flex-col rounded-lg border border-border bg-surface-200 p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <Skeleton className="size-10 rounded-lg" />

@@ -32,20 +32,26 @@ type ChartConfig = {
   title?: string;
 };
 
-const GRID_STROKE = '#2a2825';
-const AXIS_FILL = '#6b6862';
-const ACCENT = '#3ecf8e';
-const PIE_PALETTE = ['#3ecf8e', '#2a9d6b', '#1f7550', '#9fbbe0', '#c0a8dd'];
+const GRID_STROKE = 'var(--color-surface-300)';
+const AXIS_FILL = 'rgba(235, 234, 229, 0.65)';
+const ACCENT = 'var(--color-accent)';
+const PIE_PALETTE = [
+  'var(--color-chart-1)',
+  'var(--color-chart-5)',
+  'var(--color-chart-2)',
+  'var(--color-chart-3)',
+  'var(--color-chart-4)',
+];
 
 const TOOLTIP_CONTENT_STYLE = {
-  background: '#21201c',
+  background: 'var(--color-surface-200)',
   border: '1px solid rgba(235, 234, 229, 0.1)',
   borderRadius: '6px',
   fontFamily: 'var(--font-mono)',
   fontSize: '12px',
 } as const;
 
-const TOOLTIP_LABEL_STYLE = { color: '#ebeae5' } as const;
+const TOOLTIP_LABEL_STYLE = { color: 'var(--color-foreground)' } as const;
 const TOOLTIP_ITEM_STYLE = { color: ACCENT } as const;
 
 type ChartRow = Record<string, unknown>;
@@ -166,7 +172,7 @@ function InlineChart({ qr }: { qr: QueryResult }) {
             nameKey={nameKey}
             dataKey={dataKey}
             outerRadius={90}
-            stroke="#1a1916"
+            stroke="var(--color-background)"
             strokeWidth={2}
           >
             {data.map((_, i) => (
@@ -223,15 +229,15 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
       <div className="flex items-center gap-3 border-b border-border px-3 py-2">
         <div className="flex items-center gap-1.5">
           <Table2 className="h-3.5 w-3.5 text-muted" strokeWidth={1.5} />
-          <span className="font-mono text-mono-sm text-foreground/65">
+          <span className="font-mono text-mono-sm text-fg-subtle">
             {qr.row_count.toLocaleString()} rows
           </span>
         </div>
 
         {qr.execution_time_ms != null && (
           <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3 text-subtle" strokeWidth={1.5} />
-            <span className="font-mono text-mono-sm tabular-nums text-subtle">
+            <Clock className="h-3 w-3 text-fg-subtle" strokeWidth={1.5} />
+            <span className="font-mono text-mono-sm tabular-nums text-fg-subtle">
               {(qr.execution_time_ms / 1000).toFixed(2)}s
             </span>
           </div>
@@ -242,7 +248,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
             <>
               <button
                 onClick={() => setShowChart((s) => !s)}
-                className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
+                className="flex items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted focus-visible:outline-none"
                 title={showChart ? 'Hide chart' : 'Show chart'}
               >
                 <BarChart2 className="h-3 w-3" strokeWidth={2} />
@@ -259,7 +265,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
                 title="Copy SQL"
               >
                 {sqlCopied ? (
-                  <Check className="h-3 w-3 text-accent/60" strokeWidth={2.5} />
+                  <Check className="h-3 w-3 text-accent" strokeWidth={2.5} />
                 ) : (
                   <Copy className="h-3 w-3" strokeWidth={2} />
                 )}
@@ -267,7 +273,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               <div className="h-3 w-px bg-border/60" />
               <button
                 onClick={() => setSqlOpen((o) => !o)}
-                className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
+                className="flex items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted focus-visible:outline-none"
               >
                 {sqlOpen ? (
                   <ChevronDown className="h-3 w-3" strokeWidth={2} />
@@ -289,11 +295,11 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
       {/* SQL panel */}
       {sqlOpen && qr.sql && (
         <div className="border-b border-border animate-fade-in">
-          <pre className="overflow-x-auto bg-[var(--color-code-canvas)] px-4 py-3 font-mono text-mono leading-relaxed text-foreground/80">
+          <pre className="overflow-x-auto bg-[var(--color-code-canvas)] px-4 py-3 font-mono text-mono leading-relaxed text-foreground">
             {qr.sql}
           </pre>
           {qr.explanation && (
-            <p className="border-t border-border/40 px-4 py-2 font-sans text-mono-sm italic text-muted">
+            <p className="border-t border-border/40 px-4 py-2 font-sans text-mono-sm italic text-fg-muted">
               {qr.explanation}
             </p>
           )}
@@ -321,7 +327,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
                   <th
                     key={col}
                     className={cn(
-                      'px-3 py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.06em] text-muted',
+                      'px-3 py-2 font-sans text-micro font-semibold uppercase tracking-[0.06em] text-fg-muted',
                       isNumeric ? 'text-right' : 'text-left',
                     )}
                   >
@@ -355,9 +361,9 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
                       )}
                     >
                       {isNull ? (
-                        <span className="italic text-subtle">null</span>
+                        <span className="italic text-fg-subtle">null</span>
                       ) : (
-                        <span className="text-foreground/80">{String(val)}</span>
+                        <span className="text-foreground">{String(val)}</span>
                       )}
                     </td>
                   );
@@ -371,7 +377,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
           <div className="border-t border-border/35 px-4 py-2 text-center">
             <button
               onClick={() => setShowAll(true)}
-              className="font-mono text-mono-sm text-subtle transition-colors hover:text-muted"
+              className="font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted"
             >
               Show {overflow.toLocaleString()} more rows
             </button>

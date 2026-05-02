@@ -76,7 +76,7 @@ export default function SelectCompanyPage() {
         <Image src="/logo/esaplogo.svg" alt="ESAP employer solutions" width={65} height={21} priority />
       </div>
 
-      <div className="rounded-card border border-border bg-surface-100 px-6 py-8">
+      <div className="rounded-card border border-border bg-surface-200 px-6 py-8">
         {showCreate ? (
           <CreateCompanyForm
             onSubmit={handleSubmit(onCreate)}

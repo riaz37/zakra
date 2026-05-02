@@ -30,7 +30,7 @@ export default function OverviewPage() {
         {!companyId ? (
           <div
             role="status"
-            className="rounded-card border border-border bg-surface-100 px-4 py-3 font-sans text-caption text-muted"
+            className="rounded-card border border-border bg-surface-200 px-4 py-3 font-sans text-caption text-muted"
           >
             Select a company from the sidebar to filter analytics and activity by workspace.
           </div>

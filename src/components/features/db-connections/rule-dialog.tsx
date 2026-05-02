@@ -137,7 +137,7 @@ export function RuleDialog({
         <SheetHeader className="border-b border-border pb-4">
           <SheetTitle>{isEdit ? 'Edit rule' : 'Add rule'}</SheetTitle>
           {editingRule && (
-            <p className="font-mono text-mono-sm text-muted">
+            <p className="font-mono text-mono-sm text-fg-muted">
               {editingRule.name}
             </p>
           )}
@@ -217,7 +217,7 @@ export function RuleDialog({
                                     <span className="flex flex-col gap-0.5 min-w-0">
                                       <span className="truncate">{name}</span>
                                       {showEmail && (
-                                        <span className="truncate text-muted-foreground/60 text-xs">{user.email}</span>
+                                        <span className="truncate text-fg-muted text-caption">{user.email}</span>
                                       )}
                                     </span>
                                   </SelectItem>
@@ -244,7 +244,7 @@ export function RuleDialog({
 
               <Field data-invalid={!!errors.rule_text}>
                 <FieldLabel htmlFor="rule-text">Rule text</FieldLabel>
-                <p className="mb-1.5 font-sans text-caption text-muted">
+                <p className="mb-1.5 font-sans text-caption text-fg-muted">
                   Write in plain language. You can include markdown, SQL
                   snippets, or structured notes — the AI uses this verbatim.
                 </p>
@@ -252,7 +252,7 @@ export function RuleDialog({
                   {...register('rule_text')}
                   id="rule-text"
                   rows={16}
-                  className="font-mono text-sm resize-none"
+                  className="font-mono text-body resize-none"
                   placeholder={
                     'Describe the business rule in plain language…\n\nExample:\nWhen querying invoices, always filter by company_id = @CompanyId\nand exclude records where status = \'void\'.'
                   }

@@ -26,18 +26,18 @@ export function ReportCard({ turn }: { turn: CompletedTurn }) {
   const viewUrl = turn.generationId ? `/reports/${turn.generationId}` : '#';
 
   return (
-    <div className="rounded-xl border border-border bg-surface-200 animate-fade-in">
+    <div className="rounded-lg border border-border bg-surface-200 animate-fade-in">
       <div className="px-4 pt-4 pb-3">
         <div className="flex items-start gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10">
-            <BarChart2 className="h-4 w-4 text-accent/65" strokeWidth={1.5} />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-300">
+            <BarChart2 className="h-4 w-4 text-accent" strokeWidth={1.5} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-sans text-button font-medium text-foreground">
+            <p className="font-sans text-body font-medium text-foreground">
               {turn.title ?? 'Report Ready'}
             </p>
             {turn.executiveSummary && (
-              <p className="mt-0.5 line-clamp-2 font-sans text-caption text-muted">
+              <p className="mt-0.5 line-clamp-2 font-sans text-body text-fg-muted">
                 {turn.executiveSummary}
               </p>
             )}
@@ -49,18 +49,18 @@ export function ReportCard({ turn }: { turn: CompletedTurn }) {
             {turn.keyMetrics.slice(0, 4).map((m, i) => (
               <div
                 key={i}
-                className="rounded-lg border border-border bg-surface-300/60 px-3 py-1.5"
+                className="rounded-lg bg-surface-300 px-3 py-1.5"
               >
-                <p className="font-mono text-mono-sm text-subtle">{m.metric}</p>
+                <p className="font-mono text-mono-sm text-fg-subtle">{m.metric}</p>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="font-sans text-button font-medium text-foreground">
+                  <span className="font-sans text-body font-medium text-foreground">
                     {m.value}
                   </span>
                   {m.change_percent != null && (
                     <span
                       className={cn(
                         'font-mono text-mono-sm',
-                        m.change_percent >= 0 ? 'text-accent/80' : 'text-destructive/80',
+                        m.change_percent >= 0 ? 'text-accent' : 'text-error',
                       )}
                     >
                       {m.change_percent >= 0 ? '+' : ''}
@@ -76,8 +76,8 @@ export function ReportCard({ turn }: { turn: CompletedTurn }) {
 
       <div className="border-t border-border px-4 py-3">
         <Link href={viewUrl} className="flex items-center justify-between gap-3">
-          <span className="font-sans text-caption text-muted">View full report</span>
-          <span className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 font-sans text-button font-medium text-[#111] transition-colors duration-150 hover:bg-accent/90">
+          <span className="font-sans text-body text-fg-muted">View full report</span>
+          <span className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 font-sans text-body font-medium text-background transition-colors duration-150 hover:opacity-90">
             View Report
             <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
           </span>

@@ -48,12 +48,12 @@ export function CompanyPopover({
       <div className="flex flex-col gap-4 p-5 border-b border-border">
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-1.5 min-w-0">
-            <h2 className="font-sans text-[16px] font-medium tracking-[-0.01em] text-foreground leading-tight truncate">
+            <h2 className="font-sans text-subheading font-medium tracking-[-0.01em] text-foreground leading-tight truncate">
               {company.name}
             </h2>
             <div className="flex items-center gap-2">
               <StatusBadge status={status} size="sm" />
-              <span className="font-sans text-caption text-muted capitalize">
+              <span className="font-sans text-caption text-fg-muted capitalize">
                 {company.company_type}
               </span>
             </div>
@@ -61,12 +61,12 @@ export function CompanyPopover({
         </div>
 
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2.5 text-caption">
-          <dt className="text-muted font-sans">Slug</dt>
-          <dd className="font-mono text-mono-sm text-foreground/85 truncate" title={company.slug}>
+          <dt className="text-fg-muted font-sans">Slug</dt>
+          <dd className="font-mono text-mono-sm text-foreground truncate" title={company.slug}>
             {company.slug}
           </dd>
 
-          <dt className="text-muted font-sans">Subsidiaries</dt>
+          <dt className="text-fg-muted font-sans">Subsidiaries</dt>
           <dd className="font-sans text-foreground tabular-nums">
             {isLoading && data === undefined ? (
               <Skeleton className="h-3 w-8" />
@@ -75,8 +75,8 @@ export function CompanyPopover({
             )}
           </dd>
 
-          <dt className="text-muted font-sans">Created</dt>
-          <dd className="font-sans text-foreground/85">
+          <dt className="text-fg-muted font-sans">Created</dt>
+          <dd className="font-sans text-foreground">
             {isLoading && data === undefined ? (
               <Skeleton className="h-3 w-24" />
             ) : (
@@ -86,8 +86,8 @@ export function CompanyPopover({
 
           {company.parent_id ? (
             <>
-              <dt className="text-muted font-sans">Parent</dt>
-              <dd className="font-mono text-mono-sm text-foreground/70 truncate" title={company.parent_id}>
+              <dt className="text-fg-muted font-sans">Parent</dt>
+              <dd className="font-mono text-mono-sm text-fg-subtle truncate" title={company.parent_id}>
                 {company.parent_id.slice(0, 8)}…
               </dd>
             </>
@@ -107,7 +107,7 @@ export function CompanyPopover({
               <Plus aria-hidden size={14} strokeWidth={2} />
               Add subsidiary
             </span>
-            <GitBranch aria-hidden size={13} strokeWidth={1.75} className="text-muted" />
+            <GitBranch aria-hidden size={13} strokeWidth={1.75} className="text-fg-muted" />
           </Button>
         )}
       </div>

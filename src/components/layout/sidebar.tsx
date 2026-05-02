@@ -185,7 +185,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
           <>
             {!collapsed && (
               <div className="mt-5 mb-1 px-3">
-                <span className="font-sans text-micro uppercase tracking-[0.08em] text-subtle">
+                <span className="font-sans text-micro uppercase tracking-[0.08em] text-fg-subtle">
                   Admin
                 </span>
               </div>
@@ -223,7 +223,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
             <span
               aria-label={email || 'User'}
               title={email || 'Not signed in'}
-              className="flex h-8 w-8 items-center justify-center rounded-pill border border-border-medium bg-surface-300 font-sans text-button font-medium text-foreground"
+              className="flex h-8 w-8 items-center justify-center rounded-pill border border-border-medium bg-surface-300 font-sans text-body font-medium text-foreground"
             >
               {initial}
             </span>
@@ -233,7 +233,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               aria-label="Sign out"
               title="Sign out"
               className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-md text-muted',
+                'flex h-8 w-8 items-center justify-center rounded-md text-fg-muted',
                 'transition-colors duration-150',
                 'hover:bg-surface-300 hover:text-error',
                 'focus-visible:bg-surface-300 focus-visible:text-error focus-visible:outline-none',
@@ -258,7 +258,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               className={cn(
                 'flex h-9 w-9 shrink-0 items-center justify-center rounded-pill',
                 'border border-border-medium bg-surface-400',
-                'font-sans text-button font-medium text-foreground',
+                'font-sans text-body font-medium text-foreground',
               )}
             >
               {initial}
@@ -276,7 +276,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
                       {emailLocal}
                     </span>
                     <span
-                      className="truncate font-mono text-mono-sm text-muted leading-tight"
+                      className="truncate font-mono text-mono-sm text-fg-muted leading-tight"
                       title={email}
                     >
                       @{emailDomain}
@@ -291,7 +291,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
                   </span>
                 )
               ) : (
-                <span className="truncate font-sans text-caption text-muted">
+                <span className="truncate font-sans text-caption text-fg-muted">
                   Not signed in
                 </span>
               )}
@@ -305,8 +305,8 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               title="Sign out"
               className={cn(
                 'flex h-8 w-8 shrink-0 items-center justify-center rounded-md',
-                'text-subtle transition-colors duration-150',
-                'group-hover:text-muted',
+                'text-fg-subtle transition-colors duration-150',
+                'group-hover:text-fg-muted',
                 'hover:!bg-surface-400 hover:!text-error',
                 'focus-visible:bg-surface-400 focus-visible:text-error focus-visible:outline-none',
               )}

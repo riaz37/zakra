@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
 
 export interface MarkdownComponentsConfig {
-  /** Font size class for body text and list items. Default: 'text-[15px]' */
+  /** Font size class for body text and list items. Default: 'text-body' */
   bodySize?: string;
   /** Whether to include table components. Default: true */
   tables?: boolean;
@@ -14,7 +14,7 @@ export interface MarkdownComponentsConfig {
 export function buildMarkdownComponents(
   config: MarkdownComponentsConfig = {},
 ): Components {
-  const { bodySize = 'text-[15px]', tables = true } = config;
+  const { bodySize = 'text-body', tables = true } = config;
 
   const base: Components = {
     p: ({ children }) => (
@@ -34,7 +34,7 @@ export function buildMarkdownComponents(
       >
         <span
           aria-hidden
-          className="mt-[0.65em] h-[4px] w-[4px] shrink-0 rounded-full bg-muted"
+          className="mt-[0.65em] h-[4px] w-[4px] shrink-0 rounded-full bg-fg-muted"
         />
         <span>{children}</span>
       </li>
@@ -42,38 +42,38 @@ export function buildMarkdownComponents(
     strong: ({ children }) => (
       <strong className="font-semibold text-foreground">{children}</strong>
     ),
-    em: ({ children }) => <em className="italic text-muted">{children}</em>,
+    em: ({ children }) => <em className="italic text-fg-muted">{children}</em>,
     code: ({ children, className }) => {
       const isBlock = className?.startsWith('language-');
       if (isBlock) return <code className={className}>{children}</code>;
       return (
-        <code className="rounded bg-surface-400 px-1.5 py-0.5 font-mono text-[12px] text-accent">
+        <code className="rounded bg-surface-400 px-1.5 py-0.5 font-mono text-mono-sm text-accent">
           {children}
         </code>
       );
     },
     pre: ({ children }) => (
-      <pre className="my-3 overflow-x-auto rounded-lg border border-border bg-[var(--color-code-canvas)] p-3 font-mono text-[12px] leading-relaxed text-foreground">
+      <pre className="my-3 overflow-x-auto rounded-lg border border-border bg-[var(--color-code-canvas)] p-3 font-mono text-mono-sm leading-relaxed text-foreground">
         {children}
       </pre>
     ),
     h1: ({ children }) => (
-      <h1 className="mb-2 mt-4 font-sans text-[18px] font-semibold tracking-tight text-foreground first:mt-0">
+      <h1 className="mb-2 mt-4 font-sans text-heading font-semibold tracking-tight text-foreground first:mt-0">
         {children}
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="mb-2 mt-3 font-sans text-[17px] font-semibold tracking-tight text-foreground first:mt-0">
+      <h2 className="mb-2 mt-3 font-sans text-heading font-semibold tracking-tight text-foreground first:mt-0">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="mb-1.5 mt-3 font-sans text-[16px] font-semibold text-foreground first:mt-0">
+      <h3 className="mb-1.5 mt-3 font-sans text-subheading font-semibold text-foreground first:mt-0">
         {children}
       </h3>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-2 border-l-2 border-border pl-3 text-muted">
+      <blockquote className="my-2 border-l-2 border-border pl-3 text-fg-muted">
         {children}
       </blockquote>
     ),
@@ -98,14 +98,14 @@ export function buildMarkdownComponents(
     ...base,
     table: ({ children }) => (
       <div className="my-3 overflow-x-auto rounded-lg border border-border">
-        <table className="w-full text-[14px]">{children}</table>
+        <table className="w-full text-body">{children}</table>
       </div>
     ),
     thead: ({ children }) => (
       <thead className="border-b border-border bg-surface-300">{children}</thead>
     ),
     th: ({ children }) => (
-      <th className="px-3 py-2.5 text-left font-sans text-[13px] font-medium text-muted">
+      <th className="px-3 py-2.5 text-left font-sans text-caption font-medium text-fg-muted">
         {children}
       </th>
     ),

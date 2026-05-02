@@ -34,10 +34,10 @@ export function MetricStrip({
             'lg:border-b-0 lg:border-r lg:border-border lg:last:border-r-0',
           )}
         >
-          <dt className="font-sans text-caption font-medium uppercase tracking-[0.08em] text-muted">
+          <dt className="font-sans text-micro font-medium uppercase tracking-[0.08em] text-fg-muted">
             {label}
           </dt>
-          <dd className="font-sans text-[28px] font-semibold leading-none text-foreground font-feat-tnum tabular-nums">
+          <dd className="font-sans text-display font-semibold leading-none text-foreground font-feat-tnum tabular-nums">
             {isLoading ? <Skeleton className="h-7 w-16" /> : (metrics[key] ?? 0)}
           </dd>
         </div>

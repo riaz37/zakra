@@ -114,9 +114,9 @@ function SchemaTreePanel({
       {/* Panel header */}
       <div className="border-b border-border px-3 py-2.5">
         <div className="flex items-center justify-between gap-2">
-          <p className="font-sans text-caption font-medium uppercase tracking-wide text-muted">
+          <p className="font-sans text-micro font-medium uppercase tracking-wide text-fg-muted">
             Tables
-            <span className="ml-1.5 font-mono text-micro text-subtle">
+            <span className="ml-1.5 font-mono text-micro text-fg-subtle">
               {isFiltering ? `${filteredCount}/${allTablesCount}` : allTablesCount}
             </span>
           </p>
@@ -139,7 +139,7 @@ function SchemaTreePanel({
             checked={hideSystem}
             onCheckedChange={onHideSystemChange}
           />
-          <span className="font-sans text-caption text-muted">
+          <span className="font-sans text-body text-fg-muted">
             Hide system
           </span>
         </label>
@@ -165,7 +165,7 @@ function SchemaTreePanel({
         className="flex-1 overflow-y-auto"
       >
         {totalVisible === 0 ? (
-          <li className="px-3 py-4 text-center font-sans text-caption text-muted">
+          <li className="px-3 py-4 text-center font-sans text-body text-fg-muted">
             No tables match
           </li>
         ) : (
@@ -177,12 +177,12 @@ function SchemaTreePanel({
                     aria-hidden
                     size={11}
                     strokeWidth={1.75}
-                    className="shrink-0 text-subtle"
+                    className="shrink-0 text-fg-subtle"
                   />
-                  <span className="truncate font-mono text-mono-sm font-medium text-muted">
+                  <span className="truncate font-mono text-mono-sm font-medium text-fg-muted">
                     {group.schema}
                   </span>
-                  <span className="ml-auto shrink-0 font-mono text-micro text-subtle">
+                  <span className="ml-auto shrink-0 font-mono text-micro text-fg-subtle">
                     {group.tables.length}
                   </span>
                 </div>
@@ -212,8 +212,8 @@ function SchemaTreePanel({
                           isActive
                             ? 'border-l-accent bg-surface-400 text-foreground'
                             : columnMatchOnly
-                            ? 'border-l-accent/40 text-muted hover:bg-surface-300 hover:text-foreground'
-                            : 'border-l-transparent text-muted hover:bg-surface-300 hover:text-foreground',
+                            ? 'border-l-accent/40 text-fg-muted hover:bg-surface-300 hover:text-foreground'
+                            : 'border-l-transparent text-fg-muted hover:bg-surface-300 hover:text-foreground',
                         )}
                       >
                         <Table2
@@ -223,17 +223,17 @@ function SchemaTreePanel({
                           className={cn(
                             'shrink-0',
                             isActive
-                              ? 'text-muted'
+                              ? 'text-fg-muted'
                               : isSys
-                              ? 'text-subtle'
-                              : 'text-muted',
+                              ? 'text-fg-subtle'
+                              : 'text-fg-muted',
                           )}
                         />
                         <span
                           className={cn(
                             'min-w-0 flex-1 truncate font-mono text-mono-sm',
                             isActive ? 'font-medium text-foreground' : '',
-                            isSys && !isActive ? 'text-muted' : '',
+                            isSys && !isActive ? 'text-fg-muted' : '',
                           )}
                         >
                           {table.table_name}
@@ -241,7 +241,7 @@ function SchemaTreePanel({
                         <span
                           className={cn(
                             'shrink-0 font-mono text-micro tabular-nums',
-                            isActive ? 'text-muted' : 'text-subtle',
+                            isActive ? 'text-fg-muted' : 'text-fg-subtle',
                           )}
                         >
                           {table.columns.length}
@@ -285,32 +285,32 @@ function TableDetailPanel({ table }: TableDetailPanelProps) {
       <div className="mb-6 flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
-            <h2 className="font-sans text-xl font-semibold tracking-tight text-foreground">
+            <h2 className="font-sans text-heading font-semibold tracking-tight text-foreground">
               {table.display_name || table.table_name}
             </h2>
-            <span className="font-mono text-caption text-muted">
+            <span className="font-mono text-body text-fg-muted">
               {table.schema_name}.{table.table_name}
             </span>
           </div>
           {table.description ? (
-            <p className="max-w-2xl font-sans text-button text-muted">
+            <p className="max-w-2xl font-sans text-body text-fg-muted">
               {table.description}
             </p>
           ) : (
-            <p className="font-sans text-button italic text-subtle">
+            <p className="font-sans text-body italic text-fg-subtle">
               No description provided for this table.
             </p>
           )}
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 rounded-pill bg-surface-300 px-2.5 py-1 font-sans text-[11px] font-medium text-muted-strong shadow-sm ring-1 ring-border">
-            <Columns size={12} strokeWidth={1.75} className="text-muted" />
+          <div className="flex items-center gap-1.5 rounded-pill bg-surface-300 px-2.5 py-1 font-sans text-micro font-medium text-muted-strong shadow-sm ring-1 ring-border">
+            <Columns size={12} strokeWidth={1.75} className="text-fg-muted" />
             {table.columns.length} {table.columns.length === 1 ? 'column' : 'columns'}
           </div>
 
           {table.row_count != null && (
-            <div className="flex items-center gap-1.5 rounded-pill bg-surface-300 px-2.5 py-1 font-sans text-[11px] font-medium text-muted-strong shadow-sm ring-1 ring-border">
+            <div className="flex items-center gap-1.5 rounded-pill bg-surface-300 px-2.5 py-1 font-sans text-micro font-medium text-muted-strong shadow-sm ring-1 ring-border">
               <span className="font-mono">{formatRowCount(table.row_count)}</span>
             </div>
           )}
@@ -483,7 +483,7 @@ export function SchemaExplorerTab({ connectionId }: SchemaExplorerTabProps) {
         />
       ) : (
         <div className="flex flex-1 items-center justify-center py-16">
-          <p className="font-sans text-button text-muted">
+          <p className="font-sans text-body text-fg-muted">
             Select a table to view its columns.
           </p>
         </div>

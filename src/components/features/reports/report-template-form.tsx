@@ -124,7 +124,7 @@ export function ReportTemplateForm({
 
   return (
     <form id="template-form" onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="flex h-[calc(100dvh-220px)] min-h-[560px] max-h-[900px] overflow-hidden rounded-xl border border-border bg-surface-100">
+      <div className="flex h-[calc(100dvh-220px)] min-h-[560px] max-h-[900px] overflow-hidden rounded-lg border border-border bg-surface-200">
 
         {/* ── LEFT: Config panel ──────────────────────────────────────── */}
         <div className="flex w-[300px] shrink-0 flex-col border-r border-border">

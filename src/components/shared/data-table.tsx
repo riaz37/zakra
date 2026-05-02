@@ -107,13 +107,13 @@ export function DataTable<TData>({
             {headerGroups.map((headerGroup) => (
               <tr
                 key={headerGroup.id}
-                className="border-b border-border bg-surface-100/50"
+                className="border-b border-border bg-surface-200"
               >
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
                     scope="col"
-                    className="px-4 py-2.5 text-left align-middle font-sans text-[11px] font-medium uppercase tracking-[0.06em] text-fg-subtle whitespace-nowrap"
+                    className="px-4 py-2.5 text-left align-middle font-sans text-micro font-medium uppercase tracking-[0.06em] text-fg-subtle whitespace-nowrap"
                   >
                     {header.isPlaceholder
                       ? null
@@ -134,7 +134,7 @@ export function DataTable<TData>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-12 text-center font-sans text-body text-muted"
+                  className="px-4 py-12 text-center font-sans text-body text-fg-muted"
                 >
                   {emptyMessage}
                 </td>
@@ -197,7 +197,7 @@ export function DataTable<TData>({
                     const label = columnLabels.get(cell.column.id);
                     return (
                       <div key={cell.id} className="contents">
-                        <dt className="font-sans text-caption font-medium tracking-[0.048px] text-muted">
+                        <dt className="font-sans text-micro font-medium tracking-[0.048px] text-fg-muted">
                           {label}
                         </dt>
                         <dd className="font-sans text-button text-foreground">
@@ -222,7 +222,7 @@ export function DataTable<TData>({
           aria-label="Pagination navigation"
           className="mt-4 flex items-center justify-between gap-3"
         >
-          <div className="font-sans text-caption text-muted">
+          <div className="font-sans text-body text-fg-muted">
             {startIndex !== null && endIndex !== null && totalCount !== undefined
               ? `${startIndex}–${endIndex} of ${totalCount}`
               : `Page ${pageIndex + 1} of ${pageCount}`}
@@ -280,7 +280,7 @@ function PaginationButton({
       className={cn(
         "inline-flex items-center gap-1 rounded border border-border bg-surface-200 px-3 py-1.5",
         "font-sans text-button text-foreground transition-colors",
-        "hover:bg-surface-400/60",
+        "hover:bg-surface-300",
         "focus-visible:border-border-medium focus-visible:outline-none",
         "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface-200",
       )}

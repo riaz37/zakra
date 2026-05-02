@@ -139,13 +139,13 @@ export function PageHeader({
             <h1
               className={cn(
                 "font-sans font-semibold tracking-[-0.03em] text-foreground",
-                isCompact ? "text-xl" : "text-2xl",
+                isCompact ? "text-heading" : "text-display",
               )}
             >
               {title}
               {scopeLabel ? (
                 <span
-                  className="ml-3 inline-flex items-center gap-1 rounded-full bg-surface-300 px-2 py-0.5 align-middle font-sans text-caption font-medium text-muted-strong"
+                  className="ml-3 inline-flex items-center gap-1 rounded-full bg-surface-300 px-2 py-0.5 align-middle font-sans text-micro font-medium text-muted-strong"
                   aria-label={`Scope: ${scopeLabel}`}
                 >
                   <Building2 aria-hidden className="size-3" />
@@ -154,7 +154,7 @@ export function PageHeader({
               ) : null}
             </h1>
             {subtitle ? (
-              <p className="font-sans text-sm text-muted">{subtitle}</p>
+              <p className="font-sans text-body text-fg-muted">{subtitle}</p>
             ) : null}
           </div>
         </div>

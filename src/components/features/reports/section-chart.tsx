@@ -23,7 +23,13 @@ const GRID_STROKE = 'var(--color-border)';
 const AXIS_FILL = 'var(--color-muted)';
 const ACCENT = 'var(--color-accent)';
 
-const PIE_PALETTE = ['#3ecf8e', '#60a5fa', '#f59e0b', '#a78bfa', '#fb923c'];
+const PIE_PALETTE = [
+  'var(--color-chart-1)',
+  'var(--color-chart-2)',
+  'var(--color-chart-3)',
+  'var(--color-chart-4)',
+  'var(--color-chart-5)',
+];
 
 const TOOLTIP_CONTENT_STYLE = {
   background: 'var(--color-surface-200)',
@@ -183,7 +189,7 @@ export function SectionChart({ section }: SectionChartProps) {
             nameKey={nameKey}
             dataKey={dataKey}
             outerRadius={100}
-            stroke="#1a1916"
+            stroke="var(--color-background)"
             strokeWidth={2}
           >
             {chartData.map((_, i) => (

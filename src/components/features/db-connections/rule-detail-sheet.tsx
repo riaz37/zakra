@@ -24,14 +24,14 @@ function ScopeChip({ scopeType, scopeValue }: { scopeType: string; scopeValue?: 
 
   return (
     <span
-      className="inline-flex items-center gap-1 rounded-[3px] bg-surface-300 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-strong"
+      className="inline-flex items-center gap-1 rounded-[3px] bg-surface-300 px-1.5 py-0.5 font-mono text-micro uppercase tracking-[0.06em] text-muted-strong"
       title={scopeValue ?? undefined}
     >
       {scopeType}
       {display ? (
         <>
           <span className="text-subtle">·</span>
-          <span className="normal-case text-muted">{display}</span>
+          <span className="normal-case text-fg-muted">{display}</span>
         </>
       ) : null}
     </span>
@@ -67,8 +67,8 @@ export function RuleDetailSheet({
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <SheetTitle
                 className={cn(
-                  'truncate font-sans text-base font-semibold tracking-[-0.01em]',
-                  !rule.is_active && 'text-muted line-through',
+                  'truncate font-sans text-subheading font-semibold tracking-[-0.01em]',
+                  !rule.is_active && 'text-fg-muted line-through',
                 )}
               >
                 {rule.name}
@@ -76,7 +76,7 @@ export function RuleDetailSheet({
               <div className="flex items-center gap-2">
                 <ScopeChip scopeType={rule.scope_type} scopeValue={rule.scope_value} />
                 {!rule.is_active && (
-                  <span className="font-sans text-caption text-subtle">Disabled</span>
+                  <span className="font-sans text-caption text-fg-subtle">Disabled</span>
                 )}
               </div>
             </div>
@@ -88,7 +88,7 @@ export function RuleDetailSheet({
           <pre
             className={cn(
               'whitespace-pre-wrap break-words font-mono text-mono-sm leading-relaxed',
-              rule.is_active ? 'text-foreground' : 'text-muted',
+              rule.is_active ? 'text-foreground' : 'text-fg-muted',
             )}
           >
             {rule.rule_text}

@@ -17,7 +17,7 @@ function ScopeChip({ scopeType, scopeValue }: { scopeType: string; scopeValue?: 
 
   return (
     <span
-      className="inline-flex items-center gap-1 rounded-[3px] bg-surface-300 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-strong"
+      className="inline-flex items-center gap-1 rounded-[3px] bg-surface-300 px-1.5 py-0.5 font-mono text-micro uppercase tracking-[0.06em] text-muted-strong"
       title={scopeValue ?? undefined}
     >
       {scopeType}
@@ -58,8 +58,8 @@ export function BusinessRuleCard({
         }
       }}
       className={cn(
-        'cursor-pointer group relative flex flex-col rounded-xl border border-border bg-surface-100 p-5 transition-all duration-200',
-        'hover:border-border-medium hover:bg-surface-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
+        'cursor-pointer group relative flex flex-col rounded-lg border border-border bg-surface-200 p-5 transition-all duration-[120ms]',
+        'hover:border-border-medium hover:bg-surface-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent',
         !rule.is_active && 'opacity-75',
       )}
     >
@@ -67,16 +67,16 @@ export function BusinessRuleCard({
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className={cn(
-            "flex size-10 shrink-0 items-center justify-center rounded-lg shadow-sm ring-1 transition-colors",
-            rule.is_active 
+            "flex size-10 shrink-0 items-center justify-center rounded-lg ring-1 transition-colors",
+            rule.is_active
               ? "bg-surface-300 text-muted-strong ring-border group-hover:text-foreground"
-              : "bg-surface-200 text-subtle ring-border/50"
+              : "bg-surface-300 text-subtle ring-border"
           )}>
             <BookOpen size={20} strokeWidth={1.5} />
           </div>
           <div>
             <h3 className={cn(
-              "font-sans text-[15px] font-semibold tracking-tight line-clamp-1",
+              "font-sans text-subheading font-semibold tracking-tight line-clamp-1",
               rule.is_active ? "text-foreground" : "text-muted line-through"
             )}>
               {rule.name}
@@ -98,7 +98,7 @@ export function BusinessRuleCard({
       {/* Body Snippet */}
       <div className="mt-4 flex-1">
         <p className={cn(
-          "line-clamp-3 font-mono text-xs leading-relaxed",
+          "line-clamp-3 font-mono text-caption leading-relaxed",
           rule.is_active ? "text-muted-strong" : "text-subtle"
         )}>
           {rule.rule_text}

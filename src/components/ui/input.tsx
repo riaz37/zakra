@@ -44,8 +44,8 @@ function Input({
         // Surface + border
         "border bg-surface-200 text-foreground",
         // Type
-        mono ? "font-mono text-button" : "font-sans text-button",
-        "placeholder:text-foreground/35",
+        mono ? "font-mono text-body" : "font-sans text-body",
+        "placeholder:text-fg-subtle",
         // Motion
         "transition-colors duration-[120ms]",
         // Default state
@@ -58,7 +58,7 @@ function Input({
         // Disabled
         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
         // File input
-        "file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
+        "file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-body file:font-medium file:text-foreground",
         className,
       )}
       {...props}

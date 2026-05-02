@@ -15,7 +15,7 @@ export function ReportWelcome({ onPrompt }: { onPrompt: (text: string) => void }
         <Image src="/logo/esaplogo.webp" alt="ESAP" width={48} height={48} priority />
       </div>
 
-      <h2 className="font-sans text-[22px] font-normal leading-[1.25] tracking-[-0.44px] text-foreground">
+      <h2 className="font-sans text-display font-normal leading-[1.25] tracking-[-0.01em] text-foreground">
         Generate a report with AI
       </h2>
       <p className="mt-2.5 max-w-[360px] font-sans text-button leading-[1.6] text-muted">

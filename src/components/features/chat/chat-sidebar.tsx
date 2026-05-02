@@ -49,7 +49,7 @@ export function ChatSidebar() {
 
     return (
       <div className="mb-6">
-        <h3 className="mb-2 px-4 text-micro font-semibold text-muted uppercase tracking-wider">
+        <h3 className="mb-2 px-4 text-micro font-semibold text-fg-muted uppercase tracking-wider">
           {title}
         </h3>
         <ul className="space-y-1 px-2">
@@ -60,16 +60,16 @@ export function ChatSidebar() {
                 <Link
                   href={`/chat/${session.id}`}
                   className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 text-button transition-colors',
+                    'flex items-center gap-3 rounded-md px-3 py-2 text-body transition-colors',
                     isActive
-                      ? 'bg-accent/10 text-accent font-medium'
+                      ? 'bg-accent/15 text-accent font-medium'
                       : 'text-foreground hover:bg-surface-300'
                   )}
                 >
                   <MessageSquare
                     className={cn(
                       'h-4 w-4 shrink-0',
-                      isActive ? 'text-accent' : 'text-muted'
+                      isActive ? 'text-accent' : 'text-fg-muted'
                     )}
                   />
                   <span className="truncate">{session.title || 'Untitled conversation'}</span>
@@ -87,7 +87,7 @@ export function ChatSidebar() {
       <div className="p-4 border-b border-border">
         <button
           onClick={() => router.push('/chat')}
-          className="flex w-full items-center justify-between rounded-lg bg-accent px-4 py-2.5 font-sans text-button font-medium text-[#111] transition-colors duration-150 hover:bg-accent/90"
+          className="flex w-full items-center justify-between rounded-lg bg-accent px-4 py-2.5 font-sans text-body font-medium text-primary-foreground transition-colors duration-150 hover:bg-accent/80"
         >
           <span>New chat</span>
           <MessageSquarePlus className="h-4 w-4" aria-hidden />
@@ -96,7 +96,7 @@ export function ChatSidebar() {
 
       <div className="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-surface-400 scrollbar-track-transparent hover:scrollbar-thumb-surface-500">
         {!companyId && (
-          <div className="px-4 py-6 text-center text-caption text-muted">
+          <div className="px-4 py-6 text-center text-body text-fg-muted">
             Select a company to view chat history.
           </div>
         )}
@@ -131,7 +131,7 @@ export function ChatSidebar() {
         )}
 
         {!isLoading && sessions.length === 0 && companyId && (
-          <div className="px-4 py-6 text-center text-caption text-muted">
+          <div className="px-4 py-6 text-center text-body text-fg-muted">
             No past conversations found.
           </div>
         )}

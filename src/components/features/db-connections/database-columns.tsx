@@ -52,13 +52,13 @@ export function getDatabaseColumns(actions: DatabaseColumnActions): ColumnDef<Da
             <div className="flex flex-col">
               <Link 
                 href={`/db-connections/${connection.id}`}
-                className="font-sans text-[13px] font-semibold tracking-tight text-foreground hover:text-accent hover:underline line-clamp-1"
+                className="font-sans text-body font-semibold tracking-tight text-foreground hover:text-accent hover:underline line-clamp-1"
               >
                 {connection.name}
               </Link>
               {connection.is_default && (
                 <div className="mt-0.5">
-                  <Badge variant="success" size="sm" className="h-4 px-1 text-[9px]">
+                  <Badge variant="success" size="sm" className="h-4 px-1 text-micro">
                     Default
                   </Badge>
                 </div>
@@ -72,7 +72,7 @@ export function getDatabaseColumns(actions: DatabaseColumnActions): ColumnDef<Da
       accessorKey: 'database_type',
       header: 'Engine',
       cell: ({ row }) => (
-        <span className="font-mono text-xs uppercase tracking-wider text-muted-strong">
+        <span className="font-mono text-caption uppercase tracking-wider text-muted-strong">
           {row.original.database_type}
         </span>
       ),
@@ -83,7 +83,7 @@ export function getDatabaseColumns(actions: DatabaseColumnActions): ColumnDef<Da
       cell: ({ row }) => {
         const connection = row.original;
         return (
-          <div className="font-mono text-xs text-foreground truncate max-w-[200px]" title={`${connection.host}:${connection.port}`}>
+          <div className="font-mono text-caption text-foreground truncate max-w-[200px]" title={`${connection.host}:${connection.port}`}>
             {connection.host}<span className="text-subtle">:{connection.port}</span>
           </div>
         );
@@ -93,7 +93,7 @@ export function getDatabaseColumns(actions: DatabaseColumnActions): ColumnDef<Da
       accessorKey: 'database_name',
       header: 'Database',
       cell: ({ row }) => (
-        <div className="font-mono text-xs text-foreground truncate max-w-[150px]" title={row.original.database_name}>
+        <div className="font-mono text-caption text-foreground truncate max-w-[150px]" title={row.original.database_name}>
           {row.original.database_name}
         </div>
       ),
@@ -110,7 +110,7 @@ export function getDatabaseColumns(actions: DatabaseColumnActions): ColumnDef<Da
       accessorKey: 'last_connected_at',
       header: 'Last Tested',
       cell: ({ row }) => (
-        <span className="font-mono text-xs text-muted-strong">
+        <span className="font-mono text-caption text-muted-strong">
           {row.original.last_connected_at ? formatDate(row.original.last_connected_at) : 'Never'}
         </span>
       ),

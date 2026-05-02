@@ -56,9 +56,9 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
     <aside className="sticky top-6 lg:top-8 flex w-56 shrink-0 flex-col overflow-hidden rounded-card border border-border bg-surface-200 max-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-4rem)]">
       {/* Header */}
       <div className="border-b border-border px-3 py-2.5">
-        <p className="font-sans text-caption font-medium uppercase tracking-wide text-muted">
+        <p className="font-sans text-micro font-medium uppercase tracking-wide text-fg-muted">
           Tables
-          <span className="ml-1.5 font-mono text-micro text-subtle">{tables.length}</span>
+          <span className="ml-1.5 font-mono text-micro text-fg-subtle">{tables.length}</span>
         </p>
       </div>
 
@@ -82,7 +82,7 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
         className="flex-1 overflow-y-auto"
       >
         {filtered.length === 0 ? (
-          <li className="px-3 py-4 text-center font-sans text-caption text-muted">
+          <li className="px-3 py-4 text-center font-sans text-body text-fg-muted">
             No tables match
           </li>
         ) : (
@@ -102,15 +102,15 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
                     'transition-colors focus-visible:bg-surface-400 focus-visible:outline-none',
                     isActive
                       ? 'bg-surface-400 text-foreground'
-                      : 'text-muted hover:bg-surface-300 hover:text-foreground',
+                      : 'text-fg-muted hover:bg-surface-300 hover:text-foreground',
                   )}
                 >
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-mono text-caption font-medium">
+                    <span className="block truncate font-mono text-body font-medium">
                       {table.table_name}
                     </span>
                     {table.display_name && table.display_name !== table.table_name && (
-                      <span className="mt-0.5 block truncate font-sans text-caption text-muted">
+                      <span className="mt-0.5 block truncate font-sans text-caption text-fg-muted">
                         {table.display_name}
                       </span>
                     )}
@@ -119,7 +119,7 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
                     <span
                       className={cn(
                         'mt-0.5 shrink-0 font-mono text-micro',
-                        isActive ? 'text-muted' : 'text-subtle',
+                        isActive ? 'text-fg-muted' : 'text-fg-subtle',
                       )}
                     >
                       {table.columns.length}
@@ -201,19 +201,19 @@ function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
       {/* Table header */}
       <div className="mb-5">
         <div className="flex items-baseline gap-2.5">
-          <h2 className="font-sans text-[17px] font-semibold tracking-[-0.2px] text-foreground">
+          <h2 className="font-sans text-heading font-semibold tracking-[-0.2px] text-foreground">
             {table.display_name || table.table_name}
           </h2>
-          <span className="font-mono text-caption text-muted">
+          <span className="font-mono text-body text-fg-muted">
             {table.schema_name}.{table.table_name}
           </span>
         </div>
 
         <div className="mt-1.5 flex items-center gap-3">
           {table.description && (
-            <p className="font-sans text-button text-muted">{table.description}</p>
+            <p className="font-sans text-body text-fg-muted">{table.description}</p>
           )}
-          <div className="flex items-center gap-1 font-sans text-caption text-muted">
+          <div className="flex items-center gap-1 font-sans text-body text-fg-muted">
             <Columns size={12} strokeWidth={1.75} aria-hidden />
             {table.columns.length} column{table.columns.length !== 1 ? 's' : ''}
           </div>
@@ -229,7 +229,7 @@ function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
       {isLoading ? (
         <PermissionMatrixSkeleton />
       ) : table.columns.length === 0 ? (
-        <p className="font-sans text-button text-muted">
+        <p className="font-sans text-body text-fg-muted">
           No columns discovered for this table.
         </p>
       ) : (
@@ -291,7 +291,7 @@ export default function TableAccessPage() {
       <ScaffoldFilterAndContent>
         {/* User selector */}
         <div className="mb-5 flex items-center gap-3">
-          <span className="font-sans text-button text-muted">User</span>
+          <span className="font-sans text-body text-fg-muted">User</span>
           {usersLoading ? (
             <Skeleton className="h-8 w-56" rounded="lg" />
           ) : (
@@ -316,7 +316,7 @@ export default function TableAccessPage() {
                       <span className="flex flex-col gap-0.5 min-w-0">
                         <span className="truncate">{name}</span>
                         {showEmail && (
-                          <span className="truncate text-muted-foreground/60 text-xs">{user.email}</span>
+                          <span className="truncate text-fg-muted text-caption">{user.email}</span>
                         )}
                       </span>
                     </SelectItem>
@@ -363,7 +363,7 @@ export default function TableAccessPage() {
               />
             ) : (
               <div className="flex flex-1 items-center justify-center py-16">
-                <p className="font-sans text-button text-muted">
+                <p className="font-sans text-body text-fg-muted">
                   Select a table to manage column permissions.
                 </p>
               </div>

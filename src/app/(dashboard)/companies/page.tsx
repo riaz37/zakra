@@ -74,12 +74,12 @@ export default function CompaniesPage() {
             {row.original.parent_id && (
               <GitBranch className="size-3 text-subtle rotate-90" />
             )}
-            <span className="font-sans text-[16px] font-medium text-foreground">
+            <span className="font-sans text-subheading font-medium text-foreground">
               {row.original.name}
             </span>
           </div>
           {row.original.description && (
-            <span className="font-sans text-caption text-muted line-clamp-1 max-w-[400px]">
+            <span className="font-sans text-body text-fg-muted line-clamp-1 max-w-[400px]">
               {row.original.description}
             </span>
           )}
@@ -96,7 +96,7 @@ export default function CompaniesPage() {
           : undefined;
         return (
           <span
-            className="font-sans text-button text-muted capitalize"
+            className="font-sans text-body text-fg-muted capitalize"
             title={parentName ? `Under ${parentName}` : undefined}
           >
             {row.original.company_type}
@@ -113,7 +113,7 @@ export default function CompaniesPage() {
       id: 'subsidiaries',
       header: 'Subsidiaries',
       cell: ({ row }) => (
-        <span className="font-sans text-button text-muted">
+        <span className="font-sans text-body text-fg-muted">
           {row.original.subsidiaries?.length ?? 0}
         </span>
       ),
@@ -122,7 +122,7 @@ export default function CompaniesPage() {
       id: 'created_at',
       header: 'Created',
       cell: ({ row }) => (
-        <span className="font-mono text-mono text-muted">
+        <span className="font-mono text-mono-sm text-fg-muted">
           {formatDate(row.original.created_at)}
         </span>
       ),
@@ -213,10 +213,10 @@ export default function CompaniesPage() {
           onClick={() => setView('list')}
           aria-pressed={view === 'list'}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-button transition-colors',
+            'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
             view === 'list'
               ? 'bg-surface-400 text-foreground'
-              : 'text-muted hover:text-foreground',
+              : 'text-fg-muted hover:text-foreground',
           )}
         >
           <List aria-hidden size={13} strokeWidth={1.75} />
@@ -227,10 +227,10 @@ export default function CompaniesPage() {
           onClick={() => setView('hierarchy')}
           aria-pressed={view === 'hierarchy'}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-button transition-colors',
+            'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
             view === 'hierarchy'
               ? 'bg-surface-400 text-foreground'
-              : 'text-muted hover:text-foreground',
+              : 'text-fg-muted hover:text-foreground',
           )}
         >
           <Network aria-hidden size={13} strokeWidth={1.75} />

@@ -86,7 +86,7 @@ function AssignRoleForm({
             </SelectTrigger>
             <SelectContent>
               {availableRoles.length === 0 ? (
-                <div className="px-2 py-3 font-sans text-button text-muted">
+                <div className="px-2 py-3 font-sans text-body text-fg-muted">
                   No additional roles available.
                 </div>
               ) : (
@@ -139,7 +139,7 @@ export default function UserDetailPage() {
       id: 'name',
       header: 'Role',
       cell: ({ row }) => (
-        <span className="font-sans text-button font-medium text-foreground">
+        <span className="font-sans text-body font-medium text-foreground">
           {row.original.name}
         </span>
       ),
@@ -148,14 +148,14 @@ export default function UserDetailPage() {
       id: 'slug',
       header: 'Slug',
       cell: ({ row }) => (
-        <span className="font-mono text-button text-muted">{row.original.slug}</span>
+        <span className="font-mono text-body text-fg-muted">{row.original.slug}</span>
       ),
     },
     {
       id: 'assigned_at',
       header: 'Assigned',
       cell: ({ row }) => (
-        <span className="font-sans text-button text-muted">
+        <span className="font-sans text-body text-fg-muted">
           {formatDate(row.original.assigned_at)}
         </span>
       ),
@@ -198,10 +198,10 @@ export default function UserDetailPage() {
     return (
       <ScaffoldContainer>
         <div className="py-6">
-          <p className="font-sans text-button text-error">Failed to load user.</p>
+          <p className="font-sans text-body text-error">Failed to load user.</p>
           <Button
             variant="link"
-            className="mt-3 p-0 h-auto font-sans text-button text-muted underline hover:text-foreground no-underline"
+            className="mt-3 p-0 h-auto font-sans text-body text-fg-muted underline hover:text-foreground no-underline"
             onClick={() => router.push('/users')}
           >
             Back to Users
@@ -236,22 +236,22 @@ export default function UserDetailPage() {
         <ScaffoldSectionContent>
           <div className="rounded-card border border-border bg-background p-6">
             <div className="flex items-start gap-5">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-surface-300 font-sans text-[22px] font-medium text-foreground">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-surface-300 font-sans text-heading font-medium text-foreground">
                 {initial}
               </div>
               <div className="flex flex-col gap-3">
                 <div>
-                  <p className="font-sans text-[18px] font-medium text-foreground">
+                  <p className="font-sans text-heading font-medium text-foreground">
                     {fullName}
                   </p>
-                  <p className="font-sans text-button text-muted">{user.email}</p>
+                  <p className="font-sans text-body text-fg-muted">{user.email}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <UserTypeBadge type={user.user_type} />
                   <StatusBadge status={user.status} />
                 </div>
                 {user.last_login_at && (
-                  <p className="font-sans text-caption text-muted">
+                  <p className="font-sans text-body text-fg-muted">
                     Last login: {formatDateTime(user.last_login_at)}
                   </p>
                 )}

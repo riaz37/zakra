@@ -115,7 +115,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           aria-label="Close navigation"
           onClick={closeNav}
           className={cn(
-            'absolute inset-0 bg-foreground/20 backdrop-blur-sm transition-opacity duration-200',
+            'absolute inset-0 bg-black/70 transition-opacity duration-200',
             navOpen ? 'opacity-100' : 'opacity-0',
           )}
         />

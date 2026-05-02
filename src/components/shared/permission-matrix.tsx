@@ -341,7 +341,7 @@ export function PermissionMatrix({
                     {row.permission === 'read_masked' && (
                       <tr
                         className={cn(
-                          'bg-surface-100',
+                          'bg-surface-200',
                           !isLast && 'border-b border-border',
                         )}
                       >

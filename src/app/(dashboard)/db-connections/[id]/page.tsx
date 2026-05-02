@@ -119,13 +119,13 @@ export default function DbConnectionDetailPage({
         ]}
         title={connection.name}
         subtitle={
-          <span className="font-mono text-mono-sm text-muted">
+          <span className="font-mono text-mono-sm text-fg-muted">
             <span className="uppercase tracking-[0.06em]">
               {connection.database_type}
             </span>
-            <span className="mx-2 text-subtle">·</span>
+            <span className="mx-2 text-fg-subtle">·</span>
             {connection.host}
-            <span className="text-subtle">:</span>
+            <span className="text-fg-subtle">:</span>
             {connection.port}
           </span>
         }
@@ -134,7 +134,7 @@ export default function DbConnectionDetailPage({
             type="button"
             variant="ghost"
             onClick={() => setConfirmDelete(true)}
-            className="text-error hover:bg-error/8 hover:text-error h-9 px-3"
+            className="text-error hover:bg-error/10 hover:text-error h-9 px-3"
           >
             <Trash2 aria-hidden size={14} strokeWidth={1.75} className="mr-1.5" />
             Delete
@@ -170,7 +170,7 @@ export default function DbConnectionDetailPage({
             <p className="font-sans text-micro uppercase tracking-[0.048px] text-error">
               Last error
             </p>
-            <p className="mt-1.5 font-mono text-mono-sm leading-[1.5] text-error/90">
+            <p className="mt-1.5 font-mono text-mono-sm leading-[1.5] text-error">
               {connection.last_error}
             </p>
           </div>

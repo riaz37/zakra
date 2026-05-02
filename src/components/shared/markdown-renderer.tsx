@@ -9,7 +9,7 @@ export interface MarkdownRendererProps {
   className?: string;
 }
 
-const components = buildMarkdownComponents({ bodySize: 'text-[16px]' });
+const components = buildMarkdownComponents({ bodySize: 'text-body' });
 
 export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
   return (

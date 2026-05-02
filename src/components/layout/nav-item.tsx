@@ -67,12 +67,12 @@ export function NavItem({
       onClick={onNavigate}
       className={cn(
         // base
-        'relative flex h-8 items-center gap-2.5 rounded-md font-sans text-button outline-none transition-colors duration-[120ms]',
+        'relative flex h-8 items-center gap-2.5 rounded-md font-sans text-body outline-none transition-colors duration-[120ms]',
         'border-l-2 pl-[10px] pr-3',
         'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/40',
         active
           ? 'border-l-accent bg-accent-soft font-medium text-foreground'
-          : 'border-l-transparent text-muted hover:bg-surface-300 hover:text-foreground',
+          : 'border-l-transparent text-fg-muted hover:bg-surface-300 hover:text-foreground',
         collapsed && 'justify-center border-l-0 px-0 pl-0',
       )}
     >

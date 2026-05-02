@@ -89,10 +89,10 @@ function SectionBlock({ section, index }: SectionBlockProps) {
       className="scroll-mt-20 border-t border-border pt-8"
     >
       <div className="flex items-baseline gap-3">
-        <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-subtle">
+        <span className="font-mono text-micro uppercase tracking-[0.08em] text-fg-subtle">
           {formatIndex(index)}
         </span>
-        <h2 className="font-sans text-[18px] font-semibold tracking-[-0.025em] text-foreground">
+        <h2 className="font-sans text-heading font-semibold tracking-[-0.025em] text-foreground">
           {section.title}
         </h2>
       </div>
@@ -121,12 +121,12 @@ function SectionBlock({ section, index }: SectionBlockProps) {
         <div className="mt-8 space-y-6">
           {hasChart && section.chart_recommendation ? (
             <div>
-              <p className="font-sans text-[14px] font-medium text-foreground">
+              <p className="font-sans text-body font-medium text-foreground">
                 {section.chart_recommendation.title}
               </p>
-              <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.06em] text-subtle">
+              <p className="mt-1 font-mono text-micro uppercase tracking-[0.06em] text-fg-subtle">
                 {section.chart_recommendation.chart_type}
-                <span className="mx-1.5 text-subtle/60">·</span>
+                <span className="mx-1.5 text-fg-subtle">·</span>
                 {rowCount} {rowCount === 1 ? 'point' : 'points'}
               </p>
               <div className="mt-4">
@@ -141,7 +141,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                 type="button"
                 onClick={() => setTableOpen((v) => !v)}
                 aria-expanded={tableOpen}
-                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.06em] text-muted transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.06em] text-fg-muted transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
               >
                 Query Result
                 <span className="text-subtle">·</span>
@@ -168,7 +168,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                           <th
                             key={col}
                             className={cn(
-                              'px-4 py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.06em] text-muted',
+                              'px-4 py-2 font-sans text-micro font-semibold uppercase tracking-[0.06em] text-fg-muted',
                               numericColumns.has(i) ? 'text-right' : 'text-left',
                             )}
                           >
@@ -188,7 +188,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                           <tr
                             key={i}
                             className={cn(
-                              'border-b border-border/50 last:border-0',
+                              'border-b border-border last:border-0',
                               i % 2 === 0 ? 'bg-background' : 'bg-surface-100',
                             )}
                           >
@@ -204,7 +204,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                                       ? 'text-right font-mono tabular-nums'
                                       : 'text-left font-sans',
                                     formatted.isEmpty
-                                      ? 'text-subtle'
+                                      ? 'text-fg-subtle'
                                       : 'text-foreground',
                                   )}
                                 >
@@ -220,7 +220,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                 </div>
                 {showExpandToggle ? (
                   <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-surface-100 px-4 py-2">
-                    <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-subtle">
+                    <span className="font-mono text-micro uppercase tracking-[0.06em] text-fg-subtle">
                       Showing {visibleRows.length} of {rowCount} rows
                       {truncated && !tableExpanded
                         ? ' (result truncated by server)'
@@ -231,7 +231,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                         type="button"
                         onClick={() => setTableExpanded((v) => !v)}
                         aria-expanded={tableExpanded}
-                        className="cursor-pointer font-mono text-[11px] text-subtle transition-colors hover:text-muted focus-visible:text-muted focus-visible:outline-none"
+                        className="cursor-pointer font-mono text-micro text-fg-subtle transition-colors hover:text-fg-muted focus-visible:text-fg-muted focus-visible:outline-none"
                       >
                         {tableExpanded
                           ? 'Show less ↑'
@@ -366,7 +366,7 @@ export default function ReportViewerPage() {
               size="sm"
               onClick={handleDownload}
               disabled={isDownloading}
-              className="h-7 gap-1.5 text-[12px]"
+              className="h-7 gap-1.5 text-caption"
             >
               <Download aria-hidden size={13} strokeWidth={1.75} />
               {isDownloading ? 'Downloading…' : 'PDF'}
@@ -385,7 +385,7 @@ export default function ReportViewerPage() {
             title={report.title || 'Untitled Report'}
             subtitle={
               <span className="flex flex-wrap items-center gap-2">
-                <span className="font-sans text-button text-muted">
+                <span className="font-sans text-body text-fg-muted">
                   {formatDateTime(report.created_at)}
                 </span>
                 {durationLabel ? (
@@ -429,7 +429,7 @@ export default function ReportViewerPage() {
             {isInProgress ? (
               <div className="mb-6 flex items-center gap-2.5 rounded-lg border border-border bg-surface-200 px-4 py-3">
                 <Loader2 className="size-4 animate-spin text-accent" />
-                <span className="font-sans text-button text-foreground">
+                <span className="font-sans text-body text-foreground">
                   Generating report…
                 </span>
                 <span className="ml-auto font-mono text-mono-sm text-muted">
@@ -467,7 +467,7 @@ export default function ReportViewerPage() {
                   aria-hidden
                   className="mt-0.5 size-4 shrink-0 text-warning"
                 />
-                <p className="font-sans text-button text-foreground">
+                <p className="font-sans text-body text-foreground">
                   {failedCount} of {totalCount} sections failed to generate.
                 </p>
               </div>
@@ -475,10 +475,10 @@ export default function ReportViewerPage() {
 
             {report.executive_summary ? (
               <div className="mb-12 max-w-[68ch] border-l-[3px] border-accent/30 py-1 pl-5">
-                <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-subtle">
+                <p className="mb-3 font-mono text-micro font-medium uppercase tracking-[0.08em] text-fg-subtle">
                   Executive Summary
                 </p>
-                <p className="font-sans text-[15px] leading-relaxed text-foreground">
+                <p className="font-sans text-subheading leading-relaxed text-foreground">
                   {report.executive_summary}
                 </p>
               </div>
