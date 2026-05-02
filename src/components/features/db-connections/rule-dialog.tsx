@@ -10,6 +10,7 @@ import {
   useCreateBusinessRule,
   useUpdateBusinessRule,
 } from '@/hooks/useBusinessRules';
+import { useUsers } from '@/hooks/useUsers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -67,6 +68,14 @@ export function RuleDialog({
   editingRule,
 }: RuleDialogProps) {
   const isEdit = !!editingRule;
+
+  const { data: usersData } = useUsers(companyId ? { company_id: companyId, page_size: 200 } : { page_size: 200 });
+  const users = usersData?.items ?? [];
+
+  function userDisplayName(user: { first_name: string | null; last_name: string | null; email: string }): string {
+    const parts = [user.first_name, user.last_name].filter(Boolean);
+    return parts.length > 0 ? parts.join(' ') : user.email;
+  }
 
   const createRule = useCreateBusinessRule(connectionId, companyId);
   const updateRule = useUpdateBusinessRule(connectionId, companyId);
@@ -128,7 +137,7 @@ export function RuleDialog({
         <SheetHeader className="border-b border-border pb-4">
           <SheetTitle>{isEdit ? 'Edit rule' : 'Add rule'}</SheetTitle>
           {editingRule && (
-            <p className="font-mono text-mono-sm text-muted">
+            <p className="font-mono text-mono-sm text-fg-muted">
               {editingRule.name}
             </p>
           )}
@@ -178,28 +187,64 @@ export function RuleDialog({
                 />
 
                 {(scopeType === 'table' || scopeType === 'user') && (
-                  <Field data-invalid={!!errors.scope_value}>
-                    <FieldLabel htmlFor="rule-scope-value">
-                      {scopeType === 'table' ? 'Table name' : 'User ID'}
-                    </FieldLabel>
-                    <Input
-                      {...register('scope_value')}
-                      id="rule-scope-value"
-                      placeholder={
-                        scopeType === 'table' ? 'e.g. invoices' : 'User UUID'
-                      }
-                      aria-invalid={!!errors.scope_value}
-                    />
-                    {errors.scope_value && (
-                      <FieldError errors={[errors.scope_value]} />
+                  <Controller
+                    control={control}
+                    name="scope_value"
+                    render={({ field }) => (
+                      <Field data-invalid={!!errors.scope_value}>
+                        <FieldLabel htmlFor="rule-scope-value">
+                          {scopeType === 'table' ? 'Table name' : 'User'}
+                        </FieldLabel>
+                        {scopeType === 'user' ? (
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger id="rule-scope-value">
+                              <SelectValue placeholder="Select a user…">
+                                {field.value
+                                  ? userDisplayName(users.find((u) => u.id === field.value) ?? { first_name: null, last_name: null, email: field.value })
+                                  : 'Select a user…'}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent alignItemWithTrigger={false} align="start" className="w-72">
+                              {users.map((user) => {
+                                const name = userDisplayName(user);
+                                const showEmail = name !== user.email;
+                                return (
+                                  <SelectItem key={user.id} value={user.id} label={name} className="py-1.5">
+                                    <span className="flex flex-col gap-0.5 min-w-0">
+                                      <span className="truncate">{name}</span>
+                                      {showEmail && (
+                                        <span className="truncate text-fg-muted text-caption">{user.email}</span>
+                                      )}
+                                    </span>
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Input
+                            {...field}
+                            id="rule-scope-value"
+                            placeholder="e.g. invoices"
+                            aria-invalid={!!errors.scope_value}
+                          />
+                        )}
+                        {errors.scope_value && (
+                          <FieldError errors={[errors.scope_value]} />
+                        )}
+                      </Field>
                     )}
-                  </Field>
+                  />
                 )}
               </div>
 
               <Field data-invalid={!!errors.rule_text}>
                 <FieldLabel htmlFor="rule-text">Rule text</FieldLabel>
-                <p className="mb-1.5 font-sans text-caption text-muted">
+                <p className="mb-1.5 font-sans text-caption text-fg-muted">
                   Write in plain language. You can include markdown, SQL
                   snippets, or structured notes — the AI uses this verbatim.
                 </p>
@@ -207,7 +252,7 @@ export function RuleDialog({
                   {...register('rule_text')}
                   id="rule-text"
                   rows={16}
-                  className="font-mono text-mono-sm resize-none"
+                  className="font-mono text-body resize-none"
                   placeholder={
                     'Describe the business rule in plain language…\n\nExample:\nWhen querying invoices, always filter by company_id = @CompanyId\nand exclude records where status = \'void\'.'
                   }

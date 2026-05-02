@@ -73,7 +73,7 @@ export function ReportTOC({ sections }: ReportTOCProps) {
       aria-label="Table of contents"
       className="sticky top-8 flex flex-col gap-3"
     >
-      <p className="font-sans text-[11px] uppercase tracking-[0.06em] text-subtle">
+      <p className="font-sans text-micro uppercase tracking-[0.06em] text-fg-subtle">
         On this page
       </p>
       <ul className="flex flex-col gap-1.5">
@@ -85,16 +85,16 @@ export function ReportTOC({ sections }: ReportTOCProps) {
                 href={`#section-${section.id}`}
                 onClick={(e) => handleClick(e, section.id)}
                 className={cn(
-                  'flex items-baseline gap-2 truncate border-l-2 py-0.5 pl-2 font-sans text-[12px] transition-colors',
+                  'flex items-baseline gap-2 truncate border-l-2 py-0.5 pl-2 font-sans text-caption transition-colors',
                   isActive
                     ? 'border-accent text-foreground'
-                    : 'border-transparent text-muted hover:text-foreground',
+                    : 'border-transparent text-fg-muted hover:text-foreground',
                 )}
               >
                 <span
                   className={cn(
-                    'font-mono text-[10px] tabular-nums',
-                    isActive ? 'text-accent' : 'text-subtle',
+                    'font-mono text-micro tabular-nums',
+                    isActive ? 'text-accent' : 'text-fg-subtle',
                   )}
                 >
                   {formatIndex(i)}

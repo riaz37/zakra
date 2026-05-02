@@ -48,7 +48,7 @@ interface NavMenuItemProps {
 
 const ITEM_BASE =
   "inline-flex items-center gap-2 py-2 -mb-px border-b-2 border-transparent " +
-  "font-sans text-sm text-muted transition-colors duration-[120ms] " +
+  "font-sans text-body text-muted transition-colors duration-[120ms] " +
   "hover:text-foreground focus-visible:text-foreground focus-visible:outline-none";
 
 const ITEM_ACTIVE = "border-foreground text-foreground";
@@ -64,7 +64,7 @@ export function NavMenuItem({ item, className }: NavMenuItemProps) {
       ) : null}
       <span>{item.label}</span>
       {item.badge ? (
-        <span className="inline-flex items-center rounded-full bg-surface-300 px-1.5 py-0.5 font-mono text-[11px] text-muted">
+        <span className="inline-flex items-center rounded-full bg-surface-300 px-1.5 py-0.5 font-mono text-mono-sm text-muted">
           {item.badge}
         </span>
       ) : null}

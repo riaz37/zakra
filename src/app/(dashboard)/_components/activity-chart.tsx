@@ -31,7 +31,19 @@ const chartConfig = {
 
 export function ActivityChart({ data, isLoading }: ActivityChartProps) {
   if (isLoading) {
-    return <Skeleton className="h-[350px] w-full" />;
+    return (
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Activity (Last 14 Days)</CardTitle>
+          <CardDescription>
+            Daily volume of chat sessions and report generations
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-[300px] w-full" rounded="sm" />
+        </CardContent>
+      </Card>
+    );
   }
 
   // Only show the chart if we have at least one data point

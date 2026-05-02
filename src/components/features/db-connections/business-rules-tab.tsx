@@ -11,14 +11,14 @@ import {
 } from '@/hooks/useBusinessRules';
 import type { BusinessRule } from '@/types';
 import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/shared/data-table';
+
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 import { RuleDialog } from './rule-dialog';
 import { RuleDetailSheet } from './rule-detail-sheet';
-import { getRulesColumns } from './rules-columns';
+import { BusinessRuleCard } from './business-rule-card';
 
 interface BusinessRulesTabProps {
   connectionId: string;
@@ -85,11 +85,7 @@ export function BusinessRulesTab({
     }
   }
 
-  const columns = getRulesColumns({
-    onEdit: handleEdit,
-    onDelete: (rule) => setDeleteTarget(rule),
-    onToggleActive: handleToggleActive,
-  });
+  // No longer using getRulesColumns
 
   const showEmpty = !isLoading && !isError && rules.length === 0;
 
@@ -116,14 +112,18 @@ export function BusinessRulesTab({
           primaryAction={{ label: 'Add rule', onClick: handleAdd }}
         />
       ) : (
-        <DataTable
-          columns={columns}
-          data={rules}
-          isLoading={isLoading}
-          onRowClick={handleView}
-          caption="Business rules"
-          emptyMessage="No rules match."
-        />
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {rules.map((rule) => (
+            <BusinessRuleCard
+              key={rule.id}
+              rule={rule}
+              onView={handleView}
+              onEdit={handleEdit}
+              onDelete={(r) => setDeleteTarget(r)}
+              onToggleActive={handleToggleActive}
+            />
+          ))}
+        </div>
       )}
 
       <RuleDetailSheet

@@ -3,12 +3,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { ChevronDown, RefreshCw } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useChatStream } from '@/hooks/useChatStream';
 import { getPendingTask, clearPendingTask } from '@/store/pendingChatTask';
 import { useChatMessages } from '@/hooks/useChatMessages';
 import { useChatSession } from '@/hooks/useChatSessions';
 import { useDbConnection } from '@/hooks/useDbConnections';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
+import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import { ChatInput } from '@/components/ui/chat-input';
 import { ChatMessageView, UserMessage } from '@/components/features/chat/chat-message';
 import { ThinkingIndicator } from '@/components/features/chat/thinking-indicator';
@@ -16,6 +18,8 @@ import { PipelineStepList, type NormalizedStep } from '@/components/features/cha
 import { StreamingResponse } from '@/components/features/chat/streaming-response';
 import { ChatWelcome } from '@/components/features/chat/chat-welcome';
 import { ChatMessagesSkeleton } from '@/components/features/chat/chat-messages-skeleton';
+import { AnimatedPage } from '@/components/shared/animated-container';
+import { fadeUp, slideInBottom, fadeIn, staggerContainer } from '@/lib/motion';
 
 export default function ChatSessionPage() {
   const params = useParams<{ sessionId: string }>();
@@ -52,43 +56,29 @@ export default function ChatSessionPage() {
     return () => { cancel(); };
   }, [cancel]);
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const {
+    containerRef: scrollContainerRef,
+    checkAtBottom,
+    scrollToBottom,
+  } = useSmoothScroll(
+    [messages, streamingMessage, pendingUserMessage, pipelineSteps],
+    isStreaming || !!pendingUserMessage
+  );
+
   const [showScrollDown, setShowScrollDown] = useState(false);
 
-  const scrollToBottom = useCallback((smooth = true) => {
-    messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' });
-  }, []);
-
-  const scrollToBottomIfNear = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
-    if (distanceFromBottom < 200) {
-      scrollToBottom();
-    }
-  }, [scrollToBottom]);
-
-  // Track scroll distance from bottom for jump button
+  // Track scroll distance for "Latest" button
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
     const check = () => {
+      checkAtBottom();
       const dist = container.scrollHeight - container.scrollTop - container.clientHeight;
       setShowScrollDown(dist > 300);
     };
     container.addEventListener('scroll', check, { passive: true });
     return () => container.removeEventListener('scroll', check);
-  }, []);
-
-  // During active streaming always track bottom; otherwise only when near
-  useEffect(() => {
-    if (isStreaming || pendingUserMessage) {
-      scrollToBottom();
-    } else {
-      scrollToBottomIfNear();
-    }
-  }, [messages, streamingMessage, pendingUserMessage, pipelineSteps, isStreaming, scrollToBottom, scrollToBottomIfNear]);
+  }, [checkAtBottom]);
 
   const handleSend = useCallback(
     async (text: string) => {
@@ -114,7 +104,7 @@ export default function ChatSessionPage() {
   const sessionTitle = session?.title?.trim() || 'Chat';
 
   return (
-    <div className="relative flex h-full flex-col overflow-hidden">
+    <AnimatedPage className="relative flex h-full flex-col overflow-hidden">
       {/* Sticky session header */}
       <header className="shrink-0 border-b border-border bg-background">
         <div className="mx-auto flex w-full max-w-[720px] items-center justify-between gap-4 px-6 py-3">
@@ -134,15 +124,21 @@ export default function ChatSessionPage() {
       </header>
 
       {/* Reconnecting banner */}
-      {status === 'reconnecting' && (
-        <div
-          role="status"
-          className="flex items-center justify-center gap-2 border-b border-warning-border bg-warning-bg px-4 py-2 animate-fade-in"
-        >
-          <RefreshCw className="h-3.5 w-3.5 text-warning animate-spin" strokeWidth={2} />
-          <span className="font-sans text-caption text-warning">Reconnecting…</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {status === 'reconnecting' && (
+          <motion.div
+            role="status"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center justify-center gap-2 border-b border-warning-border bg-warning-bg px-4 py-2"
+          >
+            <RefreshCw className="h-3.5 w-3.5 text-warning animate-spin" strokeWidth={2} />
+            <span className="font-sans text-caption text-warning">Reconnecting…</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
 
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 pb-6">
@@ -164,14 +160,23 @@ export default function ChatSessionPage() {
           )}
 
           {(messages.length > 0 || !!pendingUserMessage || !!streamingMessage) && (
-          <div className="space-y-6">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
             {messages.map((msg) => (
-              <ChatMessageView key={msg.id} message={msg} />
+              <ChatMessageView 
+                key={msg.id} 
+                message={msg} 
+                onReRun={() => void handleSend(msg.content)}
+              />
             ))}
 
             {pendingUserMessage &&
               !messages.some((m) => m.role === 'user' && m.content === pendingUserMessage) && (
-                <UserMessage content={pendingUserMessage} />
+                <UserMessage content={pendingUserMessage} onReRun={() => void handleSend(pendingUserMessage)} />
               )}
 
             {isStreaming && pipelineSteps.length === 0 && !streamingMessage && (
@@ -196,33 +201,43 @@ export default function ChatSessionPage() {
               />
             )}
 
-            {error && (
-              <div
-                className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error animate-fade-in"
-                role="alert"
-              >
-                {error}
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-          </div>
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error"
+                  role="alert"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
           )}
         </div>
       </div>
 
       {/* Jump to latest button */}
-      {showScrollDown && (
-        <button
-          type="button"
-          aria-label="Jump to latest message"
-          onClick={() => scrollToBottom()}
-          className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-pill border border-border bg-surface-300 px-3 py-1.5 font-sans text-caption text-foreground transition-colors duration-[120ms] hover:border-border-strong hover:bg-surface-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 animate-slide-in-bottom"
-        >
-          <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
-          Latest
-        </button>
-      )}
+      <AnimatePresence>
+        {showScrollDown && (
+          <motion.button
+            type="button"
+            aria-label="Jump to latest message"
+            onClick={() => scrollToBottom()}
+            variants={slideInBottom}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="absolute bottom-28 right-6 z-10 flex items-center gap-1.5 rounded-pill border border-border bg-surface-300 px-3 py-1.5 font-sans text-caption text-foreground transition-colors duration-[120ms] hover:border-border-strong hover:bg-surface-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          >
+            <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
+            Latest
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       <div className="bg-background px-6 pb-6 pt-3">
         <div className="mx-auto max-w-[720px]">
@@ -236,6 +251,6 @@ export default function ChatSessionPage() {
           />
         </div>
       </div>
-    </div>
+    </AnimatedPage>
   );
 }

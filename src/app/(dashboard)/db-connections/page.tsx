@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Database, Plus } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
@@ -16,24 +17,25 @@ import { useResourceList } from '@/hooks/useResourceList';
 import type { DatabaseConnection } from '@/types';
 
 import { PageHeader } from '@/components/shared/page-header';
-import {
-  ScaffoldContainer,
-  ScaffoldFilterAndContent,
-  ScaffoldActionsContainer,
-} from '@/components/shared/scaffold';
+import { ScaffoldContainer, ScaffoldFilterAndContent, ScaffoldActionsContainer } from '@/components/shared/scaffold';
 import { SearchInput } from '@/components/shared/search-input';
-import { DataTable } from '@/components/shared/data-table';
+import { Skeleton } from '@/components/shared/skeleton';
+
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 import { AddConnectionDialog } from '@/components/features/db-connections/add-connection-dialog';
-import { getConnectionsColumns } from '@/components/features/db-connections/connections-columns';
+import { DatabaseCard } from '@/components/features/db-connections/database-card';
+import { AnimatedPage } from '@/components/shared/animated-container';
+import { staggerContainer, staggerScaleItem, fadeIn, fadeUp } from '@/lib/motion';
 
 export default function DbConnectionsPage() {
+
   const router = useRouter();
   const companyId = useCurrentCompanyId();
   const { search, searchProps, isEmpty } = useResourceList();
+  const reduced = useReducedMotion();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingConnection, setEditingConnection] =
@@ -70,8 +72,7 @@ export default function DbConnectionsPage() {
       const result = await testConnection.mutateAsync(connection.id);
       if (result.success) {
         toast.success(
-          `Connection successful${
-            result.latency_ms != null ? ` (${result.latency_ms}ms)` : ''
+          `Connection successful${result.latency_ms != null ? ` (${result.latency_ms}ms)` : ''
           }`,
         );
       } else {
@@ -110,12 +111,6 @@ export default function DbConnectionsPage() {
     }
   }
 
-  const columns = getConnectionsColumns({
-    onTest: handleTest,
-    onEdit: handleEdit,
-    onDelete: (connection) => setDeleteTarget(connection),
-    testingId,
-  });
 
   const showEmpty = isEmpty(filtered, isLoading) && !isError;
 
@@ -126,59 +121,107 @@ export default function DbConnectionsPage() {
         subtitle="Connected data sources powering natural language queries and reports."
         primaryActions={
           <Button onClick={handleAdd} className="h-9 px-4">
-            <Plus aria-hidden size={16} strokeWidth={1.5} />
             Add connection
           </Button>
         }
       />
 
-      <ScaffoldFilterAndContent>
-        <ScaffoldActionsContainer>
-          <div className="w-full max-w-sm">
-            <SearchInput
-              {...searchProps}
-              placeholder="Search by name, host, or database…"
-              ariaLabel="Search databases"
-            />
-          </div>
-        </ScaffoldActionsContainer>
+      <AnimatedPage>
+        <ScaffoldFilterAndContent>
+          <ScaffoldActionsContainer>
+            <div className="w-full max-w-sm">
+              <SearchInput
+                {...searchProps}
+                placeholder="Search by name, host, or database…"
+                ariaLabel="Search databases"
+              />
+            </div>
+          </ScaffoldActionsContainer>
 
-        {isError ? (
-          <ErrorState
-            title="Failed to load databases"
-            description="There was a problem loading your database connections."
-            onRetry={() => refetch()}
-          />
-        ) : showEmpty ? (
-          <EmptyState
-            icon={Database}
-            title={
-              search
-                ? 'No databases match your search'
-                : 'No databases connected'
-            }
-            description={
-              search
-                ? 'Try adjusting your search terms.'
-                : 'Connect a database to enable natural language queries and reports.'
-            }
-            primaryAction={
-              !search
-                ? { label: 'Add connection', onClick: handleAdd }
-                : undefined
-            }
-          />
-        ) : (
-          <DataTable
-            columns={columns}
-            data={filtered}
-            isLoading={isLoading}
-            onRowClick={(row) => router.push(`/db-connections/${row.id}`)}
-            caption="Databases list"
-            emptyMessage="No databases match your search."
-          />
-        )}
-      </ScaffoldFilterAndContent>
+          <AnimatePresence mode="wait">
+            {isError ? (
+              <motion.div
+                key="error"
+                variants={fadeUp}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+                exit="exit"
+              >
+                <ErrorState
+                  title="Failed to load databases"
+                  description="There was a problem loading your database connections."
+                  onRetry={() => refetch()}
+                />
+              </motion.div>
+            ) : showEmpty ? (
+              <motion.div
+                key="empty"
+                variants={fadeUp}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+                exit="exit"
+              >
+                <EmptyState
+                  icon={Database}
+                  title={
+                    search
+                      ? 'No databases match your search'
+                      : 'No databases connected'
+                  }
+                  description={
+                    search
+                      ? 'Try adjusting your search terms.'
+                      : 'Connect a database to enable natural language queries and reports.'
+                  }
+                  primaryAction={
+                    !search
+                      ? { label: 'Add connection', onClick: handleAdd }
+                      : undefined
+                  }
+                />
+              </motion.div>
+            ) : isLoading ? (
+              <motion.div
+                key="loading"
+                variants={fadeIn}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+                exit="exit"
+                className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+              >
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Skeleton key={i} className="h-[120px] w-full" rounded="lg" />
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="cards"
+                className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                variants={staggerContainer}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+              >
+                {filtered.map((connection) => (
+                  <motion.div
+                    key={connection.id}
+                    variants={staggerScaleItem}
+                    whileHover={{ y: -2, transition: { duration: 0.12, ease: 'easeOut' } }}
+                    className="h-full"
+                  >
+                    <DatabaseCard
+                      connection={connection}
+                      onTest={handleTest}
+                      onEdit={handleEdit}
+                      onDelete={(c) => setDeleteTarget(c)}
+                      isTesting={testingId === connection.id}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </ScaffoldFilterAndContent>
+      </AnimatedPage>
 
       <AddConnectionDialog
         open={dialogOpen}

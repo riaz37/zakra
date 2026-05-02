@@ -1,11 +1,13 @@
 'use client';
 
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import { StreamingTextBlock } from '@/components/shared/streaming-text-block';
 import type { PipelineStep } from '@/hooks/useChatStream';
 import type { StreamingMessage } from '@/types/chat';
 import { ContentBlockView } from './content-block-view';
 import { PipelineSummary, type NormalizedStep } from './pipeline-step-list';
+import { fadeUp, fadeIn, slideInBottom } from '@/lib/motion';
 
 function normalizeChatSteps(steps: PipelineStep[]): NormalizedStep[] {
   return steps.map((s) => ({
@@ -18,12 +20,17 @@ function normalizeChatSteps(steps: PipelineStep[]): NormalizedStep[] {
 
 function StreamingStatusPill({ blockCount }: { blockCount: number }) {
   return (
-    <div className="mb-1.5 flex items-center gap-1.5 animate-fade-in">
+    <motion.div
+      variants={fadeIn}
+      initial="hidden"
+      animate="visible"
+      className="mb-1.5 flex items-center gap-1.5"
+    >
       <span className="h-1.5 w-1.5 rounded-full bg-accent/55 animate-pulse" />
       <span className="font-mono text-mono-sm text-subtle">
         {blockCount === 0 ? 'Generating…' : 'Writing…'}
       </span>
-    </div>
+    </motion.div>
   );
 }
 
@@ -37,7 +44,12 @@ export function StreamingResponse({
   pipelineSteps,
 }: StreamingResponseProps) {
   return (
-    <div className="flex gap-3 animate-slide-in-bottom">
+    <motion.div
+      variants={slideInBottom}
+      initial="hidden"
+      animate="visible"
+      className="flex gap-3"
+    >
       <div className="relative mt-[3px] shrink-0">
         <Image
           src="/logo/esaplogo.webp"
@@ -70,13 +82,18 @@ export function StreamingResponse({
               );
             }
             return (
-              <div key={idx} className="animate-fade-in animation-delay-100">
+              <motion.div
+                key={idx}
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+              >
                 <ContentBlockView block={block} />
-              </div>
+              </motion.div>
             );
           })}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

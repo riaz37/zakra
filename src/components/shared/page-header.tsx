@@ -1,7 +1,10 @@
+'use client';
+
 import Link from "next/link";
 import { Building2 } from "lucide-react";
 import React from "react";
 import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   Breadcrumb,
@@ -13,6 +16,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { NavMenuList, type NavigationItem } from "@/components/ui/nav-menu";
 import { cn } from "@/lib/utils";
+import { fadeUp, fadeIn, staggerContainer, staggerItem, slideInRight } from "@/lib/motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -93,9 +97,13 @@ export function PageHeader({
   const hasActions = Boolean(resolvedPrimary || secondaryActions);
   const hasBreadcrumbs = !!breadcrumbs && breadcrumbs.length > 0;
   const hasNav = !!navigationItems && navigationItems.length > 0;
+  const reduced = useReducedMotion();
 
   return (
-    <div
+    <motion.div
+      variants={staggerContainer}
+      initial={reduced ? 'visible' : 'hidden'}
+      animate="visible"
       className={cn(
         "flex w-full flex-col",
         isCompact ? "gap-2 py-3" : "gap-4 py-6",
@@ -103,21 +111,23 @@ export function PageHeader({
       )}
     >
       {hasBreadcrumbs ? (
-        <Breadcrumb>
-          <BreadcrumbList>
-            {breadcrumbs!.map((crumb, idx) => {
-              const isLast = idx === breadcrumbs!.length - 1;
-              return (
-                <React.Fragment key={`${crumb.label ?? "crumb"}-${idx}`}>
-                  <BreadcrumbItem>
-                    {renderCrumb(crumb, isLast)}
-                  </BreadcrumbItem>
-                  {!isLast ? <BreadcrumbSeparator /> : null}
-                </React.Fragment>
-              );
-            })}
-          </BreadcrumbList>
-        </Breadcrumb>
+        <motion.div variants={staggerItem}>
+          <Breadcrumb>
+            <BreadcrumbList>
+              {breadcrumbs!.map((crumb, idx) => {
+                const isLast = idx === breadcrumbs!.length - 1;
+                return (
+                  <React.Fragment key={`${crumb.label ?? "crumb"}-${idx}`}>
+                    <BreadcrumbItem>
+                      {renderCrumb(crumb, isLast)}
+                    </BreadcrumbItem>
+                    {!isLast ? <BreadcrumbSeparator /> : null}
+                  </React.Fragment>
+                );
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
+        </motion.div>
       ) : null}
 
       <div
@@ -126,7 +136,7 @@ export function PageHeader({
           "sm:flex-row sm:items-center sm:justify-between sm:gap-4",
         )}
       >
-        <div className="flex min-w-0 items-center gap-3">
+        <motion.div variants={staggerItem} className="flex min-w-0 items-center gap-3">
           {icon ? (
             <span
               aria-hidden
@@ -139,13 +149,13 @@ export function PageHeader({
             <h1
               className={cn(
                 "font-sans font-semibold tracking-[-0.03em] text-foreground",
-                isCompact ? "text-xl" : "text-2xl",
+                isCompact ? "text-heading" : "text-display",
               )}
             >
               {title}
               {scopeLabel ? (
                 <span
-                  className="ml-3 inline-flex items-center gap-1 rounded-full bg-surface-300 px-2 py-0.5 align-middle font-sans text-caption font-medium text-muted-strong"
+                  className="ml-3 inline-flex items-center gap-1 rounded-full bg-surface-300 px-2 py-0.5 align-middle font-sans text-micro font-medium text-muted-strong"
                   aria-label={`Scope: ${scopeLabel}`}
                 >
                   <Building2 aria-hidden className="size-3" />
@@ -154,24 +164,27 @@ export function PageHeader({
               ) : null}
             </h1>
             {subtitle ? (
-              <p className="font-sans text-sm text-muted">{subtitle}</p>
+              <p className="font-sans text-body text-fg-muted">{subtitle}</p>
             ) : null}
           </div>
-        </div>
+        </motion.div>
 
         {hasActions ? (
-          <div className="flex shrink-0 items-center gap-2">
+          <motion.div
+            variants={slideInRight}
+            className="flex shrink-0 items-center gap-2"
+          >
             {secondaryActions}
             {resolvedPrimary}
-          </div>
+          </motion.div>
         ) : null}
       </div>
 
       {hasNav ? (
-        <div className="pt-1">
+        <motion.div variants={staggerItem} className="pt-1">
           <NavMenuList items={navigationItems!} />
-        </div>
+        </motion.div>
       ) : null}
-    </div>
+    </motion.div>
   );
 }

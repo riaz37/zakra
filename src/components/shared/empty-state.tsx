@@ -1,7 +1,11 @@
+'use client';
+
 import { type LucideIcon } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { fadeUp, staggerContainer, staggerItem } from '@/lib/motion';
 
 interface EmptyStateAction {
   label: string;
@@ -52,34 +56,54 @@ export function EmptyState({
 }: EmptyStateProps) {
   const hasAnyAction =
     Boolean(action) || Boolean(primaryAction) || Boolean(secondaryAction);
+  const reduced = useReducedMotion();
 
   return (
-    <div
+    <motion.div
+      variants={staggerContainer}
+      initial={reduced ? 'visible' : 'hidden'}
+      animate="visible"
       className={cn(
-        'flex flex-col items-start gap-3 rounded-xl border border-dashed border-border px-8 py-20',
+        'flex flex-col items-start gap-3 rounded-lg border border-dashed border-border px-8 py-20',
         className,
       )}
     >
       {Icon ? (
-        <Icon
-          aria-hidden
-          className="size-5 text-muted"
-          strokeWidth={1.5}
-        />
+        <motion.div
+          variants={staggerItem}
+          initial={reduced ? {} : { opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Icon
+            aria-hidden
+            className="size-5 text-muted"
+            strokeWidth={1.5}
+          />
+        </motion.div>
       ) : null}
 
-      <h3 className="font-sans text-sub font-normal tracking-[-0.325px] text-foreground">
+      <motion.h3
+        variants={staggerItem}
+        className="font-sans text-sub font-normal tracking-[-0.325px] text-foreground"
+      >
         {title}
-      </h3>
+      </motion.h3>
 
       {description ? (
-        <p className="max-w-[46ch] font-sans text-body text-muted">
+        <motion.p
+          variants={staggerItem}
+          className="max-w-[46ch] font-sans text-body text-muted"
+        >
           {description}
-        </p>
+        </motion.p>
       ) : null}
 
       {hasAnyAction ? (
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <motion.div
+          variants={staggerItem}
+          className="mt-4 flex flex-wrap items-center gap-2"
+        >
           {action ?? (
             <>
               {primaryAction ? (
@@ -90,9 +114,9 @@ export function EmptyState({
               ) : null}
             </>
           )}
-        </div>
+        </motion.div>
       ) : null}
-    </div>
+    </motion.div>
   );
 }
 

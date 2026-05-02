@@ -7,6 +7,7 @@ import { useDbConnections } from '@/hooks/useDbConnections';
 import { PageHeader } from '@/components/shared/page-header';
 import { ScaffoldContainer } from '@/components/shared/scaffold';
 import { ReportTemplateForm, type ReportTemplateFormData } from '@/components/features/reports/report-template-form';
+import { Button } from '@/components/ui/button';
 
 export default function NewTemplatePage() {
   const router = useRouter();
@@ -40,12 +41,30 @@ export default function NewTemplatePage() {
         ]}
         title="New Template"
         subtitle="Define the structure and sections for your AI-generated report."
+        primaryActions={
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push('/reports/templates')}
+              disabled={createTemplate.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              form="template-form"
+              isLoading={createTemplate.isPending}
+            >
+              Save template
+            </Button>
+          </div>
+        }
       />
 
       <ReportTemplateForm
         onSubmit={handleSubmit}
         isPending={createTemplate.isPending}
-        onCancel={() => router.push('/reports/templates')}
         connections={connections}
       />
     </ScaffoldContainer>

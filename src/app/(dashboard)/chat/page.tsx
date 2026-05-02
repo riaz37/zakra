@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { setPendingTask } from '@/store/pendingChatTask';
 import { sendMessage } from '@/api/chat';
 import { toast } from 'sonner';
+import { AnimatedPage } from '@/components/shared/animated-container';
 
 export default function NewChatPage() {
   const router = useRouter();
@@ -63,7 +64,7 @@ export default function NewChatPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <AnimatedPage className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-1 items-center justify-center overflow-y-auto px-6 py-6">
         <div className="w-full max-w-[720px]">
           {!companyId ? (
@@ -90,6 +91,6 @@ export default function NewChatPage() {
           />
         </div>
       </div>
-    </div>
+    </AnimatedPage>
   );
 }

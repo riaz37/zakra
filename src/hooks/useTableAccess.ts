@@ -122,8 +122,11 @@ export function useBulkGrantPermissions(tableName: string, schemaName = 'public'
   return useMutation({
     mutationFn: (data: BulkGrantPermissions) =>
       tableAccessApi.bulkGrantPermissions(tableName, data, schemaName),
-    onSuccess: () => {
+    onSettled: () => {
+      // Invalidate both 'permissions' and 'user-permissions' to ensure the UI updates
+      // even if the backend returns an error after saving.
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY, tableName, schemaName, 'permissions'] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY, tableName, schemaName, 'user-permissions'] });
     },
   });
 }

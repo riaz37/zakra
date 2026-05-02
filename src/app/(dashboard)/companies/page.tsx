@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Building2, Plus, GitBranch, List, Network } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 import {
   useCompanies,
@@ -35,12 +36,15 @@ import { Button } from '@/components/ui/button';
 import { CompanyForm, type CompanyFormData } from '@/components/features/companies/company-form';
 import { CompanyHierarchy } from '@/components/features/companies/company-hierarchy';
 import { cn } from '@/lib/utils';
+import { AnimatedPage } from '@/components/shared/animated-container';
+import { fadeUp, fadeIn } from '@/lib/motion';
 
 type CompaniesView = 'list' | 'hierarchy';
 
 export default function CompaniesPage() {
   const [view, setView] = useState<CompaniesView>('list');
   const { search, page, queryPage, setPage, searchProps, isEmpty } = useResourceList();
+  const reduced = useReducedMotion();
 
   const [createOpen, setCreateOpen] = useState(false);
   const [createSubParent, setCreateSubParent] = useState<Company | null>(null);
@@ -74,12 +78,12 @@ export default function CompaniesPage() {
             {row.original.parent_id && (
               <GitBranch className="size-3 text-subtle rotate-90" />
             )}
-            <span className="font-sans text-[16px] font-medium text-foreground">
+            <span className="font-sans text-subheading font-medium text-foreground">
               {row.original.name}
             </span>
           </div>
           {row.original.description && (
-            <span className="font-sans text-caption text-muted line-clamp-1 max-w-[400px]">
+            <span className="font-sans text-body text-fg-muted line-clamp-1 max-w-[400px]">
               {row.original.description}
             </span>
           )}
@@ -96,7 +100,7 @@ export default function CompaniesPage() {
           : undefined;
         return (
           <span
-            className="font-sans text-button text-muted capitalize"
+            className="font-sans text-body text-fg-muted capitalize"
             title={parentName ? `Under ${parentName}` : undefined}
           >
             {row.original.company_type}
@@ -113,7 +117,7 @@ export default function CompaniesPage() {
       id: 'subsidiaries',
       header: 'Subsidiaries',
       cell: ({ row }) => (
-        <span className="font-sans text-button text-muted">
+        <span className="font-sans text-body text-fg-muted">
           {row.original.subsidiaries?.length ?? 0}
         </span>
       ),
@@ -122,7 +126,7 @@ export default function CompaniesPage() {
       id: 'created_at',
       header: 'Created',
       cell: ({ row }) => (
-        <span className="font-mono text-mono text-muted">
+        <span className="font-mono text-mono-sm text-fg-muted">
           {formatDate(row.original.created_at)}
         </span>
       ),
@@ -158,7 +162,20 @@ export default function CompaniesPage() {
   const items = data?.items ?? [];
   const totalPages = data?.total_pages ?? 1;
 
+  // Build parent options and ensure the currently selected parent is ALWAYS included
+  // even if it's not in the first page of results.
   const parentOptions = allCompanies?.items?.map(c => ({ id: c.id, name: c.name })) ?? [];
+
+  if (createSubParent && !parentOptions.some(p => p.id === createSubParent.id)) {
+    parentOptions.push({ id: createSubParent.id, name: createSubParent.name });
+  }
+
+  if (editTarget?.parent_id) {
+    const parent = items.find(i => i.id === editTarget.parent_id);
+    if (parent && !parentOptions.some(p => p.id === parent.id)) {
+      parentOptions.push({ id: parent.id, name: parent.name });
+    }
+  }
 
   async function handleCreate(formData: CompanyFormData) {
     const payload: CompanyCreate = {
@@ -199,91 +216,109 @@ export default function CompaniesPage() {
         primaryActions={
           <Button
             onClick={() => setCreateOpen(true)}
-            className="h-9 px-4 gap-2"
+            className="h-9 px-4"
           >
-            <Plus aria-hidden size={16} strokeWidth={2} />
             Create Company
           </Button>
         }
       />
 
-      <div className="mt-2 flex items-center gap-1 rounded-md border border-border bg-surface-200 p-0.5 w-fit">
-        <button
-          type="button"
-          onClick={() => setView('list')}
-          aria-pressed={view === 'list'}
-          className={cn(
-            'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-button transition-colors',
-            view === 'list'
-              ? 'bg-surface-400 text-foreground'
-              : 'text-muted hover:text-foreground',
-          )}
-        >
-          <List aria-hidden size={13} strokeWidth={1.75} />
-          List
-        </button>
-        <button
-          type="button"
-          onClick={() => setView('hierarchy')}
-          aria-pressed={view === 'hierarchy'}
-          className={cn(
-            'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-button transition-colors',
-            view === 'hierarchy'
-              ? 'bg-surface-400 text-foreground'
-              : 'text-muted hover:text-foreground',
-          )}
-        >
-          <Network aria-hidden size={13} strokeWidth={1.75} />
-          Hierarchy
-        </button>
-      </div>
-
-      {view === 'list' ? (
-        <ScaffoldFilterAndContent className="mt-6">
-          <ScaffoldActionsContainer>
-            <div className="w-full max-w-sm">
-              <SearchInput {...searchProps} placeholder="Search companies…" ariaLabel="Search companies" />
-            </div>
-            <ScaffoldActionsGroup />
-          </ScaffoldActionsContainer>
-
-          {isError ? (
-            <ErrorState title="Failed to load companies" onRetry={() => refetch()} />
-          ) : isEmpty(items, isLoading) ? (
-            <EmptyState
-              icon={Building2}
-              title={search ? "No companies match your search" : "No companies yet"}
-              description={search ? "Try adjusting your search terms." : "Add your first company to start managing users and data access."}
-              action={!search ? (
-                <Button
-                  onClick={() => setCreateOpen(true)}
-                  className="h-9 px-4 gap-2"
-                >
-                  <Plus aria-hidden size={16} strokeWidth={2} />
-                  Create Company
-                </Button>
-              ) : undefined}
-            />
-          ) : (
-            <DataTable
-              columns={columns}
-              data={items}
-              isLoading={isLoading}
-              pageIndex={page}
-              pageCount={totalPages}
-              onPageChange={setPage}
-              pageSize={DEFAULT_PAGE_SIZE}
-              totalCount={data?.total}
-              caption="Companies list"
-              emptyMessage="No companies match your search."
-            />
-          )}
-        </ScaffoldFilterAndContent>
-      ) : (
-        <div className="mt-6">
-          <CompanyHierarchy />
+      <AnimatedPage>
+        <div className="mt-2 flex items-center gap-1 rounded-md border border-border bg-surface-200 p-0.5 w-fit">
+          <button
+            type="button"
+            onClick={() => setView('list')}
+            aria-pressed={view === 'list'}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
+              view === 'list'
+                ? 'bg-surface-400 text-foreground'
+                : 'text-fg-muted hover:text-foreground',
+            )}
+          >
+            <List aria-hidden size={13} strokeWidth={1.75} />
+            List
+          </button>
+          <button
+            type="button"
+            onClick={() => setView('hierarchy')}
+            aria-pressed={view === 'hierarchy'}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
+              view === 'hierarchy'
+                ? 'bg-surface-400 text-foreground'
+                : 'text-fg-muted hover:text-foreground',
+            )}
+          >
+            <Network aria-hidden size={13} strokeWidth={1.75} />
+            Hierarchy
+          </button>
         </div>
-      )}
+
+        <AnimatePresence mode="wait">
+          {view === 'list' ? (
+            <motion.div
+              key="list-view"
+              variants={fadeUp}
+              initial={reduced ? 'visible' : 'hidden'}
+              animate="visible"
+              exit="exit"
+            >
+              <ScaffoldFilterAndContent className="mt-6">
+                <ScaffoldActionsContainer>
+                  <div className="w-full max-w-sm">
+                    <SearchInput {...searchProps} placeholder="Search companies…" ariaLabel="Search companies" />
+                  </div>
+                  <ScaffoldActionsGroup />
+                </ScaffoldActionsContainer>
+
+                {isError ? (
+                  <ErrorState title="Failed to load companies" onRetry={() => refetch()} />
+                ) : isEmpty(items, isLoading) ? (
+                  <EmptyState
+                    icon={Building2}
+                    title={search ? "No companies match your search" : "No companies yet"}
+                    description={search ? "Try adjusting your search terms." : "Add your first company to start managing users and data access."}
+                    action={!search ? (
+                      <Button
+                        onClick={() => setCreateOpen(true)}
+                        className="h-9 px-4 gap-2"
+                      >
+                        <Plus aria-hidden size={16} strokeWidth={2} />
+                        Create Company
+                      </Button>
+                    ) : undefined}
+                  />
+                ) : (
+                  <DataTable
+                    columns={columns}
+                    data={items}
+                    isLoading={isLoading}
+                    pageIndex={page}
+                    pageCount={totalPages}
+                    onPageChange={setPage}
+                    pageSize={DEFAULT_PAGE_SIZE}
+                    totalCount={data?.total}
+                    caption="Companies list"
+                    emptyMessage="No companies match your search."
+                  />
+                )}
+              </ScaffoldFilterAndContent>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="hierarchy-view"
+              variants={fadeIn}
+              initial={reduced ? 'visible' : 'hidden'}
+              animate="visible"
+              exit="exit"
+              className="mt-6"
+            >
+              <CompanyHierarchy />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </AnimatedPage>
 
       {/* Main Creation Dialog */}
       <FormDialog open={createOpen} onOpenChange={setCreateOpen} title="Create Company">

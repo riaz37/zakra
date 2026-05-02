@@ -1,10 +1,17 @@
 'use client';
 
 import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { slideInBottom } from '@/lib/motion';
 
 export function ThinkingIndicator() {
   return (
-    <div className="flex items-start gap-3 animate-slide-in-bottom">
+    <motion.div
+      variants={slideInBottom}
+      initial="hidden"
+      animate="visible"
+      className="flex items-start gap-3"
+    >
       <div className="mt-0.5 shrink-0">
         <Image
           src="/logo/esaplogo.webp"
@@ -14,15 +21,24 @@ export function ThinkingIndicator() {
           className="opacity-70"
         />
       </div>
-      <div className="flex items-center gap-[5px] py-[7px]">
-        {[0, 160, 320].map((delay, i) => (
-          <span
+      <div className="flex items-center gap-1.5 py-2">
+        {[0, 1, 2].map((i) => (
+          <motion.span
             key={i}
-            className="block h-[5px] w-[5px] rounded-full bg-muted/45 animate-dot-wave"
-            style={{ animationDelay: `${delay}ms` }}
+            animate={{
+              y: [0, -3, 0],
+              opacity: [0.4, 1, 0.4],
+            }}
+            transition={{
+              duration: 0.8,
+              repeat: Infinity,
+              delay: i * 0.15,
+              ease: "easeInOut",
+            }}
+            className="block h-1.5 w-1.5 rounded-full bg-muted"
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

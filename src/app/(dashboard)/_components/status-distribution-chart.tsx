@@ -42,7 +42,17 @@ const chartConfig = {
 
 export function StatusDistributionChart({ data, isLoading }: StatusDistributionChartProps) {
   if (isLoading) {
-    return <Skeleton className="h-[350px] w-full" />;
+    return (
+      <Card className="flex flex-col h-full">
+        <CardHeader className="items-center pb-0">
+          <CardTitle>Report Status</CardTitle>
+          <CardDescription>Breakdown by generation state</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[250px]">
+          <Skeleton className="size-48" rounded="full" />
+        </CardContent>
+      </Card>
+    );
   }
 
   if (!data || data.length === 0) {

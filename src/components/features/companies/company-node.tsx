@@ -55,7 +55,7 @@ function CompanyNodeComponent({ data, selected }: NodeProps<CompanyFlowNode>) {
           />
           <span
             className={cn(
-              'text-[14px] font-medium leading-tight tracking-[-0.01em] truncate',
+              'text-body font-medium leading-tight tracking-[-0.01em] truncate',
               'text-foreground',
               isSuspended && 'opacity-65',
             )}
@@ -64,14 +64,14 @@ function CompanyNodeComponent({ data, selected }: NodeProps<CompanyFlowNode>) {
             {company.name}
           </span>
         </div>
-        <span className="text-[12px] text-muted capitalize leading-none">
+        <span className="text-caption text-fg-muted capitalize leading-none">
           {company.company_type === 'parent' ? 'parent company' : 'subsidiary'}
         </span>
 
         {isParent && (
           <>
             <div className="mt-1.5 h-px w-full bg-border" />
-            <span className="text-[12px] text-muted leading-none mt-1.5">
+            <span className="text-caption text-fg-muted leading-none mt-1.5">
               <span className="mr-1 text-subtle">↳</span>
               {subsidiaryCount} {subsidiaryCount === 1 ? 'subsidiary' : 'subsidiaries'}
             </span>

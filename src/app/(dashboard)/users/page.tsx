@@ -28,6 +28,7 @@ import { FormDialog } from '@/components/shared/form-dialog';
 import { Button } from '@/components/ui/button';
 import { InviteUserForm, type InviteFormData } from '@/components/features/users/invite-user-form';
 import { getUsersColumns } from '@/components/features/users/users-columns';
+import { AnimatedPage } from '@/components/shared/animated-container';
 
 export default function UsersPage() {
   const { search, page, queryPage, setPage, searchProps, isEmpty } = useResourceList();
@@ -78,51 +79,52 @@ export default function UsersPage() {
             onClick={() => setInviteOpen(true)}
             className="h-9 px-4"
           >
-            <UserPlus aria-hidden size={16} strokeWidth={1.5} />
             Invite User
           </Button>
         }
       />
 
-      <ScaffoldFilterAndContent>
-        <ScaffoldActionsContainer>
-          <div className="w-full max-w-sm">
-            <SearchInput {...searchProps} placeholder="Search users…" ariaLabel="Search users" />
-          </div>
-        </ScaffoldActionsContainer>
+      <AnimatedPage>
+        <ScaffoldFilterAndContent>
+          <ScaffoldActionsContainer>
+            <div className="w-full max-w-sm">
+              <SearchInput {...searchProps} placeholder="Search users…" ariaLabel="Search users" />
+            </div>
+          </ScaffoldActionsContainer>
 
-        {isError ? (
-          <ErrorState title="Failed to load users" onRetry={() => refetch()} />
-        ) : isEmpty(items, isLoading) ? (
-          <EmptyState
-            icon={Users}
-            title={search ? "No users match your search" : "No users in this workspace"}
-            description={search ? "Try adjusting your search terms." : "Invite users to grant them access to data and reports."}
-            action={!search ? (
-              <Button
-                onClick={() => setInviteOpen(true)}
-                className="h-9 px-4"
-              >
-                <UserPlus aria-hidden size={16} strokeWidth={1.5} />
-                Invite User
-              </Button>
-            ) : undefined}
-          />
-        ) : (
-          <DataTable
-            columns={columns}
-            data={items}
-            isLoading={isLoading}
-            pageIndex={page}
-            pageCount={totalPages}
-            onPageChange={setPage}
-            pageSize={DEFAULT_PAGE_SIZE}
-            totalCount={data?.total}
-            caption="Users list"
-            emptyMessage="No users match your search."
-          />
-        )}
-      </ScaffoldFilterAndContent>
+          {isError ? (
+            <ErrorState title="Failed to load users" onRetry={() => refetch()} />
+          ) : isEmpty(items, isLoading) ? (
+            <EmptyState
+              icon={Users}
+              title={search ? "No users match your search" : "No users in this workspace"}
+              description={search ? "Try adjusting your search terms." : "Invite users to grant them access to data and reports."}
+              action={!search ? (
+                <Button
+                  onClick={() => setInviteOpen(true)}
+                  className="h-9 px-4 gap-2"
+                >
+                  <UserPlus aria-hidden size={16} strokeWidth={2} />
+                  Invite User
+                </Button>
+              ) : undefined}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={items}
+              isLoading={isLoading}
+              pageIndex={page}
+              pageCount={totalPages}
+              onPageChange={setPage}
+              pageSize={DEFAULT_PAGE_SIZE}
+              totalCount={data?.total}
+              caption="Users list"
+              emptyMessage="No users match your search."
+            />
+          )}
+        </ScaffoldFilterAndContent>
+      </AnimatedPage>
 
       <FormDialog open={inviteOpen} onOpenChange={setInviteOpen} title="Invite User">
         <InviteUserForm

@@ -79,7 +79,7 @@ export function ScaffoldTitle({
   return (
     <h1
       className={cn(
-        "font-sans text-2xl font-medium tracking-[-0.01em] text-foreground",
+        "font-sans text-display font-medium tracking-[-0.01em] text-foreground",
         className,
       )}
       {...rest}
@@ -97,7 +97,7 @@ export function ScaffoldDescription({
   ...rest
 }: ScaffoldDescriptionProps) {
   return (
-    <p className={cn("font-sans text-sm text-muted", className)} {...rest}>
+    <p className={cn("font-sans text-body text-fg-muted", className)} {...rest}>
       {children}
     </p>
   );
@@ -189,7 +189,7 @@ export function ScaffoldSectionTitle({
   return (
     <Tag
       className={cn(
-        "font-sans text-xl font-medium tracking-[-0.01em] text-foreground",
+        "font-sans text-heading font-medium tracking-[-0.01em] text-foreground",
         className,
       )}
       {...rest}
@@ -208,7 +208,7 @@ export function ScaffoldSectionDescription({
   ...rest
 }: ScaffoldSectionDescriptionProps) {
   return (
-    <p className={cn("font-sans text-sm text-muted", className)} {...rest}>
+    <p className={cn("font-sans text-body text-fg-muted", className)} {...rest}>
       {children}
     </p>
   );

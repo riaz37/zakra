@@ -8,10 +8,12 @@ import {
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Skeleton } from "@/components/shared/skeleton";
+import { staggerContainer, staggerItem, fadeUp, fadeIn } from "@/lib/motion";
 
 export interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -66,6 +68,7 @@ export function DataTable<TData>({
 
   const headerGroups = table.getHeaderGroups();
   const rows = table.getRowModel().rows;
+  const reduced = useReducedMotion();
 
   // Pre-compute header labels once for the mobile card fallback so we don't
   // call flexRender during every row render.
@@ -96,6 +99,9 @@ export function DataTable<TData>({
       ? Math.min((pageIndex + 1) * pageSize, totalCount)
       : null;
 
+  // Unique key for AnimatePresence based on loading/empty/page state
+  const contentKey = isLoading ? 'loading' : isEmpty ? 'empty' : `page-${pageIndex}`;
+
   return (
     <div className={cn("w-full", className)}>
       {/* -------- Desktop: semantic table -------- */}
@@ -107,13 +113,13 @@ export function DataTable<TData>({
             {headerGroups.map((headerGroup) => (
               <tr
                 key={headerGroup.id}
-                className="border-b border-border bg-surface-100/50"
+                className="border-b border-border bg-surface-200"
               >
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
                     scope="col"
-                    className="px-4 py-2.5 text-left align-middle font-sans text-[11px] font-medium uppercase tracking-[0.06em] text-fg-subtle whitespace-nowrap"
+                    className="px-4 py-2.5 text-left align-middle font-sans text-micro font-medium uppercase tracking-[0.06em] text-fg-subtle whitespace-nowrap"
                   >
                     {header.isPlaceholder
                       ? null
@@ -127,49 +133,57 @@ export function DataTable<TData>({
             ))}
           </thead>
 
-          <tbody>
-            {isLoading ? (
-              <SkeletonRows columnCount={columns.length} />
-            ) : isEmpty ? (
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-4 py-12 text-center font-sans text-body text-muted"
-                >
-                  {emptyMessage}
-                </td>
-              </tr>
-            ) : (
-              rows.map((row) => (
-                <tr
-                  key={row.id}
-                  tabIndex={onRowClick ? 0 : undefined}
-                  className={cn(
-                    "group border-b border-border last:border-b-0",
-                    "transition-all hover:bg-surface-300",
-                    onRowClick && "cursor-pointer focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
-                  )}
-                  onClick={() => onRowClick?.(row.original)}
-                  onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row.original); } } : undefined}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className={cn(
-                        "px-4 py-2 align-middle font-sans text-button text-foreground",
-                        "relative"
-                      )}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
+          <AnimatePresence mode="wait">
+            <motion.tbody
+              key={contentKey}
+              variants={staggerContainer}
+              initial={reduced ? 'visible' : 'hidden'}
+              animate="visible"
+            >
+              {isLoading ? (
+                <SkeletonRows columnCount={columns.length} />
+              ) : isEmpty ? (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    className="px-4 py-12 text-center font-sans text-body text-fg-muted"
+                  >
+                    {emptyMessage}
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
+              ) : (
+                rows.map((row) => (
+                  <motion.tr
+                    key={row.id}
+                    variants={staggerItem}
+                    tabIndex={onRowClick ? 0 : undefined}
+                    className={cn(
+                      "group border-b border-border last:border-b-0",
+                      "transition-all hover:bg-surface-300",
+                      onRowClick && "cursor-pointer focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+                    )}
+                    onClick={() => onRowClick?.(row.original)}
+                    onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row.original); } } : undefined}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td
+                        key={cell.id}
+                        className={cn(
+                          "px-4 py-2 align-middle font-sans text-button text-foreground",
+                          "relative"
+                        )}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    ))}
+                  </motion.tr>
+                ))
+              )}
+            </motion.tbody>
+          </AnimatePresence>
         </table>
       </div>
 
@@ -177,43 +191,68 @@ export function DataTable<TData>({
       <div className="md:hidden">
         {caption ? <p className="sr-only">{caption}</p> : null}
 
-        {isLoading ? (
-          <MobileSkeletonCards />
-        ) : isEmpty ? (
-          <EmptyState title={emptyMessage} />
-        ) : (
-          <ul className="space-y-2">
-            {rows.map((row) => (
-              <li
-                key={row.id}
-                className={cn(
-                  "rounded-lg border border-border bg-surface-200 p-3",
-                  onRowClick && "cursor-pointer active:bg-accent/5 transition-colors"
-                )}
-                onClick={() => onRowClick?.(row.original)}
-              >
-                <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5">
-                  {row.getVisibleCells().map((cell) => {
-                    const label = columnLabels.get(cell.column.id);
-                    return (
-                      <div key={cell.id} className="contents">
-                        <dt className="font-sans text-caption font-medium tracking-[0.048px] text-muted">
-                          {label}
-                        </dt>
-                        <dd className="font-sans text-button text-foreground">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </dd>
-                      </div>
-                    );
-                  })}
-                </dl>
-              </li>
-            ))}
-          </ul>
-        )}
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div
+              key="mobile-loading"
+              variants={fadeIn}
+              initial={reduced ? 'visible' : 'hidden'}
+              animate="visible"
+              exit="exit"
+            >
+              <MobileSkeletonCards />
+            </motion.div>
+          ) : isEmpty ? (
+            <motion.div
+              key="mobile-empty"
+              variants={fadeUp}
+              initial={reduced ? 'visible' : 'hidden'}
+              animate="visible"
+              exit="exit"
+            >
+              <EmptyState title={emptyMessage} />
+            </motion.div>
+          ) : (
+            <motion.ul
+              key={`mobile-${pageIndex}`}
+              className="space-y-2"
+              variants={staggerContainer}
+              initial={reduced ? 'visible' : 'hidden'}
+              animate="visible"
+            >
+              {rows.map((row) => (
+                <motion.li
+                  key={row.id}
+                  variants={staggerItem}
+                  className={cn(
+                    "rounded-lg border border-border bg-surface-200 p-3",
+                    onRowClick && "cursor-pointer active:bg-accent/5 transition-colors"
+                  )}
+                  onClick={() => onRowClick?.(row.original)}
+                >
+                  <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5">
+                    {row.getVisibleCells().map((cell) => {
+                      const label = columnLabels.get(cell.column.id);
+                      return (
+                        <div key={cell.id} className="contents">
+                          <dt className="font-sans text-micro font-medium tracking-[0.048px] text-fg-muted">
+                            {label}
+                          </dt>
+                          <dd className="font-sans text-button text-foreground">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </dd>
+                        </div>
+                      );
+                    })}
+                  </dl>
+                </motion.li>
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* -------- Pagination -------- */}
@@ -222,7 +261,7 @@ export function DataTable<TData>({
           aria-label="Pagination navigation"
           className="mt-4 flex items-center justify-between gap-3"
         >
-          <div className="font-sans text-caption text-muted">
+          <div className="font-sans text-body text-fg-muted">
             {startIndex !== null && endIndex !== null && totalCount !== undefined
               ? `${startIndex}–${endIndex} of ${totalCount}`
               : `Page ${pageIndex + 1} of ${pageCount}`}
@@ -280,7 +319,7 @@ function PaginationButton({
       className={cn(
         "inline-flex items-center gap-1 rounded border border-border bg-surface-200 px-3 py-1.5",
         "font-sans text-button text-foreground transition-colors",
-        "hover:bg-surface-400/60",
+        "hover:bg-surface-300",
         "focus-visible:border-border-medium focus-visible:outline-none",
         "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface-200",
       )}

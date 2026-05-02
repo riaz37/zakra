@@ -48,7 +48,7 @@ export function ReportHistorySidebar() {
     if (group.length === 0) return null;
     return (
       <div className="mb-6">
-        <h3 className="mb-2 px-4 font-sans text-[11px] font-semibold uppercase tracking-wider text-muted">
+        <h3 className="mb-2 px-4 font-sans text-micro font-semibold uppercase tracking-wider text-fg-muted">
           {title}
         </h3>
         <ul className="space-y-0.5 px-2">
@@ -85,7 +85,7 @@ export function ReportHistorySidebar() {
       <div className="border-b border-border p-4">
         <Link
           href="/reports/ai-generate"
-          className="flex w-full items-center justify-between rounded-lg bg-accent px-4 py-2.5 font-sans text-button font-medium text-[#111] transition-colors duration-150 hover:bg-accent/90"
+          className="flex w-full items-center justify-between rounded-lg bg-accent px-4 py-2.5 font-sans text-button font-medium text-background transition-colors duration-150 hover:opacity-90"
         >
           <span>New report</span>
           <Plus className="h-4 w-4" aria-hidden />

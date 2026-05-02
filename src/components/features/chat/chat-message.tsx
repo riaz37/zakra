@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, RotateCcw } from 'lucide-react';
 import type { ChatMessage, MessageContentBlock } from '@/types/chat';
+import { motion, AnimatePresence } from 'framer-motion';
+import { fadeUp, staggerContainer, staggerItem } from '@/lib/motion';
 import { MarkdownContent } from './markdown-content';
 import { ContentBlockView } from './content-block-view';
 
@@ -83,11 +85,13 @@ function deduplicateStreamContent(content: string): string {
   return longest;
 }
 
-export function UserMessage({
-  content,
-  createdAt,
-}: {
-  content: string;
+function MessageActions({ 
+  content, 
+  onReRun, 
+  createdAt 
+}: { 
+  content: string; 
+  onReRun?: () => void;
   createdAt?: string;
 }) {
   const [copied, setCopied] = useState(false);
@@ -99,32 +103,62 @@ export function UserMessage({
   };
 
   return (
-    <div className="group flex flex-col items-end gap-1 animate-slide-in-bottom">
-      <div className="max-w-[78%] rounded-2xl border border-border/60 bg-surface-300 px-4 py-2.5 shadow-[var(--shadow-ring)]">
-        <p className="whitespace-pre-wrap font-sans text-[15px] leading-[1.65] text-foreground">
+    <div className="flex items-center gap-1 rounded-md border border-border bg-surface-200 p-0.5 shadow-sm">
+      <button
+        onClick={handleCopy}
+        className="flex h-7 w-7 items-center justify-center rounded-sm text-fg-subtle transition-colors hover:bg-surface-400 hover:text-foreground"
+        title="Copy message"
+      >
+        {copied ? (
+          <Check className="h-3.5 w-3.5 text-accent" strokeWidth={2.5} />
+        ) : (
+          <Copy className="h-3.5 w-3.5" strokeWidth={1.5} />
+        )}
+      </button>
+      {onReRun && (
+        <button
+          onClick={onReRun}
+          className="flex h-7 w-7 items-center justify-center rounded-sm text-fg-subtle transition-colors hover:bg-surface-400 hover:text-foreground"
+          title="Re-run query"
+        >
+          <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.5} />
+        </button>
+      )}
+      {createdAt && (
+        <span className="px-2 font-mono text-[10px] tabular-nums text-muted/60 select-none border-l border-border/50 ml-1">
+          {formatTime(createdAt)}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export function UserMessage({
+  content,
+  createdAt,
+  onReRun,
+}: {
+  content: string;
+  createdAt?: string;
+  onReRun?: () => void;
+}) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+      className="group flex flex-col items-end gap-1.5"
+    >
+      <div className="max-w-[85%] rounded-2xl border border-border/50 bg-surface-200 px-4 py-3 shadow-sm transition-colors group-hover:border-border">
+        <p className="whitespace-pre-wrap font-sans text-subheading leading-[1.65] text-foreground">
           {content}
         </p>
       </div>
-      <div className="flex items-center gap-2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-        {createdAt && (
-          <span className="font-mono text-mono-sm text-subtle">
-            {formatTime(createdAt)}
-          </span>
-        )}
-        <button
-          onClick={handleCopy}
-          className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted"
-          title="Copy message"
-        >
-          {copied ? (
-            <Check className="h-3 w-3 text-accent/60" strokeWidth={2.5} />
-          ) : (
-            <Copy className="h-3 w-3" strokeWidth={2} />
-          )}
-          {copied ? 'Copied' : 'Copy'}
-        </button>
+      
+      <div className="flex items-center gap-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+        <MessageActions content={content} onReRun={onReRun} createdAt={createdAt} />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -137,61 +171,64 @@ export function AssistantMessage({
   blocks?: MessageContentBlock[] | null;
   createdAt?: string;
 }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    void navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
   return (
-    <div className="group flex gap-3 animate-slide-in-bottom">
-      <div className="mt-[3px] shrink-0">
-        <Image
-          src="/logo/esaplogo.webp"
-          alt="ESAP"
-          width={22}
-          height={22}
-          className="opacity-70"
-        />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="space-y-3 border-l-2 border-accent/[0.13] pl-3">
-          <MarkdownContent>{content}</MarkdownContent>
-          {blocks?.map((block, idx) => (
-            <div key={idx} className="animate-fade-in animation-delay-100">
-              <ContentBlockView block={block} />
-            </div>
-          ))}
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      animate="visible"
+      className="group flex gap-4"
+    >
+      <div className="mt-1 shrink-0">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface-200 shadow-sm">
+          <Image
+            src="/logo/esaplogo.webp"
+            alt="ESAP"
+            width={20}
+            height={20}
+            className="opacity-90"
+          />
         </div>
-        <div className="mt-2 flex items-center gap-2.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-          <button
-            onClick={handleCopy}
-            className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted"
-            title="Copy response"
-          >
-            {copied ? (
-              <Check className="h-3 w-3 text-accent/60" strokeWidth={2.5} />
-            ) : (
-              <Copy className="h-3 w-3" strokeWidth={2} />
-            )}
-            {copied ? 'Copied' : 'Copy'}
-          </button>
-          {createdAt && (
-            <span className="font-mono text-mono-sm text-subtle">
-              {formatTime(createdAt)}
-            </span>
+      </div>
+      
+      <div className="min-w-0 flex-1">
+        <div className="space-y-4 border-l-2 border-accent/15 pl-5">
+          <div className="prose-custom prose-sm max-w-none text-foreground leading-[1.7]">
+            <MarkdownContent>{content}</MarkdownContent>
+          </div>
+          
+          {blocks && blocks.length > 0 && (
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+              className="space-y-5"
+            >
+              {blocks.map((block, idx) => (
+                <motion.div key={idx} variants={staggerItem}>
+                  <ContentBlockView block={block} />
+                </motion.div>
+              ))}
+            </motion.div>
           )}
         </div>
+
+        <div className="mt-2.5 flex items-center gap-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <MessageActions content={content} createdAt={createdAt} />
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-export function ChatMessageView({ message }: { message: ChatMessage }) {
+export function ChatMessageView({ 
+  message, 
+  onReRun 
+}: { 
+  message: ChatMessage;
+  onReRun?: () => void;
+}) {
   if (message.role === 'user') {
-    return <UserMessage content={message.content} createdAt={message.created_at} />;
+    return <UserMessage content={message.content} createdAt={message.created_at} onReRun={onReRun} />;
   }
   const blocks = parseContentBlocks(message.metadata_json);
   return (

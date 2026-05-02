@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useDbConnections } from '@/hooks/useDbConnections';
 import { useAIReportGeneration } from '@/hooks/useAIReportGeneration';
@@ -15,6 +16,7 @@ import { CompletedTurnView } from '@/components/features/reports/completed-turn-
 import { PageHeader } from '@/components/shared/page-header';
 import { ScaffoldContainer } from '@/components/shared/scaffold';
 import { reportNavigationItems } from '@/components/features/reports/nav';
+import { fadeUp, fadeIn, staggerContainer, staggerItem } from '@/lib/motion';
 
 
 // ── Main page ─────────────────────────────────────────────────────────────────
@@ -104,13 +106,30 @@ export default function AIReportChatPage() {
         />
 
         <div className="mx-auto max-w-[720px]">
-          {!hasContent && (
-            <ReportWelcome onPrompt={(text) => void handleSend(text)} />
-          )}
+          <AnimatePresence mode="wait">
+            {!hasContent && (
+              <motion.div
+                key="welcome"
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <ReportWelcome onPrompt={(text) => void handleSend(text)} />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <div className="space-y-8">
+          <motion.div
+            className="space-y-8"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
             {completedTurns.map((turn, i) => (
-              <CompletedTurnView key={i} turn={turn} />
+              <motion.div key={i} variants={staggerItem}>
+                <CompletedTurnView turn={turn} />
+              </motion.div>
             ))}
 
             {pendingQuery && (
@@ -138,17 +157,23 @@ export default function AIReportChatPage() {
               </div>
             )}
 
-            {state.status === 'error' && state.error && (
-              <div
-                className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error animate-fade-in"
-                role="alert"
-              >
-                {state.error.message}
-              </div>
-            )}
+            <AnimatePresence>
+              {state.status === 'error' && state.error && (
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error"
+                  role="alert"
+                >
+                  {state.error.message}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div ref={messagesEndRef} />
-          </div>
+          </motion.div>
         </div>
       </div>
 

@@ -6,11 +6,20 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth, useAuthStore } from '@/store/authStore';
 import { useCompanyStore } from '@/store/companyStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  fadeUp,
+  fadeIn,
+  staggerContainer,
+  staggerItem,
+  errorShake,
+  MOTION,
+} from '@/lib/motion';
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -25,6 +34,7 @@ export default function LoginPage() {
   const [apiError, setApiError] = useState<string | null>(null);
   const { selectedCompanyId } = useCompanyStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -59,9 +69,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-[340px] animate-fade-up rounded-card border border-border bg-surface-100 px-6 py-8">
+    <motion.div
+      variants={fadeUp}
+      initial={reduced ? 'visible' : 'hidden'}
+      animate="visible"
+      className="w-full max-w-[340px] rounded-card border border-border bg-surface-200 px-6 py-8"
+    >
       {/* Brand */}
-      <div className="mb-8">
+      <motion.div
+        className="mb-8"
+        initial={reduced ? {} : { opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div className="mb-3 flex items-center justify-center gap-2.5">
           <Image
             src="/logo/esaplogo.webp"
@@ -79,11 +99,17 @@ export default function LoginPage() {
           />
         </div>
         <p className="font-sans text-caption text-muted">Admin console</p>
-      </div>
+      </motion.div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <motion.form
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        variants={staggerContainer}
+        initial={reduced ? 'visible' : 'hidden'}
+        animate="visible"
+      >
         {/* Email */}
-        <div className="flex flex-col">
+        <motion.div variants={staggerItem} className="flex flex-col">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -94,15 +120,24 @@ export default function LoginPage() {
             error={!!errors.email}
             placeholder="you@company.com"
           />
-          {errors.email && (
-            <p className="mt-1.5 font-sans text-caption text-error" role="alert">
-              {errors.email.message}
-            </p>
-          )}
-        </div>
+          <AnimatePresence>
+            {errors.email && (
+              <motion.p
+                variants={fadeIn}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="mt-1.5 font-sans text-caption text-error"
+                role="alert"
+              >
+                {errors.email.message}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
         {/* Password — 16px gap between fields */}
-        <div className="mt-4 flex flex-col">
+        <motion.div variants={staggerItem} className="mt-4 flex flex-col">
           <Label htmlFor="password">Password</Label>
           <Input
             id="password"
@@ -113,38 +148,62 @@ export default function LoginPage() {
             error={!!errors.password}
             placeholder="••••••••"
           />
-          {errors.password && (
-            <p className="mt-1.5 font-sans text-caption text-error" role="alert">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
+          <AnimatePresence>
+            {errors.password && (
+              <motion.p
+                variants={fadeIn}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="mt-1.5 font-sans text-caption text-error"
+                role="alert"
+              >
+                {errors.password.message}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
         {/* Submit — 24px gap from last field */}
-        <Button
-          type="submit"
-          isLoading={isSubmitting}
-          size="lg"
-          className="mt-6 w-full"
-        >
-          {isSubmitting ? 'Signing in…' : 'Sign in'}
-        </Button>
+        <motion.div variants={staggerItem}>
+          <motion.div
+            variants={errorShake}
+            animate={apiError ? 'shake' : undefined}
+          >
+            <Button
+              type="submit"
+              isLoading={isSubmitting}
+              size="lg"
+              className="mt-6 w-full"
+            >
+              {isSubmitting ? 'Signing in…' : 'Sign in'}
+            </Button>
+          </motion.div>
+        </motion.div>
 
-        <p className="mt-4 font-sans text-caption text-muted">
+        <motion.p
+          variants={staggerItem}
+          className="mt-4 font-sans text-caption text-muted"
+        >
           First time signing in? Check your invite email for credentials.
-        </p>
+        </motion.p>
 
         {/* API error — bare, no box */}
-        {apiError && (
-          <p
-            className="mt-3 font-sans text-caption text-error"
-            role="alert"
-          >
-            {apiError}
-          </p>
-        )}
-      </form>
-    </div>
+        <AnimatePresence>
+          {apiError && (
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="mt-3 font-sans text-caption text-error"
+              role="alert"
+            >
+              {apiError}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </motion.form>
+    </motion.div>
   );
 }
-

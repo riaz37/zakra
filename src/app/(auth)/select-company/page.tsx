@@ -8,12 +8,22 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Building2, Plus, Check, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useCompanies, useCreateCompany } from '@/hooks/useCompanies';
 import { useCompanyStore } from '@/store/companyStore';
 import { Button } from '@/components/ui/button';
 import { Input, MonoInput } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import {
+  fadeUp,
+  fadeIn,
+  staggerContainer,
+  staggerItem,
+  staggerScaleItem,
+  tapPress,
+  MOTION,
+} from '@/lib/motion';
 import type { Company } from '@/types';
 
 const createSchema = z.object({
@@ -32,6 +42,7 @@ export default function SelectCompanyPage() {
   const { data, isLoading } = useCompanies({ limit: 100 });
   const createCompany = useCreateCompany();
   const [mode, setMode] = useState<'select' | 'create'>('select');
+  const reduced = useReducedMotion();
 
   const companies = data?.items ?? [];
   const hasCompanies = companies.length > 0;
@@ -69,34 +80,62 @@ export default function SelectCompanyPage() {
   }
 
   return (
-    <div className="w-full max-w-[420px] animate-fade-up">
+    <motion.div
+      variants={fadeUp}
+      initial={reduced ? 'visible' : 'hidden'}
+      animate="visible"
+      className="w-full max-w-[420px]"
+    >
       {/* Brand */}
-      <div className="mb-8 flex items-center justify-center gap-2.5">
+      <motion.div
+        className="mb-8 flex items-center justify-center gap-2.5"
+        initial={reduced ? {} : { opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      >
         <Image src="/logo/esaplogo.webp" alt="ESAP" width={32} height={32} priority />
         <Image src="/logo/esaplogo.svg" alt="ESAP employer solutions" width={65} height={21} priority />
-      </div>
+      </motion.div>
 
-      <div className="rounded-card border border-border bg-surface-100 px-6 py-8">
-        {showCreate ? (
-          <CreateCompanyForm
-            onSubmit={handleSubmit(onCreate)}
-            register={register}
-            errors={errors}
-            isSubmitting={isSubmitting}
-            onNameChange={handleNameChange}
-            canGoBack={hasCompanies}
-            onBack={() => setMode('select')}
-          />
-        ) : (
-          <SelectCompanyList
-            companies={companies}
-            isLoading={isLoading}
-            onSelect={handleSelect}
-            onCreateNew={() => setMode('create')}
-          />
-        )}
+      <div className="rounded-card border border-border bg-surface-200 px-6 py-8">
+        <AnimatePresence mode="wait">
+          {showCreate ? (
+            <motion.div
+              key="create"
+              variants={fadeUp}
+              initial={reduced ? 'visible' : 'hidden'}
+              animate="visible"
+              exit="exit"
+            >
+              <CreateCompanyForm
+                onSubmit={handleSubmit(onCreate)}
+                register={register}
+                errors={errors}
+                isSubmitting={isSubmitting}
+                onNameChange={handleNameChange}
+                canGoBack={hasCompanies}
+                onBack={() => setMode('select')}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="select"
+              variants={fadeUp}
+              initial={reduced ? 'visible' : 'hidden'}
+              animate="visible"
+              exit="exit"
+            >
+              <SelectCompanyList
+                companies={companies}
+                isLoading={isLoading}
+                onSelect={handleSelect}
+                onCreateNew={() => setMode('create')}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -113,6 +152,8 @@ function SelectCompanyList({
   onSelect: (company: Company) => void;
   onCreateNew: () => void;
 }) {
+  const reduced = useReducedMotion();
+
   return (
     <div>
       <h1 className="font-sans text-title font-semibold text-foreground">Select workspace</h1>
@@ -120,15 +161,22 @@ function SelectCompanyList({
         Choose the company you want to manage.
       </p>
 
-      <div className="mt-6 flex max-h-[min(420px,55vh)] flex-col gap-2 overflow-y-auto pr-0.5">
+      <motion.div
+        className="mt-6 flex max-h-[min(420px,55vh)] flex-col gap-2 overflow-y-auto pr-0.5"
+        variants={staggerContainer}
+        initial={reduced ? 'visible' : 'hidden'}
+        animate="visible"
+      >
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="size-5 animate-spin text-muted" />
           </div>
         ) : (
           companies.map((company) => (
-            <button
+            <motion.button
               key={company.id}
+              variants={staggerItem}
+              whileTap={tapPress}
               onClick={() => onSelect(company)}
               className={cn(
                 'flex w-full items-center gap-3 rounded-lg border border-border bg-surface-200 px-4 py-3',
@@ -144,10 +192,10 @@ function SelectCompanyList({
                 <p className="font-mono text-micro text-muted truncate">{company.slug}</p>
               </div>
               <Check className="size-4 shrink-0 text-muted opacity-0 group-hover:opacity-100" />
-            </button>
+            </motion.button>
           ))
         )}
-      </div>
+      </motion.div>
 
       <Button
         onClick={onCreateNew}
@@ -180,6 +228,8 @@ function CreateCompanyForm({
   canGoBack: boolean;
   onBack: () => void;
 }) {
+  const reduced = useReducedMotion();
+
   return (
     <div>
       {canGoBack && (
@@ -199,8 +249,15 @@ function CreateCompanyForm({
         Set up your first workspace to get started.
       </p>
 
-      <form onSubmit={onSubmit} noValidate className="mt-6 flex flex-col gap-4">
-        <div className="flex flex-col">
+      <motion.form
+        onSubmit={onSubmit}
+        noValidate
+        className="mt-6 flex flex-col gap-4"
+        variants={staggerContainer}
+        initial={reduced ? 'visible' : 'hidden'}
+        animate="visible"
+      >
+        <motion.div variants={staggerItem} className="flex flex-col">
           <Label htmlFor="name">Company name</Label>
           <Input
             id="name"
@@ -219,9 +276,9 @@ function CreateCompanyForm({
               {errors.name.message}
             </p>
           )}
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col">
+        <motion.div variants={staggerItem} className="flex flex-col">
           <Label htmlFor="slug">Slug</Label>
           <MonoInput
             id="slug"
@@ -236,17 +293,19 @@ function CreateCompanyForm({
               {errors.slug.message}
             </p>
           )}
-        </div>
+        </motion.div>
 
-        <Button
-          type="submit"
-          isLoading={isSubmitting}
-          size="lg"
-          className="mt-2 w-full"
-        >
-          {isSubmitting ? 'Creating…' : 'Create company'}
-        </Button>
-      </form>
+        <motion.div variants={staggerItem}>
+          <Button
+            type="submit"
+            isLoading={isSubmitting}
+            size="lg"
+            className="mt-2 w-full"
+          >
+            {isSubmitting ? 'Creating…' : 'Create company'}
+          </Button>
+        </motion.div>
+      </motion.form>
     </div>
   );
 }

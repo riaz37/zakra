@@ -13,11 +13,13 @@ import {
 import type { ManagedColumn, ColumnPermission, MaskPattern } from '@/types';
 import { COLUMN_PERMISSIONS, MASK_PATTERNS } from '@/utils/constants';
 import { Search, X } from 'lucide-react';
+import { Skeleton } from '@/components/shared/skeleton';
+import { motion, AnimatePresence } from 'framer-motion';
+import { staggerContainer, staggerItem, fadeUp } from '@/lib/motion';
 
 const PERMISSION_LEVELS: ColumnPermission[] = [
   COLUMN_PERMISSIONS.NONE,
   COLUMN_PERMISSIONS.READ,
-  COLUMN_PERMISSIONS.READ_MASKED,
   COLUMN_PERMISSIONS.WRITE,
 ] as ColumnPermission[];
 
@@ -166,9 +168,9 @@ export function PermissionMatrix({
   return (
     <div className="flex flex-col gap-3">
       {/* Toolbar */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         {/* Column search */}
-        <div className="relative flex-1">
+        <div className="relative w-full max-w-xs">
           <Search
             aria-hidden
             className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-subtle"
@@ -199,39 +201,45 @@ export function PermissionMatrix({
           )}
         </div>
 
-        {/* Bulk actions */}
-        <div className="flex items-center gap-1.5">
-          <span className="font-sans text-caption text-muted">All:</span>
-          {PERMISSION_LEVELS.map((level) => (
-            <button
-              key={level}
-              type="button"
-              onClick={() => setAllPermissions(level)}
-              className={cn(
-                'rounded px-2 py-1 font-sans text-caption transition-colors',
-                'border border-border text-muted hover:text-foreground hover:border-border-medium',
-              )}
-            >
-              {PERMISSION_LABELS[level]}
-            </button>
-          ))}
-        </div>
+        {/* Actions group */}
+        <div className="flex items-center gap-4">
+          {/* Bulk actions */}
+          <div className="flex items-center gap-1.5">
+            <span className="font-sans text-caption text-muted">All:</span>
+            {PERMISSION_LEVELS.map((level) => (
+              <button
+                key={level}
+                type="button"
+                onClick={() => setAllPermissions(level)}
+                className={cn(
+                  'rounded px-2 py-1 font-sans text-caption transition-colors',
+                  'border border-border text-muted hover:text-foreground hover:border-border-medium',
+                )}
+              >
+                {PERMISSION_LABELS[level]}
+              </button>
+            ))}
+          </div>
 
-        {/* Save action */}
-        <div className="flex shrink-0 items-center gap-2">
-          {isDirty && pendingCount > 0 && (
-            <span className="font-sans text-caption text-muted">
-              {pendingCount} {pendingCount === 1 ? 'change' : 'changes'}
-            </span>
-          )}
-          <Button
-            type="button"
-            onClick={handleSave}
-            disabled={!isDirty || isSaving}
-            size="sm"
-          >
-            {isSaving ? 'Saving…' : 'Save'}
-          </Button>
+          {/* Divider */}
+          <div className="h-4 w-px bg-border" />
+
+          {/* Save action */}
+          <div className="flex shrink-0 items-center gap-2">
+            {isDirty && pendingCount > 0 && (
+              <span className="font-sans text-caption text-muted">
+                {pendingCount} {pendingCount === 1 ? 'change' : 'changes'}
+              </span>
+            )}
+            <Button
+              type="button"
+              onClick={handleSave}
+              disabled={!isDirty || isSaving}
+              size="sm"
+            >
+              {isSaving ? 'Saving…' : 'Save'}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -263,7 +271,11 @@ export function PermissionMatrix({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <motion.tbody
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
             {filteredRows.length === 0 ? (
               <tr>
                 <td
@@ -279,7 +291,8 @@ export function PermissionMatrix({
                 const meta = columnMeta[row.columnName];
                 return (
                   <React.Fragment key={row.columnName}>
-                    <tr
+                    <motion.tr
+                      variants={staggerItem}
                       className={cn(
                         'group transition-colors hover:bg-surface-300/40',
                         !isLast && row.permission !== 'read_masked' && 'border-b border-border',
@@ -331,47 +344,104 @@ export function PermissionMatrix({
                           </td>
                         );
                       })}
-                    </tr>
-                    {row.permission === 'read_masked' && (
-                      <tr
-                        className={cn(
-                          'bg-surface-100',
-                          !isLast && 'border-b border-border',
-                        )}
-                      >
-                        <td colSpan={5} className="px-4 pb-2.5 pt-1">
-                          <div className="flex items-center gap-2.5">
-                            <label
-                              htmlFor={`mask-${row.columnName}`}
-                              className="shrink-0 font-sans text-caption text-muted"
+                    </motion.tr>
+                    <AnimatePresence>
+                      {row.permission === 'read_masked' && (
+                        <tr
+                          key={`mask-row-${row.columnName}`}
+                          className={cn(
+                            'bg-surface-200',
+                            !isLast && 'border-b border-border',
+                          )}
+                        >
+                          <td colSpan={5} className="p-0">
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                              className="overflow-hidden"
                             >
-                              Mask pattern
-                            </label>
-                            <Select
-                              value={row.maskPattern ?? 'PARTIAL'}
-                              onValueChange={(v) =>
-                                handleMaskPatternChange(row.columnName, v as MaskPattern)
-                              }
-                            >
-                              <SelectTrigger id={`mask-${row.columnName}`} size="sm">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent side="bottom">
-                                {MASK_PATTERN_OPTIONS.map((pattern) => (
-                                  <SelectItem key={pattern} value={pattern} label={pattern}>
-                                    {pattern}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
+                              <div className="flex items-center gap-2.5 px-4 pb-2.5 pt-1">
+                                <label
+                                  htmlFor={`mask-${row.columnName}`}
+                                  className="shrink-0 font-sans text-caption text-muted"
+                                >
+                                  Mask pattern
+                                </label>
+                                <Select
+                                  value={row.maskPattern ?? 'PARTIAL'}
+                                  onValueChange={(v) =>
+                                    handleMaskPatternChange(row.columnName, v as MaskPattern)
+                                  }
+                                >
+                                  <SelectTrigger id={`mask-${row.columnName}`} size="sm">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent side="bottom">
+                                    {MASK_PATTERN_OPTIONS.map((pattern) => (
+                                      <SelectItem key={pattern} value={pattern} label={pattern}>
+                                        {pattern}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </motion.div>
+                          </td>
+                        </tr>
+                      )}
+                    </AnimatePresence>
                   </React.Fragment>
                 );
               })
             )}
+          </motion.tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+export function PermissionMatrixSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <Skeleton className="h-8 w-full max-w-xs" rounded="lg" />
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-8 w-48" rounded="sm" />
+          <div className="h-4 w-px bg-border" />
+          <Skeleton className="h-8 w-16" rounded="sm" />
+        </div>
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full min-w-[560px] border-collapse">
+          <thead>
+            <tr className="border-b border-border bg-surface-300">
+              <th className="px-4 py-2.5 text-left font-sans text-caption font-medium text-muted">Column</th>
+              {PERMISSION_LEVELS.map((level) => (
+                <th key={level} className="w-24 px-2 py-2.5 text-center font-sans text-caption font-medium text-muted">
+                  {PERMISSION_LABELS[level]}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <tr key={idx} className="border-b border-border last:border-b-0">
+                <td className="px-4 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                </td>
+                {PERMISSION_LEVELS.map((level) => (
+                  <td key={level} className="px-2 py-2.5 text-center">
+                    <Skeleton className="mx-auto size-5 rounded-full" />
+                  </td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

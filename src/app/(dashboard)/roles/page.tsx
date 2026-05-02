@@ -32,6 +32,7 @@ import { RowActions } from '@/components/shared/row-actions';
 import { Button } from '@/components/ui/button';
 import { RoleTypeBadge } from '@/components/features/roles/role-type-badge';
 import { RoleForm, type RoleFormData } from '@/components/features/roles/role-form';
+import { AnimatedPage } from '@/components/shared/animated-container';
 
 export default function RolesPage() {
   const { search, page, queryPage, setPage, searchProps, isEmpty } = useResourceList();
@@ -152,51 +153,52 @@ export default function RolesPage() {
             onClick={() => setCreateOpen(true)}
             className="h-9 px-4"
           >
-            <Plus aria-hidden size={15} strokeWidth={2} />
             New Role
           </Button>
         }
       />
 
-      <ScaffoldFilterAndContent>
-        <ScaffoldActionsContainer>
-          <div className="w-full max-w-sm">
-            <SearchInput {...searchProps} placeholder="Search roles…" ariaLabel="Search roles" />
-          </div>
-        </ScaffoldActionsContainer>
+      <AnimatedPage>
+        <ScaffoldFilterAndContent>
+          <ScaffoldActionsContainer>
+            <div className="w-full max-w-sm">
+              <SearchInput {...searchProps} placeholder="Search roles…" ariaLabel="Search roles" />
+            </div>
+          </ScaffoldActionsContainer>
 
-        {isError ? (
-          <ErrorState title="Failed to load roles" onRetry={() => refetch()} />
-        ) : isEmpty(items, isLoading) ? (
-          <EmptyState
-            icon={Shield}
-            title={search ? "No roles match your search" : "No roles defined"}
-            description={search ? "Try adjusting your search terms." : "Create roles to control what each user type can access."}
-            action={!search ? (
-              <Button
-                onClick={() => setCreateOpen(true)}
-                className="h-9 px-4"
-              >
-                <Plus aria-hidden size={15} strokeWidth={2} />
-                New Role
-              </Button>
-            ) : undefined}
-          />
-        ) : (
-          <DataTable
-            columns={columns}
-            data={items}
-            isLoading={isLoading}
-            pageIndex={page}
-            pageCount={totalPages}
-            onPageChange={setPage}
-            pageSize={DEFAULT_PAGE_SIZE}
-            totalCount={data?.total}
-            caption="Roles list"
-            emptyMessage="No roles found."
-          />
-        )}
-      </ScaffoldFilterAndContent>
+          {isError ? (
+            <ErrorState title="Failed to load roles" onRetry={() => refetch()} />
+          ) : isEmpty(items, isLoading) ? (
+            <EmptyState
+              icon={Shield}
+              title={search ? "No roles match your search" : "No roles defined"}
+              description={search ? "Try adjusting your search terms." : "Create roles to control what each user type can access."}
+              action={!search ? (
+                <Button
+                  onClick={() => setCreateOpen(true)}
+                  className="h-9 px-4 gap-2"
+                >
+                  <Plus aria-hidden size={16} strokeWidth={2} />
+                  New Role
+                </Button>
+              ) : undefined}
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={items}
+              isLoading={isLoading}
+              pageIndex={page}
+              pageCount={totalPages}
+              onPageChange={setPage}
+              pageSize={DEFAULT_PAGE_SIZE}
+              totalCount={data?.total}
+              caption="Roles list"
+              emptyMessage="No roles found."
+            />
+          )}
+        </ScaffoldFilterAndContent>
+      </AnimatedPage>
 
       <FormDialog open={createOpen} onOpenChange={setCreateOpen} title="New Role">
         <RoleForm

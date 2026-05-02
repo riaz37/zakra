@@ -92,8 +92,8 @@ function CompanyHierarchyInner() {
         ...edge,
         animated: true,
         style: touchesSuspended
-          ? { stroke: 'rgba(232, 71, 106, 0.55)', strokeDasharray: '3 5', strokeWidth: 1.5 }
-          : { stroke: 'rgba(62, 207, 142, 0.45)', strokeDasharray: '3 5', strokeWidth: 1.5 },
+          ? { stroke: 'var(--color-error)', strokeDasharray: '3 5', strokeWidth: 1.5 }
+          : { stroke: 'var(--color-accent)', strokeDasharray: '3 5', strokeWidth: 1.5 },
       };
     });
   }, [edges, items]);
@@ -180,24 +180,24 @@ function CompanyHierarchyInner() {
 
   return (
     <div
-      className="flex flex-col rounded-lg border border-border overflow-hidden bg-surface-200/40"
+      className="flex flex-col rounded-lg border border-border overflow-hidden bg-surface-200"
       style={{ height: 'calc(100vh - 260px)', minHeight: 480 }}
     >
-      <div className="flex items-center gap-4 px-5 py-3 border-b border-border bg-surface-200/60 shrink-0">
-        <div className="flex items-center gap-2 font-sans text-caption text-muted">
-          <Building2 aria-hidden size={13} strokeWidth={1.75} className="text-subtle" />
+      <div className="flex items-center gap-4 px-5 py-3 border-b border-border bg-surface-200 shrink-0">
+        <div className="flex items-center gap-2 font-sans text-body text-fg-muted">
+          <Building2 aria-hidden size={13} strokeWidth={1.75} className="text-fg-subtle" />
           <span className="text-foreground tabular-nums font-medium">{summary.total}</span>
           <span>{summary.total === 1 ? 'company' : 'companies'}</span>
         </div>
 
         <span aria-hidden className="h-3 w-px bg-border" />
 
-        <div className="flex items-center gap-3 font-sans text-caption text-muted tabular-nums">
+        <div className="flex items-center gap-3 font-sans text-body text-fg-muted tabular-nums">
           <span>
             <span className="text-foreground font-medium">{summary.parents}</span>{' '}
             {summary.parents === 1 ? 'parent' : 'parents'}
           </span>
-          <span aria-hidden className="text-subtle">·</span>
+          <span aria-hidden className="text-fg-subtle">·</span>
           <span>
             <span className="text-foreground font-medium">{summary.subsidiaries}</span>{' '}
             subsidiaries
@@ -213,8 +213,8 @@ function CompanyHierarchyInner() {
               className={cn(
                 'flex items-center gap-1.5 px-2 py-1 rounded-sm text-micro font-medium transition-colors',
                 highlightSuspended
-                  ? 'bg-[rgba(232,71,106,0.18)] text-[#e8476a] border border-[rgba(232,71,106,0.38)]'
-                  : 'bg-[rgba(232,71,106,0.08)] text-[#e8476a] border border-transparent hover:bg-[rgba(232,71,106,0.14)]',
+                  ? 'bg-error/20 text-error border border-error/40'
+                  : 'bg-error/10 text-error border border-transparent hover:bg-error/20',
               )}
             >
               <AlertTriangle aria-hidden size={11} strokeWidth={2} />
@@ -259,7 +259,7 @@ function CompanyHierarchyInner() {
           defaultEdgeOptions={{
             type: 'smoothstep',
             animated: true,
-            style: { stroke: 'rgba(62, 207, 142, 0.45)', strokeDasharray: '3 5', strokeWidth: 1.5 },
+            style: { stroke: 'var(--color-accent)', strokeDasharray: '3 5', strokeWidth: 1.5 },
           }}
         >
           <Background
@@ -304,8 +304,8 @@ function CompanyHierarchyInner() {
           {addSubsidiaryFor && (
             <div className="flex h-full flex-col">
               <div className="px-5 py-4 border-b border-border">
-                <p className="font-sans text-caption text-muted">Add subsidiary to</p>
-                <p className="font-sans text-[15px] font-medium tracking-[-0.01em] text-foreground mt-0.5">
+                <p className="font-sans text-micro text-fg-muted">Add subsidiary to</p>
+                <p className="font-sans text-subheading font-medium tracking-[-0.01em] text-foreground mt-0.5">
                   {addSubsidiaryFor.name}
                 </p>
               </div>
@@ -347,7 +347,7 @@ function HierarchySkeleton() {
               />
             ))}
           </div>
-          <p className="font-sans text-caption text-subtle">Laying out hierarchy…</p>
+          <p className="font-sans text-body text-fg-subtle">Laying out hierarchy…</p>
         </div>
       </div>
     </div>

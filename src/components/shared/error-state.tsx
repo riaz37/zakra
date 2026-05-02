@@ -1,4 +1,9 @@
+'use client';
+
+import { motion, useReducedMotion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { scaleIn } from '@/lib/motion';
 
 interface ErrorStateProps {
   title?: string;
@@ -13,10 +18,15 @@ export function ErrorState({
   onRetry,
   className,
 }: ErrorStateProps) {
+  const reduced = useReducedMotion();
+
   return (
-    <div
+    <motion.div
+      variants={scaleIn}
+      initial={reduced ? 'visible' : 'hidden'}
+      animate="visible"
       className={cn(
-        'flex flex-col items-start gap-3 rounded-xl border border-error-border bg-error-bg px-6 py-8',
+        'flex flex-col items-start gap-3 rounded-lg border border-error-border bg-error-bg px-6 py-8',
         className,
       )}
     >
@@ -25,7 +35,7 @@ export function ErrorState({
           aria-hidden
           className="h-1.5 w-1.5 rounded-full bg-error"
         />
-        <p className="font-sans text-micro uppercase tracking-[0.048px] text-error">
+        <p className="font-sans text-micro uppercase tracking-widest text-error">
           Error
         </p>
       </div>
@@ -33,19 +43,22 @@ export function ErrorState({
         <p className="font-sans text-button font-medium text-foreground">
           {title}
         </p>
-        <p className="max-w-[54ch] font-sans text-caption text-muted-strong">
+        <p className="max-w-[54ch] font-sans text-caption text-muted-strong leading-relaxed">
           {description}
         </p>
       </div>
       {onRetry ? (
-        <button
-          type="button"
-          onClick={onRetry}
-          className="mt-2 font-sans text-caption text-muted-strong underline-offset-4 transition-colors duration-150 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
-        >
-          Try again
-        </button>
+        <div className="mt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onRetry}
+            className="border-error-border/30 bg-transparent hover:bg-error/5 hover:text-error transition-all"
+          >
+            Try again
+          </Button>
+        </div>
       ) : null}
-    </div>
+    </motion.div>
   );
 }
