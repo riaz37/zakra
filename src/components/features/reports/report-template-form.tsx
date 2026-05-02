@@ -61,8 +61,6 @@ interface ReportTemplateFormProps {
   initial?: Partial<ReportTemplateFormData>;
   onSubmit: (data: ReportTemplateFormData) => void;
   isPending: boolean;
-  onCancel: () => void;
-  submitLabel?: string;
   connections: DatabaseConnection[];
 }
 
@@ -72,8 +70,6 @@ export function ReportTemplateForm({
   initial,
   onSubmit,
   isPending,
-  onCancel,
-  submitLabel = 'Save template',
   connections,
 }: ReportTemplateFormProps) {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -127,7 +123,7 @@ export function ReportTemplateForm({
   const sectionTitles = form.watch('sections');
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
+    <form id="template-form" onSubmit={form.handleSubmit(onSubmit)}>
       <div className="flex h-[calc(100dvh-220px)] min-h-[560px] max-h-[900px] overflow-hidden rounded-xl border border-border bg-surface-100">
 
         {/* ── LEFT: Config panel ──────────────────────────────────────── */}
@@ -138,6 +134,14 @@ export function ReportTemplateForm({
 
           {/* Basic info */}
           <div className="space-y-4 p-5">
+            {sectionErrors && !Array.isArray(sectionErrors) && (
+              <div className="rounded-md border border-error-border bg-error-bg p-3 text-error">
+                <p className="font-sans text-caption font-medium">
+                  {(sectionErrors as { message?: string }).message}
+                </p>
+              </div>
+            )}
+
             <p className="font-mono text-micro font-medium uppercase tracking-[0.08em] text-muted">
               Basic Info
             </p>
@@ -186,10 +190,14 @@ export function ReportTemplateForm({
                     <FieldLabel htmlFor={field.name}>Connection *</FieldLabel>
                     <Select
                       onValueChange={(v) => field.onChange(v || '')}
-                      defaultValue={field.value}
+                      value={field.value}
                     >
                       <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
-                        <SelectValue placeholder="Select a connection…" />
+                        <SelectValue placeholder="Select a connection…">
+                          {field.value
+                            ? connections.find((c) => c.id === field.value)?.name || field.value
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {connections.map((c) => (
@@ -212,7 +220,7 @@ export function ReportTemplateForm({
                     <FieldLabel htmlFor={field.name}>Report Type</FieldLabel>
                     <Select
                       onValueChange={(v) => field.onChange(v || 'custom')}
-                      defaultValue={field.value}
+                      value={field.value}
                     >
                       <SelectTrigger id={field.name}>
                         <SelectValue />
@@ -262,10 +270,10 @@ export function ReportTemplateForm({
                       type="button"
                       onClick={() => setActiveIdx(idx)}
                       className={cn(
-                        'group/item flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left transition-colors',
+                        'group/item flex w-full items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left transition-all',
                         isActive
-                          ? 'bg-surface-400 text-foreground'
-                          : 'text-muted hover:bg-surface-300 hover:text-foreground',
+                          ? 'border-accent/30 bg-accent/10 text-foreground shadow-sm ring-1 ring-accent/20'
+                          : 'border-transparent text-muted hover:bg-surface-300 hover:text-foreground',
                       )}
                     >
                       <span
@@ -305,29 +313,6 @@ export function ReportTemplateForm({
           </div>
 
           </div>{/* end scrollable content */}
-
-          {/* Footer actions */}
-          <div className="shrink-0 border-t border-border p-4">
-            {sectionErrors && !Array.isArray(sectionErrors) && (
-              <p className="mb-3 font-sans text-caption text-error">
-                {(sectionErrors as { message?: string }).message}
-              </p>
-            )}
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={isPending}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isPending} className="flex-1">
-                {isPending ? 'Saving…' : submitLabel}
-              </Button>
-            </div>
-          </div>
         </div>
 
         {/* ── RIGHT: Section editor ───────────────────────────────────── */}
@@ -356,9 +341,6 @@ export function ReportTemplateForm({
                 {/* Section header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="flex size-7 items-center justify-center rounded-lg border border-border bg-surface-200 font-mono text-caption font-medium tabular-nums text-muted">
-                      {activeIdx + 1}
-                    </span>
                     <div>
                       <p className="font-mono text-micro uppercase tracking-[0.08em] text-muted">
                         Section {activeIdx + 1} of {fields.length}

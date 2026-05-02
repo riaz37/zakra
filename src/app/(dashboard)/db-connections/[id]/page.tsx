@@ -2,10 +2,18 @@
 
 import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { Zap, Trash2 } from 'lucide-react';
 
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
-import { useDbConnection } from '@/hooks/useDbConnections';
+import {
+  useDbConnection,
+  useTestConnection,
+  useDeleteConnection,
+} from '@/hooks/useDbConnections';
 
+import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { PageHeader } from '@/components/shared/page-header';
 import {
   ScaffoldContainer,
@@ -13,15 +21,14 @@ import {
 } from '@/components/shared/scaffold';
 import { ErrorState } from '@/components/shared/error-state';
 import { Skeleton } from '@/components/shared/skeleton';
+import { cn } from '@/lib/utils';
 
-import { OverviewTab } from '@/components/features/db-connections/overview-tab';
 import { SchemaExplorerTab } from '@/components/features/db-connections/schema-explorer-tab';
 import { BusinessRulesTab } from '@/components/features/db-connections/business-rules-tab';
 
-type TabId = 'overview' | 'schema' | 'rules';
+type TabId = 'schema' | 'rules';
 
 const TABS: ReadonlyArray<{ id: TabId; label: string }> = [
-  { id: 'overview', label: 'Overview' },
   { id: 'schema', label: 'Schema explorer' },
   { id: 'rules', label: 'Business rules' },
 ];
@@ -36,12 +43,45 @@ export default function DbConnectionDetailPage({
   const { id } = use(params);
   const router = useRouter();
   const companyId = useCurrentCompanyId();
-  const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [activeTab, setActiveTab] = useState<TabId>('schema');
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const { data: connection, isLoading, isError } = useDbConnection(
     id,
     companyId,
   );
+
+  const testConnection = useTestConnection(companyId);
+  const deleteConnection = useDeleteConnection(companyId);
+
+  async function handleTest() {
+    if (!connection) return;
+    try {
+      const result = await testConnection.mutateAsync(connection.id);
+      if (result.success) {
+        toast.success(
+          `Connection successful${
+            result.latency_ms != null ? ` (${result.latency_ms}ms)` : ''
+          }`,
+        );
+      } else {
+        toast.error(result.message || 'Connection test failed');
+      }
+    } catch {
+      toast.error('Connection test failed');
+    }
+  }
+
+  async function handleDelete() {
+    if (!connection) return;
+    try {
+      await deleteConnection.mutateAsync(connection.id);
+      toast.success('Connection deleted');
+      router.push('/db-connections');
+    } catch {
+      toast.error('Failed to delete connection');
+    }
+  }
 
   if (isLoading) {
     return (
@@ -89,6 +129,29 @@ export default function DbConnectionDetailPage({
             {connection.port}
           </span>
         }
+        secondaryActions={
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setConfirmDelete(true)}
+            className="text-error hover:bg-error/8 hover:text-error h-9 px-3"
+          >
+            <Trash2 aria-hidden size={14} strokeWidth={1.75} className="mr-1.5" />
+            Delete
+          </Button>
+        }
+        primaryActions={
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleTest}
+            isLoading={testConnection.isPending}
+            className="h-9 px-4"
+          >
+            <Zap aria-hidden size={14} strokeWidth={1.75} className="mr-1.5" />
+            Test connection
+          </Button>
+        }
         navigationItems={TABS.map((tab) => ({
           label: tab.label,
           active: activeTab === tab.id,
@@ -97,9 +160,22 @@ export default function DbConnectionDetailPage({
       />
 
       <ScaffoldFilterAndContent>
-        {activeTab === 'overview' ? (
-          <OverviewTab connection={connection} companyId={companyId} />
+        {connection.last_error ? (
+          <div
+            role="alert"
+            className={cn(
+              'mb-4 rounded-lg border border-error-border bg-error-bg px-4 py-3',
+            )}
+          >
+            <p className="font-sans text-micro uppercase tracking-[0.048px] text-error">
+              Last error
+            </p>
+            <p className="mt-1.5 font-mono text-mono-sm leading-[1.5] text-error/90">
+              {connection.last_error}
+            </p>
+          </div>
         ) : null}
+
         {activeTab === 'schema' ? (
           <SchemaExplorerTab connectionId={id} />
         ) : null}
@@ -107,6 +183,17 @@ export default function DbConnectionDetailPage({
           <BusinessRulesTab connectionId={id} companyId={companyId} />
         ) : null}
       </ScaffoldFilterAndContent>
+
+      <ConfirmDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        title="Delete connection"
+        description={`This will permanently remove "${connection.name}" and all of its business rules. This action cannot be undone.`}
+        confirmLabel="Delete permanently"
+        variant="destructive"
+        onConfirm={handleDelete}
+        isLoading={deleteConnection.isPending}
+      />
     </ScaffoldContainer>
   );
 }

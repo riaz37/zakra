@@ -2,9 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, FilePlus } from 'lucide-react';
-import { formatDate } from '@/lib/format-date';
 
 import { useReportTemplates, useDeleteReportTemplate } from '@/hooks/useReportTemplates';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
@@ -16,13 +14,11 @@ import {
   ScaffoldFilterAndContent,
 } from '@/components/shared/scaffold';
 import { reportNavigationItems } from '@/components/features/reports/nav';
-import { DataTable } from '@/components/shared/data-table';
-import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
+import { EmptyState } from '@/components/shared/empty-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { RowActions } from '@/components/shared/row-actions';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { TemplateCard } from '@/components/features/reports/template-card';
 
 export default function ReportTemplatesPage() {
   const router = useRouter();
@@ -32,64 +28,6 @@ export default function ReportTemplatesPage() {
 
   const { data, isLoading, isError, refetch } = useReportTemplates(companyId);
   const deleteMutation = useDeleteReportTemplate(companyId);
-
-  const columns: ColumnDef<ReportTemplate>[] = [
-    {
-      id: 'name',
-      header: 'Name',
-      cell: ({ row }) => (
-        <div className="flex flex-col gap-0.5">
-          <span className="font-sans text-button font-medium text-foreground">
-            {row.original.name}
-          </span>
-          {row.original.description && (
-            <span className="font-sans text-caption text-muted line-clamp-1 max-w-[400px]">
-              {row.original.description}
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
-      id: 'type',
-      header: 'Type',
-      cell: ({ row }) => (
-        <Badge variant="default" size="sm" className="font-mono">
-          {row.original.report_type}
-        </Badge>
-      ),
-    },
-    {
-      id: 'sections',
-      header: 'Sections',
-      cell: ({ row }) => (
-        <span className="font-sans text-button text-muted">
-          {row.original.sections.length}
-        </span>
-      ),
-    },
-    {
-      id: 'created_at',
-      header: 'Created',
-      cell: ({ row }) => (
-        <span className="whitespace-nowrap font-sans text-button text-muted">
-          {formatDate(row.original.created_at)}
-        </span>
-      ),
-    },
-    {
-      id: 'actions',
-      header: '',
-      cell: ({ row }) => (
-        <RowActions
-          onEdit={(e) => { e.stopPropagation(); router.push(`/reports/templates/${row.original.id}`); }}
-          onDelete={(e) => { e.stopPropagation(); setDeleteTarget(row.original); }}
-          editLabel={`Edit ${row.original.name}`}
-          deleteLabel={`Delete ${row.original.name}`}
-        />
-      ),
-    },
-  ];
 
   const templates = data?.templates ?? [];
 
@@ -135,13 +73,16 @@ export default function ReportTemplatesPage() {
             }
           />
         ) : (
-          <DataTable
-            columns={columns}
-            data={templates}
-            isLoading={isLoading}
-            caption="Report templates list"
-            emptyMessage="No templates found."
-          />
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {templates.map((template) => (
+              <TemplateCard
+                key={template.id}
+                template={template}
+                onEdit={(t) => router.push(`/reports/templates/${t.id}`)}
+                onDelete={(t) => setDeleteTarget(t)}
+              />
+            ))}
+          </div>
         )}
       </ScaffoldFilterAndContent>
 

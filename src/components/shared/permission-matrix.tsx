@@ -17,7 +17,6 @@ import { Search, X } from 'lucide-react';
 const PERMISSION_LEVELS: ColumnPermission[] = [
   COLUMN_PERMISSIONS.NONE,
   COLUMN_PERMISSIONS.READ,
-  COLUMN_PERMISSIONS.READ_MASKED,
   COLUMN_PERMISSIONS.WRITE,
 ] as ColumnPermission[];
 
@@ -166,9 +165,9 @@ export function PermissionMatrix({
   return (
     <div className="flex flex-col gap-3">
       {/* Toolbar */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         {/* Column search */}
-        <div className="relative flex-1">
+        <div className="relative w-full max-w-xs">
           <Search
             aria-hidden
             className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-subtle"
@@ -199,39 +198,45 @@ export function PermissionMatrix({
           )}
         </div>
 
-        {/* Bulk actions */}
-        <div className="flex items-center gap-1.5">
-          <span className="font-sans text-caption text-muted">All:</span>
-          {PERMISSION_LEVELS.map((level) => (
-            <button
-              key={level}
-              type="button"
-              onClick={() => setAllPermissions(level)}
-              className={cn(
-                'rounded px-2 py-1 font-sans text-caption transition-colors',
-                'border border-border text-muted hover:text-foreground hover:border-border-medium',
-              )}
-            >
-              {PERMISSION_LABELS[level]}
-            </button>
-          ))}
-        </div>
+        {/* Actions group */}
+        <div className="flex items-center gap-4">
+          {/* Bulk actions */}
+          <div className="flex items-center gap-1.5">
+            <span className="font-sans text-caption text-muted">All:</span>
+            {PERMISSION_LEVELS.map((level) => (
+              <button
+                key={level}
+                type="button"
+                onClick={() => setAllPermissions(level)}
+                className={cn(
+                  'rounded px-2 py-1 font-sans text-caption transition-colors',
+                  'border border-border text-muted hover:text-foreground hover:border-border-medium',
+                )}
+              >
+                {PERMISSION_LABELS[level]}
+              </button>
+            ))}
+          </div>
 
-        {/* Save action */}
-        <div className="flex shrink-0 items-center gap-2">
-          {isDirty && pendingCount > 0 && (
-            <span className="font-sans text-caption text-muted">
-              {pendingCount} {pendingCount === 1 ? 'change' : 'changes'}
-            </span>
-          )}
-          <Button
-            type="button"
-            onClick={handleSave}
-            disabled={!isDirty || isSaving}
-            size="sm"
-          >
-            {isSaving ? 'Saving…' : 'Save'}
-          </Button>
+          {/* Divider */}
+          <div className="h-4 w-px bg-border" />
+
+          {/* Save action */}
+          <div className="flex shrink-0 items-center gap-2">
+            {isDirty && pendingCount > 0 && (
+              <span className="font-sans text-caption text-muted">
+                {pendingCount} {pendingCount === 1 ? 'change' : 'changes'}
+              </span>
+            )}
+            <Button
+              type="button"
+              onClick={handleSave}
+              disabled={!isDirty || isSaving}
+              size="sm"
+            >
+              {isSaving ? 'Saving…' : 'Save'}
+            </Button>
+          </div>
         </div>
       </div>
 

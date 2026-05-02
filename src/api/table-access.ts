@@ -43,7 +43,7 @@ export async function listManagedTables(
  * Get a single managed table by ID
  */
 export async function getManagedTable(tableName: string, schemaName = 'public'): Promise<ManagedTable> {
-  const response = await api.get<ManagedTable>(`/data/tables/${tableName}/columns`, {
+  const response = await api.get<ManagedTable>(`/data/tables/${encodeURIComponent(tableName)}/columns`, {
     params: { schema_name: schemaName },
   });
   return response.data;
@@ -58,7 +58,7 @@ export async function getTablePermissions(
   granteeId?: string,
 ): Promise<ColumnPermissionGrant[]> {
   const response = await api.get<ColumnPermissionGrant[]>(
-    `/data/tables/${tableName}/permissions`,
+    `/data/tables/${encodeURIComponent(tableName)}/permissions`,
     { params: { schema_name: schemaName, ...(granteeId ? { grantee_id: granteeId } : {}) } }
   );
   return response.data;
@@ -74,7 +74,7 @@ export async function grantColumnPermission(
   companyId?: string
 ): Promise<ColumnPermissionGrant> {
   const response = await api.post<ColumnPermissionGrant>(
-    `/data/tables/${tableName}/column-permissions`,
+    `/data/tables/${encodeURIComponent(tableName)}/column-permissions`,
     data,
     { params: { schema_name: schemaName, company_id: companyId } }
   );
@@ -95,7 +95,7 @@ export async function bulkGrantPermissions(
   schemaName = 'public'
 ): Promise<BulkGrantResult> {
   const response = await api.post<BulkGrantResult>(
-    `/data/tables/${tableName}/column-permissions/bulk`,
+    `/data/tables/${encodeURIComponent(tableName)}/column-permissions/bulk`,
     data,
     { params: { schema_name: schemaName } },
   );
@@ -112,7 +112,7 @@ export async function revokeColumnPermission(
   granteeId: string,
   schemaName = 'public'
 ): Promise<void> {
-  await api.delete(`/data/tables/${tableName}/column-permissions/${columnName}`, {
+  await api.delete(`/data/tables/${encodeURIComponent(tableName)}/column-permissions/${encodeURIComponent(columnName)}`, {
     params: { grantee_type: granteeType, grantee_id: granteeId, schema_name: schemaName },
   });
 }
@@ -140,7 +140,7 @@ export async function getUserTableColumnPermissions(
   companyId?: string
 ): Promise<Record<string, string>> {
   const response = await api.get<Record<string, string>>(
-    `/data/tables/${tableName}/user-permissions/${userId}`,
+    `/data/tables/${encodeURIComponent(tableName)}/user-permissions/${userId}`,
     { params: { schema_name: schemaName, company_id: companyId } }
   );
   return response.data;

@@ -44,7 +44,9 @@ export interface GrantColumnPermission {
 }
 
 export interface BulkGrantPermissions {
-  grants: GrantColumnPermission[];
+  grantee_type: 'user' | 'role';
+  grantee_id: string;
+  permissions: Record<string, string>;
 }
 
 export interface UserTablePermissions {

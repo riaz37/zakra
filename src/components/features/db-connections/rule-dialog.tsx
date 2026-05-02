@@ -207,7 +207,7 @@ export function RuleDialog({
                   {...register('rule_text')}
                   id="rule-text"
                   rows={16}
-                  className="font-mono text-mono-sm resize-none"
+                  className="font-mono text-sm resize-none"
                   placeholder={
                     'Describe the business rule in plain language…\n\nExample:\nWhen querying invoices, always filter by company_id = @CompanyId\nand exclude records where status = \'void\'.'
                   }

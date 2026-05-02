@@ -22,13 +22,13 @@ import {
   ScaffoldActionsContainer,
 } from '@/components/shared/scaffold';
 import { SearchInput } from '@/components/shared/search-input';
-import { DataTable } from '@/components/shared/data-table';
+
 import { EmptyState } from '@/components/shared/empty-state';
 import { ErrorState } from '@/components/shared/error-state';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 import { AddConnectionDialog } from '@/components/features/db-connections/add-connection-dialog';
-import { getConnectionsColumns } from '@/components/features/db-connections/connections-columns';
+import { DatabaseCard } from '@/components/features/db-connections/database-card';
 
 export default function DbConnectionsPage() {
   const router = useRouter();
@@ -110,12 +110,7 @@ export default function DbConnectionsPage() {
     }
   }
 
-  const columns = getConnectionsColumns({
-    onTest: handleTest,
-    onEdit: handleEdit,
-    onDelete: (connection) => setDeleteTarget(connection),
-    testingId,
-  });
+  // No longer using getConnectionsColumns
 
   const showEmpty = isEmpty(filtered, isLoading) && !isError;
 
@@ -169,14 +164,18 @@ export default function DbConnectionsPage() {
             }
           />
         ) : (
-          <DataTable
-            columns={columns}
-            data={filtered}
-            isLoading={isLoading}
-            onRowClick={(row) => router.push(`/db-connections/${row.id}`)}
-            caption="Databases list"
-            emptyMessage="No databases match your search."
-          />
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((connection) => (
+              <DatabaseCard
+                key={connection.id}
+                connection={connection}
+                onTest={handleTest}
+                onEdit={handleEdit}
+                onDelete={(c) => setDeleteTarget(c)}
+                isTesting={testingId === connection.id}
+              />
+            ))}
+          </div>
         )}
       </ScaffoldFilterAndContent>
 

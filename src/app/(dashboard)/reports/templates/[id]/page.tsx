@@ -15,8 +15,8 @@ export default function EditTemplatePage() {
   const router = useRouter();
   const companyId = useCurrentCompanyId();
 
-  const { data: template, isLoading } = useReportTemplate(id, companyId);
-  const { data: connectionsData } = useDbConnections({ company_id: companyId });
+  const { data: template, isLoading: isLoadingTemplate } = useReportTemplate(id, companyId);
+  const { data: connectionsData, isLoading: isLoadingConnections } = useDbConnections({ company_id: companyId });
   const connections = connectionsData?.items ?? [];
 
   const updateTemplate = useUpdateReportTemplate(companyId);
@@ -37,7 +37,7 @@ export default function EditTemplatePage() {
     router.push('/reports/templates');
   };
 
-  if (isLoading) {
+  if (isLoadingTemplate || isLoadingConnections) {
     return (
       <ScaffoldContainer>
         <div className="space-y-6 py-6">
@@ -76,6 +76,25 @@ export default function EditTemplatePage() {
         ]}
         title={template.name}
         subtitle="Edit template details and sections."
+        primaryActions={
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push('/reports/templates')}
+              disabled={updateTemplate.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              form="template-form"
+              isLoading={updateTemplate.isPending}
+            >
+              Save changes
+            </Button>
+          </div>
+        }
       />
 
       <ReportTemplateForm
@@ -88,9 +107,7 @@ export default function EditTemplatePage() {
         }}
         onSubmit={handleSubmit}
         isPending={updateTemplate.isPending}
-        onCancel={() => router.push('/reports/templates')}
         connections={connections}
-        submitLabel="Save changes"
       />
     </ScaffoldContainer>
   );

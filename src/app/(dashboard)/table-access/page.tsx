@@ -7,10 +7,10 @@ import { Columns, Table } from 'lucide-react';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import {
   useManagedTables,
-  useTablePermissions,
+  useUserTableColumnPermissions,
   useBulkGrantPermissions,
 } from '@/hooks/useTableAccess';
-import { useRoles } from '@/hooks/useRoles';
+import { useUsers } from '@/hooks/useUsers';
 import { PageHeader } from '@/components/shared/page-header';
 import {
   ScaffoldContainer,
@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/shared/skeleton';
-import type { ManagedTable, ColumnPermission, MaskPattern, ColumnPermissionGrant } from '@/types';
+import type { ManagedTable, ColumnPermission, MaskPattern } from '@/types';
 
 // ── Table List Panel ──────────────────────────────────────────────────────────
 
@@ -139,14 +139,18 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
 
 interface PermissionsPanelProps {
   table: ManagedTable;
-  roleId: string;
+  userId: string;
+  companyId?: string;
 }
 
-function PermissionsPanel({ table, roleId }: PermissionsPanelProps) {
-  const { data: permissionsData, isLoading } = useTablePermissions(
+function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
+  // Uses GET /data/tables/{name}/user-permissions/{user_id}
+  // Returns Record<string, string> e.g. { "firstName": "write", "email": "read_masked" }
+  const { data: permissionsMap, isLoading } = useUserTableColumnPermissions(
     table.table_name,
+    userId,
     table.schema_name,
-    roleId,
+    companyId,
   );
 
   const bulkGrant = useBulkGrantPermissions(table.table_name, table.schema_name);
@@ -156,36 +160,39 @@ function PermissionsPanel({ table, roleId }: PermissionsPanelProps) {
     { permission: ColumnPermission; maskPattern?: MaskPattern | null }
   >;
 
-  const allGrants: ColumnPermissionGrant[] = Array.isArray(permissionsData) ? permissionsData : [];
-  const grants = allGrants.filter((g) => g.grantee_id === roleId);
-
   const initialPermissions = useMemo<PermissionMap>(() => {
     const map: PermissionMap = {};
-    for (const grant of grants) {
-      map[grant.column_name] = {
-        permission: grant.permission,
-        maskPattern: grant.mask_pattern,
-      };
+    if (permissionsMap && typeof permissionsMap === 'object') {
+      for (const [colName, perm] of Object.entries(permissionsMap)) {
+        map[colName] = {
+          permission: perm as ColumnPermission,
+          maskPattern: null,
+        };
+      }
     }
     return map;
-  // grants reference changes when permissionsData changes; stringify is not needed
-  // because TanStack Query returns a stable reference on cache hit
-  }, [grants]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [permissionsMap]);
 
   async function handleSave(rows: ColumnPermissionRow[]) {
     try {
+      const permissionsMap = rows.reduce((acc, row) => {
+        // Fallback to 'read' if 'read_masked' somehow gets through
+        acc[row.columnName] = row.permission === 'read_masked' ? 'read' : row.permission;
+        return acc;
+      }, {} as Record<string, string>);
+
       await bulkGrant.mutateAsync({
-        grants: rows.map((row) => ({
-          column_name: row.columnName,
-          grantee_type: 'role' as const,
-          grantee_id: roleId,
-          permission: row.permission,
-          ...(row.maskPattern ? { mask_pattern: row.maskPattern } : {}),
-        })),
+        grantee_type: 'user',
+        grantee_id: userId,
+        permissions: permissionsMap,
       });
       toast.success('Permissions saved');
-    } catch {
-      toast.error('Failed to save permissions');
+    } catch (err: any) {
+      console.error('Save error:', err);
+      const msg = err.response?.data?.detail || err.response?.data?.message || err.message || 'Unknown error';
+      toast.error('Failed to save permissions', {
+        description: typeof msg === 'string' ? msg : JSON.stringify(msg)
+      });
     }
   }
 
@@ -241,20 +248,29 @@ function PermissionsPanel({ table, roleId }: PermissionsPanelProps) {
   );
 }
 
+// ── helpers ───────────────────────────────────────────────────────────────────
+
+function userDisplayName(user: { first_name: string | null; last_name: string | null; email: string }): string {
+  const parts = [user.first_name, user.last_name].filter(Boolean);
+  return parts.length > 0 ? parts.join(' ') : user.email;
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function TableAccessPage() {
   const companyId = useCurrentCompanyId();
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
-  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const { data, isLoading } = useManagedTables(
     companyId ? { company_id: companyId, page_size: 500 } : undefined,
   );
-  const { data: rolesData, isLoading: rolesLoading } = useRoles({ page_size: 100 });
+  const { data: usersData, isLoading: usersLoading } = useUsers(
+    companyId ? { company_id: companyId, page_size: 200 } : { page_size: 200 },
+  );
 
   const tables: ManagedTable[] = data?.items ?? [];
-  const roles = rolesData?.items ?? [];
+  const users = usersData?.items ?? [];
   const selectedTable = tables.find((t) => t.table_name === selectedTableName) ?? null;
 
   useEffect(() => {
@@ -264,49 +280,58 @@ export default function TableAccessPage() {
   }, [tables, selectedTableName]);
 
   useEffect(() => {
-    if (!selectedRoleId && roles.length > 0) {
-      const defaultRole = roles.find((r) => r.is_default) ?? roles[0];
-      setSelectedRoleId(defaultRole.id);
+    if (!selectedUserId && users.length > 0) {
+      setSelectedUserId(users[0].id);
     }
-  }, [roles, selectedRoleId]);
+  }, [users, selectedUserId]);
 
   return (
     <ScaffoldContainer size="large">
       <PageHeader
         title="Table Access"
-        subtitle="Control which columns each role can read, mask, or modify."
+        subtitle="Control which columns each user can read, mask, or modify."
       />
 
       <ScaffoldFilterAndContent>
-        {/* Role selector */}
+        {/* User selector */}
         <div className="mb-5 flex items-center gap-3">
-          <span className="font-sans text-button text-muted">Role</span>
-          {rolesLoading ? (
-            <Skeleton className="h-8 w-48" rounded="lg" />
+          <span className="font-sans text-button text-muted">User</span>
+          {usersLoading ? (
+            <Skeleton className="h-8 w-56" rounded="lg" />
           ) : (
             <Select
-              value={selectedRoleId ?? ''}
-              onValueChange={setSelectedRoleId}
-              disabled={roles.length === 0}
+              value={selectedUserId ?? ''}
+              onValueChange={setSelectedUserId}
+              disabled={users.length === 0}
             >
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select a role…" />
+              <SelectTrigger className="w-64">
+                <SelectValue placeholder="Select a user…">
+                  {selectedUserId
+                    ? userDisplayName(users.find((u) => u.id === selectedUserId) ?? { first_name: null, last_name: null, email: selectedUserId })
+                    : 'Select a user…'}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent>
-                {roles.map((role) => (
-                  <SelectItem key={role.id} value={role.id} label={role.name}>
-                    <span>{role.name}</span>
-                    {role.is_default && (
-                      <span className="ml-2 font-sans text-caption text-muted">default</span>
-                    )}
-                  </SelectItem>
-                ))}
+              <SelectContent alignItemWithTrigger={false} align="start" className="w-72">
+                {users.map((user) => {
+                  const name = userDisplayName(user);
+                  const showEmail = name !== user.email;
+                  return (
+                    <SelectItem key={user.id} value={user.id} label={name} className="py-1.5">
+                      <span className="flex flex-col gap-0.5 min-w-0">
+                        <span className="truncate">{name}</span>
+                        {showEmail && (
+                          <span className="truncate text-muted-foreground/60 text-xs">{user.email}</span>
+                        )}
+                      </span>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           )}
         </div>
 
-        {isLoading && (
+        {(isLoading || usersLoading) && (
           <div className="flex gap-4">
             <Skeleton className="h-64 w-56 shrink-0" rounded="xl" />
             <div className="flex-1 space-y-2">
@@ -333,11 +358,12 @@ export default function TableAccessPage() {
               onSelect={setSelectedTableName}
             />
 
-            {selectedTable && selectedRoleId ? (
+            {selectedTable && selectedUserId ? (
               <PermissionsPanel
-                key={`${selectedTable.table_name}-${selectedRoleId}`}
+                key={`${selectedTable.table_name}-${selectedUserId}`}
                 table={selectedTable}
-                roleId={selectedRoleId}
+                userId={selectedUserId}
+                companyId={companyId ?? undefined}
               />
             ) : (
               <div className="flex flex-1 items-center justify-center py-16">
