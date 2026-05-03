@@ -195,7 +195,6 @@ function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
       });
       toast.success('Permissions saved');
     } catch (err: any) {
-      console.error('Save error:', err);
       const serverMsg = err.response?.data?.detail || err.response?.data?.message;
       const msg = serverMsg
         ? (typeof serverMsg === 'string' ? serverMsg : JSON.stringify(serverMsg))
