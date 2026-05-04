@@ -20,7 +20,7 @@
 
   /* ==========  Brand + state  ========== */
   --color-accent: #3ecf8e;
-  --color-accent-soft: rgba(62, 207, 142, 0.1);
+  --color-accent-soft: rgba(62, 207, 142, 0.10);
   --color-gold: #d99a45;
   --color-error: #e8476a;
   --color-success: #3ecf8e;
@@ -31,7 +31,7 @@
   --color-chart-2: #d99a45;
   --color-chart-3: #9fbbe0;
   --color-chart-4: #c0a8dd;
-  --color-chart-5: #2ea574;
+  --color-chart-5: #004d2d;
 
   /* ==========  Status colors for charts  ========== */
   --color-completed: #3ecf8e;
@@ -42,8 +42,10 @@
   /* ==========  State surface + border tokens  ========== */
   --color-error-bg: rgba(232, 71, 106, 0.08);
   --color-error-border: rgba(232, 71, 106, 0.2);
-  --color-accent-bg: rgba(62, 207, 142, 0.08);
-  --color-accent-border: rgba(62, 207, 142, 0.22);
+  --color-accent-bg: rgba(62, 207, 142, 0.10);
+  --color-accent-border: rgba(62, 207, 142, 0.20);
+  --color-accent-fg: #0d1f16;
+  --color-accent-hover: rgba(62, 207, 142, 0.16);
   --color-warning-bg: rgba(217, 154, 69, 0.1);
   --color-warning-border: rgba(217, 154, 69, 0.25);
 
@@ -65,13 +67,13 @@
   --color-popover: #21201c;
   --color-popover-foreground: #ebeae5;
   --color-muted-foreground: rgba(235, 234, 229, 0.65);
-  --color-accent-foreground: #111111;
+  --color-accent-foreground: #ffffff;
   --color-input: rgba(235, 234, 229, 0.1);
-  --color-ring: rgba(62, 207, 142, 0.4);
+  --color-ring: rgba(62, 207, 142, 0.40);
   --color-destructive: #e8476a;
   --color-destructive-foreground: #ebeae5;
   --color-primary: #3ecf8e;
-  --color-primary-foreground: #111111;
+  --color-primary-foreground: #0d1f16;
   --color-secondary: #282722;
   --color-secondary-foreground: #ebeae5;
   --color-card: #21201c;
@@ -98,7 +100,7 @@
   --shadow-ambient: none;
   --shadow-elevated: rgba(0, 0, 0, 0.5) 0px 16px 40px,
     rgba(235, 234, 229, 0.06) 0px 0px 0px 1px;
-  --shadow-focus: 0 0 0 2px rgba(62, 207, 142, 0.4);
+  --shadow-focus: 0 0 0 2px rgba(62, 207, 142, 0.40);
 
   /* ==========  Typography scale  ========== */
   --text-hero: 4.5rem;
@@ -173,6 +175,8 @@
   --color-info-soft: var(--info-soft);
   --color-destructive-soft: var(--destructive-soft);
   --color-primary-fg: var(--primary-fg);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-hover: var(--accent-hover);
   --color-brand-deep: var(--brand-deep);
 
   /* Radius aliases */
@@ -207,11 +211,13 @@
   --surface-deep: #35332e;
   --border-strong: rgba(235, 234, 229, 0.22);
   --primary: #3ecf8e;
-  --primary-hover: #45e39c;
-  --primary-soft: rgba(62, 207, 142, 0.1);
-  --primary-fg: #111111;
+  --primary-hover: #2ea574;
+  --primary-soft: rgba(62, 207, 142, 0.10);
+  --primary-fg: #0d1f16;
   --accent: #3ecf8e;
-  --accent-soft: rgba(62, 207, 142, 0.1);
+  --accent-soft: rgba(62, 207, 142, 0.10);
+  --accent-fg: #0d1f16;
+  --accent-hover: rgba(62, 207, 142, 0.16);
   --warning: #d99a45;
   --warning-soft: rgba(217, 154, 69, 0.14);
   --info: #9fbbe0;
@@ -221,7 +227,7 @@
   --brand-deep: #2ea574;
 
   /* ==========  Chart HSL variables (legacy compatibility)  ========== */
-  --chart-1: 153 60% 53%;
+  --chart-1: 152 55% 53%;
   --chart-2: 32 70% 56%;
   --chart-3: 213 47% 75%;
   --chart-4: 267 40% 76%;
@@ -252,11 +258,13 @@
   --surface-deep: #35332e;
   --border-strong: rgba(235, 234, 229, 0.22);
   --primary: #3ecf8e;
-  --primary-hover: #45e39c;
-  --primary-soft: rgba(62, 207, 142, 0.1);
-  --primary-fg: #111111;
+  --primary-hover: #2ea574;
+  --primary-soft: rgba(62, 207, 142, 0.10);
+  --primary-fg: #0d1f16;
   --accent: #3ecf8e;
-  --accent-soft: rgba(62, 207, 142, 0.1);
+  --accent-soft: rgba(62, 207, 142, 0.10);
+  --accent-fg: #0d1f16;
+  --accent-hover: rgba(62, 207, 142, 0.16);
   --warning: #d99a45;
   --warning-soft: rgba(217, 154, 69, 0.14);
   --info: #9fbbe0;
@@ -286,7 +294,7 @@
 
   ::selection {
     background: var(--color-accent);
-    color: #111111;
+    color: var(--color-accent-fg);
   }
 
   *,
@@ -363,11 +371,11 @@
 
 /* ==========  Motion utilities  ========== */
 @utility animate-fade-up {
-  animation: fade-up 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @utility animate-fade-in {
-  animation: fade-in 0.18s ease-out both;
+  animation: fade-in 0.35s ease-out both;
 }
 
 @utility animate-shimmer {

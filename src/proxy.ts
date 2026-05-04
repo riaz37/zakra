@@ -1,19 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const AUTH_COOKIE = 'kb-auth';
-const PUBLIC_PATHS = ['/login'];
+
+const ALWAYS_PUBLIC: string[] = ['/'];
+const PUBLIC_PREFIXES: string[] = ['/login'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
   const hasAuthCookie = request.cookies.has(AUTH_COOKIE);
+
+  const isAlwaysPublic = ALWAYS_PUBLIC.includes(pathname);
+  const isPublic = isAlwaysPublic || PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 
   if (!hasAuthCookie && !isPublic) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (hasAuthCookie && isPublic) {
-    return NextResponse.redirect(new URL('/', request.url));
+  // Redirect authenticated users away from login to the dashboard
+  if (hasAuthCookie && PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) {
+    return NextResponse.redirect(new URL('/overview', request.url));
   }
 
   return NextResponse.next();

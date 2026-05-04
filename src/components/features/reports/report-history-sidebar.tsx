@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronRight, Plus } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/shared/skeleton';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
@@ -81,10 +81,9 @@ export function ReportHistorySidebar() {
       <div className="border-b border-border p-4">
         <Link
           href="/reports/ai-generate"
-          className="flex w-full items-center justify-between rounded-lg bg-accent px-4 py-2.5 font-sans text-button font-medium text-background transition-colors duration-150 hover:opacity-90"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 font-sans text-button font-semibold text-primary-foreground shadow-sm transition-all duration-200 hover:bg-accent/90 hover:shadow-md active:scale-[0.98]"
         >
-          <span>New report</span>
-          <Plus className="h-4 w-4" aria-hidden />
+          New report
         </Link>
       </div>
 

@@ -1,0 +1,81 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const NAV_LINKS = [
+  { label: "Features", href: "#features" },
+  { label: "Demo", href: "#demo" },
+] as const;
+
+export function LandingNav() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-[120ms]",
+        scrolled
+          ? "bg-background/90 backdrop-blur-md border-b border-border"
+          : "bg-transparent border-b border-transparent"
+      )}
+    >
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+        {/* Logo */}
+        <div className="flex items-center gap-10">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-foreground transition-opacity duration-[120ms] hover:opacity-80"
+          >
+            <span
+              aria-hidden
+              className="inline-flex size-5 items-center justify-center rounded-sm bg-accent"
+            >
+              <span className="block size-1.5 rounded-[1px] bg-[var(--color-accent-fg)]" />
+            </span>
+            <span className="text-[15px] font-semibold tracking-[-0.02em] text-foreground">
+              Zakra
+            </span>
+          </Link>
+
+          <nav className="hidden items-center gap-6 md:flex">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-[13px] font-medium text-muted transition-colors duration-[120ms] hover:text-foreground"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-1.5">
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-[13px] text-muted hover:text-foreground")}
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: "default", size: "sm" }), "text-[13px]")}
+          >
+            Get started
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}
