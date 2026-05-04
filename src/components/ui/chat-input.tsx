@@ -2,12 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
-  Plus,
   ArrowUp,
   Square,
   X,
   FileText,
-  Paperclip,
   ImageIcon,
   Video,
   Music,
@@ -521,7 +519,6 @@ export function ChatInput({
   const [isDragging, setIsDragging] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -763,14 +760,6 @@ export function ChatInput({
                 locked={connectionLocked}
               />
             )}
-            <button
-              className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-40 text-muted hover:bg-surface-400"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={disabled || files.length >= maxFiles}
-              title={files.length >= maxFiles ? `Max ${maxFiles} files` : "Attach files"}
-            >
-              <Paperclip className="h-4 w-4" />
-            </button>
           </div>
 
           {/* Right: send / stop */}
@@ -831,17 +820,6 @@ export function ChatInput({
         )}
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple
-        className="hidden"
-        accept={acceptedFileTypes?.join(",")}
-        onChange={(e) => {
-          handleFileSelect(e.target.files);
-          e.target.value = "";
-        }}
-      />
     </div>
   );
 }
