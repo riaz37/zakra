@@ -2,11 +2,11 @@
  * React Query hooks for chat session CRUD.
  */
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import * as chatApi from '../api/chat';
 import type { ChatSessionCreate, ChatSessionUpdate } from '../types/chat';
 
-const SESSIONS_KEY = ['chat-sessions'];
+export const SESSIONS_KEY = ['chat-sessions'];
 
 export function useChatSessions(companyId?: string) {
   return useQuery({
@@ -22,6 +22,7 @@ export function useChatSession(sessionId: string | undefined, companyId?: string
     queryKey: ['chat-session', sessionId, companyId],
     queryFn: () => chatApi.getSession(sessionId!, companyId),
     enabled: !!sessionId,
+    placeholderData: keepPreviousData,
   });
 }
 

@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useChatSessions } from '@/hooks/useChatSessions';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
-import { MessageSquarePlus, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/shared/skeleton';
@@ -83,12 +82,6 @@ export function ChatSidebar() {
                       transition={{ duration: 0.2 }}
                     />
                   )}
-                  <MessageSquare
-                    className={cn(
-                      'h-3.5 w-3.5 shrink-0 transition-colors',
-                      isActive ? 'text-accent' : 'text-fg-subtle group-hover:text-foreground'
-                    )}
-                  />
                   <span className="truncate">{session.title || 'Untitled conversation'}</span>
                 </Link>
               </li>

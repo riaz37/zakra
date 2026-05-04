@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { ChevronDown, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useChatStream } from '@/hooks/useChatStream';
 import { getPendingTask, clearPendingTask } from '@/store/pendingChatTask';
 import { useChatMessages } from '@/hooks/useChatMessages';
-import { useChatSession } from '@/hooks/useChatSessions';
+import { useChatSession, SESSIONS_KEY } from '@/hooks/useChatSessions';
 import { useDbConnection } from '@/hooks/useDbConnections';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
@@ -25,6 +26,7 @@ export default function ChatSessionPage() {
   const params = useParams<{ sessionId: string }>();
   const sessionId = params.sessionId;
   const companyId = useCurrentCompanyId();
+  const queryClient = useQueryClient();
   const { data: session } = useChatSession(sessionId, companyId);
   const { data: connection } = useDbConnection(
     session?.connection_id ?? undefined,
@@ -47,6 +49,8 @@ export default function ChatSessionPage() {
   } = useChatStream({
     onComplete: () => {
       clearPendingTask(sessionId);
+      void queryClient.invalidateQueries({ queryKey: SESSIONS_KEY });
+      void queryClient.invalidateQueries({ queryKey: ['chat-session', sessionId] });
       void invalidate().then(() => reset());
     },
   });
