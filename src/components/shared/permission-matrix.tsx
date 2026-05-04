@@ -194,7 +194,7 @@ export function PermissionMatrix({
               type="button"
               onClick={() => setColumnSearch('')}
               aria-label="Clear filter"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-subtle hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-subtle hover:text-foreground"
             >
               <X className="size-3.5" />
             </button>
@@ -212,7 +212,7 @@ export function PermissionMatrix({
                 type="button"
                 onClick={() => setAllPermissions(level)}
                 className={cn(
-                  'rounded px-2 py-1 font-sans text-caption transition-colors',
+                  'cursor-pointer rounded px-2 py-1 font-sans text-caption transition-colors',
                   'border border-border text-muted hover:text-foreground hover:border-border-medium',
                 )}
               >

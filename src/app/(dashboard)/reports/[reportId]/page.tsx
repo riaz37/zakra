@@ -142,7 +142,7 @@ function SectionBlock({ section, index }: SectionBlockProps) {
                 type="button"
                 onClick={() => setTableOpen((v) => !v)}
                 aria-expanded={tableOpen}
-                className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.06em] text-fg-muted transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                className="inline-flex cursor-pointer items-center gap-1.5 font-mono text-micro uppercase tracking-[0.06em] text-fg-muted transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
               >
                 Query Result
                 <span className="text-subtle">·</span>

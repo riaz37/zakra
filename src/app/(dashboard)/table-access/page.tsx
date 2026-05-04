@@ -105,7 +105,7 @@ function TableListPanel({ tables, selectedTableName, onSelect }: TableListPanelP
                   type="button"
                   onClick={() => onSelect(table.table_name)}
                   className={cn(
-                    'flex w-full items-start justify-between gap-2 px-3 py-2.5 text-left',
+                    'flex w-full cursor-pointer items-start justify-between gap-2 px-3 py-2.5 text-left',
                     'transition-colors focus-visible:bg-surface-400 focus-visible:outline-none',
                     isActive
                       ? 'bg-surface-400 text-foreground'

@@ -110,7 +110,7 @@ export function SearchInput({
           onClick={handleClear}
           aria-label="Clear search"
           className={cn(
-            "absolute right-2 top-1/2 -translate-y-1/2 inline-flex size-6 items-center justify-center",
+            "absolute right-2 top-1/2 -translate-y-1/2 inline-flex size-6 cursor-pointer items-center justify-center",
             "rounded-md text-muted transition-colors",
             "hover:text-foreground focus-visible:text-foreground focus-visible:outline-none",
             "focus-visible:border focus-visible:border-border-medium",

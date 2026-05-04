@@ -211,7 +211,7 @@ function FilePreviewCard({
 
       {/* Remove button */}
       <button
-        className="absolute top-1.5 right-1.5 h-5 w-5 rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-surface-500 border border-border"
+        className="absolute top-1.5 right-1.5 h-5 w-5 cursor-pointer rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-surface-500 border border-border"
         onClick={() => onRemove(file.id)}
       >
         <X className="h-3 w-3 text-foreground" />
@@ -274,7 +274,7 @@ function TextualFilePreviewCard({
       <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         {file.textContent && (
           <button
-            className="h-5 w-5 rounded flex items-center justify-center bg-surface-500 border border-border"
+            className="h-5 w-5 cursor-pointer rounded flex items-center justify-center bg-surface-500 border border-border"
             onClick={() => void navigator.clipboard.writeText(file.textContent ?? "")}
             title="Copy content"
           >
@@ -465,7 +465,7 @@ function DbSelectorButton({
                 type="button"
                 onClick={() => handleSelect(c.id)}
                 className={cn(
-                  "flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-surface-400",
+                  "flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-surface-400",
                   c.id === selectedConnectionId && "bg-surface-300",
                 )}
               >
@@ -519,6 +519,15 @@ export function ChatInput({
   const [isDragging, setIsDragging] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const prevStreamingRef = useRef(isStreaming);
+
+  // Focus textarea when streaming ends
+  useEffect(() => {
+    if (prevStreamingRef.current && !isStreaming) {
+      textareaRef.current?.focus();
+    }
+    prevStreamingRef.current = isStreaming;
+  }, [isStreaming]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -776,7 +785,7 @@ export function ChatInput({
             {isStreaming ? (
               <button
                 onClick={onStop}
-                className="flex items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 font-sans text-body transition-colors hover:opacity-80 bg-error text-foreground"
+                className="flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-lg)] px-3 py-1.5 font-sans text-body transition-colors hover:opacity-80 bg-error text-foreground"
               >
                 <Square className="h-3.5 w-3.5" />
                 Stop
@@ -786,7 +795,7 @@ export function ChatInput({
                 onClick={handleSend}
                 disabled={!canSend}
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed",
+                  "flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed",
                   canSend ? "bg-accent text-background" : "bg-surface-400 text-muted",
                 )}
                 title="Send (Enter)"

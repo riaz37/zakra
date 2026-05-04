@@ -211,7 +211,7 @@ function CompanyHierarchyInner() {
               onClick={() => setHighlightSuspended((v) => !v)}
               aria-pressed={highlightSuspended}
               className={cn(
-                'flex items-center gap-1.5 px-2 py-1 rounded-sm text-micro font-medium transition-colors',
+                'flex cursor-pointer items-center gap-1.5 px-2 py-1 rounded-sm text-micro font-medium transition-colors',
                 highlightSuspended
                   ? 'bg-error/20 text-error border border-error/40'
                   : 'bg-error/10 text-error border border-transparent hover:bg-error/20',

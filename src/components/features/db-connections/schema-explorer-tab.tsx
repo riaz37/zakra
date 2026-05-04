@@ -206,7 +206,7 @@ function SchemaTreePanel({
                         type="button"
                         onClick={() => onSelect(key)}
                         className={cn(
-                          'flex w-full items-center gap-2 px-3 py-[7px] text-left',
+                          'flex w-full cursor-pointer items-center gap-2 px-3 py-[7px] text-left',
                           'border-l-2 transition-colors',
                           'focus-visible:bg-surface-400 focus-visible:outline-none',
                           isActive

@@ -240,7 +240,7 @@ export default function CompaniesPage() {
             onClick={() => setView('list')}
             aria-pressed={view === 'list'}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
+              'inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
               view === 'list'
                 ? 'bg-surface-400 text-foreground'
                 : 'text-fg-muted hover:text-foreground',
@@ -254,7 +254,7 @@ export default function CompaniesPage() {
             onClick={() => setView('hierarchy')}
             aria-pressed={view === 'hierarchy'}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
+              'inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
               view === 'hierarchy'
                 ? 'bg-surface-400 text-foreground'
                 : 'text-fg-muted hover:text-foreground',

@@ -104,7 +104,7 @@ export function ChatSidebar() {
       <div className="p-4 border-b border-border/50">
         <button
           onClick={() => router.push('/chat')}
-          className="flex w-full items-center justify-center rounded-lg bg-accent px-4 py-2.5 font-sans text-button font-semibold text-primary-foreground shadow-sm transition-all duration-200 hover:bg-accent/90 hover:shadow-md active:scale-[0.98]"
+          className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-accent px-4 py-2.5 font-sans text-button font-semibold text-primary-foreground shadow-sm transition-all duration-200 hover:bg-accent/90 hover:shadow-md active:scale-[0.98]"
         >
           New chat
         </button>

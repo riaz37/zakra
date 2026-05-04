@@ -106,7 +106,7 @@ function MessageActions({
     <div className="flex items-center gap-1 rounded-md border border-border bg-surface-200 p-0.5 shadow-sm">
       <button
         onClick={handleCopy}
-        className="flex h-7 w-7 items-center justify-center rounded-sm text-fg-subtle transition-colors hover:bg-surface-400 hover:text-foreground"
+        className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-fg-subtle transition-colors hover:bg-surface-400 hover:text-foreground"
         title="Copy message"
       >
         {copied ? (
@@ -118,7 +118,7 @@ function MessageActions({
       {onReRun && (
         <button
           onClick={onReRun}
-          className="flex h-7 w-7 items-center justify-center rounded-sm text-fg-subtle transition-colors hover:bg-surface-400 hover:text-foreground"
+          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-fg-subtle transition-colors hover:bg-surface-400 hover:text-foreground"
           title="Re-run query"
         >
           <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.5} />

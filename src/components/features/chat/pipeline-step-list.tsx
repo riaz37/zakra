@@ -116,7 +116,7 @@ export function PipelineSummary({ steps }: PipelineSummaryProps) {
     <div className="mb-3">
       <button
         onClick={() => setExpanded((e) => !e)}
-        className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
+        className="flex cursor-pointer items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
       >
         <ChevronRight
           className={cn('h-3 w-3 transition-transform duration-150', expanded && 'rotate-90')}

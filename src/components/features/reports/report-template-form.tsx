@@ -251,7 +251,7 @@ export function ReportTemplateForm({
               <button
                 type="button"
                 onClick={addSection}
-                className="flex items-center gap-1 rounded-md px-2 py-1 font-sans text-caption text-muted transition-colors hover:bg-surface-300 hover:text-foreground focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+                className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 font-sans text-caption text-muted transition-colors hover:bg-surface-300 hover:text-foreground focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
               >
                 <Plus aria-hidden size={13} strokeWidth={1.5} />
                 Add
@@ -270,7 +270,7 @@ export function ReportTemplateForm({
                       type="button"
                       onClick={() => setActiveIdx(idx)}
                       className={cn(
-                        'group/item flex w-full items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left transition-all',
+                        'group/item flex w-full cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left transition-all',
                         isActive
                           ? 'border-accent/30 bg-accent/10 text-foreground shadow-sm ring-1 ring-accent/20'
                           : 'border-transparent text-muted hover:bg-surface-300 hover:text-foreground',

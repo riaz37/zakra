@@ -285,7 +285,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
             <>
               <button
                 onClick={() => setShowChart((s) => !s)}
-                className="flex items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted focus-visible:outline-none"
+                className="flex cursor-pointer items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted focus-visible:outline-none"
                 title={showChart ? 'Hide chart' : 'Show chart'}
               >
                 <BarChart2 className="h-3 w-3" strokeWidth={2} />
@@ -298,7 +298,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
             <>
               <button
                 onClick={handleCopySql}
-                className="flex items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
+                className="flex cursor-pointer items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
                 title="Copy SQL"
               >
                 {sqlCopied ? (
@@ -310,7 +310,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               <div className="h-3 w-px bg-border/60" />
               <button
                 onClick={() => setSqlOpen((o) => !o)}
-                className="flex items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted focus-visible:outline-none"
+                className="flex cursor-pointer items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted focus-visible:outline-none"
               >
                 {sqlOpen ? (
                   <ChevronDown className="h-3 w-3" strokeWidth={2} />
@@ -438,7 +438,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="flex items-center gap-1 rounded-md px-2 py-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-foreground disabled:opacity-30 disabled:hover:text-fg-subtle"
+                className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-fg-subtle"
               >
                 <ChevronRight className="h-3 w-3 rotate-180" />
                 Prev
@@ -446,7 +446,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className="flex items-center gap-1 rounded-md px-2 py-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-foreground disabled:opacity-30 disabled:hover:text-fg-subtle"
+                className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-fg-subtle"
               >
                 Next
                 <ChevronRight className="h-3 w-3" />

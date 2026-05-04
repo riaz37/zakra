@@ -157,7 +157,7 @@ function ReportPickerBlock({ data }: { data: ReportPickerData }) {
               key={item.id}
               onClick={() => setSelected(item.id === selected ? null : item.id)}
               className={cn(
-                'relative rounded-lg border p-3 text-left transition-all duration-150',
+                'relative cursor-pointer rounded-lg border p-3 text-left transition-all duration-150',
                 isSelected
                   ? 'border-accent/40 bg-accent-soft shadow-[0_0_0_1px_var(--color-accent-border)]'
                   : 'border-border bg-surface-300 hover:bg-surface-400',
@@ -187,7 +187,7 @@ function ReportPickerBlock({ data }: { data: ReportPickerData }) {
         className={cn(
           'flex items-center gap-2 rounded-lg px-4 py-2 font-sans text-body font-medium transition-all duration-150',
           selected
-            ? 'bg-accent text-primary-foreground hover:bg-accent/80'
+            ? 'cursor-pointer bg-accent text-primary-foreground hover:bg-accent/80'
             : 'cursor-not-allowed bg-surface-300 text-fg-subtle',
         )}
       >

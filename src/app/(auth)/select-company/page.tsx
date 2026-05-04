@@ -179,7 +179,7 @@ function SelectCompanyList({
               whileTap={tapPress}
               onClick={() => onSelect(company)}
               className={cn(
-                'flex w-full items-center gap-3 rounded-lg border border-border bg-surface-200 px-4 py-3',
+                'flex w-full cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface-200 px-4 py-3',
                 'text-left transition-colors duration-150',
                 'hover:border-border-strong hover:bg-surface-300',
               )}
