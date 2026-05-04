@@ -11,11 +11,11 @@ interface AnimateInProps {
 }
 
 export function AnimateIn({ children, className, delay = 0, as: Tag = "div" }: AnimateInProps) {
-  const { ref, inView } = useInView();
+  const { ref, inView } = useInView<HTMLElement>();
 
   return (
     <Tag
-      ref={ref as React.RefObject<HTMLDivElement>}
+      ref={ref as any}
       className={cn(
         "transition-[opacity,transform] will-change-[opacity,transform]",
         inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[10px]",

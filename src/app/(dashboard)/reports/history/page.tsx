@@ -75,9 +75,11 @@ export default function ReportHistoryPage() {
   const totalPages = Math.max(1, Math.ceil(totalCount / DEFAULT_PAGE_SIZE));
   const hasActiveFilters = search.trim() !== '' || statusFilter !== 'all';
 
-  function handleStatusChange(v: string) {
-    setStatusFilter(v as StatusFilter);
-    setPage(0);
+  function handleStatusChange(v: StatusFilter | null) {
+    if (v) {
+      setStatusFilter(v);
+      setPage(0);
+    }
   }
 
   return (
