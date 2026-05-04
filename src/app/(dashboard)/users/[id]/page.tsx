@@ -14,6 +14,7 @@ import {
 } from '@/hooks/useUsers';
 import { useRoles } from '@/hooks/useRoles';
 import type { UserRole, AssignRolesRequest } from '@/types';
+import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
 
 import { PageHeader } from '@/components/shared/page-header';
 import {
@@ -132,10 +133,17 @@ export default function UserDetailPage() {
   const id = params.id;
 
   const [assignRoleOpen, setAssignRoleOpen] = useState(false);
+  const [rolesPage, setRolesPage] = useState(0);
 
   const { data: user, isLoading, isError } = useUser(id);
   const { data: userRoles, isLoading: rolesLoading } = useUserRoles(id);
   const assignMutation = useAssignUserRoles(id);
+
+  const rolesTotalCount = userRoles?.length ?? 0;
+  const rolesTotalPages = Math.max(1, Math.ceil(rolesTotalCount / DEFAULT_PAGE_SIZE));
+  const pagedRoles = userRoles
+    ? userRoles.slice(rolesPage * DEFAULT_PAGE_SIZE, (rolesPage + 1) * DEFAULT_PAGE_SIZE)
+    : [];
 
   const roleColumns: ColumnDef<UserRole>[] = [
     {
@@ -310,8 +318,13 @@ export default function UserDetailPage() {
                 ) : (
                   <DataTable
                     columns={roleColumns}
-                    data={userRoles}
+                    data={pagedRoles}
                     caption="Assigned roles"
+                    pageIndex={rolesPage}
+                    pageCount={rolesTotalPages}
+                    onPageChange={setRolesPage}
+                    pageSize={DEFAULT_PAGE_SIZE}
+                    totalCount={rolesTotalCount}
                   />
                 )}
               </ScaffoldSectionContent>

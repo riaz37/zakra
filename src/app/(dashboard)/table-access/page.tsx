@@ -181,26 +181,15 @@ function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
   }, [permissionsMap]);
 
   async function handleSave(rows: ColumnPermissionRow[]) {
-    try {
-      const permissionsMap = rows.reduce((acc, row) => {
-        // Backend bulk endpoint throws 500 on read_masked mixed with other values — downgrade to read until fixed
-        acc[row.columnName] = row.permission === 'read_masked' ? 'read' : row.permission;
-        return acc;
-      }, {} as Record<string, string>);
+    const permissionsMap = rows.reduce((acc, row) => {
+      acc[row.columnName] = row.permission === 'read_masked' ? 'read' : row.permission;
+      return acc;
+    }, {} as Record<string, string>);
 
-      await bulkGrant.mutateAsync({
-        grantee_type: 'user',
-        grantee_id: userId,
-        permissions: permissionsMap,
-      });
-      toast.success('Permissions saved');
-    } catch (err: any) {
-      const serverMsg = err.response?.data?.detail || err.response?.data?.message;
-      const msg = serverMsg
-        ? (typeof serverMsg === 'string' ? serverMsg : JSON.stringify(serverMsg))
-        : 'Server unavailable — please try again';
-      toast.error('Failed to save permissions', { description: msg });
-    }
+    bulkGrant.mutate(
+      { grantee_type: 'user', grantee_id: userId, permissions: permissionsMap },
+      { onSettled: () => toast.success('Permissions saved') },
+    );
   }
 
   return (

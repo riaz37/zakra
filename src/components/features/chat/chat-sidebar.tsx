@@ -117,8 +117,7 @@ export function ChatSidebar() {
               <Skeleton className="mb-3 h-2.5 w-10" />
               <div className="space-y-1">
                 {[0.75, 1, 0.6].map((w, i) => (
-                  <div key={i} className="flex items-center gap-3 px-3 py-2">
-                    <Skeleton className="h-4 w-4 shrink-0" />
+                  <div key={i} className="flex items-center px-3 py-2">
                     <Skeleton className="h-3.5" style={{ width: `${w * 100}%` }} />
                   </div>
                 ))}
@@ -129,8 +128,7 @@ export function ChatSidebar() {
               <Skeleton className="mb-3 h-2.5 w-20" />
               <div className="space-y-1">
                 {[0.85, 0.55].map((w, i) => (
-                  <div key={i} className="flex items-center gap-3 px-3 py-2">
-                    <Skeleton className="h-4 w-4 shrink-0" />
+                  <div key={i} className="flex items-center px-3 py-2">
                     <Skeleton className="h-3.5" style={{ width: `${w * 100}%` }} />
                   </div>
                 ))}

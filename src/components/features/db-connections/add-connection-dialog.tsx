@@ -311,14 +311,13 @@ export function AddConnectionDialog({
               name="password"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>
-                    {isEdit ? 'Password (leave blank to keep)' : 'Password'}
-                  </FieldLabel>
+                  <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                   <Input
                     {...field}
                     id={field.name}
                     type="password"
                     autoComplete="new-password"
+                    placeholder={isEdit ? 'Leave blank to keep' : undefined}
                     aria-invalid={fieldState.invalid}
                   />
                   {fieldState.invalid && (

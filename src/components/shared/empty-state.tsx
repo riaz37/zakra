@@ -64,7 +64,7 @@ export function EmptyState({
       initial={reduced ? 'visible' : 'hidden'}
       animate="visible"
       className={cn(
-        'flex flex-col items-start gap-3 rounded-lg border border-dashed border-border px-8 py-20',
+        'flex flex-col items-start gap-3 rounded-lg border border-dashed border-border px-8 py-20 max-w-2xl mx-auto w-full',
         className,
       )}
     >

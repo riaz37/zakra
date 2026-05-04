@@ -13,6 +13,7 @@ import {
   useConnectionSchema,
   useLearnSchema,
 } from '@/hooks/useDbConnections';
+import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { EmptyState } from '@/components/shared/empty-state';
@@ -265,19 +266,34 @@ interface TableDetailPanelProps {
   table: TableSchema;
 }
 
+const SCHEMA_COL_PAGE_SIZE = 20;
+
 function TableDetailPanel({ table }: TableDetailPanelProps) {
   const [colSearch, setColSearch] = useState('');
-  
+  const [colPage, setColPage] = useState(0);
+
   const columns = useMemo(() => getSchemaColumns(), []);
-  
+
   const filteredColumns = useMemo(() => {
     if (!colSearch.trim()) return table.columns;
     const term = colSearch.toLowerCase();
-    return table.columns.filter((c) => 
-      c.name.toLowerCase().includes(term) || 
+    return table.columns.filter((c) =>
+      c.name.toLowerCase().includes(term) ||
       c.data_type.toLowerCase().includes(term)
     );
   }, [table.columns, colSearch]);
+
+  const colTotalCount = filteredColumns.length;
+  const colTotalPages = Math.max(1, Math.ceil(colTotalCount / SCHEMA_COL_PAGE_SIZE));
+  const pagedColumns = filteredColumns.slice(
+    colPage * SCHEMA_COL_PAGE_SIZE,
+    (colPage + 1) * SCHEMA_COL_PAGE_SIZE,
+  );
+
+  function handleColSearch(value: string) {
+    setColSearch(value);
+    setColPage(0);
+  }
 
   return (
     <div className="min-w-0 flex-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -322,7 +338,7 @@ function TableDetailPanel({ table }: TableDetailPanelProps) {
         <div className="w-full max-w-sm">
           <SearchInput
             value={colSearch}
-            onChange={setColSearch}
+            onChange={handleColSearch}
             placeholder="Search columns by name or type…"
             ariaLabel="Search table columns"
           />
@@ -333,9 +349,14 @@ function TableDetailPanel({ table }: TableDetailPanelProps) {
       <div className="w-full">
         <DataTable
           columns={columns}
-          data={filteredColumns}
+          data={pagedColumns}
           caption={`${table.table_name} columns definition`}
           emptyMessage="No columns found matching your search."
+          pageIndex={colPage}
+          pageCount={colTotalPages}
+          onPageChange={setColPage}
+          pageSize={SCHEMA_COL_PAGE_SIZE}
+          totalCount={colTotalCount}
         />
       </div>
     </div>

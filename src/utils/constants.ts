@@ -18,7 +18,7 @@ export const DENSITY_STORAGE_KEY = 'zakra-density';
 
 // Pagination
 export const DEFAULT_PAGE_SIZE = 10;
-export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
+export const PAGE_SIZE_OPTIONS = [11, 25, 50, 100];
 
 // User Types
 export const USER_TYPES = {
@@ -100,11 +100,11 @@ export type RequiredRole = 'admin' | 'super_admin';
 
 // Navigation Items — Overview is the home (/); admin-only items gated by requiredRole
 export const NAV_ITEMS = [
-  { label: 'Overview', path: ROUTES.DASHBOARD, icon: 'LayoutDashboard' },
-  { label: 'Chat', path: ROUTES.CHAT, icon: 'MessageCircle' },
-  { label: 'Reports', path: ROUTES.REPORT_AI_GENERATE, icon: 'FileBarChart' },
-  { label: 'Companies', path: ROUTES.COMPANIES, icon: 'Building2', requiredRole: 'admin' as RequiredRole },
-  { label: 'Users', path: ROUTES.USERS, icon: 'Users', requiredRole: 'admin' as RequiredRole },
-  { label: 'Databases', path: ROUTES.DB_CONNECTIONS, icon: 'Database', requiredRole: 'admin' as RequiredRole },
-  { label: 'Table Access', path: ROUTES.TABLE_ACCESS, icon: 'Table', requiredRole: 'admin' as RequiredRole },
+  { label: 'Overview', path: ROUTES.DASHBOARD, icon: 'Gauge' },
+  { label: 'Chat', path: ROUTES.CHAT, icon: 'Bot' },
+  { label: 'Reports', path: ROUTES.REPORT_AI_GENERATE, icon: 'ScrollText' },
+  { label: 'Companies', path: ROUTES.COMPANIES, icon: 'Landmark', requiredRole: 'admin' as RequiredRole },
+  { label: 'Users', path: ROUTES.USERS, icon: 'Contact', requiredRole: 'admin' as RequiredRole },
+  { label: 'Databases', path: ROUTES.DB_CONNECTIONS, icon: 'Server', requiredRole: 'admin' as RequiredRole },
+  { label: 'Table Access', path: ROUTES.TABLE_ACCESS, icon: 'TableProperties', requiredRole: 'admin' as RequiredRole },
 ] as const;

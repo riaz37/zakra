@@ -89,6 +89,10 @@ export function DataTable<TData>({
 
   const showPagination = pageCount > 1;
   const isEmpty = !isLoading && rows.length === 0;
+  const fillerRowCount =
+    !isLoading && !isEmpty && pageSize && rows.length < pageSize
+      ? pageSize - rows.length
+      : 0;
 
   const startIndex =
     pageSize && totalCount !== undefined
@@ -152,35 +156,44 @@ export function DataTable<TData>({
                   </td>
                 </tr>
               ) : (
-                rows.map((row) => (
-                  <motion.tr
-                    key={row.id}
-                    variants={staggerItem}
-                    tabIndex={onRowClick ? 0 : undefined}
-                    className={cn(
-                      "group border-b border-border last:border-b-0",
-                      "transition-all hover:bg-surface-300",
-                      onRowClick && "cursor-pointer focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
-                    )}
-                    onClick={() => onRowClick?.(row.original)}
-                    onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row.original); } } : undefined}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className={cn(
-                          "px-4 py-2 align-middle font-sans text-button text-foreground",
-                          "relative"
-                        )}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                  </motion.tr>
-                ))
+                <>
+                  {rows.map((row) => (
+                    <motion.tr
+                      key={row.id}
+                      variants={staggerItem}
+                      tabIndex={onRowClick ? 0 : undefined}
+                      className={cn(
+                        "group border-b border-border last:border-b-0",
+                        "transition-all hover:bg-surface-300",
+                        onRowClick && "cursor-pointer focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+                      )}
+                      onClick={() => onRowClick?.(row.original)}
+                      onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row.original); } } : undefined}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className={cn(
+                            "px-4 py-2 align-middle font-sans text-button text-foreground",
+                            "relative"
+                          )}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      ))}
+                    </motion.tr>
+                  ))}
+                  {Array.from({ length: fillerRowCount }).map((_, i) => (
+                    <tr key={`filler-${i}`} aria-hidden="true" className="border-b border-border last:border-b-0">
+                      {columns.map((_, ci) => (
+                        <td key={ci} className="px-4 py-2">&nbsp;</td>
+                      ))}
+                    </tr>
+                  ))}
+                </>
               )}
             </motion.tbody>
           </AnimatePresence>

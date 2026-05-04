@@ -2,9 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Building2, Plus, GitBranch, List, Network } from 'lucide-react';
+import { Building2, Plus, GitBranch } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 import {
   useCompanies,
@@ -34,17 +33,10 @@ import { RowActions } from '@/components/shared/row-actions';
 
 import { Button } from '@/components/ui/button';
 import { CompanyForm, type CompanyFormData } from '@/components/features/companies/company-form';
-import { CompanyHierarchy } from '@/components/features/companies/company-hierarchy';
-import { cn } from '@/lib/utils';
 import { AnimatedPage } from '@/components/shared/animated-container';
-import { fadeUp, fadeIn } from '@/lib/motion';
-
-type CompaniesView = 'list' | 'hierarchy';
 
 export default function CompaniesPage() {
-  const [view, setView] = useState<CompaniesView>('list');
   const { search, page, queryPage, setPage, searchProps, isEmpty } = useResourceList();
-  const reduced = useReducedMotion();
 
   const [createOpen, setCreateOpen] = useState(false);
   const [createSubParent, setCreateSubParent] = useState<Company | null>(null);
@@ -53,8 +45,7 @@ export default function CompaniesPage() {
 
   // Main paginated companies
   const { data, isLoading, isError, refetch } = useCompanies({
-    page: queryPage,
-    page_size: DEFAULT_PAGE_SIZE,
+    page_size: 1000,
   });
 
   // Flat list of potential parents for dropdown
@@ -77,7 +68,7 @@ export default function CompaniesPage() {
             {row.original.parent_id && (
               <GitBranch className="size-3 text-subtle rotate-90" />
             )}
-            <span className="font-sans text-subheading font-medium text-foreground">
+            <span className="font-sans text-button font-medium text-foreground">
               {row.original.name}
             </span>
           </div>
@@ -158,19 +149,23 @@ export default function CompaniesPage() {
     },
   ];
 
-  const items = data?.items ?? [];
-  const totalPages = data?.total_pages ?? 1;
+  const allItems = data?.items ?? [];
 
+  // Backend may return all records regardless of page_size — paginate client-side.
   const filteredItems = useMemo(() => {
-    if (!search) return items;
+    if (!search) return allItems;
     const needle = search.toLowerCase();
-    return items.filter(
+    return allItems.filter(
       (c) =>
         c.name.toLowerCase().includes(needle) ||
         c.slug?.toLowerCase().includes(needle) ||
         c.description?.toLowerCase().includes(needle)
     );
-  }, [items, search]);
+  }, [allItems, search]);
+
+  const totalCount = data?.total ?? filteredItems.length;
+  const totalPages = data?.total_pages ?? Math.max(1, Math.ceil(filteredItems.length / DEFAULT_PAGE_SIZE));
+  const items = filteredItems.slice(page * DEFAULT_PAGE_SIZE, (page + 1) * DEFAULT_PAGE_SIZE);
 
   // Build parent options and ensure the currently selected parent is ALWAYS included
   // even if it's not in the first page of results.
@@ -234,100 +229,46 @@ export default function CompaniesPage() {
       />
 
       <AnimatedPage>
-        <div className="mt-2 flex items-center gap-1 rounded-md border border-border bg-surface-200 p-0.5 w-fit">
-          <button
-            type="button"
-            onClick={() => setView('list')}
-            aria-pressed={view === 'list'}
-            className={cn(
-              'inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
-              view === 'list'
-                ? 'bg-surface-400 text-foreground'
-                : 'text-fg-muted hover:text-foreground',
-            )}
-          >
-            <List aria-hidden size={13} strokeWidth={1.75} />
-            List
-          </button>
-          <button
-            type="button"
-            onClick={() => setView('hierarchy')}
-            aria-pressed={view === 'hierarchy'}
-            className={cn(
-              'inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-3 py-1.5 font-sans text-body transition-colors',
-              view === 'hierarchy'
-                ? 'bg-surface-400 text-foreground'
-                : 'text-fg-muted hover:text-foreground',
-            )}
-          >
-            <Network aria-hidden size={13} strokeWidth={1.75} />
-            Hierarchy
-          </button>
-        </div>
+        <ScaffoldFilterAndContent className="mt-6">
+          <ScaffoldActionsContainer>
+            <div className="w-full max-w-sm">
+              <SearchInput {...searchProps} placeholder="Search companies…" ariaLabel="Search companies" />
+            </div>
+            <ScaffoldActionsGroup />
+          </ScaffoldActionsContainer>
 
-        <AnimatePresence mode="wait">
-          {view === 'list' ? (
-            <motion.div
-              key="list-view"
-              variants={fadeUp}
-              initial={reduced ? 'visible' : 'hidden'}
-              animate="visible"
-              exit="exit"
-            >
-              <ScaffoldFilterAndContent className="mt-6">
-                <ScaffoldActionsContainer>
-                  <div className="w-full max-w-sm">
-                    <SearchInput {...searchProps} placeholder="Search companies…" ariaLabel="Search companies" />
-                  </div>
-                  <ScaffoldActionsGroup />
-                </ScaffoldActionsContainer>
-
-                {isError ? (
-                  <ErrorState title="Failed to load companies" onRetry={() => refetch()} />
-                ) : isEmpty(filteredItems, isLoading) ? (
-                  <EmptyState
-                    icon={Building2}
-                    title={search ? "No companies match your search" : "No companies yet"}
-                    description={search ? "Try adjusting your search terms." : "Add your first company to start managing users and data access."}
-                    action={!search ? (
-                      <Button
-                        onClick={() => setCreateOpen(true)}
-                        className="h-9 px-4 gap-2"
-                      >
-                        <Plus aria-hidden size={16} strokeWidth={2} />
-                        Create Company
-                      </Button>
-                    ) : undefined}
-                  />
-                ) : (
-                  <DataTable
-                    columns={columns}
-                    data={filteredItems}
-                    isLoading={isLoading}
-                    pageIndex={page}
-                    pageCount={totalPages}
-                    onPageChange={setPage}
-                    pageSize={DEFAULT_PAGE_SIZE}
-                    totalCount={data?.total}
-                    caption="Companies list"
-                    emptyMessage="No companies match your search."
-                  />
-                )}
-              </ScaffoldFilterAndContent>
-            </motion.div>
+          {isError ? (
+            <ErrorState title="Failed to load companies" onRetry={() => refetch()} />
+          ) : isEmpty(filteredItems, isLoading) ? (
+            <EmptyState
+              icon={Building2}
+              title={search ? "No companies match your search" : "No companies yet"}
+              description={search ? "Try adjusting your search terms." : "Add your first company to start managing users and data access."}
+              action={!search ? (
+                <Button
+                  onClick={() => setCreateOpen(true)}
+                  className="h-9 px-4 gap-2"
+                >
+                  <Plus aria-hidden size={16} strokeWidth={2} />
+                  Create Company
+                </Button>
+              ) : undefined}
+            />
           ) : (
-            <motion.div
-              key="hierarchy-view"
-              variants={fadeIn}
-              initial={reduced ? 'visible' : 'hidden'}
-              animate="visible"
-              exit="exit"
-              className="mt-6"
-            >
-              <CompanyHierarchy />
-            </motion.div>
+            <DataTable
+              columns={columns}
+              data={items}
+              isLoading={isLoading}
+              pageIndex={page}
+              pageCount={totalPages}
+              onPageChange={setPage}
+              pageSize={DEFAULT_PAGE_SIZE}
+              totalCount={totalCount}
+              caption="Companies list"
+              emptyMessage="No companies match your search."
+            />
           )}
-        </AnimatePresence>
+        </ScaffoldFilterAndContent>
       </AnimatedPage>
 
       {/* Main Creation Dialog */}

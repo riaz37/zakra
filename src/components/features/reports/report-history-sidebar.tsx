@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronRight, FileText, Plus } from 'lucide-react';
+import { ChevronRight, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/shared/skeleton';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
@@ -60,16 +60,12 @@ export function ReportHistorySidebar() {
                 <Link
                   href={href}
                   className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 font-sans text-button transition-colors',
+                    'flex items-center rounded-md px-3 py-2 font-sans text-button transition-colors',
                     isActive
                       ? 'bg-accent/10 font-medium text-accent'
                       : 'text-foreground hover:bg-surface-300',
                   )}
                 >
-                  <FileText
-                    className={cn('h-4 w-4 shrink-0', isActive ? 'text-accent' : 'text-muted')}
-                    strokeWidth={1.5}
-                  />
                   <span className="truncate">{report.title || 'Untitled report'}</span>
                 </Link>
               </li>
@@ -105,7 +101,6 @@ export function ReportHistorySidebar() {
             <div className="space-y-1">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="flex items-center gap-3 px-3 py-2">
-                  <Skeleton className="h-4 w-4 shrink-0" />
                   <Skeleton className="h-4 w-3/4" />
                 </div>
               ))}

@@ -6,7 +6,9 @@ import { FileText } from 'lucide-react';
 
 import { useReportGenerations } from '@/hooks/useReportGenerations';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
+import { useResourceList } from '@/hooks/useResourceList';
 import type { GeneratedReport, ReportGenerationStatus } from '@/types';
+import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
 import { AnimatedPage } from '@/components/shared/animated-container';
 
 import { PageHeader } from '@/components/shared/page-header';
@@ -29,8 +31,6 @@ import {
 import { reportNavigationItems } from '@/components/features/reports/nav';
 import { getReportGenerationsColumns } from '@/components/features/reports/generations-columns';
 
-const HISTORY_FETCH_LIMIT = 100;
-
 type StatusFilter = 'all' | ReportGenerationStatus;
 
 const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
@@ -46,13 +46,15 @@ export default function ReportHistoryPage() {
   const pathname = usePathname();
   const companyId = useCurrentCompanyId();
 
-  const [search, setSearch] = useState('');
+  const { search, page, setPage, searchProps } = useResourceList();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+
+  const skip = page * DEFAULT_PAGE_SIZE;
 
   const { data, isLoading, isError, refetch } = useReportGenerations(
     companyId,
-    0,
-    HISTORY_FETCH_LIMIT,
+    skip,
+    DEFAULT_PAGE_SIZE,
   );
 
   const reports: GeneratedReport[] = useMemo(() => {
@@ -67,18 +69,16 @@ export default function ReportHistoryPage() {
     });
   }, [data, search, statusFilter]);
 
-  const columns = useMemo(
-    () =>
-      getReportGenerationsColumns({
-        onView: (report) => router.push(`/reports/${report.id}`),
-      }),
-    [router],
-  );
+  const columns = useMemo(() => getReportGenerationsColumns(), []);
 
-  const hasActiveFilters = search.trim() !== '' || statusFilter !== 'all';
   const totalCount = data?.total ?? 0;
-  const showTruncationNotice =
-    !isLoading && totalCount > HISTORY_FETCH_LIMIT && !hasActiveFilters;
+  const totalPages = Math.max(1, Math.ceil(totalCount / DEFAULT_PAGE_SIZE));
+  const hasActiveFilters = search.trim() !== '' || statusFilter !== 'all';
+
+  function handleStatusChange(v: string) {
+    setStatusFilter(v as StatusFilter);
+    setPage(0);
+  }
 
   return (
     <ScaffoldContainer>
@@ -94,16 +94,12 @@ export default function ReportHistoryPage() {
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center">
               <div className="w-full sm:max-w-sm">
                 <SearchInput
-                  value={search}
-                  onChange={setSearch}
+                  {...searchProps}
                   placeholder="Search by title…"
                   ariaLabel="Search reports by title"
                 />
               </div>
-              <Select
-                value={statusFilter}
-                onValueChange={(v) => setStatusFilter(v as StatusFilter)}
-              >
+              <Select value={statusFilter} onValueChange={handleStatusChange}>
                 <SelectTrigger
                   aria-label="Filter by status"
                   className="h-9 w-full sm:w-[180px]"
@@ -141,21 +137,19 @@ export default function ReportHistoryPage() {
               }
             />
           ) : (
-            <>
-              <DataTable
-                columns={columns}
-                data={reports}
-                isLoading={isLoading}
-                caption="Generated reports history"
-                emptyMessage="No reports match your filters."
-                onRowClick={(report) => router.push(`/reports/${report.id}`)}
-              />
-              {showTruncationNotice && (
-                <p className="mt-3 font-mono text-micro uppercase tracking-[0.06em] text-fg-subtle">
-                  Showing the {HISTORY_FETCH_LIMIT} most recent of {totalCount}
-                </p>
-              )}
-            </>
+            <DataTable
+              columns={columns}
+              data={reports}
+              isLoading={isLoading}
+              caption="Generated reports history"
+              emptyMessage="No reports match your filters."
+              onRowClick={(report) => router.push(`/reports/${report.id}`)}
+              pageIndex={page}
+              pageCount={totalPages}
+              onPageChange={setPage}
+              pageSize={DEFAULT_PAGE_SIZE}
+              totalCount={totalCount}
+            />
           )}
         </ScaffoldFilterAndContent>
       </AnimatedPage>

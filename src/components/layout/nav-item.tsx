@@ -2,17 +2,17 @@
 
 import Link from 'next/link';
 import {
-  Building2,
-  Database,
-  FileBarChart,
+  Bot,
+  Contact,
+  Gauge,
   History,
-  LayoutDashboard,
-  MessageCircle,
+  Landmark,
   MessageSquare,
+  ScrollText,
+  Server,
   Shield,
   Sparkles,
-  Table,
-  Users,
+  TableProperties,
   type LucideIcon,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -21,17 +21,17 @@ import { cn } from '@/lib/utils';
 // Explicit icon map — no dynamic import, no `any`.
 // Extend this when NAV_ITEMS grows; ICON_MAP is the source of truth.
 const ICON_MAP: Record<string, LucideIcon> = {
-  Building2,
-  Database,
-  FileBarChart,
+  Bot,
+  Contact,
+  Gauge,
   History,
-  LayoutDashboard,
-  MessageCircle,
+  Landmark,
   MessageSquare,
+  ScrollText,
+  Server,
   Shield,
   Sparkles,
-  Table,
-  Users,
+  TableProperties,
 };
 
 export interface NavItemProps {
@@ -87,7 +87,11 @@ export function NavItem({
             aria-hidden
             size={15}
             strokeWidth={1.75}
-            className={cn('shrink-0', collapsed && 'mx-auto')}
+            className={cn(
+              'shrink-0',
+              active && 'text-accent',
+              collapsed && 'mx-auto',
+            )}
           />
         ) : null}
 

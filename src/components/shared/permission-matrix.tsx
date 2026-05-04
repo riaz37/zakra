@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -88,7 +88,14 @@ export function PermissionMatrix({
   const [isDirty, setIsDirty] = useState(false);
   const [columnSearch, setColumnSearch] = useState('');
 
+  // Track dirty state via ref so the effect below can read it without being a dep.
+  const isDirtyRef = useRef(isDirty);
+  isDirtyRef.current = isDirty;
+
   useEffect(() => {
+    // Skip resetting rows while the user has unsaved edits so that a background
+    // refetch (window focus, etc.) doesn't silently discard in-progress changes.
+    if (isDirtyRef.current) return;
     setRows(
       columns.map((col) => ({
         columnName: col.name,
@@ -96,10 +103,8 @@ export function PermissionMatrix({
         maskPattern: initialPermissions[col.name]?.maskPattern ?? null,
       }))
     );
-    setIsDirty(false);
     setColumnSearch('');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columns]);
+  }, [columns, initialPermissions]);
 
   // Column metadata map for type/nullable lookup
   const columnMeta = useMemo(

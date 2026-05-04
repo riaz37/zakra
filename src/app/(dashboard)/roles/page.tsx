@@ -115,7 +115,8 @@ export default function RolesPage() {
   ];
 
   const items = data?.items ?? [];
-  const totalPages = data?.total_pages ?? 1;
+  const totalCount = data?.total ?? 0;
+  const totalPages = data?.total_pages ?? Math.max(1, Math.ceil(totalCount / DEFAULT_PAGE_SIZE));
 
   async function handleCreate(formData: RoleFormData) {
     const payload: RoleCreate = {
@@ -192,7 +193,7 @@ export default function RolesPage() {
               pageCount={totalPages}
               onPageChange={setPage}
               pageSize={DEFAULT_PAGE_SIZE}
-              totalCount={data?.total}
+              totalCount={totalCount}
               caption="Roles list"
               emptyMessage="No roles found."
             />
