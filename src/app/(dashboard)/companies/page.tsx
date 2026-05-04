@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Building2, Plus, GitBranch, List, Network } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
@@ -55,7 +55,6 @@ export default function CompaniesPage() {
   const { data, isLoading, isError, refetch } = useCompanies({
     page: queryPage,
     page_size: DEFAULT_PAGE_SIZE,
-    search: search || undefined,
   });
 
   // Flat list of potential parents for dropdown
@@ -161,6 +160,17 @@ export default function CompaniesPage() {
 
   const items = data?.items ?? [];
   const totalPages = data?.total_pages ?? 1;
+
+  const filteredItems = useMemo(() => {
+    if (!search) return items;
+    const needle = search.toLowerCase();
+    return items.filter(
+      (c) =>
+        c.name.toLowerCase().includes(needle) ||
+        c.slug?.toLowerCase().includes(needle) ||
+        c.description?.toLowerCase().includes(needle)
+    );
+  }, [items, search]);
 
   // Build parent options and ensure the currently selected parent is ALWAYS included
   // even if it's not in the first page of results.
@@ -274,7 +284,7 @@ export default function CompaniesPage() {
 
                 {isError ? (
                   <ErrorState title="Failed to load companies" onRetry={() => refetch()} />
-                ) : isEmpty(items, isLoading) ? (
+                ) : isEmpty(filteredItems, isLoading) ? (
                   <EmptyState
                     icon={Building2}
                     title={search ? "No companies match your search" : "No companies yet"}
@@ -292,7 +302,7 @@ export default function CompaniesPage() {
                 ) : (
                   <DataTable
                     columns={columns}
-                    data={items}
+                    data={filteredItems}
                     isLoading={isLoading}
                     pageIndex={page}
                     pageCount={totalPages}

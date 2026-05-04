@@ -19,6 +19,7 @@ import {
 import { ChevronDown, ChevronRight, Clock, Table2, Copy, Check, BarChart2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatColumnHeader } from '@/lib/format-column';
+import { tryFormatQueryDate } from '@/lib/format-date';
 import type { MessageContentBlock } from '@/types/chat';
 
 type QueryResult = NonNullable<MessageContentBlock['query_result']>;
@@ -411,9 +412,14 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
                     >
                       {isNull ? (
                         <span className="italic text-fg-subtle">null</span>
-                      ) : (
-                        <span className="text-foreground">{String(val)}</span>
-                      )}
+                      ) : (() => {
+                        const formatted = tryFormatQueryDate(val);
+                        return formatted ? (
+                          <span className="text-foreground font-mono tabular-nums">{formatted}</span>
+                        ) : (
+                          <span className="text-foreground">{String(val)}</span>
+                        );
+                      })()}
                     </td>
                   );
                 })}
