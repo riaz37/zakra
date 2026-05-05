@@ -4,13 +4,14 @@ import { use, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Zap, Trash2 } from 'lucide-react';
+import { Zap, Trash2, Star, Pencil } from 'lucide-react';
 
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import {
   useDbConnection,
   useTestConnection,
   useDeleteConnection,
+  useSetDefaultConnection,
 } from '@/hooks/useDbConnections';
 
 import { Button } from '@/components/ui/button';
@@ -57,6 +58,23 @@ export default function DbConnectionDetailPage({
 
   const testConnection = useTestConnection(companyId);
   const deleteConnection = useDeleteConnection(companyId);
+  const setDefault = useSetDefaultConnection(companyId);
+
+  async function handleSetDefault() {
+    if (!connection) return;
+    try {
+      await setDefault.mutateAsync(connection.id);
+      toast.success('Set as default connection');
+    } catch {
+      toast.error('Failed to set default connection');
+    }
+  }
+
+  function handleEdit() {
+    toast.message('Edit coming soon', {
+      description: 'Inline editing for connection details is on the way.',
+    });
+  }
 
   async function handleTest() {
     if (!connection) return;
@@ -134,15 +152,46 @@ export default function DbConnectionDetailPage({
           </span>
         }
         secondaryActions={
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => setConfirmDelete(true)}
-            className="text-error hover:bg-error/10 hover:text-error h-9 px-3"
-          >
-            <Trash2 aria-hidden size={14} strokeWidth={1.75} className="mr-1.5" />
-            Delete
-          </Button>
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleSetDefault}
+              isLoading={setDefault.isPending}
+              disabled={connection.is_default}
+              className="h-9 px-3"
+              title={connection.is_default ? 'Already default' : 'Set as default'}
+            >
+              <Star
+                aria-hidden
+                size={14}
+                strokeWidth={1.75}
+                className="mr-1.5"
+                fill={connection.is_default ? 'currentColor' : 'none'}
+              />
+              {connection.is_default ? 'Default' : 'Set default'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleEdit}
+              className="h-9 px-3"
+            >
+              <Pencil aria-hidden size={14} strokeWidth={1.75} className="mr-1.5" />
+              Edit
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setConfirmDelete(true)}
+              className="text-error hover:bg-error/10 hover:text-error h-9 px-3"
+            >
+              <Trash2 aria-hidden size={14} strokeWidth={1.75} className="mr-1.5" />
+              Delete
+            </Button>
+          </>
         }
         primaryActions={
           <Button
@@ -188,7 +237,7 @@ export default function DbConnectionDetailPage({
           </AnimatePresence>
 
           <AnimatePresence mode="wait">
-            {activeTab === 'schema' ? (
+            {activeTab === 'schema' && (
               <motion.div
                 key="schema"
                 variants={fadeUp}
@@ -196,9 +245,10 @@ export default function DbConnectionDetailPage({
                 animate="visible"
                 exit="exit"
               >
-                <SchemaExplorerTab connectionId={id} />
+                <SchemaExplorerTab connectionId={id} companyId={companyId} connectionName={connection.name} />
               </motion.div>
-            ) : (
+            )}
+            {activeTab === 'rules' && (
               <motion.div
                 key="rules"
                 variants={fadeUp}

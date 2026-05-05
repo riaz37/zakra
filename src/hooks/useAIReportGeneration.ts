@@ -9,6 +9,7 @@ import type {
   QueryAdaptationResult,
 } from '../types';
 import { AI_REPORT_PIPELINE_STEPS } from '../types';
+import { useBackgroundTasksStore } from '../store/backgroundTasksStore';
 
 // ============== Actions ==============
 
@@ -150,6 +151,11 @@ export function useAIReportGeneration() {
   const [state, dispatch] = useReducer(reducer, undefined, createInitialState);
   const abortRef = useRef<AbortController | null>(null);
 
+  const startReportGeneration = useBackgroundTasksStore((s) => s.startReportGeneration);
+  const updateReportProgress = useBackgroundTasksStore((s) => s.updateReportProgress);
+  const completeReportTask = useBackgroundTasksStore((s) => s.completeReportTask);
+  const failReportTask = useBackgroundTasksStore((s) => s.failReportTask);
+
   const reset = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
@@ -178,6 +184,10 @@ export function useAIReportGeneration() {
       );
       dispatch({ type: 'START', generationId: generation_id });
 
+      const panelName = query.length > 48 ? `${query.slice(0, 48)}…` : query;
+      startReportGeneration(generation_id, panelName, AI_REPORT_PIPELINE_STEPS.length);
+      let completedSteps = 0;
+
       subscribeToSSEStream(
         task_id,
         (eventType: SSEEventType, data: Record<string, unknown>) => {
@@ -205,6 +215,8 @@ export function useAIReportGeneration() {
                 durationMs: data.duration_ms as number,
                 resultSummary: data.result_summary as string | undefined,
               });
+              completedSteps += 1;
+              updateReportProgress(generation_id, completedSteps);
               break;
 
             case 'intermediate_result': {
@@ -245,6 +257,7 @@ export function useAIReportGeneration() {
                 type: 'COMPLETE',
                 durationMs: data.total_duration_ms as number,
               });
+              completeReportTask(generation_id, generation_id);
               break;
 
             case 'agent_error':
@@ -255,6 +268,7 @@ export function useAIReportGeneration() {
                 stepName: data.step_name as string | undefined,
                 recoverable: data.recoverable as boolean,
               });
+              failReportTask(generation_id);
               break;
           }
         },
@@ -265,9 +279,11 @@ export function useAIReportGeneration() {
             message: error.message,
             recoverable: true,
           });
+          failReportTask(generation_id);
         },
         () => {
           dispatch({ type: 'COMPLETE', durationMs: 0 });
+          completeReportTask(generation_id, generation_id);
         },
         controller.signal,
       );
@@ -280,7 +296,7 @@ export function useAIReportGeneration() {
         recoverable: true,
       });
     }
-  }, []);
+  }, [startReportGeneration, updateReportProgress, completeReportTask, failReportTask]);
 
   return {
     state,

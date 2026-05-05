@@ -20,6 +20,7 @@ import { staggerContainer, staggerItem, fadeUp } from '@/lib/motion';
 const PERMISSION_LEVELS: ColumnPermission[] = [
   COLUMN_PERMISSIONS.NONE,
   COLUMN_PERMISSIONS.READ,
+  COLUMN_PERMISSIONS.READ_MASKED,
   COLUMN_PERMISSIONS.WRITE,
 ] as ColumnPermission[];
 

@@ -73,32 +73,25 @@ export default function LoginPage() {
       variants={fadeUp}
       initial={reduced ? 'visible' : 'hidden'}
       animate="visible"
-      className="w-full max-w-[340px] rounded-card border border-border bg-surface-200 px-6 py-8"
+      className="w-full max-w-[340px] rounded-card border border-border bg-surface-200 px-6 py-5"
     >
       {/* Brand */}
       <motion.div
-        className="mb-8"
+        className="mb-4"
         initial={reduced ? {} : { opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="mb-3 flex items-center justify-center gap-2.5">
+        <div className="flex flex-col items-center justify-center">
           <Image
-            src="/logo/esaplogo.webp"
-            alt="ESAP"
-            width={32}
-            height={32}
+            src="/logo/zakralogo.png"
+            alt="Zakra"
+            width={120}
+            height={36}
             priority
-          />
-          <Image
-            src="/logo/esaplogo.svg"
-            alt="ESAP employer solutions"
-            width={65}
-            height={21}
-            priority
+            className="object-contain"
           />
         </div>
-        <p className="font-sans text-caption text-muted">Admin console</p>
       </motion.div>
 
       <motion.form

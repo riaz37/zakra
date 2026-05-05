@@ -37,6 +37,7 @@ const ADMIN_LABELS = new Set<string>([
 const SECTION_ROOTS: Record<string, string> = {
   '/reports/ai-generate': '/reports',
   '/reports/templates': '/reports',
+  '/reports/generate': '/reports',
 };
 
 function isActivePath(currentPath: string, itemPath: string): boolean {
@@ -120,32 +121,22 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
       >
         {collapsed ? (
           <Image
-            src="/logo/esaplogo.webp"
-            alt="ESAP"
-            width={28}
-            height={28}
-            className="shrink-0"
+            src="/logo/zakralogo.png"
+            alt="Zakra"
+            width={32}
+            height={32}
+            className="shrink-0 object-contain"
             priority
           />
         ) : (
-          <div className="flex items-center gap-2.5">
-            <Image
-              src="/logo/esaplogo.webp"
-              alt="ESAP"
-              width={28}
-              height={28}
-              className="shrink-0"
-              priority
-            />
-            <Image
-              src="/logo/esaplogo.svg"
-              alt="ESAP employer solutions"
-              width={65}
-              height={21}
-              className="shrink-0"
-              priority
-            />
-          </div>
+          <Image
+            src="/logo/zakralogo.png"
+            alt="Zakra"
+            width={80}
+            height={24}
+            className="shrink-0 object-contain"
+            priority
+          />
         )}
       </div>
 

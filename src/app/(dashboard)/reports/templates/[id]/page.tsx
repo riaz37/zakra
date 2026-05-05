@@ -89,9 +89,17 @@ export default function EditTemplatePage() {
             <Button
               type="submit"
               form="template-form"
+              variant="outline"
               isLoading={updateTemplate.isPending}
             >
               Save changes
+            </Button>
+            <Button
+              type="button"
+              onClick={() => router.push(`/reports/generate/${id}`)}
+              disabled={updateTemplate.isPending}
+            >
+              Generate Report
             </Button>
           </div>
         }

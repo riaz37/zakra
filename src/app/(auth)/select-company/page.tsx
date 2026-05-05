@@ -88,16 +88,22 @@ export default function SelectCompanyPage() {
     >
       {/* Brand */}
       <motion.div
-        className="mb-8 flex items-center justify-center gap-2.5"
+        className="mb-4 flex items-center justify-center"
         initial={reduced ? {} : { opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
       >
-        <Image src="/logo/esaplogo.webp" alt="ESAP" width={32} height={32} priority />
-        <Image src="/logo/esaplogo.svg" alt="ESAP employer solutions" width={65} height={21} priority />
+        <Image
+          src="/logo/zakralogo.png"
+          alt="Zakra"
+          width={120}
+          height={36}
+          priority
+          className="object-contain"
+        />
       </motion.div>
 
-      <div className="rounded-card border border-border bg-surface-200 px-6 py-8">
+      <div className="rounded-card border border-border bg-surface-200 px-6 py-5">
         <AnimatePresence mode="wait">
           {showCreate ? (
             <motion.div

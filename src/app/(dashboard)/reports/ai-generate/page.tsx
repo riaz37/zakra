@@ -97,17 +97,9 @@ export default function AIReportChatPage() {
 
       {/* Message thread */}
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-6">
-        <div
-          className="pointer-events-none sticky top-0 z-10 -mt-6 h-8 w-full"
-          style={{
-            background:
-              'linear-gradient(to bottom, var(--color-background) 0%, transparent 100%)',
-          }}
-        />
-
         <div className="mx-auto max-w-[720px]">
-          <AnimatePresence mode="wait">
-            {!hasContent && (
+          <AnimatePresence mode="popLayout">
+            {!hasContent ? (
               <motion.div
                 key="welcome"
                 variants={fadeUp}
@@ -117,63 +109,64 @@ export default function AIReportChatPage() {
               >
                 <ReportWelcome onPrompt={(text) => void handleSend(text)} />
               </motion.div>
-            )}
-          </AnimatePresence>
+            ) : (
+              <motion.div
+                key="messages"
+                className="space-y-8"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+              >
+                {completedTurns.map((turn, i) => (
+                  <motion.div key={i} variants={staggerItem}>
+                    <CompletedTurnView turn={turn} />
+                  </motion.div>
+                ))}
 
-          <motion.div
-            className="space-y-8"
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-          >
-            {completedTurns.map((turn, i) => (
-              <motion.div key={i} variants={staggerItem}>
-                <CompletedTurnView turn={turn} />
-              </motion.div>
-            ))}
-
-            {pendingQuery && (
-              <div className="space-y-4">
-                <UserQueryBubble query={pendingQuery} />
-                {state.steps.some((s) => s.status !== 'pending') && (
-                  <PipelineStepList steps={normalizeReportSteps(state.steps)} />
-                )}
-                {isGenerating && !state.steps.some((s) => s.status !== 'pending') && (
-                  <div className="flex items-center gap-2 animate-fade-in">
-                    <div className="flex h-5 w-5 items-center justify-center">
-                      <Image
-                        src="/logo/esaplogo.webp"
-                        alt="ESAP"
-                        width={18}
-                        height={18}
-                        className="opacity-60"
-                      />
-                    </div>
-                    <span className="font-mono text-mono-sm text-subtle animate-pulse">
-                      Starting…
-                    </span>
+                {pendingQuery && (
+                  <div className="space-y-4">
+                    <UserQueryBubble query={pendingQuery} />
+                    {state.steps.some((s) => s.status !== 'pending') && (
+                      <PipelineStepList steps={normalizeReportSteps(state.steps)} />
+                    )}
+                    {isGenerating && !state.steps.some((s) => s.status !== 'pending') && (
+                      <div className="flex items-center gap-2 animate-fade-in">
+                        <div className="flex h-5 w-5 items-center justify-center">
+                          <Image
+                            src="/logo/esaplogo.webp"
+                            alt="ESAP"
+                            width={18}
+                            height={18}
+                            className="opacity-60"
+                          />
+                        </div>
+                        <span className="font-mono text-mono-sm text-subtle animate-pulse">
+                          Starting…
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
+
+                <AnimatePresence>
+                  {state.status === 'error' && state.error && (
+                    <motion.div
+                      variants={fadeUp}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error"
+                      role="alert"
+                    >
+                      {state.error.message}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div ref={messagesEndRef} />
+              </motion.div>
             )}
-
-            <AnimatePresence>
-              {state.status === 'error' && state.error && (
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error"
-                  role="alert"
-                >
-                  {state.error.message}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div ref={messagesEndRef} />
-          </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 

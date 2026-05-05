@@ -2,20 +2,21 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Columns, Table } from 'lucide-react';
+import { Columns, ShieldPlus, Table } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import {
   useManagedTables,
   useUserTableColumnPermissions,
-  useBulkGrantPermissions,
+  useSaveColumnPermissions,
 } from '@/hooks/useTableAccess';
 import { useUsers } from '@/hooks/useUsers';
 import { PageHeader } from '@/components/shared/page-header';
 import {
   ScaffoldContainer,
   ScaffoldFilterAndContent,
+  ScaffoldActionsContainer,
 } from '@/components/shared/scaffold';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PermissionMatrix, PermissionMatrixSkeleton } from '@/components/shared/permission-matrix';
@@ -28,11 +29,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/shared/skeleton';
 import type { ManagedTable, ColumnPermission, MaskPattern } from '@/types';
 import { AnimatedPage } from '@/components/shared/animated-container';
-import { fadeUp, staggerContainer, staggerItem } from '@/lib/motion';
+import { fadeUp, fadeIn, staggerContainer, staggerItem } from '@/lib/motion';
+import { ProtectTableDialog } from '@/components/features/table-access/protect-table-dialog';
 
 // ── Table List Panel ──────────────────────────────────────────────────────────
 
@@ -160,7 +163,11 @@ function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
     companyId,
   );
 
-  const bulkGrant = useBulkGrantPermissions(table.table_name, table.schema_name);
+  const { saveAsync, isPending: isSaving } = useSaveColumnPermissions(
+    table.table_name,
+    table.schema_name,
+    companyId,
+  );
 
   type PermissionMap = Record<
     string,
@@ -181,15 +188,12 @@ function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
   }, [permissionsMap]);
 
   async function handleSave(rows: ColumnPermissionRow[]) {
-    const permissionsMap = rows.reduce((acc, row) => {
-      acc[row.columnName] = row.permission === 'read_masked' ? 'read' : row.permission;
-      return acc;
-    }, {} as Record<string, string>);
-
-    bulkGrant.mutate(
-      { grantee_type: 'user', grantee_id: userId, permissions: permissionsMap },
-      { onSettled: () => toast.success('Permissions saved') },
-    );
+    try {
+      await saveAsync({ userId, rows });
+      toast.success('Permissions saved');
+    } catch {
+      toast.error('Failed to save permissions');
+    }
   }
 
   return (
@@ -233,7 +237,7 @@ function PermissionsPanel({ table, userId, companyId }: PermissionsPanelProps) {
           columns={table.columns}
           initialPermissions={initialPermissions}
           onSave={handleSave}
-          isSaving={bulkGrant.isPending}
+          isSaving={isSaving}
         />
       )}
     </div>
@@ -251,8 +255,10 @@ function userDisplayName(user: { first_name: string | null; last_name: string | 
 
 export default function TableAccessPage() {
   const companyId = useCurrentCompanyId();
+  const reduced = useReducedMotion();
   const [selectedTableName, setSelectedTableName] = useState<string | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [protectDialogOpen, setProtectDialogOpen] = useState(false);
 
   const { data, isLoading } = useManagedTables(
     companyId ? { company_id: companyId, page_size: 500 } : undefined,
@@ -265,7 +271,6 @@ export default function TableAccessPage() {
   const users = usersData?.items ?? [];
   const selectedTable = tables.find((t) => t.table_name === selectedTableName) ?? null;
 
-  // Reset selections when company changes
   useEffect(() => {
     setSelectedTableName(null);
     setSelectedUserId(null);
@@ -283,114 +288,164 @@ export default function TableAccessPage() {
     }
   }, [users, selectedUserId]);
 
+  const loading = isLoading || usersLoading;
+
   return (
-    <ScaffoldContainer size="large">
+    <ScaffoldContainer>
       <PageHeader
         title="Table Access"
         subtitle="Control which columns each user can read, mask, or modify."
+        primaryActions={
+          companyId ? (
+            <Button
+              type="button"
+              onClick={() => setProtectDialogOpen(true)}
+              className="h-9 px-4"
+            >
+              <ShieldPlus aria-hidden size={14} strokeWidth={1.75} className="mr-1.5" />
+              Protect table
+            </Button>
+          ) : undefined
+        }
       />
 
       <AnimatedPage>
         <ScaffoldFilterAndContent>
-          {/* User selector */}
-          <div className="mb-5 flex items-center gap-3">
-            <span className="font-sans text-body text-fg-muted">User</span>
-            {usersLoading ? (
-              <Skeleton className="h-8 w-56" rounded="lg" />
-            ) : (
-              <Select
-                value={selectedUserId ?? ''}
-                onValueChange={setSelectedUserId}
-                disabled={users.length === 0}
+          <ScaffoldActionsContainer>
+            <div className="flex items-center gap-3">
+              <span className="font-sans text-body text-fg-muted">User</span>
+              {usersLoading ? (
+                <Skeleton className="h-8 w-56" rounded="lg" />
+              ) : (
+                <Select
+                  value={selectedUserId ?? ''}
+                  onValueChange={setSelectedUserId}
+                  disabled={users.length === 0}
+                >
+                  <SelectTrigger className="w-64">
+                    <SelectValue placeholder="Select a user…">
+                      {selectedUserId
+                        ? userDisplayName(users.find((u) => u.id === selectedUserId) ?? { first_name: null, last_name: null, email: selectedUserId })
+                        : 'Select a user…'}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent alignItemWithTrigger={false} align="start" className="w-72">
+                    {users.map((user) => {
+                      const name = userDisplayName(user);
+                      const showEmail = name !== user.email;
+                      return (
+                        <SelectItem key={user.id} value={user.id} label={name} className="py-1.5">
+                          <span className="flex flex-col gap-0.5 min-w-0">
+                            <span className="truncate">{name}</span>
+                            {showEmail && (
+                              <span className="truncate text-fg-muted text-caption">{user.email}</span>
+                            )}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </ScaffoldActionsContainer>
+
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div
+                key="loading"
+                variants={fadeIn}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+                exit="exit"
+                className="flex gap-5"
               >
-                <SelectTrigger className="w-64">
-                  <SelectValue placeholder="Select a user…">
-                    {selectedUserId
-                      ? userDisplayName(users.find((u) => u.id === selectedUserId) ?? { first_name: null, last_name: null, email: selectedUserId })
-                      : 'Select a user…'}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent alignItemWithTrigger={false} align="start" className="w-72">
-                  {users.map((user) => {
-                    const name = userDisplayName(user);
-                    const showEmail = name !== user.email;
-                    return (
-                      <SelectItem key={user.id} value={user.id} label={name} className="py-1.5">
-                        <span className="flex flex-col gap-0.5 min-w-0">
-                          <span className="truncate">{name}</span>
-                          {showEmail && (
-                            <span className="truncate text-fg-muted text-caption">{user.email}</span>
-                          )}
-                        </span>
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
+                <Skeleton className="h-96 w-56 shrink-0" rounded="xl" />
+                <div className="flex-1 space-y-2">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Skeleton key={i} className="h-10" rounded="lg" />
+                  ))}
+                </div>
+              </motion.div>
+            ) : tables.length === 0 ? (
+              <motion.div
+                key="empty"
+                variants={fadeUp}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+                exit="exit"
+              >
+                <EmptyState
+                  icon={Table}
+                  title="No protected tables"
+                  description="Protect a table to start managing column-level access for your users."
+                  primaryAction={
+                    companyId
+                      ? { label: 'Protect table', onClick: () => setProtectDialogOpen(true) }
+                      : undefined
+                  }
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="content"
+                variants={fadeUp}
+                initial={reduced ? 'visible' : 'hidden'}
+                animate="visible"
+                exit="exit"
+                className="flex items-start gap-5"
+              >
+                <TableListPanel
+                  tables={tables}
+                  selectedTableName={selectedTableName}
+                  onSelect={setSelectedTableName}
+                />
+
+                <AnimatePresence mode="wait">
+                  {selectedTable && selectedUserId ? (
+                    <motion.div
+                      key={`${selectedTable.table_name}-${selectedUserId}`}
+                      variants={fadeUp}
+                      initial={reduced ? 'visible' : 'hidden'}
+                      animate="visible"
+                      exit="exit"
+                      className="min-w-0 flex-1"
+                    >
+                      <PermissionsPanel
+                        table={selectedTable}
+                        userId={selectedUserId}
+                        companyId={companyId ?? undefined}
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="placeholder"
+                      variants={fadeIn}
+                      initial={reduced ? 'visible' : 'hidden'}
+                      animate="visible"
+                      exit="exit"
+                      className="flex flex-1 items-center justify-center py-16"
+                    >
+                      <p className="font-sans text-body text-fg-muted">
+                        Select a table to manage column permissions.
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             )}
-          </div>
-
-          {(isLoading || usersLoading) && (
-            <div className="flex gap-4">
-              <Skeleton className="h-64 w-56 shrink-0" rounded="xl" />
-              <div className="flex-1 space-y-2">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="h-10" rounded="lg" />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {!isLoading && tables.length === 0 && (
-            <EmptyState
-              icon={Table}
-              title="No managed tables"
-              description="Enable column-level access control for your connected database tables."
-            />
-          )}
-
-          {!isLoading && tables.length > 0 && (
-            <div className="flex items-start gap-5">
-              <TableListPanel
-                tables={tables}
-                selectedTableName={selectedTableName}
-                onSelect={setSelectedTableName}
-              />
-
-              <AnimatePresence mode="wait">
-                {selectedTable && selectedUserId ? (
-                  <motion.div
-                    key={`${selectedTable.table_name}-${selectedUserId}`}
-                    variants={fadeUp}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    className="min-w-0 flex-1"
-                  >
-                    <PermissionsPanel
-                      table={selectedTable}
-                      userId={selectedUserId}
-                      companyId={companyId ?? undefined}
-                    />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="placeholder"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex flex-1 items-center justify-center py-16"
-                  >
-                    <p className="font-sans text-body text-fg-muted">
-                      Select a table to manage column permissions.
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          )}
+          </AnimatePresence>
         </ScaffoldFilterAndContent>
       </AnimatedPage>
+
+      {companyId && (
+        <ProtectTableDialog
+          open={protectDialogOpen}
+          onOpenChange={setProtectDialogOpen}
+          companyId={companyId}
+          onSuccess={(tableName) => setSelectedTableName(tableName)}
+        />
+      )}
     </ScaffoldContainer>
   );
 }

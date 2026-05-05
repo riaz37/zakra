@@ -50,6 +50,7 @@ export function useSchemaProgress(id: string | undefined, polling: boolean = fal
     queryFn: () => dbApi.getSchemaProgress(id!),
     enabled: !!id,
     refetchInterval: polling ? 2000 : false,
+    retry: false,
   });
   return query;
 }

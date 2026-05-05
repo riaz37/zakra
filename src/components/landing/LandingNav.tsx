@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -34,17 +35,16 @@ export function LandingNav() {
         <div className="flex items-center gap-10">
           <Link
             href="/"
-            className="flex items-center gap-2 text-foreground transition-opacity duration-[120ms] hover:opacity-80"
+            className="flex items-center transition-opacity duration-[120ms] hover:opacity-80"
           >
-            <span
-              aria-hidden
-              className="inline-flex size-5 items-center justify-center rounded-sm bg-accent"
-            >
-              <span className="block size-1.5 rounded-[1px] bg-[var(--color-accent-fg)]" />
-            </span>
-            <span className="text-[15px] font-semibold tracking-[-0.02em] text-foreground">
-              Zakra
-            </span>
+            <Image
+              src="/logo/zakralogo.png"
+              alt="Zakra"
+              width={90}
+              height={28}
+              priority
+              className="object-contain"
+            />
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">

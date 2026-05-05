@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { ArrowRight, ExternalLink, Globe, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,17 +31,16 @@ export function LandingFooter() {
           <div className="w-44 shrink-0">
             <Link
               href="/"
-              className="flex items-center gap-2 text-foreground mb-4 transition-opacity duration-[120ms] hover:opacity-80"
+              className="flex items-center mb-4 transition-opacity duration-[120ms] hover:opacity-80"
             >
-              <span
-                aria-hidden
-                className="inline-flex size-5 items-center justify-center rounded-sm bg-accent"
-              >
-                <span className="block size-1.5 rounded-[1px] bg-[var(--color-accent-fg)]" />
-              </span>
-              <span className="text-[15px] font-semibold tracking-[-0.02em]">
-                Zakra
-              </span>
+              <Image
+                src="/logo/zakralogo.png"
+                alt="Zakra"
+                width={80}
+                height={24}
+                priority
+                className="object-contain"
+              />
             </Link>
             <p className="text-[12px] leading-relaxed text-fg-subtle">
               Enterprise knowledge management, powered by AI.

@@ -14,6 +14,8 @@ import { useAuth, useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
+import { GlobalProgressPanel } from '@/components/shared/global-progress-panel';
+import { ReportGenerationProvider } from '@/contexts/ReportGenerationContext';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -87,7 +89,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }, [navOpen]);
 
   return (
-    <div className="flex h-dvh flex-col bg-background md:flex-row">
+    <ReportGenerationProvider>
+      <div className="flex h-dvh flex-col bg-background md:flex-row">
       {/* Mobile top bar (<768px) */}
       <Header navOpen={navOpen} onOpenNav={openNav} />
 
@@ -158,6 +161,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* Main content */}
       <main className="flex-1 overflow-auto">{children}</main>
-    </div>
+
+        <GlobalProgressPanel />
+      </div>
+    </ReportGenerationProvider>
   );
 }

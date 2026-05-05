@@ -71,3 +71,12 @@ export interface RegisterTableRequest {
   description?: string;
   company_id?: string;
 }
+
+export interface TablePermissionsResponse {
+  table: ManagedTable;
+  permissions: Record<string, string>;
+  can_read_columns: string[];
+  can_write_columns: string[];
+  masked_columns: string[];
+  blocked_columns: string[];
+}

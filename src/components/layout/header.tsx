@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -26,9 +27,16 @@ export function Header({ navOpen, onOpenNav }: HeaderProps) {
         'sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background-translucent px-4 backdrop-blur-md md:hidden min-h-topbar',
       )}
     >
-      <span className="font-display text-title text-foreground">
-        ESAP<span className="text-accent">-</span>KB
-      </span>
+      <div className="flex items-center gap-2">
+        <Image
+          src="/logo/zakralogo.png"
+          alt="Zakra"
+          width={80}
+          height={24}
+          className="shrink-0"
+          priority
+        />
+      </div>
 
       <button
         type="button"

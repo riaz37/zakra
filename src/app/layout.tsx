@@ -27,7 +27,7 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "ESAP-KB Admin",
+  title: "Zakra Admin",
 };
 
 export default function RootLayout({

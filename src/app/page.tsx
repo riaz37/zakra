@@ -6,10 +6,12 @@ import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { DemoSection } from "@/components/landing/DemoSection";
 import { CtaSection } from "@/components/landing/CtaSection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
+import { AuthRedirect } from "@/components/landing/AuthRedirect";
 
 export default function RootPage() {
   return (
     <div className="min-h-screen" style={{ background: "#111110" }}>
+      <AuthRedirect />
       <LandingNav />
       <main>
         <HeroSection />

@@ -6,6 +6,7 @@ import type {
   BulkGrantPermissions,
   UserTablePermissions,
   RegisterTableRequest,
+  TablePermissionsResponse,
   PaginatedResponse,
   QueryParams,
 } from '../types';
@@ -56,8 +57,8 @@ export async function getTablePermissions(
   tableName: string,
   schemaName = 'public',
   granteeId?: string,
-): Promise<ColumnPermissionGrant[]> {
-  const response = await api.get<ColumnPermissionGrant[]>(
+): Promise<TablePermissionsResponse> {
+  const response = await api.get<TablePermissionsResponse>(
     `/data/tables/${encodeURIComponent(tableName)}/permissions`,
     { params: { schema_name: schemaName, ...(granteeId ? { grantee_id: granteeId } : {}) } }
   );

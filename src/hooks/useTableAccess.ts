@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as tableAccessApi from '../api/table-access';
 import type {
   RegisterTableRequest,
   GrantColumnPermission,
   BulkGrantPermissions,
+  TablePermissionsResponse,
   QueryParams,
 } from '../types';
+import type { ColumnPermissionRow } from '@/components/shared/permission-matrix';
 
 const QUERY_KEY = 'table-access';
 
@@ -39,7 +42,7 @@ export function useTablePermissions(
   schemaName = 'public',
   granteeId?: string,
 ) {
-  return useQuery({
+  return useQuery<TablePermissionsResponse>({
     queryKey: [QUERY_KEY, tableName, schemaName, 'permissions', granteeId],
     queryFn: () => tableAccessApi.getTablePermissions(tableName!, schemaName, granteeId),
     enabled: !!tableName,
@@ -150,4 +153,49 @@ export function useRevokePermission(tableName: string, schemaName = 'public') {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY, tableName, schemaName, 'permissions'] });
     },
   });
+}
+
+/**
+ * Hook for saving column permissions for a user by issuing individual grants.
+ * Uses the single-grant endpoint which supports mask_pattern; avoids the broken bulk endpoint.
+ */
+export function useSaveColumnPermissions(
+  tableName: string,
+  schemaName = 'public',
+  companyId?: string,
+) {
+  const queryClient = useQueryClient();
+  const [isPending, setIsPending] = useState(false);
+
+  async function saveAsync({ userId, rows }: { userId: string; rows: ColumnPermissionRow[] }): Promise<void> {
+    setIsPending(true);
+    try {
+      await Promise.all(
+        rows.map((row) =>
+          tableAccessApi.grantColumnPermission(
+            tableName,
+            {
+              column_name: row.columnName,
+              grantee_type: 'user',
+              grantee_id: userId,
+              permission: row.permission,
+              ...(row.permission === 'read_masked' && row.maskPattern
+                ? { mask_pattern: row.maskPattern }
+                : {}),
+            },
+            schemaName,
+            companyId,
+          ),
+        ),
+      );
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY, tableName, schemaName, 'user-permissions'] }),
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY, tableName, schemaName, 'permissions'] }),
+      ]);
+    } finally {
+      setIsPending(false);
+    }
+  }
+
+  return { saveAsync, isPending };
 }

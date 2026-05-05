@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Building2, Plus, GitBranch } from 'lucide-react';
 import { formatDate } from '@/lib/format-date';
@@ -68,9 +69,13 @@ export default function CompaniesPage() {
             {row.original.parent_id && (
               <GitBranch className="size-3 text-subtle rotate-90" />
             )}
-            <span className="font-sans text-button font-medium text-foreground">
+            <Link
+              href={`/companies/${row.original.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="font-sans text-button font-medium text-foreground hover:text-accent transition-colors"
+            >
               {row.original.name}
-            </span>
+            </Link>
           </div>
           {row.original.description && (
             <span className="font-sans text-body text-fg-muted line-clamp-1 max-w-[400px]">

@@ -132,7 +132,9 @@ export async function learnSchema(
     }
   }
   const response = await api.post<{ task_id: string }>(
-    `/db-agent/connections/${id}/learn-schema?${params.toString()}`
+    `/db-agent/connections/${id}/learn-schema?${params.toString()}`,
+    null,
+    { timeout: 600_000 },
   );
   return response.data;
 }
