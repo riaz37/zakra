@@ -65,6 +65,8 @@ interface AddConnectionDialogProps {
   companyId?: string;
   /** When provided, the dialog enters edit mode and pre-fills the form. */
   editingConnection?: DatabaseConnection | null;
+  /** Existing connection names for duplicate validation. */
+  existingNames?: string[];
 }
 
 export function AddConnectionDialog({
@@ -72,6 +74,7 @@ export function AddConnectionDialog({
   onOpenChange,
   companyId,
   editingConnection,
+  existingNames = [],
 }: AddConnectionDialogProps) {
   const isEdit = !!editingConnection;
 
@@ -131,6 +134,16 @@ export function AddConnectionDialog({
   }
 
   async function onSubmit(data: ConnectionFormValues) {
+    const isDuplicate = existingNames.some(
+      (n) =>
+        n.toLowerCase() === data.name.toLowerCase() &&
+        n.toLowerCase() !== editingConnection?.name.toLowerCase(),
+    );
+    if (isDuplicate) {
+      form.setError('name', { message: 'A connection with this name already exists' });
+      return;
+    }
+
     try {
       if (isEdit && editingConnection) {
         const { password, ...rest } = data;

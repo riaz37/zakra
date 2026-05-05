@@ -228,6 +228,7 @@ export default function DbConnectionsPage() {
         onOpenChange={handleDialogChange}
         companyId={companyId}
         editingConnection={editingConnection}
+        existingNames={connections.map((c) => c.name)}
       />
 
       <ConfirmDialog
