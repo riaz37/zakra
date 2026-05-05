@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -57,11 +58,17 @@ export function HeroSection() {
               </Link>
             </div>
 
-            <p className="text-[12px] text-muted animate-fade-up animation-delay-300">
-              Trusted by{" "}
-              <strong className="text-foreground font-medium">800+</strong>{" "}
-              enterprise teams &middot; No credit card required
-            </p>
+            <div className="animate-fade-up animation-delay-300">
+              <p className="text-[12px] text-muted mb-4">
+                Trusted by <strong className="text-foreground font-medium">800+</strong> enterprise teams
+              </p>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 opacity-30 grayscale brightness-0 dark:invert">
+                <Image src="/partners/EMp.svg" alt="Partner" width={80} height={20} className="h-4 w-auto" />
+                <Image src="/partners/EMp-1.svg" alt="Partner" width={80} height={20} className="h-4 w-auto" />
+                <Image src="/partners/EMp-3.svg" alt="Partner" width={80} height={20} className="h-4 w-auto" />
+                <Image src="/partners/EMp-4.svg" alt="Partner" width={80} height={20} className="h-4 w-auto" />
+              </div>
+            </div>
           </div>
 
           {/* Right — terminal, delayed entrance */}
