@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -35,6 +36,7 @@ export default function LoginPage() {
   const { selectedCompanyId } = useCompanyStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const reduced = useReducedMotion();
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -132,15 +134,29 @@ export default function LoginPage() {
         {/* Password — 16px gap between fields */}
         <motion.div variants={staggerItem} className="mt-4 flex flex-col">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            {...register('password')}
-            aria-invalid={!!errors.password}
-            error={!!errors.password}
-            placeholder="••••••••"
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              {...register('password')}
+              aria-invalid={!!errors.password}
+              error={!!errors.password}
+              placeholder="••••••••"
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-0 top-0 flex h-full w-10 items-center justify-center text-fg-subtle transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+            >
+              {showPassword ? (
+                <EyeOff size={16} strokeWidth={1.5} />
+              ) : (
+                <Eye size={16} strokeWidth={1.5} />
+              )}
+            </button>
+          </div>
           <AnimatePresence>
             {errors.password && (
               <motion.p
