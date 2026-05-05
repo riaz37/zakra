@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Columns,
   Database,
@@ -189,7 +190,7 @@ function DiscoverDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>Discover tables</DialogTitle>
+          <DialogTitle>Add tables</DialogTitle>
           <p className="font-sans text-body text-fg-muted">
             Pick tables you want the AI to learn. Already-learned tables are hidden.
           </p>
@@ -631,6 +632,7 @@ export function SchemaExplorerTab({ connectionId, companyId, connectionName }: S
   const startSchemaLearning = useBackgroundTasksStore(
     (s) => s.startSchemaLearning,
   );
+  const queryClient = useQueryClient();
 
   const [selectedTableKey, setSelectedTableKey] = useState<string | null>(null);
   const [query, setQuery] = useState('');
@@ -690,6 +692,10 @@ export function SchemaExplorerTab({ connectionId, companyId, connectionName }: S
       toast.error('Failed to unlearn table');
     }
   }
+
+  const handleRefreshView = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['db-connections', connectionId, 'schema'] });
+  }, [queryClient, connectionId]);
 
   async function handleResume() {
     try {
@@ -817,12 +823,12 @@ export function SchemaExplorerTab({ connectionId, companyId, connectionName }: S
           title="No tables learned yet"
           description="Run schema discovery to introspect this database. Learned tables become available to the AI for natural-language queries."
           primaryAction={{
-            label: 'Learn schema',
+            label: 'Sync schema',
             onClick: handleLearnAll,
             isLoading: learnSchema.isPending,
           }}
           secondaryAction={{
-            label: 'Discover tables',
+            label: 'Add tables',
             onClick: () => setDiscoverOpen(true),
           }}
         />
@@ -857,7 +863,7 @@ export function SchemaExplorerTab({ connectionId, companyId, connectionName }: S
             size="sm"
             onClick={() => setDiscoverOpen(true)}
           >
-            Discover tables
+            Add tables
           </Button>
           <Button
             type="button"
@@ -867,7 +873,7 @@ export function SchemaExplorerTab({ connectionId, companyId, connectionName }: S
             isLoading={learnSchema.isPending}
             disabled={learnSchema.isPending}
           >
-            {allTables.length > 0 ? 'Re-learn schema' : 'Learn schema'}
+            Sync schema
           </Button>
         </div>
       </div>
@@ -886,8 +892,8 @@ export function SchemaExplorerTab({ connectionId, companyId, connectionName }: S
           onSelect={setSelectedTableKey}
           hideSystem={hideSystem}
           onHideSystemChange={setHideSystem}
-          onRefresh={handleLearnAll}
-          isRefreshing={learnSchema.isPending}
+          onRefresh={handleRefreshView}
+          isRefreshing={isLoading}
           query={query}
           onQueryChange={setQuery}
           showGroupHeaders={showGroupHeaders}

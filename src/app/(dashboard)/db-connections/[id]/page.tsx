@@ -8,6 +8,7 @@ import { Zap, Trash2, Star, Pencil } from 'lucide-react';
 
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import {
+  useConnectionSchema,
   useDbConnection,
   useTestConnection,
   useDeleteConnection,
@@ -51,10 +52,12 @@ export default function DbConnectionDetailPage({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const reduced = useReducedMotion();
 
-  const { data: connection, isLoading, isError } = useDbConnection(
+  const { data: connection, isLoading: isConnectionLoading, isError } = useDbConnection(
     id,
     companyId,
   );
+  const { isLoading: isSchemaLoading } = useConnectionSchema(id);
+  const isLoading = isConnectionLoading || isSchemaLoading;
 
   const testConnection = useTestConnection(companyId);
   const deleteConnection = useDeleteConnection(companyId);
@@ -112,7 +115,15 @@ export default function DbConnectionDetailPage({
           <Skeleton className="h-4 w-48" />
           <Skeleton className="h-8 w-72" />
           <Skeleton className="h-4 w-96" />
-          <Skeleton className="mt-8 h-64 w-full" rounded="lg" />
+          <div className="mt-8 flex gap-5">
+            <Skeleton className="h-80 w-56 shrink-0" rounded="xl" />
+            <div className="flex flex-1 flex-col gap-2">
+              <Skeleton className="h-10 w-full" rounded="lg" />
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-9" rounded="lg" />
+              ))}
+            </div>
+          </div>
         </div>
       </ScaffoldContainer>
     );

@@ -99,7 +99,7 @@ function ConfirmDialog({
       <DialogContent
         showCloseButton={false}
         className={cn(
-          "max-w-[420px] gap-0 rounded-xl border-border bg-surface-200 p-6",
+          "max-w-[450px] sm:max-w-[450px] gap-0 rounded-xl border-border bg-surface-200 p-6",
         )}
         role={variant === "destructive" ? "alertdialog" : "dialog"}
       >
