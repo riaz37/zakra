@@ -3,6 +3,7 @@ import { Archivo, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import { QueryProvider } from "@/lib/query-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { CookieConsentBanner } from "@/components/cookie-consent-banner";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -51,6 +52,7 @@ export default function RootLayout({
           <QueryProvider>
             {children}
             <Toaster position="bottom-right" />
+            <CookieConsentBanner />
           </QueryProvider>
         </ThemeProvider>
       </body>

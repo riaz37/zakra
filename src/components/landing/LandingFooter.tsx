@@ -54,10 +54,10 @@ export function LandingFooter() {
             </p>
             <ul className="space-y-2.5">
               {[
-                { label: "Privacy", href: "#" },
-                { label: "Terms", href: "#" },
-                { label: "Security", href: "#" },
-                { label: "Cookies", href: "#" },
+                { label: "Privacy", href: "/privacy" },
+                { label: "Terms", href: "/terms" },
+                { label: "Security", href: "/privacy#security" },
+                { label: "Cookies", href: "/cookies" },
               ].map(({ label, href }) => (
                 <li key={label}>
                   <Link

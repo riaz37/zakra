@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const AUTH_COOKIE = 'kb-auth';
 
 const ALWAYS_PUBLIC: string[] = ['/'];
-const PUBLIC_PREFIXES: string[] = ['/login'];
+const PUBLIC_PREFIXES: string[] = ['/login', '/privacy', '/terms', '/cookies'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
