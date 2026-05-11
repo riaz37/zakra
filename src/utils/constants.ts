@@ -53,7 +53,6 @@ export const COMPANY_STATUS = {
 export const DATABASE_TYPES = {
   POSTGRESQL: 'postgresql',
   MSSQL: 'mssql',
-  MONGODB: 'mongodb',
 } as const;
 
 // Column Permissions

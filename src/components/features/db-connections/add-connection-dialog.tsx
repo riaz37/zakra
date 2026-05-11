@@ -32,7 +32,6 @@ import {
 const DEFAULT_PORTS: Record<DatabaseType, number> = {
   postgresql: 5432,
   mssql: 1433,
-  mongodb: 27017,
 };
 
 interface ConnectionFormValues {
@@ -48,7 +47,7 @@ interface ConnectionFormValues {
 function buildResolverSchema(isEdit: boolean) {
   return z.object({
     name: z.string().min(1, 'Name is required'),
-    database_type: z.enum(['postgresql', 'mssql', 'mongodb']),
+    database_type: z.enum(['postgresql', 'mssql']),
     host: z.string().min(1, 'Host is required'),
     port: z.coerce.number().int().min(1).max(65535),
     database_name: z.string().min(1, 'Database name is required'),

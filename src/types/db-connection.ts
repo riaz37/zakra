@@ -1,4 +1,4 @@
-export type DatabaseType = 'postgresql' | 'mssql' | 'mongodb';
+export type DatabaseType = 'postgresql' | 'mssql';
 
 export interface DatabaseConnection {
   id: string;
