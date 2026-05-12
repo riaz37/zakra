@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
@@ -18,10 +19,19 @@ import { ScaffoldContainer } from '@/components/shared/scaffold';
 import { reportNavigationItems } from '@/components/features/reports/nav';
 import { fadeUp, fadeIn, staggerContainer, staggerItem } from '@/lib/motion';
 
-const ERROR_MESSAGES: Record<string, { title: string; hint: string }> = {
+const NO_TEMPLATE_ERROR = {
+  title: 'No matching report template',
+  hint: 'No template covers this topic. Try rephrasing your request, or check the available templates.',
+  action: { label: 'Browse templates', href: '/reports/templates' },
+};
+
+const ERROR_MESSAGES: Record<string, { title: string; hint: string; action?: { label: string; href: string } }> = {
+  NO_TEMPLATE_MATCH: NO_TEMPLATE_ERROR,
+  TemplateValidationError: NO_TEMPLATE_ERROR,
   REPORT_TEMPLATE_VALIDATION_ERROR: {
     title: 'No report templates configured',
-    hint: 'This company has no active report templates. Ask your admin to create one first.',
+    hint: 'This company has no active report templates.',
+    action: { label: 'Create a template', href: '/reports/templates/new' },
   },
   SSE_CONNECTION_ERROR: {
     title: 'Connection lost',
@@ -33,11 +43,14 @@ const ERROR_MESSAGES: Record<string, { title: string; hint: string }> = {
   },
 };
 
-const MESSAGE_PATTERNS: Array<{ match: string; title: string; hint: string }> = [
+const MESSAGE_PATTERNS: Array<{ match: string; title: string; hint: string; action?: { label: string; href: string } }> = [
+  {
+    match: 'no templates are available',
+    ...NO_TEMPLATE_ERROR,
+  },
   {
     match: 'no templates found',
-    title: 'No matching report template',
-    hint: 'No template covers this topic. Try rephrasing your request or browse available templates.',
+    ...NO_TEMPLATE_ERROR,
   },
   {
     match: 'connection not found',
@@ -47,7 +60,8 @@ const MESSAGE_PATTERNS: Array<{ match: string; title: string; hint: string }> = 
   {
     match: 'no active report templates',
     title: 'No report templates configured',
-    hint: 'This company has no active report templates. Ask your admin to create one first.',
+    hint: 'This company has no active report templates.',
+    action: { label: 'Create a template', href: '/reports/templates/new' },
   },
 ];
 
@@ -55,10 +69,11 @@ function getFriendlyError(code: string, message: string, recoverable: boolean) {
   if (ERROR_MESSAGES[code]) return ERROR_MESSAGES[code];
   const lower = message.toLowerCase();
   const matched = MESSAGE_PATTERNS.find((p) => lower.includes(p.match));
-  if (matched) return { title: matched.title, hint: matched.hint };
+  if (matched) return matched;
   return {
     title: recoverable ? 'Something went wrong' : 'Report generation failed',
     hint: recoverable ? 'Please try again.' : 'Contact support if the issue persists.',
+    action: undefined,
   };
 }
 
@@ -194,7 +209,7 @@ export default function AIReportChatPage() {
 
                 <AnimatePresence>
                   {state.status === 'error' && state.error && (() => {
-                    const { title, hint } = getFriendlyError(
+                    const { title, hint, action } = getFriendlyError(
                       state.error.code,
                       state.error.message,
                       state.error.recoverable,
@@ -210,6 +225,14 @@ export default function AIReportChatPage() {
                       >
                         <p className="font-sans text-button text-error">{title}</p>
                         <p className="font-sans text-body-sm text-subtle">{hint}</p>
+                        {action && (
+                          <Link
+                            href={action.href}
+                            className="inline-block font-sans text-body-sm text-accent hover:underline mt-1"
+                          >
+                            {action.label} →
+                          </Link>
+                        )}
                       </motion.div>
                     );
                   })()}
