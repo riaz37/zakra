@@ -134,6 +134,7 @@ function reducer(state: AIReportPipelineState, action: Action): AIReportPipeline
       };
 
     case 'COMPLETE':
+      if (state.status === 'error') return state;
       return {
         ...state,
         status: 'completed',

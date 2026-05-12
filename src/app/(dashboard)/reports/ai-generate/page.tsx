@@ -18,6 +18,50 @@ import { ScaffoldContainer } from '@/components/shared/scaffold';
 import { reportNavigationItems } from '@/components/features/reports/nav';
 import { fadeUp, fadeIn, staggerContainer, staggerItem } from '@/lib/motion';
 
+const ERROR_MESSAGES: Record<string, { title: string; hint: string }> = {
+  REPORT_TEMPLATE_VALIDATION_ERROR: {
+    title: 'No report templates configured',
+    hint: 'This company has no active report templates. Ask your admin to create one first.',
+  },
+  SSE_CONNECTION_ERROR: {
+    title: 'Connection lost',
+    hint: 'The connection was interrupted. Please try again.',
+  },
+  SUBMIT_ERROR: {
+    title: 'Failed to start report generation',
+    hint: 'Something went wrong submitting your request. Please try again.',
+  },
+};
+
+const MESSAGE_PATTERNS: Array<{ match: string; title: string; hint: string }> = [
+  {
+    match: 'no templates found',
+    title: 'No matching report template',
+    hint: 'No template covers this topic. Try rephrasing your request or browse available templates.',
+  },
+  {
+    match: 'connection not found',
+    title: 'Database connection not found',
+    hint: 'The selected database connection is unavailable. Check your connections and try again.',
+  },
+  {
+    match: 'no active report templates',
+    title: 'No report templates configured',
+    hint: 'This company has no active report templates. Ask your admin to create one first.',
+  },
+];
+
+function getFriendlyError(code: string, message: string, recoverable: boolean) {
+  if (ERROR_MESSAGES[code]) return ERROR_MESSAGES[code];
+  const lower = message.toLowerCase();
+  const matched = MESSAGE_PATTERNS.find((p) => lower.includes(p.match));
+  if (matched) return { title: matched.title, hint: matched.hint };
+  return {
+    title: recoverable ? 'Something went wrong' : 'Report generation failed',
+    hint: recoverable ? 'Please try again.' : 'Contact support if the issue persists.',
+  };
+}
+
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
@@ -149,18 +193,26 @@ export default function AIReportChatPage() {
                 )}
 
                 <AnimatePresence>
-                  {state.status === 'error' && state.error && (
-                    <motion.div
-                      variants={fadeUp}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      className="rounded-card border border-error/20 bg-error/5 px-4 py-3 font-sans text-button text-error"
-                      role="alert"
-                    >
-                      {state.error.message}
-                    </motion.div>
-                  )}
+                  {state.status === 'error' && state.error && (() => {
+                    const { title, hint } = getFriendlyError(
+                      state.error.code,
+                      state.error.message,
+                      state.error.recoverable,
+                    );
+                    return (
+                      <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="rounded-card border border-error/20 bg-error/5 px-4 py-3 space-y-1"
+                        role="alert"
+                      >
+                        <p className="font-sans text-button text-error">{title}</p>
+                        <p className="font-sans text-body-sm text-subtle">{hint}</p>
+                      </motion.div>
+                    );
+                  })()}
                 </AnimatePresence>
 
                 <div ref={messagesEndRef} />
