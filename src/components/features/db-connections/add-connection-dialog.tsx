@@ -205,11 +205,13 @@ export function AddConnectionDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.values(DATABASE_TYPES).map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </SelectItem>
-                    ))}
+                    {Object.values(DATABASE_TYPES)
+                      .filter((type) => type !== DATABASE_TYPES.POSTGRESQL)
+                      .map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 {fieldState.invalid && (
