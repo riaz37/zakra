@@ -9,7 +9,6 @@ import { NAV_ITEMS } from '@/utils/constants';
 import { cn } from '@/lib/utils';
 import { NavItem } from './nav-item';
 import { CompanySwitcher } from './company-switcher';
-import { LanguageSwitcher } from '@/components/shared/language-switcher';
 
 export interface SidebarProps {
   variant?: 'full' | 'rail' | 'overlay';
@@ -219,7 +218,6 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
             >
               {initial}
             </span>
-            <LanguageSwitcher variant="icon" />
             <button
               type="button"
               onClick={handleSignOut}
@@ -237,9 +235,6 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
           </div>
         ) : (
           <>
-            <div className="mb-1 px-1">
-              <LanguageSwitcher variant="full" className="w-full justify-start" />
-            </div>
           <div
             role="group"
             aria-label={isSignedIn ? `Signed in as ${email}` : 'Account'}
