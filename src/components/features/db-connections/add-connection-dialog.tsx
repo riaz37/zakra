@@ -110,8 +110,8 @@ export function AddConnectionDialog({
       });
     } else {
       form.reset({
-        database_type: 'postgresql',
-        port: 5432,
+        database_type: 'mssql',
+        port: 1433,
         name: '',
         host: '',
         database_name: '',
