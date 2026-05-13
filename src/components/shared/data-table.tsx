@@ -89,11 +89,6 @@ export function DataTable<TData>({
 
   const showPagination = pageCount > 1;
   const isEmpty = !isLoading && rows.length === 0;
-  const fillerRowCount =
-    !isLoading && !isEmpty && pageSize && rows.length < pageSize
-      ? pageSize - rows.length
-      : 0;
-
   const startIndex =
     pageSize && totalCount !== undefined
       ? Math.min(pageIndex * pageSize + 1, totalCount)
@@ -186,13 +181,7 @@ export function DataTable<TData>({
                       ))}
                     </motion.tr>
                   ))}
-                  {Array.from({ length: fillerRowCount }).map((_, i) => (
-                    <tr key={`filler-${i}`} aria-hidden="true" className="border-b border-border last:border-b-0">
-                      {columns.map((_, ci) => (
-                        <td key={ci} className="px-4 py-2">&nbsp;</td>
-                      ))}
-                    </tr>
-                  ))}
+
                 </>
               )}
             </motion.tbody>
