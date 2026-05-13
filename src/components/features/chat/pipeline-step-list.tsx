@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Check, X, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -76,12 +77,13 @@ interface PipelineStepListProps {
 }
 
 export function PipelineStepList({ steps }: PipelineStepListProps) {
+  const t = useTranslations('dashboard.chat.pipeline');
   const visible = steps.filter((s) => s.status !== 'pending');
 
   return (
     <div
       aria-live="polite"
-      aria-label="Processing steps"
+      aria-label={t('processingSteps')}
       className="flex gap-3 animate-slide-in-bottom"
     >
       <div className="mt-0.5 shrink-0">
@@ -108,6 +110,7 @@ interface PipelineSummaryProps {
 }
 
 export function PipelineSummary({ steps }: PipelineSummaryProps) {
+  const t = useTranslations('dashboard.chat.pipeline');
   const [expanded, setExpanded] = useState(false);
   const done = steps.filter((s) => s.status === 'completed' || s.status === 'skipped' || s.durationMs !== undefined);
   if (done.length === 0) return null;
@@ -123,7 +126,7 @@ export function PipelineSummary({ steps }: PipelineSummaryProps) {
           strokeWidth={2}
         />
         <span>
-          {done.length} {done.length === 1 ? 'step' : 'steps'}
+          {done.length} {done.length === 1 ? t('step') : t('steps')}
         </span>
       </button>
 

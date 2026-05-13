@@ -1,17 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = [
-  { label: "Features", href: "#features" },
-  { label: "Demo", href: "#demo" },
-] as const;
-
 export function LandingNav() {
+  const t = useTranslations("landing.nav");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -20,6 +18,11 @@ export function LandingNav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const NAV_LINKS = [
+    { label: t("features"), href: "#features" },
+    { label: t("demo"), href: "#demo" },
+  ] as const;
 
   return (
     <header
@@ -49,30 +52,31 @@ export function LandingNav() {
 
           <nav className="hidden items-center gap-6 md:flex">
             {NAV_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
                 className="text-[13px] font-medium text-muted transition-colors duration-[120ms] hover:text-foreground"
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
           </nav>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-1.5">
+          <LanguageSwitcher variant="icon" />
           <Link
             href="/login"
             className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-[13px] text-muted hover:text-foreground")}
           >
-            Sign in
+            {t("signIn")}
           </Link>
           <Link
             href="/login"
             className={cn(buttonVariants({ variant: "default", size: "sm" }), "text-[13px]")}
           >
-            Get started
+            {t("getStarted")}
           </Link>
         </div>
       </div>

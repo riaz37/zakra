@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StreamingTextBlock } from '@/components/shared/streaming-text-block';
@@ -19,6 +20,7 @@ function normalizeChatSteps(steps: PipelineStep[]): NormalizedStep[] {
 }
 
 function StreamingStatusPill({ blockCount }: { blockCount: number }) {
+  const t = useTranslations('dashboard.chat.session');
   return (
     <motion.div
       variants={fadeIn}
@@ -28,7 +30,7 @@ function StreamingStatusPill({ blockCount }: { blockCount: number }) {
     >
       <span className="h-1.5 w-1.5 rounded-full bg-accent/55 animate-pulse" />
       <span className="font-mono text-mono-sm text-subtle">
-        {blockCount === 0 ? 'Generating…' : 'Writing…'}
+        {blockCount === 0 ? t('generating') : t('writing')}
       </span>
     </motion.div>
   );

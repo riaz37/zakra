@@ -193,25 +193,25 @@ function FilePreviewCard({
       )}
 
       {/* Type badge */}
-      <div className="absolute bottom-2 left-2">
+      <div className="absolute bottom-2 start-2">
         <CardBadge label={getFileTypeLabel(file.type)} />
       </div>
 
       {/* Status icons */}
       {file.uploadStatus === "uploading" && (
-        <div className="absolute top-2 left-2">
+        <div className="absolute top-2 start-2">
           <Loader2 className="h-3 w-3 animate-spin text-accent" />
         </div>
       )}
       {file.uploadStatus === "error" && (
-        <div className="absolute top-2 left-2">
+        <div className="absolute top-2 start-2">
           <AlertCircle className="h-3 w-3 text-error" />
         </div>
       )}
 
       {/* Remove button */}
       <button
-        className="absolute top-1.5 right-1.5 h-5 w-5 cursor-pointer rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-surface-500 border border-border"
+        className="absolute top-1.5 end-1.5 h-5 w-5 cursor-pointer rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-surface-500 border border-border"
         onClick={() => onRemove(file.id)}
       >
         <X className="h-3 w-3 text-foreground" />
@@ -260,18 +260,18 @@ function TextualFilePreviewCard({
 
       {/* Status icons */}
       {file.uploadStatus === "uploading" && (
-        <div className="absolute top-2 left-2">
+        <div className="absolute top-2 start-2">
           <Loader2 className="h-3 w-3 animate-spin text-accent" />
         </div>
       )}
       {file.uploadStatus === "error" && (
-        <div className="absolute top-2 left-2">
+        <div className="absolute top-2 start-2">
           <AlertCircle className="h-3 w-3 text-error" />
         </div>
       )}
 
       {/* Hover actions */}
-      <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-1.5 end-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         {file.textContent && (
           <button
             className="h-5 w-5 cursor-pointer rounded flex items-center justify-center bg-surface-500 border border-border"
@@ -321,7 +321,7 @@ function PastedContentCard({
         <CardBadge label="PASTED" />
       </div>
 
-      <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-1.5 end-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           className="h-5 w-5 rounded flex items-center justify-center bg-surface-500 border border-border"
           onClick={() => void navigator.clipboard.writeText(content.content)}
@@ -465,7 +465,7 @@ function DbSelectorButton({
                 type="button"
                 onClick={() => handleSelect(c.id)}
                 className={cn(
-                  "flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-surface-400",
+                  "flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-start transition-colors hover:bg-surface-400",
                   c.id === selectedConnectionId && "bg-surface-300",
                 )}
               >

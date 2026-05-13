@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from "next-intl";
 import { AnimateIn } from "@/components/landing/AnimateIn";
 import Image from "next/image";
 
@@ -11,12 +14,14 @@ const PARTNER_LOGOS = [
 ];
 
 export function LogoBar() {
+  const t = useTranslations("landing.logobar");
+
   return (
     <section className="py-10 px-6">
       <div className="max-w-6xl mx-auto">
         <AnimateIn>
           <p className="text-center mb-8 text-fg-subtle text-[11px] uppercase tracking-[0.08em]">
-            Trusted by industry leaders
+            {t("trustedBy")}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">

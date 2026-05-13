@@ -9,6 +9,7 @@ import { NAV_ITEMS } from '@/utils/constants';
 import { cn } from '@/lib/utils';
 import { NavItem } from './nav-item';
 import { CompanySwitcher } from './company-switcher';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
 
 export interface SidebarProps {
   variant?: 'full' | 'rail' | 'overlay';
@@ -106,7 +107,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'flex h-dvh flex-col border-r border-border bg-surface-100',
+        'flex h-dvh flex-col border-e border-border bg-surface-100',
         variant === 'full' && 'w-56',
         variant === 'rail' && 'w-[52px]',
         variant === 'overlay' && 'w-56',
@@ -218,6 +219,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
             >
               {initial}
             </span>
+            <LanguageSwitcher variant="icon" />
             <button
               type="button"
               onClick={handleSignOut}
@@ -234,6 +236,10 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
             </button>
           </div>
         ) : (
+          <>
+            <div className="mb-1 px-1">
+              <LanguageSwitcher variant="full" className="w-full justify-start" />
+            </div>
           <div
             role="group"
             aria-label={isSignedIn ? `Signed in as ${email}` : 'Account'}
@@ -305,6 +311,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               <LogOut aria-hidden size={14} strokeWidth={1.75} />
             </button>
           </div>
+          </>
         )}
       </div>
     </aside>

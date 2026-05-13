@@ -1,7 +1,9 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useChatSessions } from '@/hooks/useChatSessions';
 import { useCurrentCompanyId } from '@/hooks/useCurrentCompany';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -41,11 +43,12 @@ function groupSessions(sessions: ChatSession[]) {
 }
 
 export function ChatSidebar() {
+  const t = useTranslations('dashboard.chat');
   const router = useRouter();
   const params = useParams<{ sessionId: string }>();
   const activeSessionId = params?.sessionId;
   const companyId = useCurrentCompanyId();
-  
+
   const { data, isLoading } = useChatSessions(companyId);
   const sessions = data?.sessions ?? [];
 
@@ -82,7 +85,7 @@ export function ChatSidebar() {
                       transition={{ duration: 0.2 }}
                     />
                   )}
-                  <span className="truncate">{session.title || 'Untitled conversation'}</span>
+                  <span className="truncate">{session.title || t('untitledConversation')}</span>
                 </Link>
               </li>
             );
@@ -99,14 +102,14 @@ export function ChatSidebar() {
           onClick={() => router.push('/chat')}
           className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-accent px-4 py-2.5 font-sans text-button font-semibold text-primary-foreground shadow-sm transition-all duration-200 hover:bg-accent/90 hover:shadow-md active:scale-[0.98]"
         >
-          New chat
+          {t('newChat')}
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-surface-400 scrollbar-track-transparent hover:scrollbar-thumb-surface-500">
         {!companyId && (
           <div className="px-4 py-6 text-center text-body text-fg-muted">
-            Select a company to view chat history.
+            {t('selectCompanyHistory')}
           </div>
         )}
 
@@ -139,16 +142,16 @@ export function ChatSidebar() {
 
         {!isLoading && sessions.length === 0 && companyId && (
           <div className="px-4 py-6 text-center text-body text-fg-muted">
-            No past conversations found.
+            {t('noPastConversations')}
           </div>
         )}
 
         {!isLoading && sessions.length > 0 && (
           <>
-            {renderGroup('Today', today)}
-            {renderGroup('Yesterday', yesterday)}
-            {renderGroup('Previous 7 Days', previous7Days)}
-            {renderGroup('Older', older)}
+            {renderGroup(t('today'), today)}
+            {renderGroup(t('yesterday'), yesterday)}
+            {renderGroup(t('previous7Days'), previous7Days)}
+            {renderGroup(t('older'), older)}
           </>
         )}
       </div>

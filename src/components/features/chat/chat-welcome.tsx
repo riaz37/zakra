@@ -1,22 +1,19 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { staggerContainer, staggerItem, staggerScaleItem } from '@/lib/motion';
-
-const EXAMPLE_PROMPTS = [
-  'Show me sales by region this month',
-  'Which users signed up in the last 7 days?',
-  'Top 5 products by revenue',
-  'Monthly trend for approved operations',
-];
 
 interface ChatWelcomeProps {
   onPrompt: (text: string) => void;
 }
 
 export function ChatWelcome({ onPrompt }: ChatWelcomeProps) {
+  const t = useTranslations('dashboard.chat.welcome');
   const reduced = useReducedMotion();
+
+  const examplePrompts = t.raw('prompts') as string[];
 
   return (
     <motion.div
@@ -44,14 +41,13 @@ export function ChatWelcome({ onPrompt }: ChatWelcomeProps) {
         variants={staggerItem}
         className="font-sans text-heading font-normal leading-[1.25] tracking-[-0.44px] text-foreground"
       >
-        Ask anything about your data
+        {t('heading')}
       </motion.h2>
       <motion.p
         variants={staggerItem}
         className="mt-2.5 max-w-[360px] font-sans text-body leading-[1.6] text-fg-muted"
       >
-        Query your connected database in plain language — operations, trends,
-        users, anything.
+        {t('subheading')}
       </motion.p>
 
       <motion.div
@@ -60,7 +56,7 @@ export function ChatWelcome({ onPrompt }: ChatWelcomeProps) {
         initial={reduced ? 'visible' : 'hidden'}
         animate="visible"
       >
-        {EXAMPLE_PROMPTS.map((prompt) => (
+        {examplePrompts.map((prompt) => (
           <motion.button
             key={prompt}
             variants={staggerScaleItem}

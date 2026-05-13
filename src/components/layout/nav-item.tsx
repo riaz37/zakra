@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 // Explicit icon map — no dynamic import, no `any`.
@@ -58,10 +59,12 @@ export function NavItem({
   onNavigate,
 }: NavItemProps) {
   const Icon = ICON_MAP[icon];
+  const locale = useLocale();
+  const isRtl = locale === 'ar';
 
   return (
     <motion.div
-      whileHover={collapsed ? undefined : { x: 2 }}
+      whileHover={collapsed ? undefined : { x: isRtl ? -2 : 2 }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.1, ease: 'easeOut' }}
     >
@@ -74,12 +77,12 @@ export function NavItem({
         className={cn(
           // base
           'relative flex h-8 items-center gap-2.5 rounded-md font-sans text-body outline-none transition-colors duration-[120ms]',
-          'border-l-2 pl-[10px] pr-3',
+          'border-s-2 ps-[10px] pe-3',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/40',
           active
-            ? 'border-l-accent bg-accent-soft font-medium text-foreground'
-            : 'border-l-transparent text-fg-muted hover:bg-surface-300 hover:text-foreground',
-          collapsed && 'justify-center border-l-0 px-0 pl-0',
+            ? 'border-s-accent bg-accent-soft font-medium text-foreground'
+            : 'border-s-transparent text-fg-muted hover:bg-surface-300 hover:text-foreground',
+          collapsed && 'justify-center border-s-0 px-0 ps-0',
         )}
       >
         {Icon ? (

@@ -79,7 +79,7 @@
   --color-card: #21201c;
   --color-card-foreground: #ebeae5;
 
-  /* ==========  Fonts — Archivo / JetBrains Mono  ========== */
+  /* ==========  Fonts — Archivo / JetBrains Mono / Noto Sans Arabic  ========== */
   --font-display: var(--font-sans);
   --font-sans: "Archivo", system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
@@ -290,6 +290,12 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     font-feature-settings: "ss01", "cv01";
+  }
+
+  /* Arabic locale: swap font stack to Noto Sans Arabic */
+  [dir="rtl"] body,
+  [dir="rtl"] {
+    font-family: var(--font-arabic), system-ui, Arial, sans-serif;
   }
 
   ::selection {

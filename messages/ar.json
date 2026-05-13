@@ -1,0 +1,782 @@
+{
+  "landing": {
+    "nav": {
+      "features": "المميزات",
+      "demo": "العرض التوضيحي",
+      "signIn": "تسجيل الدخول",
+      "getStarted": "ابدأ الآن"
+    },
+    "hero": {
+      "badge": "متاح الآن للجميع · الإصدار المؤسسي",
+      "headline1": "بياناتك.",
+      "headline2": "أي سؤال.",
+      "headline3": "إجابة فورية.",
+      "description": "تتصل زكرا بقواعد بيانات مؤسستك، وتتعلم سياق عملك، وتمنح كل عضو في الفريق واجهة باللغة الطبيعية للمعلومات التي يحتاجها — دون كتابة أي استعلام.",
+      "startFree": "ابدأ مجاناً",
+      "bookDemo": "احجز عرضاً توضيحياً",
+      "trustedBy": "موثوق به من قِبَل {count}+ فريق مؤسسي",
+      "terminal": {
+        "title": "زكرا — مساحة العمل — analytics_db",
+        "userPrompt": "كم عدد المستخدمين النشطين الذين اشتركوا الشهر الماضي؟",
+        "thinking": "جارٍ الاستعلام من <db1>users_db</db1> و<db2>analytics_db</db2> — تم العثور على مصدرين",
+        "activeUsers": "مستخدم نشط",
+        "growth": "↑ 14.2% مقارنة بالشهر السابق · 0.18 ثانية · مصدران",
+        "followUp": "اطرح سؤالاً متابعاً…"
+      }
+    },
+    "stats": {
+      "queries": {
+        "value": "+10M",
+        "label": "استعلام تمت معالجته",
+        "sub": "عبر جميع المستأجرين"
+      },
+      "customers": {
+        "value": "+800",
+        "label": "عميل مؤسسي",
+        "sub": "في بيئة الإنتاج"
+      },
+      "latency": {
+        "value": "< 180ms",
+        "label": "متوسط وقت الاستجابة",
+        "sub": "p99 latency"
+      },
+      "uptime": {
+        "value": "99.95%",
+        "label": "اتفاقية مستوى الخدمة",
+        "sub": "آخر 12 شهراً"
+      }
+    },
+    "features": {
+      "eyebrow": "لماذا زكرا",
+      "headline": "مبني لفرق البيانات المؤسسية.",
+      "subheadline": "مصمَّم لفرق المؤسسات التي تحتاج إلى إجابات موثوقة من بيانات معقدة ومتعددة المصادر — دون أعباء هندسية في كل طلب.",
+      "items": {
+        "nlq": {
+          "title": "استعلامات اللغة الطبيعية",
+          "body": "اسأل بالعربية أو الإنجليزية. تستعلم زكرا من قواعد بياناتك، وتقدم الإجابة مع ذكر المصدر الدقيق — دون الحاجة إلى SQL.",
+          "tag": "واجهة الذكاء الاصطناعي"
+        },
+        "federation": {
+          "title": "اتحاد مصادر متعددة",
+          "body": "PostgreSQL وMySQL وMongoDB وREST APIs. لوحة اتصال واحدة، واستعلام كامل عبر جميع مصادر بياناتك في آنٍ واحد.",
+          "tag": "الموصلات"
+        },
+        "access": {
+          "title": "التحكم الدقيق في الوصول",
+          "body": "أذونات محددة لكل شركة وقسم ومجموعة بيانات. لا أحد يرى ما لا ينبغي له. وراثة الأدوار مضمّنة.",
+          "tag": "الأمان"
+        },
+        "knowledge": {
+          "title": "قاعدة معرفة منتقاة",
+          "body": "عزِّز إجابات الذكاء الاصطناعي بمقالات محققة وإجراءات تشغيل موحدة وكتب تشغيل. اجعل كل إجابة مستندة إلى حقيقة معتمدة.",
+          "tag": "المعرفة"
+        },
+        "multitenant": {
+          "title": "معمارية متعددة المستأجرين",
+          "body": "أدِر مئات المستأجرين من لوحة تحكم واحدة. بيانات منفصلة وأدوار منفصلة وواجهة تحكم موحدة.",
+          "tag": "المؤسسة"
+        },
+        "audit": {
+          "title": "التدقيق والامتثال",
+          "body": "كل استعلام مسجّل وكل وصول مُتتبَّع. جاهز للتصدير لـ SOC2 وISO 27001 والـ GDPR عند الطلب.",
+          "tag": "الامتثال"
+        }
+      }
+    },
+    "demo": {
+      "eyebrow": "كيف يعمل",
+      "headline1": "من البيانات إلى الرؤية",
+      "headline2": "في ثلاث خطوات.",
+      "description": "اربط قواعد بياناتك في دقائق. ادعُ فريقك. ابدأ في الحصول على الإجابات في نفس اليوم — دون سطر واحد من الكود أو تذكرة هندسة بيانات.",
+      "steps": [
+        "اربط قواعد بياناتك في دقائق",
+        "ادعُ فريقك بصلاحيات محددة بالدور",
+        "اطرح أسئلة بالعربية أو الإنجليزية — دون SQL"
+      ],
+      "startFree": "ابدأ مجاناً",
+      "bookDemo": "احجز عرضاً توضيحياً",
+      "terminal": {
+        "title": "زكرا — مساحة العمل",
+        "connectionsLabel": "الاتصالات",
+        "userQuery": "أفضل 5 عملاء من حيث الإيرادات في الربع الأخير؟",
+        "thinking": "جارٍ الاستعلام من <db1>crm_db</db1> و<db2>analytics_db</db2>…",
+        "tableHeaders": {
+          "customer": "العميل",
+          "revenue": "الإيرادات",
+          "growth": "النمو"
+        },
+        "resultMeta": "4 صفوف · مصدران · 0.21 ثانية",
+        "followUp": "اطرح سؤالاً متابعاً…"
+      }
+    },
+    "cta": {
+      "eyebrow": "مستعد للبدء؟",
+      "headline1": "فريقك يستحق أفضل",
+      "headline2": "من كتابة تذاكر SQL.",
+      "description": "أعدّ زكرا في أقل من ساعة. اربط قاعدة بياناتك الأولى، ادعُ فريقك، وابدأ في الحصول على الإجابات اليوم.",
+      "startFree": "ابدأ مجاناً",
+      "talkSales": "تحدث مع المبيعات",
+      "disclaimer": "بدون بطاقة ائتمانية · تجربة مجانية 14 يوماً · إلغاء في أي وقت"
+    },
+    "logobar": {
+      "trustedBy": "موثوق به من قادة الصناعة"
+    },
+    "footer": {
+      "tagline": "إدارة المعرفة المؤسسية، مدعومة بالذكاء الاصطناعي.",
+      "legal": {
+        "heading": "القانونية",
+        "privacy": "الخصوصية",
+        "terms": "الشروط",
+        "security": "الأمان",
+        "cookies": "ملفات تعريف الارتباط"
+      },
+      "newsletter": {
+        "heading": "النشرة الإخبارية",
+        "description": "تحديثات المنتج وأدلة المؤسسة والتكاملات الجديدة. بدون إزعاج.",
+        "placeholder": "you@company.com",
+        "subscribe": "اشتراك",
+        "success": "أنت في القائمة. سنتواصل معك قريباً."
+      },
+      "copyright": "© 2026 زكرا. جميع الحقوق محفوظة."
+    }
+  },
+  "auth": {
+    "layout": {
+      "copyright": "© {year} إمباورينج إنرجي (تتداول بإسم ESAP AI)",
+      "privacy": "سياسة الخصوصية",
+      "terms": "شروط الخدمة",
+      "cookies": "سياسة ملفات تعريف الارتباط"
+    },
+    "login": {
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "you@company.com",
+      "emailError": "أدخل بريداً إلكترونياً صحيحاً",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "••••••••",
+      "passwordError": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "signIn": "تسجيل الدخول",
+      "signingIn": "جارٍ تسجيل الدخول…",
+      "firstTime": "تسجيل الدخول لأول مرة؟ تحقق من بريد الدعوة للحصول على بيانات الاعتماد.",
+      "defaultError": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى."
+    },
+    "selectCompany": {
+      "selectTitle": "اختر مساحة العمل",
+      "selectDescription": "اختر الشركة التي تريد إدارتها.",
+      "loading": "جارٍ التحميل…",
+      "createNew": "إنشاء شركة جديدة",
+      "backToList": "العودة إلى القائمة",
+      "createTitle": "إنشاء شركة",
+      "createDescription": "أنشئ مساحة عملك الأولى للبدء.",
+      "nameLabel": "اسم الشركة",
+      "namePlaceholder": "شركة أكمي",
+      "nameRequired": "اسم الشركة مطلوب",
+      "slugLabel": "المعرّف",
+      "slugPlaceholder": "acme-corp",
+      "slugRequired": "المعرّف مطلوب",
+      "slugFormat": "أحرف صغيرة وأرقام وشرطات فقط",
+      "creating": "جارٍ الإنشاء…",
+      "createSubmit": "إنشاء الشركة",
+      "createdToast": "تم إنشاء {name}",
+      "createError": "فشل إنشاء الشركة. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "dashboard": {
+    "nav": {
+      "overview": "نظرة عامة",
+      "chat": "المحادثة",
+      "reports": "التقارير",
+      "companies": "الشركات",
+      "users": "المستخدمون",
+      "databases": "قواعد البيانات",
+      "tableAccess": "صلاحيات الجداول",
+      "roles": "الأدوار",
+      "signOut": "تسجيل الخروج"
+    },
+    "header": {
+      "openNavLabel": "فتح القائمة",
+      "closeNavLabel": "إغلاق القائمة"
+    },
+    "databases": {
+      "title": "قواعد البيانات",
+      "subtitle": "مصادر البيانات المتصلة التي تشغّل الاستعلامات والتقارير باللغة الطبيعية.",
+      "addConnection": "إضافة اتصال",
+      "editConnection": "تعديل الاتصال",
+      "testConnection": "اختبار الاتصال",
+      "setDefault": "تعيين كافتراضي",
+      "default": "افتراضي",
+      "alreadyDefault": "افتراضي بالفعل",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "search": {
+        "placeholder": "البحث بالاسم أو المضيف أو قاعدة البيانات…",
+        "ariaLabel": "البحث في قواعد البيانات"
+      },
+      "empty": {
+        "title": "لا توجد قواعد بيانات متصلة",
+        "description": "اربط قاعدة بيانات لتفعيل الاستعلامات والتقارير باللغة الطبيعية.",
+        "searchTitle": "لا توجد قواعد بيانات تطابق بحثك",
+        "searchDescription": "جرّب تعديل مصطلحات البحث."
+      },
+      "error": {
+        "loadTitle": "فشل تحميل قواعد البيانات",
+        "loadDescription": "حدثت مشكلة أثناء تحميل اتصالات قاعدة البيانات.",
+        "notFoundTitle": "الاتصال غير موجود",
+        "notFoundDescription": "تعذّر تحميل اتصال قاعدة البيانات هذا. ربما تم حذفه أو لا تملك صلاحية الوصول إليه."
+      },
+      "toast": {
+        "testSuccess": "الاتصال ناجح",
+        "testSuccessLatency": "الاتصال ناجح ({latency}ms)",
+        "testFailed": "فشل اختبار الاتصال",
+        "deleted": "تم حذف الاتصال",
+        "deleteFailed": "فشل حذف الاتصال",
+        "setDefaultSuccess": "تم التعيين كاتصال افتراضي",
+        "setDefaultFailed": "فشل تعيين الاتصال الافتراضي",
+        "editSoon": "التعديل قريباً",
+        "editSoonDescription": "التعديل المضمّن لتفاصيل الاتصال في الطريق."
+      },
+      "confirmDelete": {
+        "title": "حذف الاتصال",
+        "description": "سيؤدي هذا إلى إزالة \"{name}\" وجميع قواعد العمل المرتبطة به بشكل دائم. لا يمكن التراجع عن هذا الإجراء.",
+        "confirmLabel": "حذف نهائياً"
+      },
+      "lastError": "آخر خطأ",
+      "tabs": {
+        "schema": "مستكشف المخطط",
+        "rules": "قواعد العمل"
+      },
+      "breadcrumbs": {
+        "databases": "قواعد البيانات"
+      }
+    },
+    "tableAccess": {
+      "title": "صلاحيات الجداول",
+      "subtitle": "تحكّم في الأعمدة التي يمكن لكل مستخدم قراءتها أو إخفاؤها أو تعديلها.",
+      "protectTable": "حماية الجدول",
+      "user": "المستخدم",
+      "selectUser": "اختر مستخدماً…",
+      "tables": {
+        "label": "الجداول",
+        "filterPlaceholder": "تصفية الجداول…",
+        "filterAriaLabel": "تصفية الجداول",
+        "ariaLabel": "الجداول المُدارة",
+        "noMatch": "لا توجد جداول مطابقة",
+        "selectPrompt": "اختر جدولاً لإدارة صلاحيات الأعمدة."
+      },
+      "columns": {
+        "none": "لم يتم اكتشاف أعمدة لهذا الجدول."
+      },
+      "inactive": "غير نشط",
+      "empty": {
+        "title": "لا توجد جداول محمية",
+        "description": "احمِ جدولاً لبدء إدارة الوصول على مستوى الأعمدة للمستخدمين."
+      },
+      "toast": {
+        "saved": "تم حفظ الصلاحيات",
+        "saveFailed": "فشل حفظ الصلاحيات"
+      }
+    },
+    "overview": {
+      "title": "نظرة عامة",
+      "subtitle": "التحليلات والنشاط عبر مساحة عملك.",
+      "selectCompanyHint": "اختر شركة من الشريط الجانبي لتصفية التحليلات والنشاط حسب مساحة العمل.",
+      "metrics": {
+        "totalUsers": "إجمالي المستخدمين",
+        "totalConnections": "الاتصالات",
+        "totalReports": "التقارير المُنشأة",
+        "totalChatSessions": "جلسات المحادثة"
+      },
+      "activityChart": {
+        "title": "النشاط (آخر 14 يوماً)",
+        "description": "الحجم اليومي لجلسات المحادثة وإنشاء التقارير",
+        "noData": "لا تتوفر بيانات نشاط.",
+        "waitingFirst": "في انتظار إجراءك الأول",
+        "reports": "التقارير",
+        "chats": "المحادثات"
+      },
+      "statusChart": {
+        "title": "حالة التقارير",
+        "description": "توزيع حسب حالة الإنشاء",
+        "noReports": "لم يتم إنشاء أي تقارير بعد",
+        "noDataHint": "سيظهر توزيع الحالات هنا",
+        "completed": "مكتمل",
+        "failed": "فشل",
+        "running": "قيد التنفيذ",
+        "pending": "قيد الانتظار",
+        "reportsLabel": "التقارير"
+      },
+      "recentActivity": {
+        "title": "النشاط الأخير",
+        "description": "أحدث المحادثات والتقارير",
+        "reportsHeading": "التقارير",
+        "chatsHeading": "المحادثات",
+        "noRecentReports": "لا توجد تقارير حديثة.",
+        "noRecentChats": "لا توجد محادثات حديثة.",
+        "untitledReport": "تقرير بلا عنوان",
+        "newChat": "محادثة جديدة",
+        "unknown": "غير معروف"
+      }
+    },
+    "chat": {
+      "title": "المحادثة",
+      "newChat": "محادثة جديدة",
+      "selectCompanyHistory": "اختر شركة لعرض سجل المحادثات.",
+      "noPastConversations": "لا توجد محادثات سابقة.",
+      "untitledConversation": "محادثة بلا عنوان",
+      "today": "اليوم",
+      "yesterday": "أمس",
+      "previous7Days": "آخر 7 أيام",
+      "older": "أقدم",
+      "noCompanySelected": "لم يتم اختيار شركة",
+      "noCompanyDescription": "اختر شركة من الشريط الجانبي لبدء محادثة.",
+      "selectCompanyBeforeChat": "اختر شركة قبل بدء المحادثة.",
+      "selectConnectionFirst": "اختر اتصالاً بقاعدة البيانات أولاً.",
+      "failedToCreateSession": "فشل إنشاء جلسة المحادثة.",
+      "welcome": {
+        "heading": "اسأل أي شيء عن بياناتك",
+        "subheading": "استعلم من قاعدة بياناتك المتصلة بلغة طبيعية — العمليات والاتجاهات والمستخدمون وأي شيء آخر.",
+        "prompts": [
+          "أرني المبيعات حسب المنطقة هذا الشهر",
+          "أي المستخدمين اشتركوا في آخر 7 أيام؟",
+          "أفضل 5 منتجات من حيث الإيرادات",
+          "الاتجاه الشهري للعمليات المعتمدة"
+        ]
+      },
+      "session": {
+        "defaultTitle": "المحادثة",
+        "reconnecting": "جارٍ إعادة الاتصال…",
+        "jumpToLatest": "الانتقال إلى آخر رسالة",
+        "latest": "الأحدث",
+        "generating": "جارٍ الإنشاء…",
+        "writing": "جارٍ الكتابة…"
+      },
+      "pipeline": {
+        "processingSteps": "خطوات المعالجة",
+        "step": "خطوة",
+        "steps": "خطوات"
+      },
+      "message": {
+        "copyMessage": "نسخ الرسالة",
+        "reRunQuery": "إعادة تشغيل الاستعلام"
+      },
+      "queryResult": {
+        "rows": "صفوف",
+        "hideChart": "إخفاء الرسم البياني",
+        "showChart": "إظهار الرسم البياني",
+        "copySql": "نسخ SQL",
+        "prev": "السابق",
+        "next": "التالي",
+        "pageOf": "الصفحة {current} من {total}"
+      }
+    },
+    "roles": {
+      "title": "الأدوار",
+      "subtitle": "حدِّد مجموعات الصلاحيات التي تتحكم في ما يمكن للمستخدمين الوصول إليه.",
+      "newRole": "دور جديد",
+      "createRole": "إنشاء دور",
+      "saveChanges": "حفظ التغييرات",
+      "columns": {
+        "name": "الاسم",
+        "type": "النوع",
+        "description": "الوصف",
+        "level": "المستوى",
+        "created": "تاريخ الإنشاء"
+      },
+      "search": {
+        "placeholder": "البحث في الأدوار…",
+        "ariaLabel": "البحث في الأدوار"
+      },
+      "caption": "قائمة الأدوار",
+      "empty": {
+        "title": "لم يتم تعريف أي أدوار",
+        "description": "أنشئ أدواراً للتحكم في ما يمكن لكل نوع مستخدم الوصول إليه.",
+        "searchTitle": "لا توجد أدوار تطابق بحثك",
+        "searchDescription": "جرّب تعديل مصطلحات البحث."
+      },
+      "error": {
+        "loadTitle": "فشل تحميل الأدوار"
+      },
+      "dialog": {
+        "createTitle": "دور جديد",
+        "editTitle": "تعديل الدور"
+      },
+      "confirmDelete": {
+        "title": "حذف الدور",
+        "description": "هل أنت متأكد من حذف \"{name}\"؟ سيفقد المستخدمون الذين لديهم هذا الدور الصلاحيات المرتبطة به.",
+        "confirmLabel": "حذف"
+      },
+      "actions": {
+        "editLabel": "تعديل {name}",
+        "deleteLabel": "حذف {name}"
+      },
+      "emptyMessage": "لم يتم العثور على أدوار."
+    },
+    "reports": {
+      "title": "التقارير",
+      "aiGenerateSubtitle": "إنشاء تقارير مدعومة بالذكاء الاصطناعي من بياناتك المتصلة.",
+      "historySubtitle": "جميع التقارير المُنشأة بالذكاء الاصطناعي لهذه المساحة، الأحدث أولاً.",
+      "templatesSubtitle": "قوالب قابلة لإعادة الاستخدام لتقاريرك المُنشأة بالذكاء الاصطناعي.",
+      "nav": {
+        "aiGenerate": "إنشاء بالذكاء الاصطناعي",
+        "history": "السجل",
+        "templates": "القوالب"
+      },
+      "status": {
+        "pending": "في الانتظار",
+        "running": "قيد التشغيل",
+        "completed": "مكتمل",
+        "failed": "فشل",
+        "all": "جميع الحالات"
+      },
+      "generate": {
+        "breadcrumbReports": "التقارير",
+        "breadcrumbTemplates": "القوالب",
+        "breadcrumbReady": "جاهز",
+        "breadcrumbFailed": "فشل",
+        "breadcrumbGenerating": "جارٍ الإنشاء…",
+        "titleReady": "التقرير جاهز",
+        "titleFailed": "فشل الإنشاء",
+        "titleGenerating": "جارٍ إنشاء التقرير",
+        "preparingPipeline": "جارٍ التحضير…",
+        "viewReport": "عرض التقرير",
+        "retry": "إعادة المحاولة",
+        "retryGeneration": "إعادة محاولة الإنشاء",
+        "pipeline": "خط المعالجة",
+        "connectingStream": "جارٍ الاتصال بتدفق الإنشاء…",
+        "totalDuration": "الإجمالي",
+        "sectionAnalyses": "تحليلات الأقسام · {count}",
+        "reportReady": "التقرير جاهز",
+        "redirecting": "جارٍ توجيهك إلى التقرير الكامل…",
+        "viewNow": "عرض الآن",
+        "failedAt": "فشل عند: {stepName}",
+        "executiveSummary": "الملخص التنفيذي",
+        "analysisRunning": "نحن نشغّل خط تحليل المعطيات مقابل بياناتك. يستغرق هذا عادةً من 30 إلى 90 ثانية حسب عدد الأقسام."
+      },
+      "viewer": {
+        "breadcrumbReports": "التقارير",
+        "untitledReport": "تقرير بلا عنوان",
+        "downloadPdf": "تنزيل PDF",
+        "downloading": "جارٍ التنزيل…",
+        "pdf": "PDF",
+        "generatingReport": "جارٍ إنشاء التقرير…",
+        "sectionsProgress": "{completed} / {total} أقسام",
+        "reportFailed": "فشل إنشاء التقرير",
+        "partialFailure": "فشل {failed} من {total} أقسام في الإنشاء.",
+        "executiveSummary": "الملخص التنفيذي",
+        "queryResult": "نتيجة الاستعلام",
+        "rowsCount": "{count} صفوف",
+        "showingRows": "عرض {showing} من {total} صفوف",
+        "truncatedByServer": " (النتيجة مقطوعة من الخادم)",
+        "showMoreRows": "عرض {count} صفوف إضافية ↓",
+        "showLess": "عرض أقل ↑",
+        "generatingAnalysis": "جارٍ إنشاء التحليل…",
+        "sectionFailed": "فشل إنشاء القسم.",
+        "noDataAvailable": "لا تتوفر بيانات لهذا القسم.",
+        "reportNotFound": "التقرير غير موجود",
+        "reportNotFoundDescription": "ربما تم حذف هذا التقرير، أو قد لا تملك صلاحية الوصول إليه.",
+        "downloadingAriaLabel": "جارٍ تنزيل ملف PDF للتقرير",
+        "downloadAriaLabel": "تنزيل التقرير بصيغة PDF",
+        "pointSingular": "نقطة",
+        "pointPlural": "نقاط",
+        "sectionSingular": "قسم",
+        "sectionPlural": "أقسام"
+      },
+      "history": {
+        "search": {
+          "placeholder": "البحث بالعنوان…",
+          "ariaLabel": "البحث في التقارير بالعنوان"
+        },
+        "statusFilter": {
+          "ariaLabel": "التصفية حسب الحالة",
+          "placeholder": "جميع الحالات"
+        },
+        "caption": "سجل التقارير المُنشأة",
+        "empty": {
+          "title": "لم يتم إنشاء أي تقارير بعد",
+          "description": "ستظهر التقارير المُنشأة هنا بمجرد إنشائها.",
+          "filteredTitle": "لا توجد تقارير تطابق عوامل التصفية",
+          "filteredDescription": "جرّب مسح مصطلح البحث أو عامل تصفية الحالة."
+        },
+        "error": {
+          "loadTitle": "فشل تحميل سجل التقارير"
+        },
+        "emptyMessage": "لا توجد تقارير تطابق عوامل التصفية."
+      },
+      "templates": {
+        "newTemplate": "قالب جديد",
+        "saveTemplate": "حفظ القالب",
+        "saveChanges": "حفظ التغييرات",
+        "cancel": "إلغاء",
+        "generateReport": "إنشاء تقرير",
+        "empty": {
+          "title": "لا توجد قوالب تقارير",
+          "description": "أنشئ قوالب لتوحيد تقاريرك المُنشأة بالذكاء الاصطناعي."
+        },
+        "error": {
+          "loadTitle": "فشل تحميل القوالب"
+        },
+        "confirmDelete": {
+          "title": "حذف القالب",
+          "description": "هل أنت متأكد من حذف \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+          "confirmLabel": "حذف"
+        },
+        "breadcrumbs": {
+          "templates": "القوالب",
+          "newTemplate": "قالب جديد"
+        },
+        "new": {
+          "title": "قالب جديد",
+          "subtitle": "حدِّد البنية والأقسام لتقريرك المُنشأ بالذكاء الاصطناعي."
+        },
+        "edit": {
+          "subtitle": "تعديل تفاصيل القالب وأقسامه."
+        },
+        "notFound": "القالب غير موجود.",
+        "backToTemplates": "العودة إلى القوالب"
+      },
+      "aiGenerate": {
+        "placeholder": "صِف التقرير الذي تريد إنشاءه…",
+        "starting": "جارٍ البدء…",
+        "errors": {
+          "noTemplateTitle": "لا يوجد قالب تقرير مطابق",
+          "noTemplateHint": "لا يغطي أي قالب هذا الموضوع. جرّب إعادة صياغة طلبك، أو تحقق من القوالب المتاحة.",
+          "browseTemplates": "تصفح القوالب",
+          "noTemplatesConfiguredTitle": "لم يتم تكوين قوالب تقارير",
+          "noTemplatesConfiguredHint": "لا توجد قوالب تقارير نشطة لهذه الشركة.",
+          "createTemplate": "إنشاء قالب",
+          "connectionLostTitle": "انقطع الاتصال",
+          "connectionLostHint": "تم مقاطعة الاتصال. يرجى المحاولة مرة أخرى.",
+          "submitFailedTitle": "فشل بدء إنشاء التقرير",
+          "submitFailedHint": "حدث خطأ أثناء إرسال طلبك. يرجى المحاولة مرة أخرى.",
+          "defaultRecoverableTitle": "حدث خطأ ما",
+          "defaultRecoverableHint": "يرجى المحاولة مرة أخرى.",
+          "defaultFailedTitle": "فشل إنشاء التقرير",
+          "defaultFailedHint": "تواصل مع الدعم إذا استمرت المشكلة."
+        }
+      }
+    },
+    "companies": {
+      "title": "الشركات",
+      "subtitle": "إدارة جميع المؤسسات وعلاقاتها الهيكلية.",
+      "createCompany": "إنشاء شركة",
+      "editCompany": "تعديل الشركة",
+      "deleteCompany": "حذف الشركة",
+      "createSubsidiary": "إنشاء شركة تابعة",
+      "addSubsidiary": "إضافة شركة تابعة",
+      "addSubsidiaryTo": "إضافة شركة تابعة إلى {name}",
+      "saveChanges": "حفظ التغييرات",
+      "delete": "حذف",
+      "name": "الشركة",
+      "type": "النوع",
+      "parent": "الشركة الأم",
+      "status": "الحالة",
+      "subsidiaries": "الشركات التابعة",
+      "created": "تاريخ الإنشاء",
+      "actions": "الإجراءات",
+      "caption": "قائمة الشركات",
+      "search": {
+        "placeholder": "البحث في الشركات…",
+        "ariaLabel": "البحث في الشركات"
+      },
+      "empty": {
+        "title": "لا توجد شركات بعد",
+        "description": "أضف أول شركة لبدء إدارة المستخدمين والوصول إلى البيانات.",
+        "searchTitle": "لا توجد شركات تطابق بحثك",
+        "searchDescription": "جرّب تعديل مصطلحات البحث."
+      },
+      "error": {
+        "loadTitle": "فشل تحميل الشركات"
+      },
+      "confirmDelete": "هل أنت متأكد من حذف \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+      "form": {
+        "name": "الاسم *",
+        "slug": "المعرّف",
+        "status": "الحالة",
+        "parent": "الشركة الأم",
+        "description": "الوصف",
+        "noneTopLevel": "بدون (المستوى الأعلى)",
+        "statusActive": "نشط",
+        "statusInactive": "غير نشط",
+        "statusSuspended": "موقوف",
+        "cancel": "إلغاء",
+        "saving": "جارٍ الحفظ…"
+      },
+      "detail": {
+        "tab": {
+          "overview": "نظرة عامة",
+          "users": "المستخدمون",
+          "subsidiaries": "الشركات الفرعية"
+        },
+        "overview": {
+          "typeParent": "شركة رئيسية",
+          "typeSubsidiary": "شركة فرعية",
+          "type": "النوع",
+          "status": "الحالة",
+          "industry": "القطاع",
+          "domain": "النطاق",
+          "slug": "المعرّف",
+          "country": "الدولة",
+          "created": "تاريخ الإنشاء",
+          "updated": "تاريخ التحديث",
+          "description": "الوصف",
+          "dbConnections": "اتصالات قواعد البيانات",
+          "dbConnectionsHint": "عرض وإدارة اتصالات قواعد البيانات المرتبطة بهذه الشركة."
+        },
+        "usersTab": {
+          "heading": "مستخدمو الشركة",
+          "userCount": "{count, plural, one {مستخدم واحد لديه صلاحية الوصول.} other {{count} مستخدمون لديهم صلاحية الوصول.}}",
+          "addUser": "إضافة مستخدم",
+          "loadError": "فشل تحميل المستخدمين",
+          "emptyTitle": "لا يوجد مستخدمون بعد",
+          "emptyDescription": "أضف مستخدمًا لمنحه صلاحية الوصول إلى هذه الشركة.",
+          "emptyMessage": "لا يوجد مستخدمون في هذه الشركة.",
+          "dialogTitle": "إضافة مستخدم إلى الشركة",
+          "removeTitle": "إزالة مستخدم",
+          "removeDescription": "هل تريد إزالة {name} من هذه الشركة؟ سيفقد الصلاحية فورًا.",
+          "removeLabel": "إزالة",
+          "successAdd": "تمت إضافة المستخدم إلى الشركة",
+          "errorAdd": "فشل إضافة المستخدم",
+          "successRemove": "تمت إزالة المستخدم من الشركة",
+          "errorRemove": "فشل إزالة المستخدم"
+        },
+        "subsidiariesTab": {
+          "heading": "الشركات الفرعية",
+          "subCount": "{count, plural, one {شركة فرعية واحدة تابعة لهذه الشركة.} other {{count} شركات فرعية تابعة لهذه الشركة.}}",
+          "addSubsidiary": "إضافة شركة فرعية",
+          "loadError": "فشل تحميل الشركات الفرعية",
+          "emptyTitle": "لا توجد شركات فرعية بعد",
+          "emptyDescription": "أنشئ شركة فرعية لتمثيل مؤسسة تحت هذه الشركة الأم.",
+          "emptyMessage": "لا توجد شركات فرعية.",
+          "dialogTitle": "إنشاء شركة فرعية",
+          "view": "عرض",
+          "successCreate": "تم إنشاء الشركة الفرعية",
+          "errorCreate": "فشل إنشاء الشركة الفرعية"
+        },
+        "notFound": {
+          "title": "الشركة غير موجودة",
+          "description": "تعذّر تحميل هذه الشركة. ربما تم حذفها أو ليس لديك صلاحية الوصول إليها."
+        },
+        "addUserForm": {
+          "fieldLabel": "المستخدم",
+          "placeholder": "اختر مستخدمًا…",
+          "loadingPlaceholder": "جارٍ تحميل المستخدمين…",
+          "noUsers": "لا يوجد مستخدمون إضافيون.",
+          "description": "سيُمنح المستخدم صلاحية الوصول إلى هذه الشركة.",
+          "adding": "جارٍ الإضافة…",
+          "cancel": "إلغاء"
+        },
+        "addSubForm": {
+          "namePlaceholder": "Acme Subsidiary",
+          "slugPlaceholder": "acme-subsidiary",
+          "slugDescription": "معرّف فريد — أحرف صغيرة وشرطات فقط.",
+          "descriptionPlaceholder": "اختياري",
+          "creating": "جارٍ الإنشاء…",
+          "cancel": "إلغاء"
+        },
+        "columns": {
+          "name": "الاسم",
+          "email": "البريد الإلكتروني",
+          "slug": "المعرّف",
+          "status": "الحالة",
+          "created": "تاريخ الإنشاء"
+        }
+      }
+    },
+    "users": {
+      "title": "المستخدمون",
+      "subtitle": "دعوة أعضاء الفريق وإدارة صلاحياتهم عبر مساحة العمل.",
+      "addUser": "إضافة مستخدم",
+      "editUser": "تعديل المستخدم",
+      "deleteUser": "حذف المستخدم",
+      "inviteUser": "دعوة مستخدم",
+      "delete": "حذف",
+      "email": "البريد الإلكتروني",
+      "name": "الاسم",
+      "type": "النوع",
+      "role": "الدور",
+      "company": "الشركة",
+      "status": "الحالة",
+      "created": "تاريخ الإنشاء",
+      "actions": "الإجراءات",
+      "caption": "قائمة المستخدمين",
+      "search": {
+        "placeholder": "البحث في المستخدمين…",
+        "ariaLabel": "البحث في المستخدمين"
+      },
+      "empty": {
+        "title": "لا يوجد مستخدمون في مساحة العمل",
+        "description": "ادعُ مستخدمين لمنحهم صلاحية الوصول إلى البيانات والتقارير.",
+        "searchTitle": "لا يوجد مستخدمون يطابقون بحثك",
+        "searchDescription": "جرّب تعديل مصطلحات البحث."
+      },
+      "error": {
+        "loadTitle": "فشل تحميل المستخدمين"
+      },
+      "confirmDelete": "هل أنت متأكد من حذف \"{email}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+      "form": {
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "email": "البريد الإلكتروني *",
+        "password": "كلمة المرور *",
+        "userType": "نوع المستخدم",
+        "typeRegular": "عادي",
+        "typeAdmin": "مدير",
+        "cancel": "إلغاء",
+        "inviteUser": "دعوة مستخدم"
+      },
+      "detail": {
+        "loadError": "فشل تحميل المستخدم.",
+        "backToUsers": "العودة إلى المستخدمين",
+        "profile": {
+          "title": "الملف الشخصي",
+          "description": "معلومات الحساب ونوع الصلاحية الحالية.",
+          "lastLogin": "آخر تسجيل دخول: {date}"
+        },
+        "roles": {
+          "title": "الأدوار المُسندة",
+          "description": "تحدد الأدوار البيانات والإجراءات التي يمكن للمستخدم الوصول إليها.",
+          "assignButton": "إسناد دور",
+          "dialogTitle": "إسناد دور",
+          "caption": "الأدوار المُسندة",
+          "emptyTitle": "لا توجد أدوار مُسندة",
+          "emptyDescription": "قم بإسناد أدوار للتحكم في صلاحيات هذا المستخدم.",
+          "columns": {
+            "role": "الدور",
+            "slug": "المعرّف",
+            "assigned": "تاريخ الإسناد"
+          }
+        },
+        "assignForm": {
+          "fieldLabel": "الدور",
+          "placeholder": "اختر دورًا…",
+          "noRoles": "لا توجد أدوار إضافية متاحة.",
+          "assigning": "جارٍ الإسناد…",
+          "cancel": "إلغاء"
+        }
+      }
+    }
+  },
+  "common": {
+    "languageSwitcher": {
+      "label": "اللغة",
+      "en": "English",
+      "ar": "العربية"
+    },
+    "cookie": {
+      "message": "نستخدم ملفات تعريف الارتباط لتحسين تجربتك.",
+      "accept": "قبول",
+      "decline": "رفض"
+    },
+    "notFound": {
+      "title": "404",
+      "heading": "الصفحة غير موجودة",
+      "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+      "goHome": "العودة إلى لوحة التحكم"
+    },
+    "error": {
+      "title": "حدث خطأ ما",
+      "description": "حدث خطأ غير متوقع. حاول تحديث الصفحة أو انقر أدناه للمحاولة مرة أخرى."
+    }
+  }
+}

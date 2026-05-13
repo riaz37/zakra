@@ -4,15 +4,24 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { ArrowRight, ExternalLink, Globe, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 const SOCIAL = [
-  { icon: ExternalLink, label: "GitHub", href: "#" },
-  { icon: Globe, label: "Website", href: "#" },
-  { icon: Mail, label: "Contact", href: "#" },
+  { icon: ExternalLink, labelKey: "github", href: "#" },
+  { icon: Globe, labelKey: "website", href: "#" },
+  { icon: Mail, labelKey: "contact", href: "#" },
 ];
 
+const LEGAL_LINKS = [
+  { key: "privacy", href: "/privacy" },
+  { key: "terms", href: "/terms" },
+  { key: "security", href: "/privacy#security" },
+  { key: "cookies", href: "/cookies" },
+] as const;
+
 export function LandingFooter() {
+  const t = useTranslations("landing.footer");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -43,28 +52,23 @@ export function LandingFooter() {
               />
             </Link>
             <p className="text-[12px] leading-relaxed text-fg-subtle">
-              Enterprise knowledge management, powered by AI.
+              {t("tagline")}
             </p>
           </div>
 
           {/* Legal */}
           <div className="shrink-0">
             <p className="mb-4 text-[10px] font-medium uppercase tracking-[0.08em] text-fg-subtle">
-              Legal
+              {t("legal.heading")}
             </p>
             <ul className="space-y-2.5">
-              {[
-                { label: "Privacy", href: "/privacy" },
-                { label: "Terms", href: "/terms" },
-                { label: "Security", href: "/privacy#security" },
-                { label: "Cookies", href: "/cookies" },
-              ].map(({ label, href }) => (
-                <li key={label}>
+              {LEGAL_LINKS.map(({ key, href }) => (
+                <li key={key}>
                   <Link
                     href={href}
                     className="text-[13px] text-muted hover:text-foreground transition-colors duration-[120ms]"
                   >
-                    {label}
+                    {t(`legal.${key}`)}
                   </Link>
                 </li>
               ))}
@@ -74,21 +78,21 @@ export function LandingFooter() {
           {/* Newsletter */}
           <div className="flex-1 md:max-w-sm ml-auto">
             <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-fg-subtle">
-              Newsletter
+              {t("newsletter.heading")}
             </p>
             <p className="text-[13px] text-muted leading-relaxed mb-4">
-              Product updates, enterprise guides, and new integrations. No spam.
+              {t("newsletter.description")}
             </p>
 
             {submitted ? (
               <p className="text-[13px] text-accent">
-                You&apos;re on the list. We&apos;ll be in touch.
+                {t("newsletter.success")}
               </p>
             ) : (
               <form onSubmit={handleSubmit} className="flex gap-2">
                 <input
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder={t("newsletter.placeholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -108,8 +112,8 @@ export function LandingFooter() {
                     "transition-opacity duration-[120ms] hover:opacity-90 shrink-0"
                   )}
                 >
-                  Subscribe
-                  <ArrowRight size={13} strokeWidth={2} />
+                  {t("newsletter.subscribe")}
+                  <ArrowRight size={13} strokeWidth={2} className="rtl:rotate-180" />
                 </button>
               </form>
             )}
@@ -119,15 +123,15 @@ export function LandingFooter() {
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <p className="text-[12px] text-fg-subtle">
-            &copy; 2026 Zakra, Inc. All rights reserved.
+            {t("copyright")}
           </p>
 
           <div className="flex items-center gap-0.5">
-            {SOCIAL.map(({ icon: Icon, label, href }) => (
+            {SOCIAL.map(({ icon: Icon, labelKey, href }) => (
               <Link
-                key={label}
+                key={labelKey}
                 href={href}
-                aria-label={label}
+                aria-label={labelKey}
                 className="size-8 inline-flex items-center justify-center rounded-md transition-colors duration-[120ms] text-fg-subtle hover:text-foreground hover:bg-surface-300"
               >
                 <Icon size={14} strokeWidth={1.5} />

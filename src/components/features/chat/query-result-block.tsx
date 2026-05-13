@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Bar,
   BarChart,
@@ -193,6 +194,7 @@ interface QueryResultBlockProps {
 }
 
 export function QueryResultBlock({ qr }: QueryResultBlockProps) {
+  const t = useTranslations('dashboard.chat.queryResult');
   const [sqlOpen, setSqlOpen] = useState(false);
   const [sqlCopied, setSqlCopied] = useState(false);
   const [showChart, setShowChart] = useState(true);
@@ -267,7 +269,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
         <div className="flex items-center gap-1.5">
           <Table2 className="h-3.5 w-3.5 text-muted" strokeWidth={1.5} />
           <span className="font-mono text-mono-sm text-fg-subtle">
-            {qr.row_count.toLocaleString()} rows
+            {qr.row_count.toLocaleString()} {t('rows')}
           </span>
         </div>
 
@@ -286,7 +288,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               <button
                 onClick={() => setShowChart((s) => !s)}
                 className="flex cursor-pointer items-center gap-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-fg-muted focus-visible:outline-none"
-                title={showChart ? 'Hide chart' : 'Show chart'}
+                title={showChart ? t('hideChart') : t('showChart')}
               >
                 <BarChart2 className="h-3 w-3" strokeWidth={2} />
               </button>
@@ -299,7 +301,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
               <button
                 onClick={handleCopySql}
                 className="flex cursor-pointer items-center gap-1 font-mono text-mono-sm text-subtle transition-colors hover:text-muted focus-visible:outline-none"
-                title="Copy SQL"
+                title={t('copySql')}
               >
                 {sqlCopied ? (
                   <Check className="h-3 w-3 text-accent" strokeWidth={2.5} />
@@ -432,7 +434,7 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
         {totalPages > 1 && (
           <div className="flex items-center justify-between border-t border-border/35 bg-surface-200/40 px-4 py-2">
             <span className="font-mono text-mono-sm text-fg-subtle">
-              Page {currentPage} of {totalPages}
+              {t('pageOf', { current: currentPage, total: totalPages })}
             </span>
             <div className="flex items-center gap-2">
               <button
@@ -441,14 +443,14 @@ export function QueryResultBlock({ qr }: QueryResultBlockProps) {
                 className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-fg-subtle"
               >
                 <ChevronRight className="h-3 w-3 rotate-180" />
-                Prev
+                {t('prev')}
               </button>
               <button
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
                 className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 font-mono text-mono-sm text-fg-subtle transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-fg-subtle"
               >
-                Next
+                {t('next')}
                 <ChevronRight className="h-3 w-3" />
               </button>
             </div>

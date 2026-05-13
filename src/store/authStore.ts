@@ -88,6 +88,8 @@ export const useAuthStore = create<AuthStore>()(
       fetchUser: async () => {
         const token = getAccessToken();
         if (!token) {
+          // Cookie may still exist — clear it to prevent middleware redirect loop
+          fetch('/api/auth/clear-cookie', { method: 'POST' }).catch(() => {});
           set({ isAuthenticated: false, user: null });
           return;
         }
@@ -104,6 +106,7 @@ export const useAuthStore = create<AuthStore>()(
           });
         } catch {
           clearTokens();
+          fetch('/api/auth/clear-cookie', { method: 'POST' }).catch(() => {});
           set({
             user: null,
             isAuthenticated: false,
@@ -132,6 +135,7 @@ export const useAuthStore = create<AuthStore>()(
           });
         } catch (error) {
           clearTokens();
+          fetch('/api/auth/clear-cookie', { method: 'POST' }).catch(() => {});
           set({
             user: null,
             isAuthenticated: false,
@@ -159,7 +163,6 @@ export const useAuthStore = create<AuthStore>()(
       name: 'auth-storage',
       partialize: state => ({
         user: state.user,
-        isAuthenticated: state.isAuthenticated,
       }),
     }
   )

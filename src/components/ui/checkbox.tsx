@@ -20,12 +20,12 @@ function Checkbox({
       data-slot="checkbox"
       onCheckedChange={onCheckedChange}
       className={cn(
-        'group/checkbox relative inline-flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-border-medium bg-surface-200 transition-[background,border-color] outline-none',
-        'hover:border-fg-muted',
-        'focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent',
-        'data-[checked]:bg-accent data-[checked]:border-accent',
-        'data-[indeterminate]:bg-accent data-[indeterminate]:border-accent',
-        'disabled:cursor-not-allowed disabled:opacity-50',
+        "group/checkbox relative inline-flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-border-medium bg-surface-200 transition-[background,border-color] outline-none",
+        "hover:border-fg-muted",
+        "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent",
+        "data-[checked]:bg-accent data-[checked]:border-accent",
+        "data-[indeterminate]:bg-accent data-[indeterminate]:border-accent",
+        "disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}

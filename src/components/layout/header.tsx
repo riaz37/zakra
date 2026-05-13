@@ -2,25 +2,18 @@
 
 import Image from 'next/image';
 import { Menu } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
 
 export interface HeaderProps {
-  /**
-   * Whether the mobile navigation overlay is currently open.
-   * Wired into `aria-expanded` on the hamburger trigger.
-   */
   navOpen: boolean;
-  /**
-   * Opens the mobile navigation overlay. The overlay itself owns the
-   * close affordance (backdrop click + Escape key + in-overlay close btn).
-   */
   onOpenNav: () => void;
 }
 
-/**
- * Mobile-only top bar. Desktop (>=768px) uses the persistent sidebar.
- */
 export function Header({ navOpen, onOpenNav }: HeaderProps) {
+  const t = useTranslations('dashboard.header');
+
   return (
     <header
       className={cn(
@@ -38,16 +31,19 @@ export function Header({ navOpen, onOpenNav }: HeaderProps) {
         />
       </div>
 
-      <button
-        type="button"
-        onClick={onOpenNav}
-        aria-label="Open navigation"
-        aria-expanded={navOpen}
-        aria-controls="mobile-navigation"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-300 text-foreground shadow-ring transition-all duration-200 hover:text-error hover:shadow-focus focus-visible:text-error focus-visible:shadow-focus focus-visible:outline-none"
-      >
-        <Menu aria-hidden size={16} strokeWidth={1.75} />
-      </button>
+      <div className="flex items-center gap-1">
+        <LanguageSwitcher variant="icon" />
+        <button
+          type="button"
+          onClick={onOpenNav}
+          aria-label={t('openNavLabel')}
+          aria-expanded={navOpen}
+          aria-controls="mobile-navigation"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-300 text-foreground shadow-ring transition-all duration-200 hover:text-error hover:shadow-focus focus-visible:text-error focus-visible:shadow-focus focus-visible:outline-none"
+        >
+          <Menu aria-hidden size={16} strokeWidth={1.75} />
+        </button>
+      </div>
     </header>
   );
 }

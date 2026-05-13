@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Copy, Check, RotateCcw } from 'lucide-react';
 import type { ChatMessage, MessageContentBlock } from '@/types/chat';
@@ -85,15 +86,16 @@ function deduplicateStreamContent(content: string): string {
   return longest;
 }
 
-function MessageActions({ 
-  content, 
-  onReRun, 
-  createdAt 
-}: { 
-  content: string; 
+function MessageActions({
+  content,
+  onReRun,
+  createdAt
+}: {
+  content: string;
   onReRun?: () => void;
   createdAt?: string;
 }) {
+  const t = useTranslations('dashboard.chat.message');
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -107,7 +109,7 @@ function MessageActions({
       <button
         onClick={handleCopy}
         className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-fg-subtle transition-colors hover:bg-surface-400 hover:text-foreground"
-        title="Copy message"
+        title={t('copyMessage')}
       >
         {copied ? (
           <Check className="h-3.5 w-3.5 text-accent" strokeWidth={2.5} />
@@ -119,7 +121,7 @@ function MessageActions({
         <button
           onClick={onReRun}
           className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm text-fg-subtle transition-colors hover:bg-surface-400 hover:text-foreground"
-          title="Re-run query"
+          title={t('reRunQuery')}
         >
           <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.5} />
         </button>

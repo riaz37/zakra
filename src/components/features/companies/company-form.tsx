@@ -139,7 +139,11 @@ export function CompanyForm({
                 <FieldLabel htmlFor={field.name}>Parent Company</FieldLabel>
                 <Select value={field.value ?? ''} onValueChange={field.onChange}>
                   <SelectTrigger id={field.name}>
-                    <SelectValue placeholder="None (top-level)" />
+                    <SelectValue placeholder="None (top-level)">
+                      {field.value
+                        ? (parentCompanies.find(c => c.id === field.value)?.name ?? field.value)
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None (top-level)</SelectItem>

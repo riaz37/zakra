@@ -1,0 +1,782 @@
+{
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "demo": "Demo",
+      "signIn": "Sign in",
+      "getStarted": "Get started"
+    },
+    "hero": {
+      "badge": "Now generally available · enterprise edition",
+      "headline1": "Your data.",
+      "headline2": "Any question.",
+      "headline3": "Instant answer.",
+      "description": "Zakra connects to your enterprise databases, learns your business context, and gives every team member a natural-language interface to the information they need — without writing a single query.",
+      "startFree": "Start for free",
+      "bookDemo": "Book a demo",
+      "trustedBy": "Trusted by {count}+ enterprise teams",
+      "terminal": {
+        "title": "zakra — workspace — analytics_db",
+        "userPrompt": "How many active users signed up last month?",
+        "thinking": "Querying <db1>users_db</db1>, <db2>analytics_db</db2> — 2 sources matched",
+        "activeUsers": "active users",
+        "growth": "↑ 14.2% vs prior month · 0.18s · 2 sources",
+        "followUp": "Ask a follow-up question…"
+      }
+    },
+    "stats": {
+      "queries": {
+        "value": "10M+",
+        "label": "Queries answered",
+        "sub": "across all tenants"
+      },
+      "customers": {
+        "value": "800+",
+        "label": "Enterprise customers",
+        "sub": "in production"
+      },
+      "latency": {
+        "value": "< 180ms",
+        "label": "Avg response time",
+        "sub": "p99 latency"
+      },
+      "uptime": {
+        "value": "99.95%",
+        "label": "Uptime SLA",
+        "sub": "last 12 months"
+      }
+    },
+    "features": {
+      "eyebrow": "Why Zakra",
+      "headline": "Built for enterprise data teams.",
+      "subheadline": "Built for enterprise teams that need reliable answers from complex, multi-source data — without engineering overhead on every request.",
+      "items": {
+        "nlq": {
+          "title": "Natural Language Queries",
+          "body": "Ask in plain English. Zakra queries your databases, surfaces the answer, and cites the exact source row — no SQL required.",
+          "tag": "AI Interface"
+        },
+        "federation": {
+          "title": "Multi-Source Federation",
+          "body": "PostgreSQL, MySQL, MongoDB, REST APIs. One connection panel, full query federation across all your data sources simultaneously.",
+          "tag": "Connectors"
+        },
+        "access": {
+          "title": "Fine-Grained Access Control",
+          "body": "Permissions scoped per company, department, and dataset. Nobody sees what they shouldn't. Role inheritance built in.",
+          "tag": "Security"
+        },
+        "knowledge": {
+          "title": "Curated Knowledge Base",
+          "body": "Augment AI answers with verified articles, SOPs, and runbooks. Ground every response in company-approved truth.",
+          "tag": "Knowledge"
+        },
+        "multitenant": {
+          "title": "Multi-Tenant Architecture",
+          "body": "Manage hundreds of tenants from one admin dashboard. Separate data, separate roles, unified control surface.",
+          "tag": "Enterprise"
+        },
+        "audit": {
+          "title": "Audit & Compliance",
+          "body": "Every query logged, every access traced. Export-ready for SOC2, ISO 27001, and GDPR on demand.",
+          "tag": "Compliance"
+        }
+      }
+    },
+    "demo": {
+      "eyebrow": "How it works",
+      "headline1": "From data to insight",
+      "headline2": "in three steps.",
+      "description": "Connect your databases in minutes. Invite your team. Start getting answers the same day — without a single line of code or a data engineering ticket.",
+      "steps": [
+        "Connect your databases in minutes",
+        "Invite your team with role-based access",
+        "Ask questions in plain English — no SQL"
+      ],
+      "startFree": "Start for free",
+      "bookDemo": "Book a demo",
+      "terminal": {
+        "title": "zakra — workspace",
+        "connectionsLabel": "Connections",
+        "userQuery": "Top 5 revenue customers last quarter?",
+        "thinking": "Querying <db1>crm_db</db1>, <db2>analytics_db</db2>…",
+        "tableHeaders": {
+          "customer": "Customer",
+          "revenue": "Revenue",
+          "growth": "Growth"
+        },
+        "resultMeta": "4 rows · 2 sources · 0.21s",
+        "followUp": "Ask a follow-up…"
+      }
+    },
+    "cta": {
+      "eyebrow": "Ready to start?",
+      "headline1": "Your team deserves better",
+      "headline2": "than writing SQL tickets.",
+      "description": "Get Zakra set up in under an hour. Connect your first database, invite your team, and start getting answers today.",
+      "startFree": "Start for free",
+      "talkSales": "Talk to sales",
+      "disclaimer": "No credit card · Free 14-day trial · Cancel anytime"
+    },
+    "logobar": {
+      "trustedBy": "Trusted by industry leaders"
+    },
+    "footer": {
+      "tagline": "Enterprise knowledge management, powered by AI.",
+      "legal": {
+        "heading": "Legal",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "security": "Security",
+        "cookies": "Cookies"
+      },
+      "newsletter": {
+        "heading": "Newsletter",
+        "description": "Product updates, enterprise guides, and new integrations. No spam.",
+        "placeholder": "you@company.com",
+        "subscribe": "Subscribe",
+        "success": "You're on the list. We'll be in touch."
+      },
+      "copyright": "© 2026 Zakra, Inc. All rights reserved."
+    }
+  },
+  "auth": {
+    "layout": {
+      "copyright": "© {year} Empowering Energy (trading as ESAP AI)",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
+    },
+    "login": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@company.com",
+      "emailError": "Enter a valid email address",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "passwordError": "Password must be at least 8 characters",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "signIn": "Sign in",
+      "signingIn": "Signing in…",
+      "firstTime": "First time signing in? Check your invite email for credentials.",
+      "defaultError": "Sign in failed. Please try again."
+    },
+    "selectCompany": {
+      "selectTitle": "Select workspace",
+      "selectDescription": "Choose the company you want to manage.",
+      "loading": "Loading…",
+      "createNew": "Create new company",
+      "backToList": "Back to list",
+      "createTitle": "Create company",
+      "createDescription": "Set up your first workspace to get started.",
+      "nameLabel": "Company name",
+      "namePlaceholder": "Acme Corp",
+      "nameRequired": "Company name is required",
+      "slugLabel": "Slug",
+      "slugPlaceholder": "acme-corp",
+      "slugRequired": "Slug is required",
+      "slugFormat": "Lowercase letters, numbers, and hyphens only",
+      "creating": "Creating…",
+      "createSubmit": "Create company",
+      "createdToast": "{name} created",
+      "createError": "Failed to create company. Please try again."
+    }
+  },
+  "dashboard": {
+    "nav": {
+      "overview": "Overview",
+      "chat": "Chat",
+      "reports": "Reports",
+      "companies": "Companies",
+      "users": "Users",
+      "databases": "Databases",
+      "tableAccess": "Table Access",
+      "roles": "Roles",
+      "signOut": "Sign out"
+    },
+    "header": {
+      "openNavLabel": "Open navigation",
+      "closeNavLabel": "Close navigation"
+    },
+    "databases": {
+      "title": "Databases",
+      "subtitle": "Connected data sources powering natural language queries and reports.",
+      "addConnection": "Add connection",
+      "editConnection": "Edit connection",
+      "testConnection": "Test connection",
+      "setDefault": "Set default",
+      "default": "Default",
+      "alreadyDefault": "Already default",
+      "edit": "Edit",
+      "delete": "Delete",
+      "search": {
+        "placeholder": "Search by name, host, or database…",
+        "ariaLabel": "Search databases"
+      },
+      "empty": {
+        "title": "No databases connected",
+        "description": "Connect a database to enable natural language queries and reports.",
+        "searchTitle": "No databases match your search",
+        "searchDescription": "Try adjusting your search terms."
+      },
+      "error": {
+        "loadTitle": "Failed to load databases",
+        "loadDescription": "There was a problem loading your database connections.",
+        "notFoundTitle": "Connection not found",
+        "notFoundDescription": "This database connection could not be loaded. It may have been deleted or you may not have access."
+      },
+      "toast": {
+        "testSuccess": "Connection successful",
+        "testSuccessLatency": "Connection successful ({latency}ms)",
+        "testFailed": "Connection test failed",
+        "deleted": "Connection deleted",
+        "deleteFailed": "Failed to delete connection",
+        "setDefaultSuccess": "Set as default connection",
+        "setDefaultFailed": "Failed to set default connection",
+        "editSoon": "Edit coming soon",
+        "editSoonDescription": "Inline editing for connection details is on the way."
+      },
+      "confirmDelete": {
+        "title": "Delete connection",
+        "description": "This will permanently remove \"{name}\" and all of its business rules. This action cannot be undone.",
+        "confirmLabel": "Delete permanently"
+      },
+      "lastError": "Last error",
+      "tabs": {
+        "schema": "Schema explorer",
+        "rules": "Business rules"
+      },
+      "breadcrumbs": {
+        "databases": "Databases"
+      }
+    },
+    "tableAccess": {
+      "title": "Table Access",
+      "subtitle": "Control which columns each user can read, mask, or modify.",
+      "protectTable": "Protect table",
+      "user": "User",
+      "selectUser": "Select a user…",
+      "tables": {
+        "label": "Tables",
+        "filterPlaceholder": "Filter tables…",
+        "filterAriaLabel": "Filter tables",
+        "ariaLabel": "Managed tables",
+        "noMatch": "No tables match",
+        "selectPrompt": "Select a table to manage column permissions."
+      },
+      "columns": {
+        "none": "No columns discovered for this table."
+      },
+      "inactive": "Inactive",
+      "empty": {
+        "title": "No protected tables",
+        "description": "Protect a table to start managing column-level access for your users."
+      },
+      "toast": {
+        "saved": "Permissions saved",
+        "saveFailed": "Failed to save permissions"
+      }
+    },
+    "overview": {
+      "title": "Overview",
+      "subtitle": "Analytics and activity across your workspace.",
+      "selectCompanyHint": "Select a company from the sidebar to filter analytics and activity by workspace.",
+      "metrics": {
+        "totalUsers": "Total Users",
+        "totalConnections": "Connections",
+        "totalReports": "Reports Generated",
+        "totalChatSessions": "Chat Sessions"
+      },
+      "activityChart": {
+        "title": "Activity (Last 14 Days)",
+        "description": "Daily volume of chat sessions and report generations",
+        "noData": "No activity data available.",
+        "waitingFirst": "Waiting for your first action",
+        "reports": "Reports",
+        "chats": "Chats"
+      },
+      "statusChart": {
+        "title": "Report Status",
+        "description": "Breakdown by generation state",
+        "noReports": "No reports generated yet",
+        "noDataHint": "Status breakdown will appear here",
+        "completed": "Completed",
+        "failed": "Failed",
+        "running": "Running",
+        "pending": "Pending",
+        "reportsLabel": "Reports"
+      },
+      "recentActivity": {
+        "title": "Recent Activity",
+        "description": "Latest chats and reports",
+        "reportsHeading": "Reports",
+        "chatsHeading": "Chats",
+        "noRecentReports": "No recent reports.",
+        "noRecentChats": "No recent chats.",
+        "untitledReport": "Untitled Report",
+        "newChat": "New Chat",
+        "unknown": "Unknown"
+      }
+    },
+    "chat": {
+      "title": "Chat",
+      "newChat": "New chat",
+      "selectCompanyHistory": "Select a company to view chat history.",
+      "noPastConversations": "No past conversations found.",
+      "untitledConversation": "Untitled conversation",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "previous7Days": "Previous 7 Days",
+      "older": "Older",
+      "noCompanySelected": "No company selected",
+      "noCompanyDescription": "Select a company from the sidebar to start a conversation.",
+      "selectCompanyBeforeChat": "Select a company before starting a chat.",
+      "selectConnectionFirst": "Select a database connection first.",
+      "failedToCreateSession": "Failed to create chat session.",
+      "welcome": {
+        "heading": "Ask anything about your data",
+        "subheading": "Query your connected database in plain language — operations, trends, users, anything.",
+        "prompts": [
+          "Show me sales by region this month",
+          "Which users signed up in the last 7 days?",
+          "Top 5 products by revenue",
+          "Monthly trend for approved operations"
+        ]
+      },
+      "session": {
+        "defaultTitle": "Chat",
+        "reconnecting": "Reconnecting…",
+        "jumpToLatest": "Jump to latest message",
+        "latest": "Latest",
+        "generating": "Generating…",
+        "writing": "Writing…"
+      },
+      "pipeline": {
+        "processingSteps": "Processing steps",
+        "step": "step",
+        "steps": "steps"
+      },
+      "message": {
+        "copyMessage": "Copy message",
+        "reRunQuery": "Re-run query"
+      },
+      "queryResult": {
+        "rows": "rows",
+        "hideChart": "Hide chart",
+        "showChart": "Show chart",
+        "copySql": "Copy SQL",
+        "prev": "Prev",
+        "next": "Next",
+        "pageOf": "Page {current} of {total}"
+      }
+    },
+    "roles": {
+      "title": "Roles",
+      "subtitle": "Define permission bundles that control what users can access.",
+      "newRole": "New Role",
+      "createRole": "Create Role",
+      "saveChanges": "Save Changes",
+      "columns": {
+        "name": "Name",
+        "type": "Type",
+        "description": "Description",
+        "level": "Level",
+        "created": "Created"
+      },
+      "search": {
+        "placeholder": "Search roles…",
+        "ariaLabel": "Search roles"
+      },
+      "caption": "Roles list",
+      "empty": {
+        "title": "No roles defined",
+        "description": "Create roles to control what each user type can access.",
+        "searchTitle": "No roles match your search",
+        "searchDescription": "Try adjusting your search terms."
+      },
+      "error": {
+        "loadTitle": "Failed to load roles"
+      },
+      "dialog": {
+        "createTitle": "New Role",
+        "editTitle": "Edit Role"
+      },
+      "confirmDelete": {
+        "title": "Delete Role",
+        "description": "Are you sure you want to delete \"{name}\"? Users with this role will lose the associated permissions.",
+        "confirmLabel": "Delete"
+      },
+      "actions": {
+        "editLabel": "Edit {name}",
+        "deleteLabel": "Delete {name}"
+      },
+      "emptyMessage": "No roles found."
+    },
+    "reports": {
+      "title": "Reports",
+      "aiGenerateSubtitle": "Generate AI-driven reports from your connected data.",
+      "historySubtitle": "Every AI-generated report for this workspace, newest first.",
+      "templatesSubtitle": "Reusable templates for your AI-generated reports.",
+      "nav": {
+        "aiGenerate": "AI Generate",
+        "history": "History",
+        "templates": "Templates"
+      },
+      "status": {
+        "pending": "Pending",
+        "running": "Running",
+        "completed": "Completed",
+        "failed": "Failed",
+        "all": "All statuses"
+      },
+      "generate": {
+        "breadcrumbReports": "Reports",
+        "breadcrumbTemplates": "Templates",
+        "breadcrumbReady": "Ready",
+        "breadcrumbFailed": "Failed",
+        "breadcrumbGenerating": "Generating…",
+        "titleReady": "Report ready",
+        "titleFailed": "Generation failed",
+        "titleGenerating": "Generating report",
+        "preparingPipeline": "Preparing pipeline…",
+        "viewReport": "View report",
+        "retry": "Retry",
+        "retryGeneration": "Retry generation",
+        "pipeline": "Pipeline",
+        "connectingStream": "Connecting to generation stream…",
+        "totalDuration": "Total",
+        "sectionAnalyses": "Section analyses · {count}",
+        "reportReady": "Report ready",
+        "redirecting": "Redirecting you to the full report…",
+        "viewNow": "View now",
+        "failedAt": "Failed at: {stepName}",
+        "executiveSummary": "Executive summary",
+        "analysisRunning": "We're running the analysis pipeline against your data. This typically takes 30–90 seconds depending on section count."
+      },
+      "viewer": {
+        "breadcrumbReports": "Reports",
+        "untitledReport": "Untitled Report",
+        "downloadPdf": "Download PDF",
+        "downloading": "Downloading…",
+        "pdf": "PDF",
+        "generatingReport": "Generating report…",
+        "sectionsProgress": "{completed} / {total} sections",
+        "reportFailed": "Report generation failed",
+        "partialFailure": "{failed} of {total} sections failed to generate.",
+        "executiveSummary": "Executive Summary",
+        "queryResult": "Query Result",
+        "rowsCount": "{count} rows",
+        "showingRows": "Showing {showing} of {total} rows",
+        "truncatedByServer": " (result truncated by server)",
+        "showMoreRows": "Show {count} more rows ↓",
+        "showLess": "Show less ↑",
+        "generatingAnalysis": "Generating analysis…",
+        "sectionFailed": "Section generation failed.",
+        "noDataAvailable": "No data available for this section.",
+        "reportNotFound": "Report not found",
+        "reportNotFoundDescription": "This report may have been deleted, or you may not have access to it.",
+        "downloadingAriaLabel": "Downloading report PDF",
+        "downloadAriaLabel": "Download report as PDF",
+        "pointSingular": "point",
+        "pointPlural": "points",
+        "sectionSingular": "section",
+        "sectionPlural": "sections"
+      },
+      "history": {
+        "search": {
+          "placeholder": "Search by title…",
+          "ariaLabel": "Search reports by title"
+        },
+        "statusFilter": {
+          "ariaLabel": "Filter by status",
+          "placeholder": "All statuses"
+        },
+        "caption": "Generated reports history",
+        "empty": {
+          "title": "No reports generated yet",
+          "description": "Generated reports will appear here as soon as you create one.",
+          "filteredTitle": "No reports match your filters",
+          "filteredDescription": "Try clearing the search term or status filter."
+        },
+        "error": {
+          "loadTitle": "Failed to load report history"
+        },
+        "emptyMessage": "No reports match your filters."
+      },
+      "templates": {
+        "newTemplate": "New Template",
+        "saveTemplate": "Save template",
+        "saveChanges": "Save changes",
+        "cancel": "Cancel",
+        "generateReport": "Generate Report",
+        "empty": {
+          "title": "No report templates",
+          "description": "Create templates to standardize your AI-generated reports."
+        },
+        "error": {
+          "loadTitle": "Failed to load templates"
+        },
+        "confirmDelete": {
+          "title": "Delete Template",
+          "description": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+          "confirmLabel": "Delete"
+        },
+        "breadcrumbs": {
+          "templates": "Templates",
+          "newTemplate": "New Template"
+        },
+        "new": {
+          "title": "New Template",
+          "subtitle": "Define the structure and sections for your AI-generated report."
+        },
+        "edit": {
+          "subtitle": "Edit template details and sections."
+        },
+        "notFound": "Template not found.",
+        "backToTemplates": "Back to Templates"
+      },
+      "aiGenerate": {
+        "placeholder": "Describe the report you want to generate…",
+        "starting": "Starting…",
+        "errors": {
+          "noTemplateTitle": "No matching report template",
+          "noTemplateHint": "No template covers this topic. Try rephrasing your request, or check the available templates.",
+          "browseTemplates": "Browse templates",
+          "noTemplatesConfiguredTitle": "No report templates configured",
+          "noTemplatesConfiguredHint": "This company has no active report templates.",
+          "createTemplate": "Create a template",
+          "connectionLostTitle": "Connection lost",
+          "connectionLostHint": "The connection was interrupted. Please try again.",
+          "submitFailedTitle": "Failed to start report generation",
+          "submitFailedHint": "Something went wrong submitting your request. Please try again.",
+          "defaultRecoverableTitle": "Something went wrong",
+          "defaultRecoverableHint": "Please try again.",
+          "defaultFailedTitle": "Report generation failed",
+          "defaultFailedHint": "Contact support if the issue persists."
+        }
+      }
+    },
+    "companies": {
+      "title": "Companies",
+      "subtitle": "Manage all organizations and their hierarchical relationships.",
+      "createCompany": "Create Company",
+      "editCompany": "Edit Company",
+      "deleteCompany": "Delete Company",
+      "createSubsidiary": "Create Subsidiary",
+      "addSubsidiary": "Add Subsidiary",
+      "addSubsidiaryTo": "Add Subsidiary to {name}",
+      "saveChanges": "Save Changes",
+      "delete": "Delete",
+      "name": "Company",
+      "type": "Type",
+      "parent": "Parent Company",
+      "status": "Status",
+      "subsidiaries": "Subsidiaries",
+      "created": "Created",
+      "actions": "Actions",
+      "caption": "Companies list",
+      "search": {
+        "placeholder": "Search companies…",
+        "ariaLabel": "Search companies"
+      },
+      "empty": {
+        "title": "No companies yet",
+        "description": "Add your first company to start managing users and data access.",
+        "searchTitle": "No companies match your search",
+        "searchDescription": "Try adjusting your search terms."
+      },
+      "error": {
+        "loadTitle": "Failed to load companies"
+      },
+      "confirmDelete": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+      "form": {
+        "name": "Name *",
+        "slug": "Slug",
+        "status": "Status",
+        "parent": "Parent Company",
+        "description": "Description",
+        "noneTopLevel": "None (top-level)",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "statusSuspended": "Suspended",
+        "cancel": "Cancel",
+        "saving": "Saving…"
+      },
+      "detail": {
+        "tab": {
+          "overview": "Overview",
+          "users": "Users",
+          "subsidiaries": "Subsidiaries"
+        },
+        "overview": {
+          "typeParent": "Parent",
+          "typeSubsidiary": "Subsidiary",
+          "type": "Type",
+          "status": "Status",
+          "industry": "Industry",
+          "domain": "Domain",
+          "slug": "Slug",
+          "country": "Country",
+          "created": "Created",
+          "updated": "Updated",
+          "description": "Description",
+          "dbConnections": "Database connections",
+          "dbConnectionsHint": "View and manage database connections scoped to this company."
+        },
+        "usersTab": {
+          "heading": "Company users",
+          "userCount": "{count, plural, one {{count} user has access.} other {{count} users have access.}}",
+          "addUser": "Add User",
+          "loadError": "Failed to load users",
+          "emptyTitle": "No users yet",
+          "emptyDescription": "Add a user to grant them access to this company.",
+          "emptyMessage": "No users in this company.",
+          "dialogTitle": "Add user to company",
+          "removeTitle": "Remove user",
+          "removeDescription": "Remove {name} from this company? They will lose access immediately.",
+          "removeLabel": "Remove",
+          "successAdd": "User added to company",
+          "errorAdd": "Failed to add user",
+          "successRemove": "User removed from company",
+          "errorRemove": "Failed to remove user"
+        },
+        "subsidiariesTab": {
+          "heading": "Subsidiaries",
+          "subCount": "{count, plural, one {{count} subsidiary under this company.} other {{count} subsidiaries under this company.}}",
+          "addSubsidiary": "Add Subsidiary",
+          "loadError": "Failed to load subsidiaries",
+          "emptyTitle": "No subsidiaries yet",
+          "emptyDescription": "Create a subsidiary to model an organization under this parent.",
+          "emptyMessage": "No subsidiaries.",
+          "dialogTitle": "Create subsidiary",
+          "view": "View",
+          "successCreate": "Subsidiary created",
+          "errorCreate": "Failed to create subsidiary"
+        },
+        "notFound": {
+          "title": "Company not found",
+          "description": "This company could not be loaded. It may have been deleted or you may not have access."
+        },
+        "addUserForm": {
+          "fieldLabel": "User",
+          "placeholder": "Select a user…",
+          "loadingPlaceholder": "Loading users…",
+          "noUsers": "No additional users available.",
+          "description": "The user will be granted access to this company.",
+          "adding": "Adding…",
+          "cancel": "Cancel"
+        },
+        "addSubForm": {
+          "namePlaceholder": "Acme Subsidiary",
+          "slugPlaceholder": "acme-subsidiary",
+          "slugDescription": "Unique identifier — lowercase, hyphens only.",
+          "descriptionPlaceholder": "Optional",
+          "creating": "Creating…",
+          "cancel": "Cancel"
+        },
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "slug": "Slug",
+          "status": "Status",
+          "created": "Created"
+        }
+      }
+    },
+    "users": {
+      "title": "Users",
+      "subtitle": "Invite teammates and manage their access across the workspace.",
+      "addUser": "Add User",
+      "editUser": "Edit User",
+      "deleteUser": "Delete User",
+      "inviteUser": "Invite User",
+      "delete": "Delete",
+      "email": "Email",
+      "name": "Name",
+      "type": "Type",
+      "role": "Role",
+      "company": "Company",
+      "status": "Status",
+      "created": "Created",
+      "actions": "Actions",
+      "caption": "Users list",
+      "search": {
+        "placeholder": "Search users…",
+        "ariaLabel": "Search users"
+      },
+      "empty": {
+        "title": "No users in this workspace",
+        "description": "Invite users to grant them access to data and reports.",
+        "searchTitle": "No users match your search",
+        "searchDescription": "Try adjusting your search terms."
+      },
+      "error": {
+        "loadTitle": "Failed to load users"
+      },
+      "confirmDelete": "Are you sure you want to delete \"{email}\"? This action cannot be undone.",
+      "form": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email *",
+        "password": "Password *",
+        "userType": "User Type",
+        "typeRegular": "Regular",
+        "typeAdmin": "Admin",
+        "cancel": "Cancel",
+        "inviteUser": "Invite User"
+      },
+      "detail": {
+        "loadError": "Failed to load user.",
+        "backToUsers": "Back to Users",
+        "profile": {
+          "title": "Profile",
+          "description": "Account information and current access type.",
+          "lastLogin": "Last login: {date}"
+        },
+        "roles": {
+          "title": "Assigned Roles",
+          "description": "Roles determine what data and actions this user can access.",
+          "assignButton": "Assign Role",
+          "dialogTitle": "Assign Role",
+          "caption": "Assigned roles",
+          "emptyTitle": "No roles assigned",
+          "emptyDescription": "Assign roles to control what this user can access.",
+          "columns": {
+            "role": "Role",
+            "slug": "Slug",
+            "assigned": "Assigned"
+          }
+        },
+        "assignForm": {
+          "fieldLabel": "Role",
+          "placeholder": "Select a role…",
+          "noRoles": "No additional roles available.",
+          "assigning": "Assigning…",
+          "cancel": "Cancel"
+        }
+      }
+    }
+  },
+  "common": {
+    "languageSwitcher": {
+      "label": "Language",
+      "en": "English",
+      "ar": "العربية"
+    },
+    "cookie": {
+      "message": "We use cookies to improve your experience.",
+      "accept": "Accept",
+      "decline": "Decline"
+    },
+    "notFound": {
+      "title": "404",
+      "heading": "Page not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "goHome": "Go to dashboard"
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "An unexpected error occurred. Try refreshing the page or click below to retry."
+    }
+  }
+}
