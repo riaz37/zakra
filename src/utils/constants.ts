@@ -51,7 +51,6 @@ export const COMPANY_STATUS = {
 
 // Database Types
 export const DATABASE_TYPES = {
-  POSTGRESQL: 'postgresql',
   MSSQL: 'mssql',
 } as const;
 

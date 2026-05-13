@@ -1,4 +1,4 @@
-export type DatabaseType = 'postgresql' | 'mssql';
+export type DatabaseType = 'mssql';
 
 export interface DatabaseConnection {
   id: string;

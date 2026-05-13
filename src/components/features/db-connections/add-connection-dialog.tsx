@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/select';
 
 const DEFAULT_PORTS: Record<DatabaseType, number> = {
-  postgresql: 5432,
   mssql: 1433,
 };
 
@@ -47,7 +46,7 @@ interface ConnectionFormValues {
 function buildResolverSchema(isEdit: boolean) {
   return z.object({
     name: z.string().min(1, 'Name is required'),
-    database_type: z.enum(['postgresql', 'mssql']),
+    database_type: z.enum(['mssql']),
     host: z.string().min(1, 'Host is required'),
     port: z.coerce.number().int().min(1).max(65535),
     database_name: z.string().min(1, 'Database name is required'),
@@ -86,8 +85,8 @@ export function AddConnectionDialog({
   const form = useForm<ConnectionFormValues>({
     resolver: zodResolver(buildResolverSchema(isEdit)),
     defaultValues: {
-      database_type: 'postgresql',
-      port: 5432,
+      database_type: 'mssql',
+      port: 1433,
       name: '',
       host: '',
       database_name: '',
@@ -205,13 +204,11 @@ export function AddConnectionDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.values(DATABASE_TYPES)
-                      .filter((type) => type !== DATABASE_TYPES.POSTGRESQL)
-                      .map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type.charAt(0).toUpperCase() + type.slice(1)}
-                        </SelectItem>
-                      ))}
+                    {Object.values(DATABASE_TYPES).map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 {fieldState.invalid && (
