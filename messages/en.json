@@ -4,7 +4,8 @@
       "features": "Features",
       "demo": "Demo",
       "signIn": "Sign in",
-      "getStarted": "Get started"
+      "getStarted": "Get started",
+      "dashboard": "Go to Dashboard"
     },
     "hero": {
       "badge": "Now generally available · enterprise edition",

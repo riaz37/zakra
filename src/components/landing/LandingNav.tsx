@@ -7,10 +7,12 @@ import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/authStore";
 
 export function LandingNav() {
   const t = useTranslations("landing.nav");
   const [scrolled, setScrolled] = useState(false);
+  const isAuthenticated = useAuthStore((s) => !!s.user);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -66,18 +68,29 @@ export function LandingNav() {
         {/* Actions */}
         <div className="flex items-center gap-1.5">
           <LanguageSwitcher variant="icon" />
-          <Link
-            href="/login"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-[13px] text-muted hover:text-foreground")}
-          >
-            {t("signIn")}
-          </Link>
-          <Link
-            href="/login"
-            className={cn(buttonVariants({ variant: "default", size: "sm" }), "text-[13px]")}
-          >
-            {t("getStarted")}
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              href="/overview"
+              className={cn(buttonVariants({ variant: "default", size: "sm" }), "text-[13px]")}
+            >
+              {t("dashboard")}
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-[13px] text-muted hover:text-foreground")}
+              >
+                {t("signIn")}
+              </Link>
+              <Link
+                href="/login"
+                className={cn(buttonVariants({ variant: "default", size: "sm" }), "text-[13px]")}
+              >
+                {t("getStarted")}
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
