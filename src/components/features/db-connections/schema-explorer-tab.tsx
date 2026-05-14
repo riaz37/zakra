@@ -667,7 +667,7 @@ export function SchemaExplorerTab({ connectionId, companyId, connectionName }: S
       startSchemaLearning(connectionId, connectionName ?? connectionId);
     } catch {
       setPollingProgress(false);
-      toast.error('Failed to start schema learning');
+      toast.error('Could not start schema learning. Please try again.');
     }
   }
 
@@ -686,10 +686,10 @@ export function SchemaExplorerTab({ connectionId, companyId, connectionName }: S
   async function handleUnlearn(tableName: string) {
     try {
       await unlearnTables.mutateAsync([tableName]);
-      toast.success('Table unlearned');
+      toast.success('Table removed from AI memory');
       setSelectedTableKey(null);
     } catch {
-      toast.error('Failed to unlearn table');
+      toast.error('Could not remove table. Please try again.');
     }
   }
 

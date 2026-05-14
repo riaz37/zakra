@@ -11,13 +11,13 @@ export async function generateMetadata({ params }: TermsPageProps): Promise<Meta
   const { locale } = await params;
   if (locale === 'ar') {
     return {
-      title: 'شروط الخدمة — زاكرا',
+      title: 'شروط الخدمة | زاكرا',
       description:
         'الشروط التي تحكم الوصول إلى زاكرا، منصة قاعدة المعرفة المؤسسية المدعومة بالذكاء الاصطناعي من Empowering Energy (ESAP AI).',
     };
   }
   return {
-    title: 'Terms of Service — Zakra',
+    title: 'Terms of Service | Zakra',
     description:
       'Terms governing access to Zakra, the AI-powered enterprise knowledge base platform by Empowering Energy (ESAP AI).',
   };
@@ -133,7 +133,7 @@ function EnglishContent({ locale }: { locale: string }) {
           Terms of Service
         </h1>
         <p className="font-sans text-sm text-muted">
-          <strong className="text-foreground">Product:</strong> Zakra — AI-Powered Enterprise Knowledge Base &amp; Reporting Platform
+          <strong className="text-foreground">Product:</strong> Zakra AI-Powered Enterprise Knowledge Base &amp; Reporting Platform
           <br />
           <strong className="text-foreground">Operated by:</strong> Empowering Energy (trading as ESAP AI) (CR No. [Insert CR Number])
           <br />
@@ -147,7 +147,7 @@ function EnglishContent({ locale }: { locale: string }) {
         These Terms govern access to Zakra at <span className="font-mono text-xs">zakra.esap.ai</span>, operated by{' '}
         <strong className="text-foreground">Empowering Energy (trading as ESAP AI)</strong> (CR No. [Insert CR Number]).
         They apply to the Client organisation and all Authorised Users. These Terms operate alongside any Master
-        Services Agreement (MSA), Statement of Work (SOW), and Data Processing Agreement (DPA) — the MSA/DPA takes
+        Services Agreement (MSA), Statement of Work (SOW), and Data Processing Agreement (DPA) the MSA/DPA takes
         precedence in the event of conflicts.
       </P>
 
@@ -208,10 +208,10 @@ function EnglishContent({ locale }: { locale: string }) {
 
       <SectionHeading id="ai-disclaimer" num="6">AI-Generated Content Disclaimer</SectionHeading>
       <ul className="mb-4 ml-5 list-disc space-y-2 font-sans text-sm text-muted">
-        <li>AI-generated queries may not always produce the intended results — verify against source data</li>
+        <li>AI-generated queries may not always produce the intended results verify against source data</li>
         <li>Reports are AI-generated summaries, <strong className="text-foreground">not audited financial or HR documents</strong></li>
         <li>AI answers depend on the accuracy and completeness of data in Connected Databases</li>
-        <li>All outputs are labelled: <em className="text-foreground">&quot;AI-generated — verify against source data before formal use.&quot;</em></li>
+        <li>All outputs are labelled: <em className="text-foreground">&quot;AI-generated verify against source data before formal use.&quot;</em></li>
         <li>Empowering Energy (trading as ESAP AI) is not liable for decisions made based on AI reports without human verification</li>
       </ul>
 
@@ -293,7 +293,7 @@ function EnglishContent({ locale }: { locale: string }) {
 
       {/* Contact */}
       <div className="mt-8 rounded-lg border border-border bg-surface-200 p-4">
-        <p className="mb-1 font-sans text-sm font-medium text-foreground">Empowering Energy — Legal Team</p>
+        <p className="mb-1 font-sans text-sm font-medium text-foreground">Empowering Energy Legal Team</p>
         <p className="font-sans text-sm text-muted">
           📧{' '}
           <a href="mailto:legal@esap.ai" className="text-accent hover:underline">
@@ -340,7 +340,7 @@ function ArabicContent({ locale }: { locale: string }) {
           شروط الخدمة
         </h1>
         <p className="font-sans text-sm text-muted">
-          <strong className="text-foreground">المنتج:</strong> زاكرا — منصة قاعدة المعرفة والتقارير المؤسسية المدعومة بالذكاء الاصطناعي
+          <strong className="text-foreground">المنتج:</strong> زاكرا منصة قاعدة المعرفة والتقارير المؤسسية المدعومة بالذكاء الاصطناعي
           <br />
           <strong className="text-foreground">تشغيل:</strong> Empowering Energy (المعروفة باسم ESAP AI) (رقم السجل التجاري: [يُدرج رقم السجل])
           <br />
@@ -353,7 +353,7 @@ function ArabicContent({ locale }: { locale: string }) {
       <P>
         تحكم هذه الشروط الوصول إلى زاكرا على <span className="font-mono text-xs">zakra.esap.ai</span>، التي تشغّلها{' '}
         <strong className="text-foreground">Empowering Energy (المعروفة باسم ESAP AI)</strong> (رقم السجل التجاري: [يُدرج رقم السجل]).
-        تنطبق الشروط على مؤسسة العميل وجميع المستخدمين المصرّح لهم. تعمل هذه الشروط جنبًا إلى جنب مع أي اتفاقية خدمات رئيسية (MSA) وبيان عمل (SOW) واتفاقية معالجة بيانات (DPA) — وتُقدَّم MSA/DPA على هذه الشروط عند التعارض.
+        تنطبق الشروط على مؤسسة العميل وجميع المستخدمين المصرّح لهم. تعمل هذه الشروط جنبًا إلى جنب مع أي اتفاقية خدمات رئيسية (MSA) وبيان عمل (SOW) واتفاقية معالجة بيانات (DPA) وتُقدَّم MSA/DPA على هذه الشروط عند التعارض.
       </P>
 
       <SectionHeading id="service" num="2">وصف الخدمة</SectionHeading>
@@ -413,10 +413,10 @@ function ArabicContent({ locale }: { locale: string }) {
 
       <SectionHeading id="ai-disclaimer" num="6">إخلاء مسؤولية المحتوى المولّد بالذكاء الاصطناعي</SectionHeading>
       <ul className="mb-4 mr-5 list-disc space-y-2 font-sans text-sm text-muted">
-        <li>قد لا تُنتج الاستعلامات المولّدة بالذكاء الاصطناعي دائمًا النتائج المقصودة — تحقّق من بيانات المصدر</li>
+        <li>قد لا تُنتج الاستعلامات المولّدة بالذكاء الاصطناعي دائمًا النتائج المقصودة تحقّق من بيانات المصدر</li>
         <li>التقارير ملخّصات مولّدة بالذكاء الاصطناعي، <strong className="text-foreground">وليست وثائق مالية أو موارد بشرية مُراجَعة</strong></li>
         <li>تعتمد إجابات الذكاء الاصطناعي على دقة واكتمال البيانات في قواعد البيانات المربوطة</li>
-        <li>جميع المخرجات تحمل تسمية: <em className="text-foreground">"مولَّد بالذكاء الاصطناعي — تحقّق من بيانات المصدر قبل الاستخدام الرسمي."</em></li>
+        <li>جميع المخرجات تحمل تسمية: <em className="text-foreground">"مولَّد بالذكاء الاصطناعي تحقّق من بيانات المصدر قبل الاستخدام الرسمي."</em></li>
         <li>لا تتحمّل Empowering Energy (باسم ESAP AI) المسؤولية عن قرارات اتُّخذت بناءً على تقارير ذكاء اصطناعي دون تحقّق بشري</li>
       </ul>
 
@@ -482,7 +482,7 @@ function ArabicContent({ locale }: { locale: string }) {
 
       {/* Contact */}
       <div className="mt-8 rounded-lg border border-border bg-surface-200 p-4">
-        <p className="mb-1 font-sans text-sm font-medium text-foreground">Empowering Energy — الفريق القانوني</p>
+        <p className="mb-1 font-sans text-sm font-medium text-foreground">Empowering Energy الفريق القانوني</p>
         <p className="font-sans text-sm text-muted">
           📧{' '}
           <a href="mailto:legal@esap.ai" className="text-accent hover:underline">
@@ -524,7 +524,7 @@ export default async function TermsPage({ params }: TermsPageProps) {
 
   return (
     <div className="flex gap-10">
-      {/* Sticky TOC — desktop only */}
+      {/* Sticky TOC desktop only */}
       <aside className="hidden shrink-0 xl:block">
         <LegalToc items={toc} />
       </aside>

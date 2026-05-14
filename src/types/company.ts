@@ -3,53 +3,32 @@ export interface Company {
   parent_id: string | null;
   name: string;
   slug: string;
-  description: string | null;
   company_type: 'parent' | 'subsidiary';
   status: 'active' | 'inactive' | 'suspended';
-  domain: string | null;
-  industry: string | null;
-  size: string | null;
-  address: string | null;
-  country: string | null;
-  settings: Record<string, unknown>;
+  settings: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
   subsidiaries?: Company[];
   subsidiary_count?: number;
-  admin_count?: number;
-  user_count?: number;
 }
 
 export interface CompanyCreate {
   name: string;
-  slug: string;
-  description?: string;
-  domain?: string;
-  industry?: string;
-  size?: string;
-  address?: string;
-  country?: string;
-  settings?: Record<string, unknown>;
+  slug?: string | null;
+  settings?: Record<string, unknown> | null;
 }
 
 export interface CompanyUpdate {
-  name?: string;
-  description?: string;
-  status?: 'active' | 'inactive' | 'suspended';
-  domain?: string;
-  industry?: string;
-  size?: string;
-  address?: string;
-  country?: string;
-  settings?: Record<string, unknown>;
+  name?: string | null;
+  slug?: string | null;
+  status?: 'active' | 'inactive' | 'suspended' | null;
+  settings?: Record<string, unknown> | null;
 }
 
 export interface SubsidiaryCreate {
   name: string;
-  slug: string;
-  description?: string;
-  domain?: string;
-  industry?: string;
+  slug?: string | null;
+  settings?: Record<string, unknown> | null;
 }
 
 export interface CompanyUser {

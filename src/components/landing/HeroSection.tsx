@@ -3,9 +3,21 @@
 import Image from "next/image";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const DEMO_EMAIL = "sales@esap.ai";
+
+function handleBookDemo() {
+  window.location.href = `mailto:${DEMO_EMAIL}`;
+  navigator.clipboard.writeText(DEMO_EMAIL).then(() => {
+    toast.success(`Email copied: ${DEMO_EMAIL}`, {
+      description: "No mail client? Paste it into your preferred email app.",
+    });
+  });
+}
 
 export function HeroSection() {
   const t = useTranslations("landing.hero");
@@ -53,12 +65,12 @@ export function HeroSection() {
                 {t("startFree")}
                 <ArrowRight size={13} strokeWidth={2.5} className="rtl:rotate-180" />
               </Link>
-              <a
-                href="mailto:sales@esap.ai"
+              <button
+                onClick={handleBookDemo}
                 className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
               >
                 {t("bookDemo")}
-              </a>
+              </button>
             </div>
 
             <div className="animate-fade-up animation-delay-300">

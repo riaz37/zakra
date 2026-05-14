@@ -12,14 +12,14 @@
       "headline1": "Your data.",
       "headline2": "Any question.",
       "headline3": "Instant answer.",
-      "description": "Zakra connects to your enterprise databases, learns your business context, and gives every team member a natural-language interface to the information they need — without writing a single query.",
+      "description": "Zakra connects to your enterprise databases, learns your business context, and gives every team member a natural-language interface to the information they need, without writing a single query.",
       "startFree": "Start for free",
       "bookDemo": "Book a demo",
       "trustedBy": "Trusted by {count}+ enterprise teams",
       "terminal": {
-        "title": "zakra — workspace — analytics_db",
+        "title": "zakra | workspace | analytics_db",
         "userPrompt": "How many active users signed up last month?",
-        "thinking": "Querying <db1>users_db</db1>, <db2>analytics_db</db2> — 2 sources matched",
+        "thinking": "Querying <db1>users_db</db1>, <db2>analytics_db</db2> · 2 sources matched",
         "activeUsers": "active users",
         "growth": "↑ 14.2% vs prior month · 0.18s · 2 sources",
         "followUp": "Ask a follow-up question…"
@@ -50,11 +50,11 @@
     "features": {
       "eyebrow": "Why Zakra",
       "headline": "Built for enterprise data teams.",
-      "subheadline": "Built for enterprise teams that need reliable answers from complex, multi-source data — without engineering overhead on every request.",
+      "subheadline": "Built for enterprise teams that need reliable answers from complex, multi-source data, without engineering overhead on every request.",
       "items": {
         "nlq": {
           "title": "Natural Language Queries",
-          "body": "Ask in plain English. Zakra queries your databases, surfaces the answer, and cites the exact source row — no SQL required.",
+          "body": "Ask in plain English. Zakra queries your databases, surfaces the answer, and cites the exact source row. No SQL required.",
           "tag": "AI Interface"
         },
         "federation": {
@@ -88,16 +88,16 @@
       "eyebrow": "How it works",
       "headline1": "From data to insight",
       "headline2": "in three steps.",
-      "description": "Connect your databases in minutes. Invite your team. Start getting answers the same day — without a single line of code or a data engineering ticket.",
+      "description": "Connect your databases in minutes. Invite your team. Start getting answers the same day, without a single line of code or a data engineering ticket.",
       "steps": [
         "Connect your databases in minutes",
         "Invite your team with role-based access",
-        "Ask questions in plain English — no SQL"
+        "Ask questions in plain English, no SQL"
       ],
       "startFree": "Start for free",
       "bookDemo": "Book a demo",
       "terminal": {
-        "title": "zakra — workspace",
+        "title": "zakra | workspace",
         "connectionsLabel": "Connections",
         "userQuery": "Top 5 revenue customers last quarter?",
         "thinking": "Querying <db1>crm_db</db1>, <db2>analytics_db</db2>…",
@@ -336,12 +336,12 @@
       "failedToCreateSession": "Failed to create chat session.",
       "welcome": {
         "heading": "Ask anything about your data",
-        "subheading": "Query your connected database in plain language — operations, trends, users, anything.",
+        "subheading": "Query your connected database in plain language: operations, trends, users, anything.",
         "prompts": [
-          "Show me sales by region this month",
-          "Which users signed up in the last 7 days?",
-          "Top 5 products by revenue",
-          "Monthly trend for approved operations"
+          "Show me all the transactions",
+          "Give me the Expenses with the same invoice number",
+          "Show me all the pending Request Money for the Accountant",
+          "Show me all the approved operations"
         ]
       },
       "session": {
@@ -670,7 +670,7 @@
         "addSubForm": {
           "namePlaceholder": "Acme Subsidiary",
           "slugPlaceholder": "acme-subsidiary",
-          "slugDescription": "Unique identifier — lowercase, hyphens only.",
+          "slugDescription": "Unique identifier. Lowercase, hyphens only.",
           "descriptionPlaceholder": "Optional",
           "creating": "Creating…",
           "cancel": "Cancel"

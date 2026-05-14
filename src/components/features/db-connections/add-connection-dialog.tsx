@@ -149,10 +149,10 @@ export function AddConnectionDialog({
           ...rest,
           ...(password ? { password } : {}),
         });
-        toast.success('Connection updated');
+        toast.success('Database connection updated');
       } else {
         await createConnection.mutateAsync(data);
-        toast.success('Connection added');
+        toast.success('Database connection added');
       }
       form.reset();
       onOpenChange(false);

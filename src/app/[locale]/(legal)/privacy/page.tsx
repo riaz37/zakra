@@ -11,13 +11,13 @@ export async function generateMetadata({ params }: PrivacyPageProps): Promise<Me
   const { locale } = await params;
   if (locale === 'ar') {
     return {
-      title: 'سياسة الخصوصية — زاكرا',
+      title: 'سياسة الخصوصية | زاكرا',
       description:
         'كيفية جمع Empowering Energy (المعروفة باسم ESAP AI) للبيانات ومعالجتها وحمايتها على منصة زاكرا وفق نظام PDPL.',
     };
   }
   return {
-    title: 'Privacy Policy — Zakra',
+    title: 'Privacy Policy | Zakra',
     description:
       'How Empowering Energy (trading as ESAP AI) collects, processes, and protects data on the Zakra platform under PDPL.',
   };
@@ -131,7 +131,7 @@ function EnglishContent({ locale }: { locale: string }) {
           Privacy Policy
         </h1>
         <p className="font-sans text-sm text-muted">
-          <strong className="text-foreground">Product:</strong> Zakra — AI-Powered Enterprise Knowledge Base &amp; Reporting Platform
+          <strong className="text-foreground">Product:</strong> Zakra AI-Powered Enterprise Knowledge Base &amp; Reporting Platform
           <br />
           <strong className="text-foreground">Operated by:</strong> Empowering Energy (trading as ESAP AI)
           <br />
@@ -139,7 +139,7 @@ function EnglishContent({ locale }: { locale: string }) {
           <span className="font-mono text-xs">zakra.esap.ai</span>
           <br />
           <strong className="text-foreground">Risk Classification:</strong>{' '}
-          <span className="font-medium text-error">HIGHEST</span> — Direct connection to client production databases
+          <span className="font-medium text-error">HIGHEST</span> Direct connection to client production databases
         </p>
       </div>
 
@@ -148,13 +148,13 @@ function EnglishContent({ locale }: { locale: string }) {
         Zakra is an AI-powered enterprise knowledge base and reporting platform developed and operated by{' '}
         <strong className="text-foreground">Empowering Energy (trading as ESAP AI)</strong> (CR No. [Insert CR Number]).
         We help organisations connect their databases, query them using natural language AI, and generate structured
-        reports — all through a secure, access-controlled interface.
+        reports all through a secure, access-controlled interface.
       </P>
 
       <SectionHeading id="our-role">Our Role: Data Processor</SectionHeading>
       <P>
         Zakra operates exclusively in a B2B enterprise context. Your organisation is the{' '}
-        <strong className="text-foreground">Data Controller</strong> — you determine which databases are connected,
+        <strong className="text-foreground">Data Controller</strong>: you determine which databases are connected,
         which tables and columns are exposed, and who has access. Empowering Energy (trading as ESAP AI) acts solely
         as a <strong className="text-foreground">Data Processor</strong>, processing database data only on your
         organisation&apos;s behalf and strictly under your documented instructions.
@@ -176,15 +176,15 @@ function EnglishContent({ locale }: { locale: string }) {
 
       <SectionHeading id="what-we-process">What Data We Process</SectionHeading>
       <ul className="mb-4 ml-5 list-disc space-y-2 font-sans text-sm text-muted">
-        <li><strong className="text-foreground">Client Database Content (Queried)</strong> — Data from Connected Databases accessed through AI queries: employee records, salary/payroll data, financial transactions, invoices, purchase orders, and any other data in exposed tables</li>
-        <li><strong className="text-foreground">AI-Generated Reports</strong> — Structured reports (HR, Financial, Custom) containing analysis, summaries, and visualisations built from database query results</li>
-        <li><strong className="text-foreground">Chat Query Content</strong> — Natural language questions from users and AI-generated responses containing database-sourced results</li>
-        <li><strong className="text-foreground">Database Connection Credentials</strong> — Server IPs, ports, database names, authentication credentials (encrypted, never stored in plaintext)</li>
-        <li><strong className="text-foreground">Company Hierarchy Data</strong> — Company names, parent/subsidiary relationships, status, creation dates</li>
-        <li><strong className="text-foreground">User Account Data</strong> — Names, emails, roles (Super Admin, Admin, Regular), account status</li>
-        <li><strong className="text-foreground">Table Access Configurations</strong> — Column-level permissions (None, Read, Masked, Write) per table per role</li>
-        <li><strong className="text-foreground">Report Templates</strong> — Template names, types (HR, Financial, Custom), section structures</li>
-        <li><strong className="text-foreground">Usage and Analytics Data</strong> — Login timestamps, chat sessions, reports generated, daily activity volumes</li>
+        <li><strong className="text-foreground">Client Database Content (Queried)</strong>: Data from Connected Databases accessed through AI queries: employee records, salary/payroll data, financial transactions, invoices, purchase orders, and any other data in exposed tables</li>
+        <li><strong className="text-foreground">AI-Generated Reports</strong>: Structured reports (HR, Financial, Custom) containing analysis, summaries, and visualisations built from database query results</li>
+        <li><strong className="text-foreground">Chat Query Content</strong>: Natural language questions from users and AI-generated responses containing database-sourced results</li>
+        <li><strong className="text-foreground">Database Connection Credentials</strong>: Server IPs, ports, database names, authentication credentials (encrypted, never stored in plaintext)</li>
+        <li><strong className="text-foreground">Company Hierarchy Data</strong>: Company names, parent/subsidiary relationships, status, creation dates</li>
+        <li><strong className="text-foreground">User Account Data</strong>: Names, emails, roles (Super Admin, Admin, Regular), account status</li>
+        <li><strong className="text-foreground">Table Access Configurations</strong>: Column-level permissions (None, Read, Masked, Write) per table per role</li>
+        <li><strong className="text-foreground">Report Templates</strong>: Template names, types (HR, Financial, Custom), section structures</li>
+        <li><strong className="text-foreground">Usage and Analytics Data</strong>: Login timestamps, chat sessions, reports generated, daily activity volumes</li>
       </ul>
 
       <SectionHeading id="why-we-process">Why We Process Your Data</SectionHeading>
@@ -202,18 +202,18 @@ function EnglishContent({ locale }: { locale: string }) {
       />
       <P>
         We never process data for advertising, profiling, or any purpose outside the contracted scope. We do not retain
-        copies of your raw database data — only generated reports and chat outputs.
+        copies of your raw database data only generated reports and chat outputs.
       </P>
 
       <SectionHeading id="how-we-use-ai">How We Use AI</SectionHeading>
       <ul className="mb-4 ml-5 list-disc space-y-2 font-sans text-sm text-muted">
         <li>Zakra uses AI to translate natural language questions into database queries and return results</li>
         <li>AI auto-selects report templates, runs database queries, and builds structured reports</li>
-        <li>All AI-generated reports and chat answers are assistance tools — <strong className="text-foreground">not final records or audited outputs</strong></li>
+        <li>All AI-generated reports and chat answers are assistance tools <strong className="text-foreground">not final records or audited outputs</strong></li>
         <li>AI outputs should always be verified against source data before use in formal decisions</li>
         <li>We do not use your database data, reports, or chat content to train AI models without explicit written consent</li>
         <li>We maintain documentation of AI models, query translation logic, and known limitations</li>
-        <li>Database credentials are never sent to LLM providers — only query results</li>
+        <li>Database credentials are never sent to LLM providers only query results</li>
       </ul>
 
       <SectionHeading id="data-sharing">Data Sharing &amp; Sub-Processors</SectionHeading>
@@ -239,13 +239,13 @@ function EnglishContent({ locale }: { locale: string }) {
 
       <SectionHeading id="your-rights">Your Organisation&apos;s Rights Under PDPL</SectionHeading>
       <ul className="mb-4 ml-5 list-disc space-y-2 font-sans text-sm text-muted">
-        <li><strong className="text-foreground">Access</strong> — Copy of all generated reports, chat histories, and configurations</li>
-        <li><strong className="text-foreground">Correction</strong> — Fix inaccurate metadata or user data</li>
-        <li><strong className="text-foreground">Deletion</strong> — Specific reports, chat histories, or all platform data</li>
-        <li><strong className="text-foreground">Portability</strong> — JSON or PDF export</li>
-        <li><strong className="text-foreground">Objection</strong> — Object to processing not in DPA</li>
-        <li><strong className="text-foreground">Restriction</strong> — Restrict processing during dispute</li>
-        <li><strong className="text-foreground">Audit</strong> — Evidence of PDPL compliance, query audit logs</li>
+        <li><strong className="text-foreground">Access</strong>: Copy of all generated reports, chat histories, and configurations</li>
+        <li><strong className="text-foreground">Correction</strong>: Fix inaccurate metadata or user data</li>
+        <li><strong className="text-foreground">Deletion</strong>: Specific reports, chat histories, or all platform data</li>
+        <li><strong className="text-foreground">Portability</strong>: JSON or PDF export</li>
+        <li><strong className="text-foreground">Objection</strong>: Object to processing not in DPA</li>
+        <li><strong className="text-foreground">Restriction</strong>: Restrict processing during dispute</li>
+        <li><strong className="text-foreground">Audit</strong>: Evidence of PDPL compliance, query audit logs</li>
       </ul>
       <P>
         Note: Rights regarding data in your Connected Databases must be fulfilled by your organisation directly at the
@@ -256,7 +256,7 @@ function EnglishContent({ locale }: { locale: string }) {
         <a href="mailto:privacy@esap.ai" className="text-accent hover:underline">
           privacy@esap.ai
         </a>{' '}
-        — Response within 30 days.
+        Response within 30 days.
       </P>
 
       <SectionHeading id="retention">Data Retention</SectionHeading>
@@ -274,7 +274,7 @@ function EnglishContent({ locale }: { locale: string }) {
         ]}
       />
       <P>
-        Raw database data is <strong className="text-foreground">NOT retained</strong> — only generated outputs.
+        Raw database data is <strong className="text-foreground">NOT retained</strong>: only generated outputs.
         30-day export window on termination. Permanent deletion confirmed in writing.
       </P>
 
@@ -282,18 +282,18 @@ function EnglishContent({ locale }: { locale: string }) {
       <ul className="mb-4 ml-5 list-disc space-y-2 font-sans text-sm text-muted">
         <li>AES-256 encryption at rest for all reports, chat logs, and credentials</li>
         <li>TLS 1.3 encryption in transit, including database connections</li>
-        <li>Database credentials encrypted in secure vault — never in plaintext</li>
+        <li>Database credentials encrypted in secure vault never in plaintext</li>
         <li>Column-level access control (None/Read/Masked/Write) enforced before queries execute</li>
         <li>Company Context isolation between organisations</li>
         <li>Role-based access (Super Admin / Admin / Regular)</li>
-        <li>Query audit logging — all AI queries logged with user, timestamp, and content</li>
+        <li>Query audit logging all AI queries logged with user, timestamp, and content</li>
         <li>Regular security audits and vulnerability assessments</li>
         <li>72-hour SDAIA/NDMO breach notification + immediate client notification</li>
       </ul>
 
       <SectionHeading id="contact">Contact &amp; Complaints</SectionHeading>
       <P>
-        <strong className="text-foreground">Empowering Energy — Data Privacy Team</strong>
+        <strong className="text-foreground">Empowering Energy Data Privacy Team</strong>
         <br />
         📧{' '}
         <a href="mailto:privacy@esap.ai" className="text-accent hover:underline">
@@ -342,7 +342,7 @@ function ArabicContent({ locale }: { locale: string }) {
           سياسة الخصوصية
         </h1>
         <p className="font-sans text-sm text-muted">
-          <strong className="text-foreground">المنتج:</strong> زاكرا — منصة قاعدة المعرفة والتقارير المؤسسية المدعومة بالذكاء الاصطناعي
+          <strong className="text-foreground">المنتج:</strong> زاكرا منصة قاعدة المعرفة والتقارير المؤسسية المدعومة بالذكاء الاصطناعي
           <br />
           <strong className="text-foreground">تشغيل:</strong> Empowering Energy (المعروفة باسم ESAP AI)
           <br />
@@ -350,7 +350,7 @@ function ArabicContent({ locale }: { locale: string }) {
           <span className="font-mono text-xs">zakra.esap.ai</span>
           <br />
           <strong className="text-foreground">تصنيف المخاطر:</strong>{' '}
-          <span className="font-medium text-error">الأعلى</span> — اتصال مباشر بقواعد بيانات الإنتاج الخاصة بالعميل
+          <span className="font-medium text-error">الأعلى</span> اتصال مباشر بقواعد بيانات الإنتاج الخاصة بالعميل
         </p>
       </div>
 
@@ -358,13 +358,13 @@ function ArabicContent({ locale }: { locale: string }) {
       <P>
         زاكرا هي منصة قاعدة معرفة وتقارير مؤسسية مدعومة بالذكاء الاصطناعي، طوّرتها وتشغّلها{' '}
         <strong className="text-foreground">Empowering Energy (المعروفة باسم ESAP AI)</strong> (رقم السجل التجاري: [يُدرج رقم السجل]).
-        نساعد المؤسسات على ربط قواعد بياناتها والاستعلام عنها بلغة طبيعية وتوليد تقارير منظّمة — كل ذلك عبر واجهة آمنة ومحكومة بضوابط الوصول.
+        نساعد المؤسسات على ربط قواعد بياناتها والاستعلام عنها بلغة طبيعية وتوليد تقارير منظّمة كل ذلك عبر واجهة آمنة ومحكومة بضوابط الوصول.
       </P>
 
       <SectionHeading id="our-role">دورنا: معالج البيانات</SectionHeading>
       <P>
         تعمل زاكرا حصرًا في سياق مؤسسي B2B. مؤسستك هي{' '}
-        <strong className="text-foreground">المتحكم في البيانات</strong> — أنتِ/أنتم تحددون قواعد البيانات المربوطة والجداول والأعمدة المكشوفة وصلاحيات الوصول.
+        <strong className="text-foreground">المتحكم في البيانات</strong>: أنتِ/أنتم تحددون قواعد البيانات المربوطة والجداول والأعمدة المكشوفة وصلاحيات الوصول.
         تعمل Empowering Energy (باسم ESAP AI) بوصفها{' '}
         <strong className="text-foreground">معالِجًا للبيانات</strong> فقط، وتعالج بيانات قاعدة البيانات نيابةً عن مؤسستك ووفق تعليماتكم الموثّقة حصرًا.
       </P>
@@ -385,15 +385,15 @@ function ArabicContent({ locale }: { locale: string }) {
 
       <SectionHeading id="what-we-process">البيانات التي نعالجها</SectionHeading>
       <ul className="mb-4 mr-5 list-disc space-y-2 font-sans text-sm text-muted">
-        <li><strong className="text-foreground">محتوى قاعدة بيانات العميل (المُستعلَم)</strong> — بيانات من قواعد البيانات المربوطة يصل إليها الذكاء الاصطناعي: سجلات الموظفين، بيانات الرواتب، المعاملات المالية، الفواتير، أوامر الشراء، وأي بيانات أخرى في الجداول المكشوفة</li>
-        <li><strong className="text-foreground">التقارير المولّدة بالذكاء الاصطناعي</strong> — تقارير منظّمة (موارد بشرية، مالية، مخصّصة) تحتوي على تحليلات وملخّصات ومرئيات مبنية على نتائج استعلامات قاعدة البيانات</li>
-        <li><strong className="text-foreground">محتوى استعلامات الدردشة</strong> — أسئلة المستخدمين بالغة الطبيعية واستجابات الذكاء الاصطناعي المحتوية على نتائج مصدرها قاعدة البيانات</li>
-        <li><strong className="text-foreground">بيانات اعتماد الاتصال بقاعدة البيانات</strong> — عناوين IP الخوادم والمنافذ وأسماء قواعد البيانات وبيانات اعتماد المصادقة (مشفّرة، لا تُخزَّن نصًا صريحًا)</li>
-        <li><strong className="text-foreground">بيانات التسلسل الهرمي للشركة</strong> — أسماء الشركات وعلاقات الشركة الأم/التابعة والحالة وتواريخ الإنشاء</li>
-        <li><strong className="text-foreground">بيانات حساب المستخدم</strong> — الأسماء والبريد الإلكتروني والأدوار (مدير عام، مدير، مستخدم عادي) وحالة الحساب</li>
-        <li><strong className="text-foreground">إعدادات وصول الجداول</strong> — صلاحيات على مستوى الأعمدة (بلا وصول، قراءة، مُقنَّع، كتابة) لكل جدول ولكل دور</li>
-        <li><strong className="text-foreground">قوالب التقارير</strong> — أسماء القوالب والأنواع (موارد بشرية، مالية، مخصّصة) وهياكل الأقسام</li>
-        <li><strong className="text-foreground">بيانات الاستخدام والتحليلات</strong> — طوابع وقت تسجيل الدخول وجلسات الدردشة والتقارير المنشأة وأحجام النشاط اليومي</li>
+        <li><strong className="text-foreground">محتوى قاعدة بيانات العميل (المُستعلَم)</strong>: بيانات من قواعد البيانات المربوطة يصل إليها الذكاء الاصطناعي: سجلات الموظفين، بيانات الرواتب، المعاملات المالية، الفواتير، أوامر الشراء، وأي بيانات أخرى في الجداول المكشوفة</li>
+        <li><strong className="text-foreground">التقارير المولّدة بالذكاء الاصطناعي</strong>: تقارير منظّمة (موارد بشرية، مالية، مخصّصة) تحتوي على تحليلات وملخّصات ومرئيات مبنية على نتائج استعلامات قاعدة البيانات</li>
+        <li><strong className="text-foreground">محتوى استعلامات الدردشة</strong>: أسئلة المستخدمين بالغة الطبيعية واستجابات الذكاء الاصطناعي المحتوية على نتائج مصدرها قاعدة البيانات</li>
+        <li><strong className="text-foreground">بيانات اعتماد الاتصال بقاعدة البيانات</strong>: عناوين IP الخوادم والمنافذ وأسماء قواعد البيانات وبيانات اعتماد المصادقة (مشفّرة، لا تُخزَّن نصًا صريحًا)</li>
+        <li><strong className="text-foreground">بيانات التسلسل الهرمي للشركة</strong>: أسماء الشركات وعلاقات الشركة الأم/التابعة والحالة وتواريخ الإنشاء</li>
+        <li><strong className="text-foreground">بيانات حساب المستخدم</strong>: الأسماء والبريد الإلكتروني والأدوار (مدير عام، مدير، مستخدم عادي) وحالة الحساب</li>
+        <li><strong className="text-foreground">إعدادات وصول الجداول</strong>: صلاحيات على مستوى الأعمدة (بلا وصول، قراءة، مُقنَّع، كتابة) لكل جدول ولكل دور</li>
+        <li><strong className="text-foreground">قوالب التقارير</strong>: أسماء القوالب والأنواع (موارد بشرية، مالية، مخصّصة) وهياكل الأقسام</li>
+        <li><strong className="text-foreground">بيانات الاستخدام والتحليلات</strong>: طوابع وقت تسجيل الدخول وجلسات الدردشة والتقارير المنشأة وأحجام النشاط اليومي</li>
       </ul>
 
       <SectionHeading id="why-we-process">أسباب معالجة البيانات</SectionHeading>
@@ -410,18 +410,18 @@ function ArabicContent({ locale }: { locale: string }) {
         ]}
       />
       <P>
-        لا نعالج البيانات قط لأغراض الإعلان أو التنميط أو أي غرض خارج نطاق العقد. لا نحتفظ بنسخ من بيانات قاعدة بياناتك الخام — بل بالتقارير المولّدة ومخرجات الدردشة فحسب.
+        لا نعالج البيانات قط لأغراض الإعلان أو التنميط أو أي غرض خارج نطاق العقد. لا نحتفظ بنسخ من بيانات قاعدة بياناتك الخام بل بالتقارير المولّدة ومخرجات الدردشة فحسب.
       </P>
 
       <SectionHeading id="how-we-use-ai">كيفية استخدامنا للذكاء الاصطناعي</SectionHeading>
       <ul className="mb-4 mr-5 list-disc space-y-2 font-sans text-sm text-muted">
         <li>تستخدم زاكرا الذكاء الاصطناعي لترجمة الأسئلة بالغة الطبيعية إلى استعلامات قاعدة بيانات وإعادة النتائج</li>
         <li>يختار الذكاء الاصطناعي قوالب التقارير تلقائيًا وينفّذ استعلامات قاعدة البيانات ويبني تقارير منظّمة</li>
-        <li>جميع التقارير وإجابات الدردشة المولّدة بالذكاء الاصطناعي أدوات مساعدة — <strong className="text-foreground">وليست سجلات نهائية أو مخرجات مراجَعة</strong></li>
+        <li>جميع التقارير وإجابات الدردشة المولّدة بالذكاء الاصطناعي أدوات مساعدة <strong className="text-foreground">وليست سجلات نهائية أو مخرجات مراجَعة</strong></li>
         <li>ينبغي دائمًا التحقق من مخرجات الذكاء الاصطناعي بمقارنتها مع بيانات المصدر قبل استخدامها في القرارات الرسمية</li>
         <li>لا نستخدم بيانات قاعدة بياناتك أو تقاريرك أو محتوى دردشتك لتدريب نماذج الذكاء الاصطناعي دون موافقة كتابية صريحة</li>
         <li>نحتفظ بوثائق نماذج الذكاء الاصطناعي ومنطق ترجمة الاستعلامات والقيود المعروفة</li>
-        <li>لا تُرسَل بيانات اعتماد قاعدة البيانات قط إلى موفّري LLM — تُرسَل نتائج الاستعلامات فحسب</li>
+        <li>لا تُرسَل بيانات اعتماد قاعدة البيانات قط إلى موفّري LLM تُرسَل نتائج الاستعلامات فحسب</li>
       </ul>
 
       <SectionHeading id="data-sharing">مشاركة البيانات والمعالجون الفرعيون</SectionHeading>
@@ -444,13 +444,13 @@ function ArabicContent({ locale }: { locale: string }) {
 
       <SectionHeading id="your-rights">حقوق مؤسستك بموجب نظام PDPL</SectionHeading>
       <ul className="mb-4 mr-5 list-disc space-y-2 font-sans text-sm text-muted">
-        <li><strong className="text-foreground">الوصول</strong> — نسخة من جميع التقارير المولّدة وسجلات الدردشة والإعدادات</li>
-        <li><strong className="text-foreground">التصحيح</strong> — تصحيح البيانات الوصفية غير الدقيقة أو بيانات المستخدمين</li>
-        <li><strong className="text-foreground">الحذف</strong> — تقارير محددة أو سجلات دردشة أو جميع بيانات المنصة</li>
-        <li><strong className="text-foreground">قابلية النقل</strong> — تصدير JSON أو PDF</li>
-        <li><strong className="text-foreground">الاعتراض</strong> — الاعتراض على المعالجة غير المدرجة في اتفاقية معالجة البيانات</li>
-        <li><strong className="text-foreground">التقييد</strong> — تقييد المعالجة أثناء النزاع</li>
-        <li><strong className="text-foreground">التدقيق</strong> — إثبات الامتثال لنظام PDPL وسجلات تدقيق الاستعلامات</li>
+        <li><strong className="text-foreground">الوصول</strong>: نسخة من جميع التقارير المولّدة وسجلات الدردشة والإعدادات</li>
+        <li><strong className="text-foreground">التصحيح</strong>: تصحيح البيانات الوصفية غير الدقيقة أو بيانات المستخدمين</li>
+        <li><strong className="text-foreground">الحذف</strong>: تقارير محددة أو سجلات دردشة أو جميع بيانات المنصة</li>
+        <li><strong className="text-foreground">قابلية النقل</strong>: تصدير JSON أو PDF</li>
+        <li><strong className="text-foreground">الاعتراض</strong>: الاعتراض على المعالجة غير المدرجة في اتفاقية معالجة البيانات</li>
+        <li><strong className="text-foreground">التقييد</strong>: تقييد المعالجة أثناء النزاع</li>
+        <li><strong className="text-foreground">التدقيق</strong>: إثبات الامتثال لنظام PDPL وسجلات تدقيق الاستعلامات</li>
       </ul>
       <P>
         ملاحظة: يجب أن تُستوفى الحقوق المتعلقة بالبيانات في قواعد بياناتك المربوطة من قِبَل مؤسستك مباشرةً على مستوى قاعدة البيانات.
@@ -460,7 +460,7 @@ function ArabicContent({ locale }: { locale: string }) {
         <a href="mailto:privacy@esap.ai" className="text-accent hover:underline">
           privacy@esap.ai
         </a>{' '}
-        — الرد خلال 30 يومًا.
+        الرد خلال 30 يومًا.
       </P>
 
       <SectionHeading id="retention">الاحتفاظ بالبيانات</SectionHeading>
@@ -478,7 +478,7 @@ function ArabicContent({ locale }: { locale: string }) {
         ]}
       />
       <P>
-        بيانات قاعدة البيانات الخام <strong className="text-foreground">لا تُحتفظ بها</strong> — المخرجات المولّدة فحسب.
+        بيانات قاعدة البيانات الخام <strong className="text-foreground">لا تُحتفظ بها</strong>: المخرجات المولّدة فحسب.
         نافذة تصدير 30 يومًا عند إنهاء العقد. تأكيد الحذف الدائم كتابيًا.
       </P>
 
@@ -486,18 +486,18 @@ function ArabicContent({ locale }: { locale: string }) {
       <ul className="mb-4 mr-5 list-disc space-y-2 font-sans text-sm text-muted">
         <li>تشفير AES-256 للبيانات الساكنة لجميع التقارير وسجلات الدردشة وبيانات الاعتماد</li>
         <li>تشفير TLS 1.3 أثناء النقل بما في ذلك اتصالات قاعدة البيانات</li>
-        <li>بيانات اعتماد قاعدة البيانات مشفّرة في خزنة آمنة — لا تُخزَّن نصًا صريحًا قط</li>
+        <li>بيانات اعتماد قاعدة البيانات مشفّرة في خزنة آمنة لا تُخزَّن نصًا صريحًا قط</li>
         <li>ضبط صلاحيات الوصول على مستوى الأعمدة (بلا وصول/قراءة/مُقنَّع/كتابة) قبل تنفيذ الاستعلامات</li>
         <li>عزل سياق الشركة بين المؤسسات</li>
         <li>الوصول المبني على الأدوار (مدير عام / مدير / مستخدم عادي)</li>
-        <li>تسجيل تدقيق الاستعلامات — جميع استعلامات الذكاء الاصطناعي مسجّلة مع المستخدم والطابع الزمني والمحتوى</li>
+        <li>تسجيل تدقيق الاستعلامات جميع استعلامات الذكاء الاصطناعي مسجّلة مع المستخدم والطابع الزمني والمحتوى</li>
         <li>عمليات تدقيق أمني منتظمة وتقييمات الثغرات</li>
         <li>إشعار SDAIA/NDMO بالخروقات خلال 72 ساعة + إشعار فوري للعميل</li>
       </ul>
 
       <SectionHeading id="contact">التواصل والشكاوى</SectionHeading>
       <P>
-        <strong className="text-foreground">Empowering Energy — فريق خصوصية البيانات</strong>
+        <strong className="text-foreground">Empowering Energy فريق خصوصية البيانات</strong>
         <br />
         📧{' '}
         <a href="mailto:privacy@esap.ai" className="text-accent hover:underline">
@@ -541,7 +541,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
 
   return (
     <div className="flex gap-10">
-      {/* Sticky TOC — desktop only */}
+      {/* Sticky TOC desktop only */}
       <aside className="hidden shrink-0 xl:block">
         <LegalToc items={toc} />
       </aside>

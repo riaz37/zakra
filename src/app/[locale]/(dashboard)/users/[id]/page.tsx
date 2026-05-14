@@ -12,9 +12,11 @@ import {
   useUser,
   useUserRoles,
   useAssignUserRoles,
+  useUpdateUser,
 } from '@/hooks/useUsers';
 import { useRoles } from '@/hooks/useRoles';
 import type { UserRole, AssignRolesRequest } from '@/types';
+import { EditUserForm } from '@/components/features/users/edit-user-form';
 import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
 
 import { PageHeader } from '@/components/shared/page-header';
@@ -128,6 +130,7 @@ function AssignRoleForm({
   );
 }
 
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function UserDetailPage() {
@@ -138,11 +141,13 @@ export default function UserDetailPage() {
   const id = params.id;
 
   const [assignRoleOpen, setAssignRoleOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [rolesPage, setRolesPage] = useState(0);
 
   const { data: user, isLoading, isError } = useUser(id);
   const { data: userRoles, isLoading: rolesLoading } = useUserRoles(id);
   const assignMutation = useAssignUserRoles(id);
+  const updateMutation = useUpdateUser(id);
 
   const rolesTotalCount = userRoles?.length ?? 0;
   const rolesTotalPages = Math.max(1, Math.ceil(rolesTotalCount / DEFAULT_PAGE_SIZE));
@@ -239,6 +244,11 @@ export default function UserDetailPage() {
           { label: fullName },
         ]}
         title={fullName}
+        primaryActions={
+          <Button onClick={() => setEditOpen(true)} className="h-9 px-4">
+            Edit
+          </Button>
+        }
       />
 
       <AnimatedPage>
@@ -344,6 +354,20 @@ export default function UserDetailPage() {
           currentRoleIds={userRoles?.map((r) => r.id) ?? []}
           onSuccess={() => setAssignRoleOpen(false)}
           onCancel={() => setAssignRoleOpen(false)}
+        />
+      </FormDialog>
+
+      <FormDialog open={editOpen} onOpenChange={setEditOpen} title="Edit User">
+        <EditUserForm
+          userId={id}
+          initial={{
+            first_name: user.first_name ?? '',
+            last_name: user.last_name ?? '',
+            user_type: (user.user_type === 'super_admin' ? 'admin' : user.user_type) as 'admin' | 'regular',
+          }}
+          updateMutation={updateMutation}
+          onSuccess={() => setEditOpen(false)}
+          onCancel={() => setEditOpen(false)}
         />
       </FormDialog>
     </ScaffoldContainer>

@@ -54,7 +54,7 @@ export function StreamingResponse({
     >
       <div className="relative mt-[3px] shrink-0">
         <Image
-          src="/logo/esaplogo.webp"
+          src="/marco.svg"
           alt="ESAP"
           width={22}
           height={22}

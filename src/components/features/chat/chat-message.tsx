@@ -181,15 +181,13 @@ export function AssistantMessage({
       className="group flex gap-4"
     >
       <div className="mt-1 shrink-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface-200 shadow-sm">
-          <Image
-            src="/logo/esaplogo.webp"
-            alt="ESAP"
-            width={20}
-            height={20}
-            className="opacity-90"
-          />
-        </div>
+        <Image
+          src="/marco.svg"
+          alt="ESAP"
+          width={32}
+          height={32}
+          className="opacity-90"
+        />
       </div>
       
       <div className="min-w-0 flex-1">

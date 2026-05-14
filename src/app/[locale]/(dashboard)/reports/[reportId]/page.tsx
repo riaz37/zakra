@@ -38,7 +38,7 @@ function formatCell(value: unknown): {
   isEmpty: boolean;
 } {
   if (value === null || value === undefined || value === '') {
-    return { display: '—', isNumeric: false, isEmpty: true };
+    return { display: '-', isNumeric: false, isEmpty: true };
   }
   if (typeof value === 'boolean') {
     return { display: value ? 'Yes' : 'No', isNumeric: false, isEmpty: false };

@@ -13,6 +13,8 @@ import {
   Pie,
   PieChart,
   ResponsiveContainer,
+  Scatter,
+  ScatterChart,
   Tooltip,
   XAxis,
   YAxis,
@@ -25,13 +27,19 @@ import type { MessageContentBlock } from '@/types/chat';
 
 type QueryResult = NonNullable<MessageContentBlock['query_result']>;
 
+type AggregationType = 'sum' | 'avg' | 'count' | 'min' | 'max' | 'none';
+
 type ChartConfig = {
   chart_type?: string;
-  x_axis?: string;
-  y_axis?: string;
-  label_column?: string;
-  value_column?: string;
+  x_axis?: string | null;
+  y_axis?: string | null;
+  z_axis?: string | null;
+  label_column?: string | null;
+  value_column?: string | null;
+  group_column?: string | null;
+  aggregation?: AggregationType;
   title?: string;
+  reasoning?: string;
 };
 
 const GRID_STROKE = 'var(--color-surface-300)';
@@ -58,16 +66,6 @@ const TOOLTIP_ITEM_STYLE = { color: ACCENT } as const;
 
 type ChartRow = Record<string, unknown>;
 
-function toChartRows(rows: Record<string, unknown>[], columns: string[]): ChartRow[] {
-  return rows.map((row) => {
-    const out: ChartRow = {};
-    for (const col of columns) {
-      out[col] = row[col];
-    }
-    return out;
-  });
-}
-
 function parseChartConfig(raw: Record<string, unknown> | undefined): ChartConfig | null {
   if (!raw) return null;
   const type = raw.chart_type ?? raw.type;
@@ -75,88 +73,213 @@ function parseChartConfig(raw: Record<string, unknown> | undefined): ChartConfig
   return raw as ChartConfig;
 }
 
+// ── Aggregation helpers ────────────────────────────────────────────────────
+
+function toNumber(val: unknown): number {
+  if (typeof val === 'number') return val;
+  const n = Number(val);
+  return isNaN(n) ? 0 : n;
+}
+
+function formatNumber(val: unknown): string {
+  const n = Number(val);
+  if (isNaN(n)) return String(val);
+  if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (Math.abs(n) >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return n % 1 === 0 ? n.toString() : n.toFixed(2);
+}
+
+function applyAggregation(values: number[], agg: AggregationType): number {
+  if (values.length === 0) return 0;
+  switch (agg) {
+    case 'sum': return values.reduce((a, b) => a + b, 0);
+    case 'avg': return values.reduce((a, b) => a + b, 0) / values.length;
+    case 'count': return values.length;
+    case 'min': return Math.min(...values);
+    case 'max': return Math.max(...values);
+    default: return values[values.length - 1];
+  }
+}
+
+function aggregateForAxis(
+  data: ChartRow[],
+  xCol: string,
+  yCol: string,
+  agg: AggregationType,
+  groupCol?: string | null,
+): { chartData: ChartRow[]; groups: string[] } {
+  if (!groupCol) {
+    const buckets = new Map<string, number[]>();
+    for (const row of data) {
+      const key = String(row[xCol] ?? '');
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key)!.push(toNumber(row[yCol]));
+    }
+    const chartData = [...buckets.entries()].map(([x, vals]) => ({
+      [xCol]: x,
+      [yCol]: applyAggregation(vals, agg),
+    }));
+    return { chartData, groups: [] };
+  }
+
+  const xGroups = new Map<string, Map<string, number[]>>();
+  const allGroups = new Set<string>();
+  for (const row of data) {
+    const xVal = String(row[xCol] ?? '');
+    const gVal = String(row[groupCol] ?? '');
+    allGroups.add(gVal);
+    if (!xGroups.has(xVal)) xGroups.set(xVal, new Map());
+    const gMap = xGroups.get(xVal)!;
+    if (!gMap.has(gVal)) gMap.set(gVal, []);
+    gMap.get(gVal)!.push(toNumber(row[yCol]));
+  }
+  const groups = [...allGroups];
+  const chartData = [...xGroups.entries()].map(([x, gMap]) => {
+    const entry: ChartRow = { [xCol]: x };
+    for (const g of groups) {
+      entry[g] = applyAggregation(gMap.get(g) ?? [], agg);
+    }
+    return entry;
+  });
+  return { chartData, groups };
+}
+
+function aggregateBy(
+  data: ChartRow[],
+  categoryCol: string,
+  valueCol: string,
+  agg: AggregationType,
+): { name: string; value: number }[] {
+  const buckets = new Map<string, number[]>();
+  for (const row of data) {
+    const key = String(row[categoryCol] ?? 'Unknown');
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key)!.push(toNumber(row[valueCol]));
+  }
+  return [...buckets.entries()].map(([name, vals]) => ({
+    name,
+    value: applyAggregation(vals, agg),
+  }));
+}
+
+const AXIS_TICK = { fill: AXIS_FILL, fontSize: 10, fontFamily: 'monospace' } as const;
+const CHART_MARGIN = { top: 8, right: 12, left: 0, bottom: 0 } as const;
+
 function InlineChart({ qr }: { qr: QueryResult }) {
   const cfg = parseChartConfig(qr.chart_config);
-  if (!cfg?.chart_type) return null;
+  if (!cfg?.chart_type || cfg.chart_type === 'table') return null;
 
-  const data = toChartRows(qr.rows, qr.columns).slice(0, 50);
-  if (data.length === 0) return null;
+  const allRows = qr.rows as ChartRow[];
+  if (allRows.length === 0) return null;
 
+  const agg: AggregationType = cfg.aggregation ?? 'sum';
+
+  // ── Bar ───────────────────────────────────────────────────────────────────
   if (cfg.chart_type === 'bar') {
     const xKey = cfg.x_axis;
     const yKey = cfg.y_axis;
-    if (!xKey || !yKey || !(xKey in data[0]) || !(yKey in data[0])) return null;
+    if (!xKey || !yKey) return null;
+
+    const { chartData, groups } = aggregateForAxis(allRows, xKey, yKey, agg, cfg.group_column);
+    if (chartData.length === 0) return null;
 
     return (
       <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+        <BarChart data={chartData} margin={CHART_MARGIN}>
           <CartesianGrid stroke={GRID_STROKE} strokeDasharray="3 3" vertical={false} />
-          <XAxis
-            dataKey={xKey}
-            stroke={GRID_STROKE}
-            tick={{ fill: AXIS_FILL, fontSize: 10, fontFamily: 'monospace' }}
-            tickLine={false}
-          />
-          <YAxis
-            stroke={GRID_STROKE}
-            tick={{ fill: AXIS_FILL, fontSize: 10, fontFamily: 'monospace' }}
-            tickLine={false}
-          />
+          <XAxis dataKey={xKey} stroke={GRID_STROKE} tick={AXIS_TICK} tickLine={false} />
+          <YAxis stroke={GRID_STROKE} tick={AXIS_TICK} tickLine={false} tickFormatter={formatNumber} />
           <Tooltip
             cursor={{ fill: 'rgba(62, 207, 142, 0.06)' }}
             contentStyle={TOOLTIP_CONTENT_STYLE}
             labelStyle={TOOLTIP_LABEL_STYLE}
             itemStyle={TOOLTIP_ITEM_STYLE}
+            formatter={(v: unknown) => formatNumber(v)}
           />
-          <Bar dataKey={yKey} fill={ACCENT} radius={[2, 2, 0, 0]} />
+          {groups.length > 0 ? (
+            <>
+              <Legend wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', color: AXIS_FILL }} />
+              {groups.map((g, i) => (
+                <Bar key={g} dataKey={g} fill={PIE_PALETTE[i % PIE_PALETTE.length]} radius={[2, 2, 0, 0]} />
+              ))}
+            </>
+          ) : (
+            <Bar dataKey={yKey} fill={ACCENT} radius={[2, 2, 0, 0]} />
+          )}
         </BarChart>
       </ResponsiveContainer>
     );
   }
 
+  // ── Line ──────────────────────────────────────────────────────────────────
   if (cfg.chart_type === 'line') {
     const xKey = cfg.x_axis;
     const yKey = cfg.y_axis;
-    if (!xKey || !yKey || !(xKey in data[0]) || !(yKey in data[0])) return null;
+    if (!xKey || !yKey) return null;
+
+    const { chartData, groups } = aggregateForAxis(allRows, xKey, yKey, agg, cfg.group_column);
+    if (chartData.length === 0) return null;
 
     return (
       <ResponsiveContainer width="100%" height={220}>
-        <LineChart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+        <LineChart data={chartData} margin={CHART_MARGIN}>
           <CartesianGrid stroke={GRID_STROKE} strokeDasharray="3 3" vertical={false} />
-          <XAxis
-            dataKey={xKey}
-            stroke={GRID_STROKE}
-            tick={{ fill: AXIS_FILL, fontSize: 10, fontFamily: 'monospace' }}
-            tickLine={false}
-          />
-          <YAxis
-            stroke={GRID_STROKE}
-            tick={{ fill: AXIS_FILL, fontSize: 10, fontFamily: 'monospace' }}
-            tickLine={false}
-          />
+          <XAxis dataKey={xKey} stroke={GRID_STROKE} tick={AXIS_TICK} tickLine={false} />
+          <YAxis stroke={GRID_STROKE} tick={AXIS_TICK} tickLine={false} tickFormatter={formatNumber} />
           <Tooltip
             cursor={{ stroke: ACCENT, strokeOpacity: 0.15 }}
             contentStyle={TOOLTIP_CONTENT_STYLE}
             labelStyle={TOOLTIP_LABEL_STYLE}
             itemStyle={TOOLTIP_ITEM_STYLE}
+            formatter={(v: unknown) => formatNumber(v)}
           />
-          <Line
-            type="monotone"
-            dataKey={yKey}
-            stroke={ACCENT}
-            strokeWidth={2}
-            dot={{ fill: ACCENT, r: 3 }}
-            activeDot={{ r: 5 }}
-          />
+          {groups.length > 0 ? (
+            <>
+              <Legend wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', color: AXIS_FILL }} />
+              {groups.map((g, i) => (
+                <Line
+                  key={g}
+                  type="monotone"
+                  dataKey={g}
+                  stroke={PIE_PALETTE[i % PIE_PALETTE.length]}
+                  strokeWidth={2}
+                  dot={false}
+                />
+              ))}
+            </>
+          ) : (
+            <Line
+              type="monotone"
+              dataKey={yKey}
+              stroke={ACCENT}
+              strokeWidth={2}
+              dot={{ fill: ACCENT, r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     );
   }
 
+  // ── Pie ───────────────────────────────────────────────────────────────────
   if (cfg.chart_type === 'pie') {
     const nameKey = cfg.label_column;
-    const dataKey = cfg.value_column;
-    if (!nameKey || !dataKey || !(nameKey in data[0]) || !(dataKey in data[0])) return null;
+    const valueKey = cfg.value_column;
+    if (!nameKey || !valueKey) return null;
+
+    let pieData = aggregateBy(allRows, nameKey, valueKey, agg);
+    pieData.sort((a, b) => b.value - a.value);
+
+    const MAX_SLICES = 8;
+    if (pieData.length > MAX_SLICES) {
+      const top = pieData.slice(0, MAX_SLICES - 1);
+      const otherValue = pieData.slice(MAX_SLICES - 1).reduce((s, d) => s + d.value, 0);
+      top.push({ name: 'Other', value: otherValue });
+      pieData = top;
+    }
+
+    const total = pieData.reduce((s, d) => s + d.value, 0);
 
     return (
       <ResponsiveContainer width="100%" height={220}>
@@ -164,24 +287,60 @@ function InlineChart({ qr }: { qr: QueryResult }) {
           <Tooltip
             contentStyle={TOOLTIP_CONTENT_STYLE}
             labelStyle={TOOLTIP_LABEL_STYLE}
-            itemStyle={TOOLTIP_ITEM_STYLE}
+            formatter={(v: unknown) => [formatNumber(v), 'Value']}
           />
-          <Legend
-            wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', color: AXIS_FILL }}
-          />
+          <Legend wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', color: AXIS_FILL }} />
           <Pie
-            data={data}
-            nameKey={nameKey}
-            dataKey={dataKey}
-            outerRadius={90}
+            data={pieData}
+            nameKey="name"
+            dataKey="value"
+            outerRadius={85}
+            innerRadius={35}
+            paddingAngle={2}
             stroke="var(--color-background)"
             strokeWidth={2}
+            label={(props) => {
+              const name = String(props.name ?? '');
+              const value = toNumber(props.value);
+              const pct = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
+              return `${name} (${pct}%)`;
+            }}
+            labelLine={{ strokeWidth: 1, stroke: AXIS_FILL }}
           >
-            {data.map((_, i) => (
+            {pieData.map((_, i) => (
               <Cell key={`cell-${i}`} fill={PIE_PALETTE[i % PIE_PALETTE.length]} />
             ))}
           </Pie>
         </PieChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  // ── Scatter ───────────────────────────────────────────────────────────────
+  if (cfg.chart_type === 'scatter') {
+    const xKey = cfg.x_axis;
+    const yKey = cfg.y_axis;
+    if (!xKey || !yKey) return null;
+
+    const scatterData = allRows.slice(0, 500).map((row) => ({
+      x: toNumber(row[xKey]),
+      y: toNumber(row[yKey]),
+    }));
+
+    return (
+      <ResponsiveContainer width="100%" height={220}>
+        <ScatterChart margin={CHART_MARGIN}>
+          <CartesianGrid stroke={GRID_STROKE} strokeDasharray="3 3" />
+          <XAxis type="number" dataKey="x" name={xKey} stroke={GRID_STROKE} tick={AXIS_TICK} tickLine={false} tickFormatter={formatNumber} />
+          <YAxis type="number" dataKey="y" name={yKey} stroke={GRID_STROKE} tick={AXIS_TICK} tickLine={false} tickFormatter={formatNumber} />
+          <Tooltip
+            cursor={{ strokeDasharray: '3 3', stroke: ACCENT, strokeOpacity: 0.3 }}
+            contentStyle={TOOLTIP_CONTENT_STYLE}
+            labelStyle={TOOLTIP_LABEL_STYLE}
+            formatter={(v: unknown) => formatNumber(v)}
+          />
+          <Scatter data={scatterData} fill={ACCENT} opacity={0.7} />
+        </ScatterChart>
       </ResponsiveContainer>
     );
   }

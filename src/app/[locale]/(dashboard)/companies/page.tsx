@@ -54,7 +54,6 @@ export default function CompaniesPage() {
   // Flat list of potential parents for dropdown
   const { data: allCompanies } = useCompanies({
     page_size: 1000,
-    company_type: 'parent',
   });
 
   const createMutation = useCreateCompany();
@@ -66,24 +65,17 @@ export default function CompaniesPage() {
       id: 'name',
       header: t('name'),
       cell: ({ row }) => (
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
-            {row.original.parent_id && (
-              <GitBranch className="size-3 text-subtle rotate-90" />
-            )}
-            <Link
-              href={`/companies/${row.original.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="font-sans text-button font-medium text-foreground hover:text-accent transition-colors"
-            >
-              {row.original.name}
-            </Link>
-          </div>
-          {row.original.description && (
-            <span className="font-sans text-body text-fg-muted line-clamp-1 max-w-[400px]">
-              {row.original.description}
-            </span>
+        <div className="flex items-center gap-2">
+          {row.original.parent_id && (
+            <GitBranch className="size-3 text-subtle rotate-90" />
           )}
+          <Link
+            href={`/companies/${row.original.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="font-sans text-button font-medium text-foreground hover:text-accent transition-colors"
+          >
+            {row.original.name}
+          </Link>
         </div>
       ),
     },
@@ -113,11 +105,16 @@ export default function CompaniesPage() {
     {
       id: 'subsidiaries',
       header: t('subsidiaries'),
-      cell: ({ row }) => (
-        <span className="font-sans text-body text-fg-muted">
-          {row.original.subsidiaries?.length ?? 0}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const count = allCompanies?.items?.filter(
+          (c) => c.parent_id === row.original.id
+        ).length ?? 0;
+        return (
+          <span className="font-sans text-body text-fg-muted">
+            {row.original.subsidiary_count ?? count}
+          </span>
+        );
+      },
     },
     {
       id: 'created_at',
@@ -165,8 +162,7 @@ export default function CompaniesPage() {
     return allItems.filter(
       (c) =>
         c.name.toLowerCase().includes(needle) ||
-        c.slug?.toLowerCase().includes(needle) ||
-        c.description?.toLowerCase().includes(needle)
+        c.slug?.toLowerCase().includes(needle)
     );
   }, [allItems, search]);
 
@@ -193,11 +189,10 @@ export default function CompaniesPage() {
     const payload: CompanyCreate = {
       name: formData.name,
       slug: formData.slug,
-      description: formData.description || undefined,
     };
     await createMutation.mutateAsync({
       data: payload,
-      parentId: formData.parent_id
+      parentId: formData.parent_id || undefined,
     });
     setCreateOpen(false);
     setCreateSubParent(null);
@@ -208,7 +203,6 @@ export default function CompaniesPage() {
     const payload: CompanyUpdate = {
       name: formData.name,
       status: formData.status as CompanyUpdate['status'],
-      description: formData.description || undefined,
     };
     await updateMutation.mutateAsync(payload);
     setEditTarget(null);
@@ -295,6 +289,12 @@ export default function CompaniesPage() {
         onOpenChange={(open) => !open && setCreateSubParent(null)}
         title={t('addSubsidiaryTo', { name: createSubParent?.name ?? '' })}
       >
+        {createSubParent && (
+          <div className="mb-4 rounded-md border border-border bg-surface-200 px-3 py-2">
+            <span className="font-sans text-caption text-fg-muted">Subsidiary of: </span>
+            <span className="font-sans text-body font-medium text-foreground">{createSubParent.name}</span>
+          </div>
+        )}
         <CompanyForm
           initial={{
             parent_id: createSubParent?.id,
@@ -303,7 +303,6 @@ export default function CompaniesPage() {
           isPending={createMutation.isPending}
           onCancel={() => setCreateSubParent(null)}
           submitLabel={t('createSubsidiary')}
-          parentCompanies={parentOptions}
         />
       </FormDialog>
 
@@ -317,7 +316,6 @@ export default function CompaniesPage() {
             initial={{
               name: editTarget.name,
               slug: editTarget.slug,
-              description: editTarget.description ?? '',
               status: editTarget.status as 'active' | 'inactive' | 'suspended',
               parent_id: editTarget.parent_id ?? '',
             }}
@@ -326,6 +324,7 @@ export default function CompaniesPage() {
             onCancel={() => setEditTarget(null)}
             submitLabel={t('saveChanges')}
             parentCompanies={parentOptions.filter(p => p.id !== editTarget.id)}
+            isEditing
           />
         )}
       </FormDialog>

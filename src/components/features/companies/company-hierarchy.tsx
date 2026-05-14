@@ -128,7 +128,6 @@ function CompanyHierarchyInner() {
     const payload: SubsidiaryCreate = {
       name: formData.name,
       slug: formData.slug,
-      description: formData.description || undefined,
     };
 
     try {
@@ -140,7 +139,6 @@ function CompanyHierarchyInner() {
       const fallback: CompanyCreate = {
         name: formData.name,
         slug: formData.slug,
-        description: formData.description || undefined,
       };
       try {
         await createMutation.mutateAsync({

@@ -30,7 +30,24 @@ const notoArabic = Noto_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: "Zakra Admin",
+  title: {
+    default: "Zakra",
+    template: "%s | Zakra",
+  },
+  description: "Zakra connects to your enterprise databases, learns your business context, and gives every team member a natural-language interface to the information they need, without writing a single query.",
+  icons: {
+    icon: [
+      { url: '/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon_io/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon_io/favicon.ico', type: 'image/x-icon' },
+    ],
+    apple: [
+      { url: '/favicon_io/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      { rel: 'manifest', url: '/favicon_io/site.webmanifest' },
+    ],
+  },
 };
 
 export default function RootLayout({

@@ -16,8 +16,13 @@ import type {
  * List all companies with pagination
  */
 export async function listCompanies(params?: QueryParams): Promise<PaginatedResponse<Company>> {
-  const response = await api.get<PaginatedResponse<Company>>('/companies', { params });
-  return response.data;
+  const { page = 1, page_size = 10, ...rest } = params ?? {};
+  const skip = (page - 1) * page_size;
+  const response = await api.get<PaginatedResponse<Company>>('/companies', {
+    params: { skip, limit: page_size, ...rest },
+  });
+  const data = response.data;
+  return { ...data, total_pages: Math.ceil(data.total / page_size) };
 }
 
 /**
@@ -58,11 +63,14 @@ export async function listSubsidiaries(
   companyId: string,
   params?: QueryParams
 ): Promise<PaginatedResponse<Company>> {
+  const { page = 1, page_size = 10, ...rest } = params ?? {};
+  const skip = (page - 1) * page_size;
   const response = await api.get<PaginatedResponse<Company>>(
     `/companies/${companyId}/sub-companies`,
-    { params }
+    { params: { skip, limit: page_size, ...rest } }
   );
-  return response.data;
+  const data = response.data;
+  return { ...data, total_pages: Math.ceil(data.total / page_size) };
 }
 
 /**
@@ -70,7 +78,7 @@ export async function listSubsidiaries(
  */
 export async function createSubsidiary(
   parentId: string,
-  data: SubsidiaryCreate
+  data: SubsidiaryCreate | CompanyCreate
 ): Promise<Company> {
   const response = await api.post<Company>(`/companies/${parentId}/sub-companies`, data);
   return response.data;
@@ -83,8 +91,13 @@ export async function listCompanyUsers(
   companyId: string,
   params?: QueryParams
 ): Promise<PaginatedResponse<{ id: string; email: string; first_name: string | null; last_name: string | null }>> {
-  const response = await api.get(`/companies/${companyId}/users`, { params });
-  return response.data;
+  const { page = 1, page_size = 10, ...rest } = params ?? {};
+  const skip = (page - 1) * page_size;
+  const response = await api.get(`/companies/${companyId}/users`, {
+    params: { skip, limit: page_size, ...rest },
+  });
+  const data = response.data;
+  return { ...data, total_pages: Math.ceil(data.total / page_size) };
 }
 
 /**

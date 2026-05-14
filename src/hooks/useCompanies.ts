@@ -8,9 +8,10 @@ const QUERY_KEY = 'companies';
  * Hook for fetching paginated list of companies
  */
 export function useCompanies(params?: QueryParams) {
+  const merged: QueryParams = { sort_by: 'created_at', sort_order: 'desc' as const, ...params };
   return useQuery({
-    queryKey: [QUERY_KEY, params],
-    queryFn: () => companiesApi.listCompanies(params),
+    queryKey: [QUERY_KEY, merged],
+    queryFn: () => companiesApi.listCompanies(merged),
   });
 }
 
@@ -54,8 +55,10 @@ export function useCreateCompany() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ data }: { data: CompanyCreate; parentId?: string }) =>
-      companiesApi.createCompany(data),
+    mutationFn: ({ data, parentId }: { data: CompanyCreate; parentId?: string }) =>
+      parentId
+        ? companiesApi.createSubsidiary(parentId, data)
+        : companiesApi.createCompany(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
     },

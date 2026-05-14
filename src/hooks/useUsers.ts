@@ -7,9 +7,31 @@ export type { ListUser };
 const QUERY_KEY = 'users';
 
 export function useUsers(params?: QueryParams & { company_id?: string }) {
+  const { search, page = 1, page_size = 10, ...rest } = params ?? {};
+
+  // Backend does not support search — fetch all and filter client-side
+  const fetchParams = { sort_by: 'created_at', sort_order: 'desc' as const, page: 1, page_size: 1000, ...rest };
+
   return useQuery({
-    queryKey: [QUERY_KEY, params],
-    queryFn: () => usersApi.listUsers(params),
+    queryKey: [QUERY_KEY, rest, search ?? '', page, page_size],
+    queryFn: async () => {
+      const all = await usersApi.listUsers(fetchParams);
+      const term = search?.trim().toLowerCase();
+      const filtered = term
+        ? all.items.filter((u) =>
+            u.email.toLowerCase().includes(term) ||
+            (u.first_name ?? '').toLowerCase().includes(term) ||
+            (u.last_name ?? '').toLowerCase().includes(term)
+          )
+        : all.items;
+
+      const total = filtered.length;
+      const total_pages = Math.max(1, Math.ceil(total / page_size));
+      const skip = (page - 1) * page_size;
+      const items = filtered.slice(skip, skip + page_size);
+
+      return { ...all, items, total, total_pages };
+    },
   });
 }
 

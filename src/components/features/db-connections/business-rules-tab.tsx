@@ -70,7 +70,7 @@ export function BusinessRulesTab({
       await updateRule.mutateAsync({ ruleId: rule.id, data: { is_active: !rule.is_active } });
       toast.success(rule.is_active ? 'Rule disabled' : 'Rule enabled');
     } catch {
-      toast.error('Failed to update rule');
+      toast.error('Could not update rule. Please try again.');
     }
   }
 
@@ -78,10 +78,10 @@ export function BusinessRulesTab({
     if (!deleteTarget) return;
     try {
       await deleteRule.mutateAsync(deleteTarget.id);
-      toast.success('Rule deleted');
+      toast.success('Business rule deleted');
       setDeleteTarget(null);
     } catch {
-      toast.error('Failed to delete rule');
+      toast.error('Could not delete rule. Please try again.');
     }
   }
 

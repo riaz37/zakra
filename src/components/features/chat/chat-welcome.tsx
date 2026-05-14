@@ -29,7 +29,7 @@ export function ChatWelcome({ onPrompt }: ChatWelcomeProps) {
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       >
         <Image
-          src="/logo/esaplogo.webp"
+          src="/marco.svg"
           alt="ESAP"
           width={48}
           height={48}

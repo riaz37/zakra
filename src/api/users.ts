@@ -18,8 +18,16 @@ import type {
  * List all users with pagination
  */
 export async function listUsers(params?: QueryParams): Promise<PaginatedResponse<ListUser>> {
-  const response = await api.get<PaginatedResponse<ListUser>>('/users', { params });
-  return response.data;
+  const { page = 1, page_size = 10, ...rest } = params ?? {};
+  const skip = (page - 1) * page_size;
+  const response = await api.get<PaginatedResponse<ListUser>>('/users', {
+    params: { skip, limit: page_size, ...rest },
+  });
+  const data = response.data;
+  return {
+    ...data,
+    total_pages: Math.ceil(data.total / page_size),
+  };
 }
 
 /**

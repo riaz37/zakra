@@ -22,8 +22,7 @@ import { Button } from '@/components/ui/button';
 const companySchema = z.object({
   name: z.string().min(1, 'Company name is required.'),
   slug: z.string().min(1, 'Slug is required.'),
-  description: z.string().optional(),
-  status: z.enum(['active', 'inactive', 'suspended']),
+  status: z.enum(['active', 'inactive', 'suspended']).optional(),
   parent_id: z.string().optional(),
 });
 
@@ -43,6 +42,7 @@ export interface CompanyFormProps {
   onCancel: () => void;
   submitLabel?: string;
   parentCompanies?: { id: string; name: string }[];
+  isEditing?: boolean;
 }
 
 export function CompanyForm({
@@ -52,13 +52,13 @@ export function CompanyForm({
   onCancel,
   submitLabel = 'Create Company',
   parentCompanies,
+  isEditing = false,
 }: CompanyFormProps) {
   const form = useForm<CompanyFormData>({
     resolver: zodResolver(companySchema),
     defaultValues: {
       name: initial?.name ?? '',
       slug: initial?.slug ?? '',
-      description: initial?.description ?? '',
       status: initial?.status ?? 'active',
       parent_id: initial?.parent_id ?? '',
     },
@@ -92,45 +92,57 @@ export function CompanyForm({
           )}
         />
 
-        <Controller
-          control={form.control}
-          name="slug"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Slug</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                placeholder="acme-corp"
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+        {!isEditing && (
+          <Controller
+            control={form.control}
+            name="slug"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Slug</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="acme-corp"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+        )}
+        {isEditing && initial?.slug && (
+          <Field>
+            <FieldLabel>Slug</FieldLabel>
+            <span className="font-mono text-body text-fg-muted px-3 py-2 rounded-md border border-border bg-surface-200 block">
+              {initial.slug}
+            </span>
+          </Field>
+        )}
 
-        <Controller
-          control={form.control}
-          name="status"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Status</FieldLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="suspended">Suspended</SelectItem>
-                </SelectContent>
-              </Select>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+        {isEditing && (
+          <Controller
+            control={form.control}
+            name="status"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Status</FieldLabel>
+                <Select onValueChange={field.onChange} value={field.value ?? 'active'}>
+                  <SelectTrigger id={field.name} aria-invalid={fieldState.invalid}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="suspended">Suspended</SelectItem>
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+        )}
 
-        {parentCompanies && parentCompanies.length > 0 && (
+        {parentCompanies && parentCompanies.length > 0 && !isEditing && (
           <Controller
             control={form.control}
             name="parent_id"
@@ -158,23 +170,15 @@ export function CompanyForm({
             )}
           />
         )}
+        {isEditing && initial?.parent_id && (
+          <Field>
+            <FieldLabel>Parent Company</FieldLabel>
+            <span className="font-sans text-body text-fg-muted px-3 py-2 rounded-md border border-border bg-surface-200 block">
+              {parentCompanies?.find(c => c.id === initial.parent_id)?.name ?? initial.parent_id}
+            </span>
+          </Field>
+        )}
 
-        <Controller
-          control={form.control}
-          name="description"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                placeholder="Optional description"
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
       </FieldGroup>
 
       <div className="flex justify-end gap-2 pt-2">

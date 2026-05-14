@@ -111,15 +111,15 @@ export function RuleDialog({
     try {
       if (editingRule) {
         await updateRule.mutateAsync({ ruleId: editingRule.id, data });
-        toast.success('Rule updated');
+        toast.success('Business rule saved');
       } else {
         await createRule.mutateAsync(data);
-        toast.success('Rule created');
+        toast.success('Business rule created');
       }
       reset(EMPTY_DEFAULTS);
       onOpenChange(false);
     } catch {
-      toast.error('Failed to save rule');
+      toast.error('Could not save rule. Please try again.');
     }
   }
 

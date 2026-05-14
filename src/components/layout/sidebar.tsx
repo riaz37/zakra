@@ -4,11 +4,13 @@ import { useMemo } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { LogOut } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/store/authStore';
 import { NAV_ITEMS } from '@/utils/constants';
 import { cn } from '@/lib/utils';
 import { NavItem } from './nav-item';
 import { CompanySwitcher } from './company-switcher';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
 
 export interface SidebarProps {
   variant?: 'full' | 'rail' | 'overlay';
@@ -80,8 +82,16 @@ function filterItemsByRole(
   });
 }
 
+function labelToNavKey(label: string): string {
+  return label
+    .split(' ')
+    .map((w, i) => i === 0 ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join('');
+}
+
 export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
   const pathname = usePathname();
+  const t = useTranslations('dashboard.nav');
   const { user, isAdmin, isSuperAdmin, logout } = useAuth();
   const { primaryItems, adminItems } = useMemo(() => {
     const allowed = filterItemsByRole(NAV_ITEMS, isAdmin, isSuperAdmin);
@@ -160,7 +170,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
           {primaryItems.map((item) => (
             <li key={item.path}>
               <NavItem
-                label={item.label}
+                label={t(labelToNavKey(item.label))}
                 path={item.path}
                 icon={item.icon}
                 active={isActivePath(pathname, item.path)}
@@ -186,7 +196,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
               {adminItems.map((item) => (
                 <li key={item.path}>
                   <NavItem
-                    label={item.label}
+                    label={t(labelToNavKey(item.label))}
                     path={item.path}
                     icon={item.icon}
                     active={isActivePath(pathname, item.path)}
@@ -211,6 +221,7 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
       >
         {collapsed ? (
           <div className="flex flex-col items-center gap-1.5">
+            <LanguageSwitcher variant="icon" />
             <span
               aria-label={email || 'User'}
               title={email || 'Not signed in'}
@@ -235,6 +246,9 @@ export function Sidebar({ variant = 'full', onNavigate }: SidebarProps) {
           </div>
         ) : (
           <>
+          <div className="mb-1">
+            <LanguageSwitcher variant="full" className="w-full justify-start px-2" />
+          </div>
           <div
             role="group"
             aria-label={isSignedIn ? `Signed in as ${email}` : 'Account'}

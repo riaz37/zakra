@@ -75,7 +75,7 @@ export default function RolesPage() {
       header: t('columns.description'),
       cell: ({ row }) => (
         <span className="font-sans text-button text-muted">
-          {row.original.description ?? '—'}
+          {row.original.description ?? '-'}
         </span>
       ),
     },

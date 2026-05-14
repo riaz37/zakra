@@ -34,20 +34,19 @@ export function CookieConsentBanner() {
       <p className="mb-1 font-sans text-sm font-semibold text-foreground">Cookies on Zakra</p>
       <p className="mb-3 font-sans text-xs leading-relaxed text-muted">
         We use cookies to keep your session secure, maintain your Company Context preference, and provide anonymous
-        usage analytics. Database queries, reports, and credentials are handled through encrypted data pipelines —
-        never cookies.
+        usage analytics. Database queries, reports, and credentials are handled through encrypted data pipelines, never cookies.
       </p>
       <div className="mb-3 space-y-1.5 text-xs text-muted">
         <div className="flex items-start gap-2">
           <span className="shrink-0 text-accent">✓</span>
           <span>
-            <strong className="text-foreground">Essential</strong> — session, CSRF, Company Context. Required.
+            <strong className="text-foreground">Essential</strong>: session, CSRF, Company Context. Required.
           </span>
         </div>
         <div className="flex items-start gap-2">
           <span className="shrink-0">○</span>
           <span>
-            <strong className="text-foreground">Analytics</strong> — anonymous platform usage. Optional.
+            <strong className="text-foreground">Analytics</strong>: anonymous platform usage. Optional.
           </span>
         </div>
       </div>

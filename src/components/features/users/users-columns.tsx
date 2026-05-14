@@ -10,10 +10,12 @@ import { AvatarInitial } from '@/components/features/users/avatar-initial';
 import { UserTypeBadge } from '@/components/features/users/user-type-badge';
 
 interface GetUsersColumnsArgs {
+  onEdit: (user: ListUser) => void;
   onDelete: (user: ListUser) => void;
 }
 
 export function getUsersColumns({
+  onEdit,
   onDelete,
 }: GetUsersColumnsArgs): ColumnDef<ListUser>[] {
   return [
@@ -65,7 +67,10 @@ export function getUsersColumns({
       header: '',
       cell: ({ row }) => (
         <RowActions
+          variant="outline-icon"
+          onEdit={(e) => { e.stopPropagation(); onEdit(row.original); }}
           onDelete={(e) => { e.stopPropagation(); onDelete(row.original); }}
+          editLabel={`Edit ${row.original.email}`}
           deleteLabel={`Delete ${row.original.email}`}
         />
       ),

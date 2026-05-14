@@ -14,7 +14,7 @@ export function ThinkingIndicator() {
     >
       <div className="mt-0.5 shrink-0">
         <Image
-          src="/logo/esaplogo.webp"
+          src="/marco.svg"
           alt="ESAP"
           width={22}
           height={22}

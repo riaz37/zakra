@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { type ColumnDef } from '@tanstack/react-table';
 import { toast } from 'sonner';
-import { Plus, Trash2, ArrowUpRight, Building2, Users as UsersIcon } from 'lucide-react';
+import { Trash2, ArrowUpRight, Building2, Users as UsersIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -118,7 +118,13 @@ function AddUserForm({ companyId, existingUserIds, onSuccess, onCancel }: AddUse
           <FieldLabel htmlFor="add-user-select">{t('fieldLabel')}</FieldLabel>
           <Select value={selectedUserId} onValueChange={(v) => { if (v) setSelectedUserId(v); }}>
             <SelectTrigger id="add-user-select">
-              <SelectValue placeholder={isLoading ? t('loadingPlaceholder') : t('placeholder')} />
+              <SelectValue placeholder={isLoading ? t('loadingPlaceholder') : t('placeholder')}>
+                {(value: string | null) => {
+                  if (!value) return null;
+                  const u = availableUsers.find((u) => u.id === value);
+                  return u ? formatFullName(u.first_name, u.last_name, u.email) : value;
+                }}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {availableUsers.length === 0 ? (
@@ -127,7 +133,7 @@ function AddUserForm({ companyId, existingUserIds, onSuccess, onCancel }: AddUse
                 </div>
               ) : (
                 availableUsers.map((u) => (
-                  <SelectItem key={u.id} value={u.id}>
+                  <SelectItem key={u.id} value={u.id} label={formatFullName(u.first_name, u.last_name, u.email)}>
                     {formatFullName(u.first_name, u.last_name, u.email)} · {u.email}
                   </SelectItem>
                 ))
@@ -165,7 +171,6 @@ function AddSubsidiaryForm({ parentId, onSuccess, onCancel }: AddSubsidiaryFormP
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
-  const [description, setDescription] = useState('');
   const createMutation = useCreateSubsidiary(parentId);
 
   function handleNameChange(value: string) {
@@ -180,7 +185,6 @@ function AddSubsidiaryForm({ parentId, onSuccess, onCancel }: AddSubsidiaryFormP
       const payload: SubsidiaryCreate = {
         name: name.trim(),
         slug: slug.trim(),
-        description: description.trim() || undefined,
       };
       await createMutation.mutateAsync(payload);
       toast.success(tSub('successCreate'));
@@ -218,15 +222,6 @@ function AddSubsidiaryForm({ parentId, onSuccess, onCancel }: AddSubsidiaryFormP
           <FieldDescription>{t('slugDescription')}</FieldDescription>
         </Field>
 
-        <Field>
-          <FieldLabel htmlFor="sub-description">{tForm('description')}</FieldLabel>
-          <Input
-            id="sub-description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder={t('descriptionPlaceholder')}
-          />
-        </Field>
       </FieldGroup>
 
       <div className="flex justify-end gap-2 pt-2">
@@ -269,29 +264,8 @@ function OverviewTab({ company }: { company: Company }) {
         <InfoCell label={t('status')}>
           <StatusBadge status={company.status} />
         </InfoCell>
-        <InfoCell label={t('industry')}>
-          {company.industry ? (
-            <span>{company.industry}</span>
-          ) : (
-            <span className="text-fg-muted">—</span>
-          )}
-        </InfoCell>
-        <InfoCell label={t('domain')}>
-          {company.domain ? (
-            <span className="font-mono text-mono-sm">{company.domain}</span>
-          ) : (
-            <span className="text-fg-muted">—</span>
-          )}
-        </InfoCell>
         <InfoCell label={t('slug')}>
           <span className="font-mono text-mono-sm">{company.slug}</span>
-        </InfoCell>
-        <InfoCell label={t('country')}>
-          {company.country ? (
-            <span>{company.country}</span>
-          ) : (
-            <span className="text-fg-muted">—</span>
-          )}
         </InfoCell>
         <InfoCell label={t('created')}>
           <span className="font-mono text-mono-sm text-fg-muted">
@@ -303,17 +277,6 @@ function OverviewTab({ company }: { company: Company }) {
             {formatDate(company.updated_at)}
           </span>
         </InfoCell>
-
-        {company.description ? (
-          <div className="col-span-full mt-2 border-t border-border pt-5">
-            <p className="font-sans text-micro uppercase tracking-[0.06em] text-fg-muted">
-              {t('description')}
-            </p>
-            <p className="mt-2 max-w-[65ch] font-sans text-body text-foreground">
-              {company.description}
-            </p>
-          </div>
-        ) : null}
       </section>
 
       <Link
@@ -425,7 +388,6 @@ function UsersTab({ companyId }: UsersTabProps) {
           </p>
         </div>
         <Button onClick={() => setAddOpen(true)} className="h-9 px-4">
-          <Plus aria-hidden size={14} strokeWidth={2} className="mr-1.5" />
           {t('addUser')}
         </Button>
       </div>
@@ -438,8 +400,7 @@ function UsersTab({ companyId }: UsersTabProps) {
           title={t('emptyTitle')}
           description={t('emptyDescription')}
           action={
-            <Button onClick={() => setAddOpen(true)} className="h-9 px-4 gap-2">
-              <Plus aria-hidden size={16} strokeWidth={2} />
+            <Button onClick={() => setAddOpen(true)} className="h-9 px-4">
               {t('addUser')}
             </Button>
           }
@@ -547,6 +508,7 @@ function SubsidiariesTab({ parentId }: SubsidiariesTabProps) {
           <Button
             variant="ghost"
             size="sm"
+            nativeButton={false}
             render={<Link href={`/companies/${row.original.id}`} />}
             className="h-8 px-2 text-fg-muted hover:text-foreground"
           >
@@ -570,7 +532,6 @@ function SubsidiariesTab({ parentId }: SubsidiariesTabProps) {
           </p>
         </div>
         <Button onClick={() => setAddOpen(true)} className="h-9 px-4">
-          <Plus aria-hidden size={14} strokeWidth={2} className="mr-1.5" />
           {t('addSubsidiary')}
         </Button>
       </div>
@@ -583,8 +544,7 @@ function SubsidiariesTab({ parentId }: SubsidiariesTabProps) {
           title={t('emptyTitle')}
           description={t('emptyDescription')}
           action={
-            <Button onClick={() => setAddOpen(true)} className="h-9 px-4 gap-2">
-              <Plus aria-hidden size={16} strokeWidth={2} />
+            <Button onClick={() => setAddOpen(true)} className="h-9 px-4">
               {t('addSubsidiary')}
             </Button>
           }
@@ -681,11 +641,7 @@ export default function CompanyDetailPage({ params }: CompanyDetailPageProps) {
         ]}
         title={company.name}
         subtitle={
-          company.domain ? (
-            <span className="font-mono text-mono-sm text-fg-muted">{company.domain}</span>
-          ) : (
-            <span className="font-mono text-mono-sm text-fg-muted">{company.slug}</span>
-          )
+          <span className="font-mono text-mono-sm text-fg-muted">{company.slug}</span>
         }
         secondaryActions={<StatusBadge status={company.status} />}
         navigationItems={navigationItems}

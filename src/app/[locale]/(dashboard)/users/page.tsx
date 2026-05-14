@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import { Users, UserPlus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 import {
   useUsers,
   useCreateUser,
+  useUpdateUser,
   useDeleteUser,
 } from '@/hooks/useUsers';
-import type { ListUser, UserCreate } from '@/types';
+import type { ListUser, UserCreate, UserUpdate } from '@/types';
 import { DEFAULT_PAGE_SIZE } from '@/utils/constants';
 import { useResourceList } from '@/hooks/useResourceList';
 
@@ -28,13 +30,16 @@ import { FormDialog } from '@/components/shared/form-dialog';
 
 import { Button } from '@/components/ui/button';
 import { InviteUserForm, type InviteFormData } from '@/components/features/users/invite-user-form';
+import { EditUserForm } from '@/components/features/users/edit-user-form';
 import { getUsersColumns } from '@/components/features/users/users-columns';
 import { AnimatedPage } from '@/components/shared/animated-container';
 
 export default function UsersPage() {
   const t = useTranslations('dashboard.users');
+  const router = useRouter();
   const { search, page, queryPage, setPage, searchProps, isEmpty } = useResourceList();
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<ListUser | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ListUser | null>(null);
 
   const { data, isLoading, isError, refetch } = useUsers({
@@ -44,9 +49,11 @@ export default function UsersPage() {
   });
 
   const createMutation = useCreateUser();
+  const updateMutation = useUpdateUser(editTarget?.id ?? '');
   const deleteMutation = useDeleteUser();
 
   const columns = getUsersColumns({
+    onEdit: (user) => setEditTarget(user),
     onDelete: (user) => setDeleteTarget(user),
   });
 
@@ -124,10 +131,27 @@ export default function UsersPage() {
               totalCount={totalCount}
               caption={t('caption')}
               emptyMessage="No users match your search."
+              onRowClick={(user) => router.push(`/users/${user.id}`)}
             />
           )}
         </ScaffoldFilterAndContent>
       </AnimatedPage>
+
+      <FormDialog open={!!editTarget} onOpenChange={(open) => !open && setEditTarget(null)} title="Edit User">
+        {editTarget && (
+          <EditUserForm
+            userId={editTarget.id}
+            initial={{
+              first_name: editTarget.first_name ?? '',
+              last_name: editTarget.last_name ?? '',
+              user_type: (editTarget.user_type === 'super_admin' ? 'admin' : editTarget.user_type) as 'admin' | 'regular',
+            }}
+            updateMutation={updateMutation}
+            onSuccess={() => setEditTarget(null)}
+            onCancel={() => setEditTarget(null)}
+          />
+        )}
+      </FormDialog>
 
       <FormDialog open={inviteOpen} onOpenChange={setInviteOpen} title={t('inviteUser')}>
         <InviteUserForm

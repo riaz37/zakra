@@ -74,13 +74,10 @@ export function ReportCard({ turn }: { turn: CompletedTurn }) {
         )}
       </div>
 
-      <div className="border-t border-border px-4 py-3">
-        <Link href={viewUrl} className="flex items-center justify-between gap-3">
-          <span className="font-sans text-body text-fg-muted">View full report</span>
-          <span className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 font-sans text-body font-medium text-background transition-colors duration-150 hover:opacity-90">
-            View Report
-            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-          </span>
+      <div className="border-t border-border px-4 py-3 flex justify-end">
+        <Link href={viewUrl} className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 font-sans text-body font-medium text-background transition-colors duration-150 hover:opacity-90">
+          View Report
+          <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
         </Link>
       </div>
     </div>

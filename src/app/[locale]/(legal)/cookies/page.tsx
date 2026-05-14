@@ -11,13 +11,13 @@ export async function generateMetadata({ params }: CookiesPageProps): Promise<Me
   const { locale } = await params;
   if (locale === 'ar') {
     return {
-      title: 'سياسة ملفات تعريف الارتباط — زاكرا',
+      title: 'سياسة ملفات تعريف الارتباط | زاكرا',
       description:
         'كيفية استخدام زاكرا لملفات تعريف الارتباط للحفاظ على أمان الجلسات وتفضيلات سياق الشركة وتقديم تحليلات مجهولة.',
     };
   }
   return {
-    title: 'Cookie Policy — Zakra',
+    title: 'Cookie Policy | Zakra',
     description:
       'How Zakra uses cookies to keep sessions secure, maintain Company Context preferences, and provide anonymous analytics.',
   };
@@ -105,7 +105,7 @@ function EnglishContent({ locale }: { locale: string }) {
           Cookie Policy
         </h1>
         <p className="font-sans text-sm text-muted">
-          <strong className="text-foreground">Product:</strong> Zakra — AI-Powered Enterprise Knowledge Base &amp; Reporting Platform
+          <strong className="text-foreground">Product:</strong> Zakra AI-Powered Enterprise Knowledge Base &amp; Reporting Platform
           <br />
           <strong className="text-foreground">Operated by:</strong> Empowering Energy (trading as ESAP AI)
         </p>
@@ -122,14 +122,14 @@ function EnglishContent({ locale }: { locale: string }) {
           <div className="flex items-start gap-2">
             <span className="mt-0.5 shrink-0 text-accent">✓</span>
             <p className="font-sans text-sm text-muted">
-              <strong className="text-foreground">Essential Cookies</strong> — Required for login, session security,
+              <strong className="text-foreground">Essential Cookies</strong>: Required for login, session security,
               Company Context, and platform functionality. Cannot be disabled.
             </p>
           </div>
           <div className="flex items-start gap-2">
             <span className="mt-0.5 shrink-0 text-muted">○</span>
             <p className="font-sans text-sm text-muted">
-              <strong className="text-foreground">Analytics Cookies</strong> — Anonymous, aggregated platform usage
+              <strong className="text-foreground">Analytics Cookies</strong>: Anonymous, aggregated platform usage
               data. No personal data included.
             </p>
           </div>
@@ -211,7 +211,7 @@ function EnglishContent({ locale }: { locale: string }) {
         Questions about cookies or consent can be directed to the Empowering Energy Data Privacy Team:
       </P>
       <div className="rounded-lg border border-border bg-surface-200 p-4">
-        <p className="mb-1 font-sans text-sm font-medium text-foreground">Empowering Energy — Data Privacy Team</p>
+        <p className="mb-1 font-sans text-sm font-medium text-foreground">Empowering Energy Data Privacy Team</p>
         <p className="font-sans text-sm text-muted">
           📧{' '}
           <a href="mailto:privacy@esap.ai" className="text-accent hover:underline">
@@ -258,13 +258,13 @@ function ArabicContent({ locale }: { locale: string }) {
           سياسة ملفات تعريف الارتباط
         </h1>
         <p className="font-sans text-sm text-muted">
-          <strong className="text-foreground">المنتج:</strong> زاكرا — منصة قاعدة المعرفة والتقارير المؤسسية المدعومة بالذكاء الاصطناعي
+          <strong className="text-foreground">المنتج:</strong> زاكرا منصة قاعدة المعرفة والتقارير المؤسسية المدعومة بالذكاء الاصطناعي
           <br />
           <strong className="text-foreground">تشغيل:</strong> Empowering Energy (المعروفة باسم ESAP AI)
         </p>
       </div>
 
-      {/* Consent banner preview — Arabic */}
+      {/* Consent banner preview Arabic */}
       <div className="mb-8 rounded-xl border border-accent-border bg-accent-soft p-5">
         <p className="mb-1 font-sans text-sm font-semibold text-foreground">ملفات تعريف الارتباط على زاكرا</p>
         <p className="mb-3 font-sans text-sm text-muted">
@@ -274,13 +274,13 @@ function ArabicContent({ locale }: { locale: string }) {
           <div className="flex items-start gap-2">
             <span className="mt-0.5 shrink-0 text-accent">✓</span>
             <p className="font-sans text-sm text-muted">
-              <strong className="text-foreground">ملفات تعريف الارتباط الأساسية</strong> — مطلوبة لتسجيل الدخول وأمان الجلسة وسياق الشركة ووظائف المنصة. لا يمكن تعطيلها.
+              <strong className="text-foreground">ملفات تعريف الارتباط الأساسية</strong>: مطلوبة لتسجيل الدخول وأمان الجلسة وسياق الشركة ووظائف المنصة. لا يمكن تعطيلها.
             </p>
           </div>
           <div className="flex items-start gap-2">
             <span className="mt-0.5 shrink-0 text-muted">○</span>
             <p className="font-sans text-sm text-muted">
-              <strong className="text-foreground">ملفات تعريف الارتباط التحليلية</strong> — بيانات استخدام المنصة المجمّعة المجهولة. لا تتضمّن بيانات شخصية.
+              <strong className="text-foreground">ملفات تعريف الارتباط التحليلية</strong>: بيانات استخدام المنصة المجمّعة المجهولة. لا تتضمّن بيانات شخصية.
             </p>
           </div>
         </div>
@@ -352,7 +352,7 @@ function ArabicContent({ locale }: { locale: string }) {
         يمكن توجيه أسئلتك حول ملفات تعريف الارتباط أو الموافقة إلى فريق خصوصية البيانات في Empowering Energy:
       </P>
       <div className="rounded-lg border border-border bg-surface-200 p-4">
-        <p className="mb-1 font-sans text-sm font-medium text-foreground">Empowering Energy — فريق خصوصية البيانات</p>
+        <p className="mb-1 font-sans text-sm font-medium text-foreground">Empowering Energy فريق خصوصية البيانات</p>
         <p className="font-sans text-sm text-muted">
           📧{' '}
           <a href="mailto:privacy@esap.ai" className="text-accent hover:underline">
@@ -394,7 +394,7 @@ export default async function CookiesPage({ params }: CookiesPageProps) {
 
   return (
     <div className="flex gap-10">
-      {/* Sticky TOC — desktop only */}
+      {/* Sticky TOC desktop only */}
       <aside className="hidden shrink-0 xl:block">
         <LegalToc items={toc} />
       </aside>

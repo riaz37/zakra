@@ -59,8 +59,13 @@ export default function NewChatPage() {
       const { task_id } = await sendMessage(session.id, text.trim(), companyId);
       setPendingTask(session.id, { taskId: task_id, userMessage: text.trim() });
       router.push(`/chat/${session.id}`);
-    } catch {
-      toast.error(t('failedToCreateSession'));
+    } catch (err) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 403) {
+        toast.error("You don't have access to this database");
+      } else {
+        toast.error(t('failedToCreateSession'));
+      }
       setIsCreating(false);
     }
   };
